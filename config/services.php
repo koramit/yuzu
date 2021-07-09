@@ -30,4 +30,33 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'toothpaste' => [
+        'url' => env('TOOTHPASTE_URL'),
+        'token' => env('TOOTHPASTE_TOKEN'),
+        'authenticate' => [
+            'endpoint' => env('HANNAH_URL').'auth',
+            'auth' => 'token_secret',
+            'app' => env('HANNAH_APP'),
+            'token' => env('HANNAH_TOKEN'),
+        ],
+        'patient' => [
+            'endpoint' => env('HANNAH_URL').'patient',
+            'auth' => 'token_secret',
+            'app' => env('HANNAH_APP'),
+            'token' => env('HANNAH_TOKEN'),
+        ],
+        'admission' => [
+            'endpoint' => env('HANNAH_URL').'admission',
+            'auth' => 'token_secret',
+            'app' => env('HANNAH_APP'),
+            'token' => env('HANNAH_TOKEN'),
+        ],
+        'recently_admit' => [
+            'endpoint' => env('HANNAH_URL').'patient-recently-admit',
+            'auth' => 'token_secret',
+            'app' => env('HANNAH_APP'),
+            'token' => env('HANNAH_TOKEN'),
+        ],
+    ],
+
 ];

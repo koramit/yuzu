@@ -175,6 +175,12 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /*
+         * Customs service providers
+         */
+        App\Providers\PatientAPIServiceProvider::class,
+        App\Providers\AuthenticationAPIServiceProvider::class,
+
     ],
 
     /*
@@ -229,5 +235,11 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
+
+    'patient_api_provider' => env('PATIENT_API_PROVIDER'),
+    'authentication_api_provider' => env('AUTHENTICATION_API_PROVIDER'),
+
+    'mini_hash_start_at' => env('MINI_HASH_START_AT'),
+    'mini_hash_length' => env('MINI_HASH_LENGTH'),
 
 ];
