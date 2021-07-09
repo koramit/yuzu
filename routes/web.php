@@ -6,6 +6,6 @@ Route::get('/', function () {
     return Inertia\Inertia::render('Welcome');
 });
 
-Route::get('/prototypes/form', function () {
-    return Inertia\Inertia::render('Prototypes/Form');
-});
+// Route::get('/prototypes/form', function () {
+//     return Inertia\Inertia::render('Prototypes/Form');
+// });
