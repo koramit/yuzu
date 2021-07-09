@@ -1,0 +1,9 @@
+@tailwind base;
+
+@tailwind components;
+@import 'animate';
+@import 'button';
+@import 'form';
+@import 'page';
+
+@tailwind utilities;

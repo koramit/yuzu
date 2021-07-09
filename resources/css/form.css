@@ -1,0 +1,25 @@
+.form-label {
+    @apply block uppercase tracking-wide text-dark-theme-light text-xs lg:text-base font-semibold py-2 truncate;
+}
+
+.form-input {
+    @apply text-gray-600 appearance-none w-full py-1 px-2 lg:py-2 lg:px-3 bg-white shadow-sm rounded border-2 border-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:bg-soft-theme-light focus:border-bitter-theme-light disabled:bg-gray-200 disabled:border-white disabled:cursor-not-allowed;
+}
+
+input[type="checkbox"] {
+    box-sizing: border-box;
+    padding: 0;
+}
+
+input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,<svg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'><path d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/></svg>");
+    border-color: transparent;
+    background-color: currentColor;
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+input[type="date"] {
+    height: 2.375rem;
+}

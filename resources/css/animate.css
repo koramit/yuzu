@@ -1,0 +1,18 @@
+.floating-x {
+    transform: translatex(-40px);
+    animation: float 2s ease-in-out infinite both;
+}
+
+@keyframes float {
+    0% {
+        transform: translatex(0px);
+    }
+
+    50% {
+        transform: translatex(40px);
+    }
+
+    100% {
+        transform: translatex(0px);
+    }
+}
