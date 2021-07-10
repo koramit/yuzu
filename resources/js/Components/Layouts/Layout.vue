@@ -1,4 +1,7 @@
 <template>
+    <InertiaHead>
+        <title>{{ $page.props.flash.title }}</title>
+    </InertiaHead>
     <div>
         <!-- main contailner, flex makes its childs extend full h -->
         <div class="md:h-screen md:flex md:flex-col">
@@ -9,9 +12,9 @@
                     <!-- the logo -->
                     <inertia-link
                         class="inline-block"
-                        :href="`${baseUrl}/home`"
+                        :href="route('home')"
                     >
-                        <span class="font-bold text-lg md:text-2xl">Yuzu 🍊</span>
+                        <span class="font-bold text-lg md:text-2xl">Yuzu</span>
                     </inertia-link>
                     <!-- title display on mobile -->
                     <div class="text-soft-theme-light text-sm truncate mx-1 md:hidden">
@@ -19,16 +22,17 @@
                     </div>
                     <!-- hotel menu on mobile -->
                     <button
-                        class="md:hidden text-soft-theme-light"
+                        class="md:hidden text-soft-theme-light transition-colors duration-300 ease-in-out"
+                        :class="{'text-bitter-theme-light': mobileMenuVisible}"
                         @click="mobileMenuVisible = !mobileMenuVisible"
                     >
                         <svg
                             class="w-6 h-6"
                             xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 576 512"
+                            viewBox="0 0 512 512"
                         ><path
                             fill="currentColor"
-                            d="M560 64c8.84 0 16-7.16 16-16V16c0-8.84-7.16-16-16-16H16C7.16 0 0 7.16 0 16v32c0 8.84 7.16 16 16 16h15.98v384H16c-8.84 0-16 7.16-16 16v32c0 8.84 7.16 16 16 16h240v-80c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v80h240c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16h-16V64h16zm-304 44.8c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zm0 96c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zm-128-96c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zM179.2 256h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8zM192 384c0-53.02 42.98-96 96-96s96 42.98 96 96H192zm256-140.8c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4zm0-96c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4z"
+                            d="M484.112 27.889C455.989-.233 416.108-8.057 387.059 8.865 347.604 31.848 223.504-41.111 91.196 91.197-41.277 223.672 31.923 347.472 8.866 387.058c-16.922 29.051-9.1 68.932 19.022 97.054 28.135 28.135 68.011 35.938 97.057 19.021 39.423-22.97 163.557 49.969 295.858-82.329 132.474-132.477 59.273-256.277 82.331-295.861 16.922-29.05 9.1-68.931-19.022-97.054zm-22.405 72.894c-38.8 66.609 45.6 165.635-74.845 286.08-120.44 120.443-219.475 36.048-286.076 74.843-22.679 13.207-64.035-27.241-50.493-50.488 38.8-66.609-45.6-165.635 74.845-286.08C245.573 4.702 344.616 89.086 411.219 50.292c22.73-13.24 64.005 27.288 50.488 50.491zm-169.861 8.736c1.37 10.96-6.404 20.957-17.365 22.327-54.846 6.855-135.779 87.787-142.635 142.635-1.373 10.989-11.399 18.734-22.326 17.365-10.961-1.37-18.735-11.366-17.365-22.326 9.162-73.286 104.167-168.215 177.365-177.365 10.953-1.368 20.956 6.403 22.326 17.364z"
                         /></svg>
                     </button>
                 </div>
@@ -57,7 +61,7 @@
                                 <template v-if="hasRoles">
                                     <inertia-link
                                         class="block px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
-                                        :href="`${baseUrl}/home`"
+                                        :href="route('home')"
                                         v-if="! currentPage('home')"
                                     >
                                         หน้าหลัก
@@ -65,7 +69,7 @@
                                 </template>
                                 <inertia-link
                                     class="w-full font-semibold text-left px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
-                                    :href="`${baseUrl}/logout`"
+                                    :href="route('logout')"
                                     method="post"
                                     as="button"
                                     type="button"
@@ -103,7 +107,7 @@
                             <template v-if="hasRoles">
                                 <inertia-link
                                     class="block py-1"
-                                    :href="`${baseUrl}/home`"
+                                    :href="route('home')"
                                     v-if="! currentPage('home')"
                                 >
                                     หน้าหลัก
@@ -111,7 +115,7 @@
                             </template>
                             <inertia-link
                                 class="block py-1"
-                                :href="`${baseUrl}/logout`"
+                                :href="route('logout')"
                                 method="post"
                                 as="button"
                                 type="button"
@@ -131,14 +135,16 @@
             <!-- this is content -->
             <div class="md:flex md:flex-grow md:overflow-hidden">
                 <!-- this is sidebar menu on desktop -->
-                <main-menu
-                    :url="url()"
-                    class="hidden md:block bg-thick-theme-light flex-shrink-0 w-56 xl:w-64 py-12 px-6 overflow-y-auto"
-                />
-                <action-menu
-                    class="hidden md:block bg-thick-theme-light flex-shrink-0 w-56 xl:w-64 py-12 px-6 overflow-y-auto"
-                    @action-clicked="actionClicked"
-                />
+                <div class="hidden md:block bg-thick-theme-light flex-shrink-0 w-56 xl:w-64 py-12 px-6 overflow-y-auto">
+                    <!-- class="hidden md:block bg-thick-theme-light flex-shrink-0 w-56 xl:w-64 py-12 px-6 overflow-y-auto" -->
+                    <main-menu
+                        :url="url()"
+                    />
+                    <!-- class="hidden md:block bg-thick-theme-light flex-shrink-0 w-56 xl:w-64 py-12 px-6 overflow-y-auto" -->
+                    <action-menu
+                        @action-clicked="actionClicked"
+                    />
+                </div>
                 <!-- this is main page -->
                 <div
                     class="w-full p-4 md:overflow-y-auto sm:p-8 md:p-16 lg:px-24"
@@ -162,69 +168,51 @@ import MainMenu from '@/Components/Helpers/MainMenu';
 import ActionMenu from '@/Components/Helpers/ActionMenu';
 import FlashMessages from '@/Components/Helpers/FlashMessages';
 import ConfirmForm from '@/Components/Forms/ConfirmForm';
+import { computed, inject, nextTick, ref } from '@vue/runtime-core';
+import { useCheckSessionTimeout } from '@/Functions/useCheckSessionTimeout';
 export default {
     components: { Dropdown, Icon, MainMenu, ActionMenu, FlashMessages, ConfirmForm },
-    computed: {
-        hasRoles() {
+    setup () {
+        useCheckSessionTimeout();
+
+        const confirmForm = ref(null);
+        const mobileMenuVisible = ref(false);
+        const avatarSrcError = ref(false);
+
+        const hasRoles = computed(() => {
             return false;
-            // return this.$page.props.user.abilities.length;
-        }
-    },
-    watch: {
-        '$page.props.flash': {
-            immediate: true,
-            deep: true,
-            handler() { document.title = this.$page.props.flash.title; }
-        },
-    },
-    data () {
+        });
+
+        const emitter = inject('emitter');
+
+        emitter.on('need-confirm', (cinfigs) => {
+            setTimeout(() => nextTick(() => confirmForm.value.open(cinfigs)), 300);
+        });
+
+        const url = () => {
+            return location.pathname.substr(1);
+        };
+
+        const actionClicked = (action) => {
+            mobileMenuVisible.value = false;
+            setTimeout(() => {
+                emitter.emit('action-clicked', action);
+            }, 300); // equal to animate duration
+        };
+
+        const currentPage = (route) => {
+            return location.pathname.substr(1) === route;
+        };
+
         return {
-            mobileMenuVisible: false,
-            avatarSrcError: false,
+            confirmForm,
+            mobileMenuVisible,
+            avatarSrcError,
+            hasRoles,
+            url,
+            actionClicked,
+            currentPage,
         };
     },
-    created () {
-        this.baseUrl = document.querySelector('meta[name=base-url]').content;
-        var lastTimeCheckSessionTimeout = Date.now();
-        const endpoint =  this.baseUrl + '/session-timeout';
-        const sessionLifetimeSeconds = parseInt(document.querySelector('meta[name=session-lifetime-seconds]').content);
-        window.addEventListener('focus', () => {
-            let timeDiff = Date.now() - lastTimeCheckSessionTimeout;
-            if ( (timeDiff) > (sessionLifetimeSeconds) ) {
-                window.axios
-                    .post(endpoint)
-                    .then(() => lastTimeCheckSessionTimeout = Date.now())
-                    .catch(() => location.reload());
-            }
-        });
-        console.log('event on need-confirm');
-        // this.eventBus.on('need-confirm', (cinfigs) => {
-        //     setTimeout(() => this.$nextTick(() => this.$refs.confirmForm.open(cinfigs)), 300);
-        // });
-    },
-    mounted () {
-        this.$nextTick(() => {
-            const pageLoadingIndicator = document.getElementById('page-loading-indicator');
-            if (pageLoadingIndicator) {
-                pageLoadingIndicator.remove();
-            }
-        });
-    },
-    methods: {
-        url() {
-            return location.pathname.substr(1);
-        },
-        actionClicked (action) {
-            this.mobileMenuVisible = false;
-
-            setTimeout(() => {
-                // this.eventBus.emit('action-clicked', action);
-                console.log('event emit action-clicked');
-            }, 300); // equal to animate duration
-        },
-        currentPage(route) {
-            return location.pathname.substr(1) === route;
-        }
-    }
 };
 </script>
