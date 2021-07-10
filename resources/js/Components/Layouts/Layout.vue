@@ -47,8 +47,7 @@
                         <template #default>
                             <div class="flex items-center cursor-pointer select-none group">
                                 <div class="group-hover:text-bitter-theme-light focus:text-bitter-theme-light mr-1 whitespace-no-wrap">
-                                    <!-- <span>{{ $page.props.user.name }}</span> -->
-                                    <span>place user</span>
+                                    <span>{{ $page.props.user.name }}</span>
                                 </div>
                                 <icon
                                     class="w-4 h-4 group-hover:text-bitter-theme-light focus:text-bitter-theme-light"
@@ -70,7 +69,7 @@
                                 <inertia-link
                                     class="w-full font-semibold text-left px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
                                     :href="route('logout')"
-                                    method="post"
+                                    method="delete"
                                     as="button"
                                     type="button"
                                 >
@@ -103,7 +102,7 @@
                                     >
                                 </div>
                             </div> -->
-                            <span class="inline-block py-1 text-white">place user</span>
+                            <span class="inline-block py-1 text-white">{{ $page.props.user.name }}</span>
                             <template v-if="hasRoles">
                                 <inertia-link
                                     class="block py-1"
@@ -116,7 +115,7 @@
                             <inertia-link
                                 class="block py-1"
                                 :href="route('logout')"
-                                method="post"
+                                method="delete"
                                 as="button"
                                 type="button"
                             >
@@ -173,7 +172,10 @@ import { useCheckSessionTimeout } from '@/Functions/useCheckSessionTimeout';
 export default {
     components: { Dropdown, Icon, MainMenu, ActionMenu, FlashMessages, ConfirmForm },
     setup () {
-        useCheckSessionTimeout();
+        const pageLoadingIndicator = document.getElementById('page-loading-indicator');
+        if (pageLoadingIndicator) {
+            useCheckSessionTimeout();
+        }
 
         const confirmForm = ref(null);
         const mobileMenuVisible = ref(false);

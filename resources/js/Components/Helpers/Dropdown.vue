@@ -4,7 +4,7 @@
         ref="dropdown"
     >
         <div
-            class="fixed inset-0 bg-black bg-opacity-25 z-10"
+            class="fixed inset-0 z-10"
             @click="show = false"
             v-if="show"
         />
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { onUnmounted } from 'vue';
+import { onUnmounted, ref } from 'vue';
 export default {
     props: {
         autoClose: { type: Boolean, default: true },
@@ -37,26 +37,33 @@ export default {
     setup () {
         const escapePressed = (e) => {
             if (e.keyCode === 27) {
-                this.show = false;
+                show.value = false;
             }
         };
         document.addEventListener('keydown', escapePressed);
         onUnmounted( () => window.removeEventListener('keydown', escapePressed));
-    },
-    data() {
-        return {
-            show: false,
-            dropup: false,
-            dropupThreshold: 0.8,
-        };
-    },
-    methods: {
-        toggle () {
-            if (!this.show) {
-                this.dropup = (this.$refs.dropdown.offsetTop / (window.innerHeight + window.scrollY)) > this.dropupThreshold;
+
+        const show = ref(false);
+        const animate = ref(false);
+        const dropup = ref(false);
+        const dropupThreshold = ref(0.8);
+        const dropdown = ref(null);
+
+        const toggle = () => {
+            if (!show.value) {
+                dropup.value = (dropdown.value.offsetTop / (window.innerHeight + window.scrollY)) > dropupThreshold.value;
             }
-            this.show = !this.show;
-        }
+            show.value = !show.value;
+        };
+
+        return {
+            show,
+            animate,
+            dropup,
+            dropupThreshold,
+            dropdown,
+            toggle,
+        };
     }
 };
 </script>
