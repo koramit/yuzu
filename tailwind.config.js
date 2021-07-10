@@ -8,11 +8,14 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                'soft-theme-light': '#e1f5fe',
-                'alt-theme-light': '#b3e5fc',
-                'bitter-theme-light': '#81d4fa',
-                'thick-theme-light': '#afc2cb',
-                'dark-theme-light': '#82b3c9',
+                'soft-theme-light': '#FCECDD',
+                'alt-theme-light': '#FFC288',
+                'bitter-theme-light': '#9EDE73',
+                'dark-theme-light': '#FEA82F',
+                // 'thick-theme-light': '#C5D7BD', x
+                'thick-theme-light': '#9FB8AD',
+                // 'thick-theme-light': '#BECA5C',
+                // 'thick-theme-light': '#00AF91',
             }
         },
     },
@@ -25,4 +28,4 @@ module.exports = {
         },
     },
     plugins: [],
-}
+};
