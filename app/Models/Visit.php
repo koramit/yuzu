@@ -81,4 +81,9 @@ class Visit extends Model
 
         return $items[$this->attributes['screen_type']];
     }
+
+    public function getPatientNameAttribute()
+    {
+        return $this->patient ? $this->patient->full_name : $this->form['patient']['name'];
+    }
 }

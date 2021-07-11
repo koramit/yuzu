@@ -30,8 +30,8 @@ class VisitsController extends Controller
                        ->through(function ($visit) {
                            return [
                                'slug' => $visit->slug,
-                               'hn' => $visit->patient->hn,
-                               'patient_name' => $visit->patient->full_name,
+                               'hn' => $visit->patient->hn ?? null,
+                               'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
                                'date_visit' => $visit->date_visit->format('d M Y'),
                            ];
@@ -101,7 +101,7 @@ class VisitsController extends Controller
 
         $visit->load('patient');
 
-        Request::session()->flash('page-title', $visit->patient->full_name.'@'.$visit->date_visit->format('d M Y'));
+        Request::session()->flash('page-title', $visit->full_name.'@'.$visit->date_visit->format('d M Y'));
 
         return Inertia::render('Visits/Edit', [
             'visit' => $visit,
