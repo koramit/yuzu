@@ -101,7 +101,7 @@ class VisitsController extends Controller
 
         $visit->load('patient');
 
-        Request::session()->flash('page-title', $visit->full_name.'@'.$visit->date_visit->format('d M Y'));
+        Request::session()->flash('page-title', $visit->patient_name.'@'.$visit->date_visit->format('d M Y'));
 
         return Inertia::render('Visits/Edit', [
             'visit' => $visit,
