@@ -13,7 +13,7 @@
                 </p>
                 <div class="flex items-baseline">
                     <p class="p-1 text-lg pt-0">
-                        {{ visit.date_visit }} {{ visit.patient_name }}
+                        {{ visit.date_visit }} <br class="md:hidden"> {{ visit.patient_name }}
                     </p>
                 </div>
                 <p class="px-1 text-xs text-dark-theme-light italic">
