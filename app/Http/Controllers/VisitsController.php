@@ -35,6 +35,7 @@ class VisitsController extends Controller
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
                                'date_visit' => $visit->date_visit->format('d M Y'),
+                               'updated_at_for_humans' => $visit->updated_at_for_humans,
                            ];
                        });
 

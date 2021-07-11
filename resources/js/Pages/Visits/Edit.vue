@@ -245,7 +245,7 @@
                 />
                 <FormCheckbox
                     class="mt-2"
-                    v-model="form.comorbids.ht"
+                    v-model="form.comorbids.dlp"
                     label="ไขมันในเลือดสูง"
                     @autosave="autosave('comorbids.dlp')"
                 />

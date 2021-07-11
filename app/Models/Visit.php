@@ -17,6 +17,17 @@ class Visit extends Model
         'form' => 'array',
     ];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'hn',
+        'patient_name',
+        'updated_at_for_humans',
+    ];
+
     public function patient()
     {
         return $this->belongsTo(Patient::class);
@@ -82,8 +93,18 @@ class Visit extends Model
         return $items[$this->attributes['screen_type']];
     }
 
+    public function getHnAttribute()
+    {
+        return $this->patient ? $this->patient->hn : $this->form['patient']['hn'];
+    }
+
     public function getPatientNameAttribute()
     {
         return $this->patient ? $this->patient->full_name : $this->form['patient']['name'];
+    }
+
+    public function getUpdatedAtForHumansAttribute()
+    {
+        return $this->updated_at->locale('th_TH')->diffForHumans(now());
     }
 }

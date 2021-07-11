@@ -9,13 +9,10 @@ module.exports = {
         extend: {
             colors: {
                 'soft-theme-light': '#FCECDD',
-                'alt-theme-light': '#FFC288',
+                'alt-theme-light': '#FFD384', // FFC288
                 'bitter-theme-light': '#9EDE73',
                 'dark-theme-light': '#FEA82F',
-                // 'thick-theme-light': '#C5D7BD', x
                 'thick-theme-light': '#9FB8AD',
-                // 'thick-theme-light': '#BECA5C',
-                // 'thick-theme-light': '#00AF91',
             }
         },
     },
