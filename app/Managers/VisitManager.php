@@ -90,7 +90,7 @@ class VisitManager
                 ['label' => 'เจ็บคอ', 'name' => 'sore_throat'],
                 ['label' => 'มีน้ำมูก', 'name' => 'rhinorrhoea'],
                 ['label' => 'มีเสมหะ', 'name' => 'sputum'],
-                ['label' => 'เหนื่อย/รักต้องเปิด', 'name' => 'fatigue'],
+                ['label' => 'เหนื่อย/แน่นอก', 'name' => 'fatigue'],
                 ['label' => 'จมูกไม่ได้กลิ่น', 'name' => 'anosmia'],
                 ['label' => 'ลิ้นไม่ได้รส', 'name' => 'loss_of_taste'],
                 ['label' => 'ปวดเมื่อยกล้ามเนื้อ', 'name' => 'myalgia'],
