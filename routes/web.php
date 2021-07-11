@@ -45,7 +45,7 @@ Route::get('/', HomeController::class)
 
 // visit
 Route::get('visits', [VisitsController::class, 'index'])
-     ->middleware('auth')
+     ->middleware('auth', 'remember')
      ->name('visits');
 Route::post('visits', [VisitsController::class, 'store'])
      ->middleware('auth')
