@@ -26,6 +26,7 @@ class VisitsController extends Controller
         ]);
 
         $visits = Visit::with('patient')
+                       ->orderByDesc('updated_at')
                        ->paginate()
                        ->through(function ($visit) {
                            return [
