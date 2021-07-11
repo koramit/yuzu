@@ -82,4 +82,9 @@ class Patient extends Model
 
         return now()->diffInYears($this->dob);
     }
+
+    public function getGenderAttribute()
+    {
+        return $this->profile['gender'] === 'male' ? 'ชาย' : 'หญิง';
+    }
 }

@@ -77,6 +77,11 @@ export default {
     mounted () {
         this.fp = flatpickr(this.$refs.input, this.flatpickrOptions[this.mode]);
     },
+    methods: {
+        setDate (date) {
+            this.fp.setDate(date);
+        }
+    }
 };
 </script>
 

@@ -13,7 +13,7 @@
             >
         </div>
         <div class="mt-4 px-4 py-8 w-80 bg-white rounded shadow transform -translate-y-12">
-            <span class="block text-xl text-bitter-theme-light mt-12 text-center">🍊 ARI Clinic Inhaler 😌</span>
+            <span class="block text-xl text-bitter-theme-light mt-12 text-center">⚗️ ARI Clinic Inhaler 😌</span>
             <FormInput
                 class="mt-8"
                 label="ชื่อบัญชี"
@@ -47,13 +47,16 @@ import { useForm } from '@inertiajs/inertia-vue3';
 import FormInput from '@/Components/Controls/FormInput';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import { useCheckSessionTimeout } from '@/Functions/useCheckSessionTimeout';
+import { useRemoveLoader } from '@/Functions/useRemoveLoader';
 import { nextTick, onMounted, ref } from '@vue/runtime-core';
 export default {
     components: { FormInput, SpinnerButton },
     setup () {
+        useCheckSessionTimeout();
+
         const pageLoadingIndicator = document.getElementById('page-loading-indicator');
         if (pageLoadingIndicator) {
-            useCheckSessionTimeout();
+            useRemoveLoader();
         }
 
         const busy = ref(true);

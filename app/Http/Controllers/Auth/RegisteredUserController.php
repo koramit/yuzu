@@ -24,13 +24,14 @@ class RegisteredUserController extends Controller
     {
         if ($profile = Session::get('profile', null)) {
             if (! isset($profile['is_md'])) {
-                $profile['is_md'] = (strpos($profile['name'], ' พญ. ') !== false ||
-                    strpos($profile['name'], ' นพ. ') !== false ||
-                    strpos($profile['name'], 'อ.พญ.') === 0 ||
-                    strpos($profile['name'], 'อ.นพ.') === 0 ||
-                    strpos($profile['name'], 'นพ.') === 0 ||
-                    strpos($profile['name'], 'พญ.') === 0
-                );
+                $profile['is_md'] = str_contains($profile['name'], 'พญ.') || str_contains($profile['name'], 'นพ.');
+                // $profile['is_md'] = (strpos($profile['name'], ' พญ. ') !== false ||
+                //     strpos($profile['name'], ' นพ. ') !== false ||
+                //     strpos($profile['name'], 'อ.พญ.') === 0 ||
+                //     strpos($profile['name'], 'อ.นพ.') === 0 ||
+                //     strpos($profile['name'], 'นพ.') === 0 ||
+                //     strpos($profile['name'], 'พญ.') === 0
+                // );
             }
 
             return Inertia::render('Auth/Register', ['profile' => $profile]);

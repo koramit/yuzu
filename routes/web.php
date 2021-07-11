@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagesController;
+use App\Http\Controllers\ResourceEmployeesController;
+use App\Http\Controllers\ResourcePatientsController;
 use App\Http\Controllers\VisitsController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,12 +35,39 @@ Route::post('register', [RegisteredUserController::class, 'store'])
      ->name('register.store');
 
 // Page
-Route::get('/terms-and-policies', [PagesController::class, 'terms'])
+Route::get('terms-and-policies', [PagesController::class, 'terms'])
      ->name('terms');
 
-// Route::get('visits', [VisitsController::class, 'index']);
-
-// visit
-Route::get('/', [VisitsController::class, 'index'])
+// home
+Route::get('/', HomeController::class)
      ->middleware('auth')
      ->name('home');
+
+// visit
+Route::get('visits', [VisitsController::class, 'index'])
+     ->middleware('auth')
+     ->name('visits');
+Route::post('visits', [VisitsController::class, 'store'])
+     ->middleware('auth')
+     ->name('visits.store');
+Route::get('visits/{visit:slug}/edit', [VisitsController::class, 'edit'])
+     ->middleware('auth')
+     ->name('visits.edit');
+Route::patch('visits/{visit}', [VisitsController::class, 'update'])
+     ->middleware('auth')
+     ->name('visits.update');
+
+// resources
+Route::middleware('auth')
+     ->prefix('resources/api')
+     ->name('resources.api.')
+     ->group(function () {
+         Route::get('patients/{hn}', ResourcePatientsController::class)
+              ->name('patients.show');
+         Route::get('employees/{id}', ResourceEmployeesController::class)
+              ->name('employees.show');
+         // Route::get('admissions/{an}', AdmissionsController::class)
+          //      ->name('admissions.show');
+          // Route::get('wards', WardsController::class)
+          //      ->name('wards');
+     });

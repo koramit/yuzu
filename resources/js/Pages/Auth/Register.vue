@@ -84,6 +84,7 @@ import FormCheckbox from '@/Components/Controls/FormCheckbox.vue';
 import FormInput from '@/Components/Controls/FormInput';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import { useCheckSessionTimeout } from '@/Functions/useCheckSessionTimeout';
+import { useRemoveLoader } from '@/Functions/useRemoveLoader';
 import { computed, nextTick, onMounted, ref } from '@vue/runtime-core';
 export default {
     components: { FormCheckbox, FormInput, SpinnerButton },
@@ -91,9 +92,11 @@ export default {
         profile: { type: Object, required: true }
     },
     setup (props) {
+        useCheckSessionTimeout();
+
         const pageLoadingIndicator = document.getElementById('page-loading-indicator');
         if (pageLoadingIndicator) {
-            useCheckSessionTimeout();
+            useRemoveLoader();
         }
 
         const busy = ref(true);

@@ -33,6 +33,12 @@ return [
     'toothpaste' => [
         'url' => env('TOOTHPASTE_URL'),
         'token' => env('TOOTHPASTE_TOKEN'),
+        'user_by_id' => [
+            'endpoint' => env('HANNAH_URL').'user-by-id',
+            'auth' => 'token_secret',
+            'app' => env('HANNAH_APP'),
+            'token' => env('HANNAH_TOKEN'),
+        ],
         'authenticate' => [
             'endpoint' => env('HANNAH_URL').'auth',
             'auth' => 'token_secret',

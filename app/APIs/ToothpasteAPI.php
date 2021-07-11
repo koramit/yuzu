@@ -50,6 +50,27 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         ];
     }
 
+    public function getUserById($id)
+    {
+        $data = $this->brushing($this->pasteLoad('user_by_id', ['org_id' => $id]));
+        if (! $data || ! $data['ok']) { // error: $data = null
+            return [
+                'found' => false,
+                'message' => __('service.failed'),
+            ];
+        }
+
+        if (! isset($data['found']) || ! $data['found']) {
+            $data['message'] = $data['message'] ?? __('auth.failed');
+            unset($data['UserInfo']);
+            unset($data['body']);
+
+            return $data;
+        }
+
+        return $data;
+    }
+
     public function getPatient($hn)
     {
         $data = $this->brushing($this->pasteLoad('patient', ['hn' => $hn]));

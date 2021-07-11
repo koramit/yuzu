@@ -169,12 +169,15 @@ import FlashMessages from '@/Components/Helpers/FlashMessages';
 import ConfirmForm from '@/Components/Forms/ConfirmForm';
 import { computed, inject, nextTick, ref } from '@vue/runtime-core';
 import { useCheckSessionTimeout } from '@/Functions/useCheckSessionTimeout';
+import { useRemoveLoader } from '@/Functions/useRemoveLoader';
 export default {
     components: { Dropdown, Icon, MainMenu, ActionMenu, FlashMessages, ConfirmForm },
     setup () {
+        useCheckSessionTimeout();
+
         const pageLoadingIndicator = document.getElementById('page-loading-indicator');
         if (pageLoadingIndicator) {
-            useCheckSessionTimeout();
+            useRemoveLoader();
         }
 
         const confirmForm = ref(null);
@@ -197,9 +200,11 @@ export default {
 
         const actionClicked = (action) => {
             mobileMenuVisible.value = false;
-            setTimeout(() => {
-                emitter.emit('action-clicked', action);
-            }, 300); // equal to animate duration
+            nextTick(() => {
+                setTimeout(() => {
+                    emitter.emit('action-clicked', action);
+                }, 300); // equal to animate duration
+            });
         };
 
         const currentPage = (route) => {
