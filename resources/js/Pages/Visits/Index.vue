@@ -1,15 +1,55 @@
 <template>
     <div>
-        <h1>index</h1>
-        <InertiaLink
+        <!-- card -->
+        <div
+            class="rounded bg-white shadow-sm my-1 p-1 flex"
             v-for="(visit, key) in visits.data"
             :key="key"
-            :href="route('visits.edit', visit)"
-            class="block underline my-4"
         >
-            {{ visit.date_visit }} - {{ visit.hn }} - {{ visit.patient_name }} - {{ visit.patient_type }}
-        </InertiaLink>
+            <!-- left detail -->
+            <div class="w-3/4">
+                <p class="p-1 pb-0 text-thick-theme-light">
+                    {{ visit.patient_type }} filterable
+                </p>
+                <div class="flex items-baseline">
+                    <p class="p-1 text-lg pt-0">
+                        {{ visit.date_visit }} {{ visit.patient_name }}
+                    </p>
+                </div>
+                <p class="px-1 text-xs text-dark-theme-light italic">
+                    ปรับปรุงล่าสุด {{ visit.updated_at_for_humans }} sortable
+                </p>
+            </div>
+            <!-- right menu -->
+            <div class="w-1/4 text-sm p-1 grid justify-items-center ">
+                <!-- write -->
+                <!-- v-if="userCan('write', referCase)" -->
+                <InertiaLink
+                    class="w-full flex text-yellow-200 justify-start"
+                    :href="route('visits.edit', visit)"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="edit"
+                    />
+                    <span class="block font-normal text-thick-theme-light">เขียนต่อ</span>
+                </InertiaLink>
+                <!-- edit -->
+                <!-- v-if="userCan('edit', referCase)" -->
+                <!-- <InertiaLink
+                    class="w-full flex text-alt-theme-light justify-start"
+                    :href="route('visits.edit', visit)"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="eraser"
+                    />
+                    <span class="block font-normal text-thick-theme-light">แก้ไข</span>
+                </InertiaLink> -->
+            </div>
+        </div>
 
+        <!-- pagination -->
         <div v-if="visits.links.length > 3">
             <div class="flex flex-wrap -mb-1 mt-4">
                 <template v-for="(link, key) in visits.links">
@@ -19,7 +59,7 @@
                         class="mr-1 mb-1 px-4 py-3 text-sm leading-4 bg-gray-200 text-gray-400 border rounded cursor-not-allowed"
                         v-html="link.label"
                     />
-                    <inertia-link
+                    <InertiaLink
                         v-else
                         :key="key+'theLink'"
                         class="mr-1 mb-1 px-4 py-3 text-sm text-dark-theme-light leading-4 border border-alt-theme-light rounded hover:bg-white focus:border-dark-theme-light focus:text-dark-theme-light transition-colors"
@@ -32,17 +72,19 @@
                 </template>
             </div>
         </div>
+
         <Visit ref="createVisitForm" />
     </div>
 </template>
 
 <script>
 import Layout from '@/Components/Layouts/Layout';
+import Icon from '@/Components/Helpers/Icon';
 import Visit from '@/Components/Forms/Visit';
 import { inject, nextTick, ref } from '@vue/runtime-core';
 export default {
     layout: Layout,
-    components: { Visit },
+    components: { Visit, Icon },
     props: {
         visits: { type: Object, required: true }
     },
