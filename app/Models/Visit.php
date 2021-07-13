@@ -59,6 +59,10 @@ class Visit extends Model
 
     public function getPatientTypeAttribute()
     {
+        if (! isset($this->attributes['patient_type'])) {
+            return null;
+        }
+
         $items = [
             1 => 'บุคคลทั่วไป',
             2 => 'เจ้าหน้าที่ศิริราช',
@@ -71,23 +75,25 @@ class Visit extends Model
     {
         $items = [
             'เริ่มตรวจใหม่' => 1,
-            'ตามนัด Swab 7 วัน' => 2,
-            'ตามนัด Swab 14 วัน' => 3,
-            'ตามนัด Reswab 7 วัน' => 4,
-            'ตามนัด Reswab 14 วัน' => 5,
+            'นัดมา swab' => 2,
+            'นัดมา swab day 7' => 3,
+            'นัดมา swab day 14' => 4,
         ];
         $this->attributes['screen_type'] = $items[$value];
     }
 
     public function getScreenTypeAttribute()
     {
+        if (! isset($this->attributes['screen_type'])) {
+            return null;
+        }
+
         $items = [
             '',
             'เริ่มตรวจใหม่',
-            'ตามนัด Swab 7 วัน',
-            'ตามนัด Swab 14 วัน',
-            'ตามนัด Reswab 7 วัน',
-            'ตามนัด Reswab 14 วัน',
+            'นัดมา swab',
+            'นัดมา swab day 7',
+            'นัดมา swab day 14',
         ];
 
         return $items[$this->attributes['screen_type']];

@@ -33,12 +33,12 @@
 </template>
 
 <script>
-import { reactive, ref } from '@vue/reactivity';
+import { ref } from '@vue/reactivity';
 import { computed, watch } from '@vue/runtime-core';
 export default {
     emits: ['update:modelValue', 'autosave'],
     props: {
-        modelValue: { type: String, default: '' },
+        modelValue: { type: [String, Number], default: '' },
         options: { type: Array, required: true },
         name: { type: String, required: true },
         label: { type: String, default: '' },
@@ -47,34 +47,30 @@ export default {
         allowReset: { type:Boolean },
     },
     setup(props, context) {
-        const items = reactive(
-            typeof props.options[0] === 'string'
-                ?   props.options.map( function (option) {
-                    return { value: option, label: option };
-                })
-                :   [...props.options]
-        );
-
         const selected = ref(props.modelValue);
 
         watch (
             () => selected.value,
-            (val, old) => {
-                console.log(old + ' -> ' + val);
+            (val) => {
                 context.emit('update:modelValue', val);
+                context.emit('autosave');
             },
         );
 
         const computeItems = computed(() => {
+            let options = typeof props.options[0] === 'string'
+                ?   props.options.map( function (option) {
+                    return { value: option, label: option };
+                })
+                :   [...props.options];
             if (!props.allowReset || selected.value === null) {
-                return items;
+                return options;
             } else {
-                return [...items, { label: 'ยกเลิก', value: null }];
+                return [...options, { label: 'ยกเลิก', value: null }];
             }
         });
 
         return {
-            items,
             selected,
             computeItems,
         };

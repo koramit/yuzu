@@ -11,7 +11,7 @@
                 label="HN"
                 v-model="form.patient.hn"
                 :error="form.errors.hn"
-                :readonly="visit.patient !== null"
+                :readonly="visit.has_patient"
                 @autosave="autosave('patient.hn')"
             />
             <FormInput
@@ -22,6 +22,42 @@
                 :error="form.errors.name"
                 @autosave="autosave('patient.name')"
             />
+            <FormDatetime
+                class="mt-2"
+                label="วันที่ตรวจ"
+                v-model="form.visit.date_visit"
+                name="date_latest_expose"
+                :disabled="true"
+            />
+            <div class="mt-2">
+                <label class="form-label">ประเภทผู้ป่วย</label>
+                <FormRadio
+                    class="md:grid grid-cols-2 gap-x-2"
+                    v-model="form.visit.patient_type"
+                    :error="form.errors.patient_type"
+                    name="patient_type"
+                    :options="configs.patient_types"
+                    @autosave="autosave('patient_type', false)"
+                />
+            </div>
+            <div>
+                <label class="form-label">ประเภทการตรวจ</label>
+                <FormRadio
+                    class="md:grid grid-cols-2 gap-x-2"
+                    v-model="form.visit.screen_type"
+                    :error="form.errors.screen_type"
+                    name="screen_type"
+                    :options="configs.screen_types"
+                    @autosave="autosave('screen_type', false)"
+                />
+            </div>
+            <FormReveal
+                v-if="visit.has_patient"
+                class="mt-2"
+                name="patient_document_id"
+                label="เลขประจำตัวประชาชน"
+                :secret="visit.patient_document_id"
+            />
             <FormSelect
                 class="mt-2"
                 label="สิทธิ์การรักษา"
@@ -31,7 +67,7 @@
                 :options="configs.insurances"
                 :allow-other="true"
                 ref="insurance"
-                :disabled="visit.patient_type === 'เจ้าหน้าที่ศิริราช'"
+                :disabled="isEmployee"
                 @autosave="autosave('patient.insurance')"
             />
             <FormInput
@@ -55,36 +91,58 @@
         </div>
         <div
             class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
-            v-if="visit.patient_type === 'เจ้าหน้าที่ศิริราช'"
+            v-if="isEmployee"
         >
             <h2 class="font-semibold text-thick-theme-light">
                 เจ้าหน้าที่ศิริราช
             </h2>
-            <FormInput
+            <FormCheckbox
                 class="mt-2"
-                name="sap_id"
-                type="tel"
-                label="sap id"
-                v-model="form.patient.sap_id"
-                :error="form.errors.sap_id"
-                @autosave="sapIdUpdated"
+                v-model="form.patient.no_sap_id"
+                label="ไม่มี ID คณะแพทย์ศิริราช"
+                :toggler="true"
+                @autosave="autosave('patient.no_sap_id')"
             />
-            <FormInput
-                class="mt-2"
-                name="position"
-                label="ปฏิบัติงาน"
-                v-model="form.patient.position"
-                :error="form.errors.position"
-                :readonly="true"
-            />
-            <FormInput
-                class="mt-2"
-                name="division"
-                label="สังกัด"
-                v-model="form.patient.division"
-                :error="form.errors.division"
-                :readonly="true"
-            />
+            <template v-if="form.patient.no_sap_id">
+                <FormSelect
+                    class="mt-2"
+                    name="position"
+                    label="ปฏิบัติงาน"
+                    v-model="form.patient.position"
+                    :error="form.errors.position"
+                    :options="configs.positions"
+                    :allow-other="true"
+                    ref="position"
+                    @autosave="autosave('patient.position')"
+                />
+            </template>
+            <template v-else>
+                <FormInput
+                    class="mt-2"
+                    name="sap_id"
+                    type="tel"
+                    label="sap id หรือรหัสนักศึกษาแพทย์"
+                    v-model="form.patient.sap_id"
+                    :error="form.errors.sap_id"
+                    @autosave="sapIdUpdated"
+                />
+                <FormInput
+                    class="mt-2"
+                    name="position"
+                    label="ปฏิบัติงาน"
+                    v-model="form.patient.position"
+                    :error="form.errors.position"
+                    :readonly="true"
+                />
+                <FormInput
+                    class="mt-2"
+                    name="division"
+                    label="สังกัด"
+                    v-model="form.patient.division"
+                    :error="form.errors.division"
+                    :readonly="true"
+                />
+            </template>
             <FormSelect
                 class="mt-2"
                 label="ความเสี่ยง"
@@ -99,8 +157,17 @@
             <h2 class="font-semibold text-thick-theme-light">
                 อาการ
             </h2>
+            <FormInput
+                class="mt-2"
+                label="อุณหภูมิ (℃)"
+                type="number"
+                name="temperature_celsius"
+                v-model="form.patient.temperature_celsius"
+                :error="form.errors.temperature_celsius"
+                @autosave="autosave('patient.temperature_celsius')"
+            />
             <small
-                class="my-t text-red-700 text-sm"
+                class="my-2 text-red-700 text-sm"
                 v-if="form.errors.symptoms"
             >{{ form.errors.symptoms }}</small>
             <FormCheckbox
@@ -127,7 +194,7 @@
                     v-model="form.symptoms.o2_sat"
                     :error="form.errors.o2_sat"
                     @autosave="autosave('symptoms.o2_sat')"
-                    v-if="form.symptoms.fatigue"
+                    v-if="form.symptoms.fatigue || form.symptoms.cough"
                 />
                 <FormInput
                     class="mt-2"
@@ -145,7 +212,7 @@
             </h2>
             <FormSelect
                 class="mt-2"
-                :label="visit.screen_type"
+                :label="form.visit.screen_type"
                 v-model="form.exposure.evaluation"
                 :error="form.errors.evaluation"
                 name="evaluation"
@@ -220,7 +287,7 @@
                 โรคประจำตัว
             </h2>
             <small
-                class="my-t text-red-700 text-sm"
+                class="my-2 text-red-700 text-sm"
                 v-if="form.errors.comorbids"
             >{{ form.errors.comorbids }}</small>
             <FormCheckbox
@@ -249,6 +316,41 @@
                     label="ไขมันในเลือดสูง"
                     @autosave="autosave('comorbids.dlp')"
                 />
+                <FormCheckbox
+                    class="mt-2"
+                    v-model="form.comorbids.obesity"
+                    label="ภาวะอ้วน"
+                    @autosave="autosave('comorbids.obesity')"
+                />
+                <template v-if="form.comorbids.obesity">
+                    <FormInput
+                        class="mt-2"
+                        label="น้ำหนัก (kg.)"
+                        type="number"
+                        name="weight"
+                        v-model="form.patient.weight"
+                        :error="form.errors.weight"
+                        @autosave="autosave('patient.weight')"
+                    />
+                    <FormInput
+                        class="mt-2"
+                        label="ส่วนสูง (cm.)"
+                        type="number"
+                        name="height"
+                        v-model="form.patient.height"
+                        :error="form.errors.height"
+                        @autosave="autosave('patient.height')"
+                    />
+                    <FormInput
+                        class="mt-2"
+                        label="BMI (kg/m²)"
+                        type="number"
+                        name="BMI"
+                        v-model="BMI"
+                        :readonly="true"
+                        @autosave="autosave('patient.height')"
+                    />
+                </template>
                 <FormInput
                     class="mt-2"
                     placeholder="ระบุโรคประจำตัวอื่นๆ"
@@ -264,7 +366,7 @@
                 ประวัติการฉีดวัคซีน COVID-19
             </h2>
             <small
-                class="my-t text-red-700 text-sm"
+                class="my-2 text-red-700 text-sm"
                 v-if="form.errors.vaccination"
             >{{ form.errors.vaccination }}</small>
             <FormCheckbox
@@ -284,15 +386,18 @@
                     :options="configs.vaccines"
                     @autosave="autosave('vaccination.brand')"
                 />
-                <FormSelect
-                    class="mt-2"
-                    label="จำนวนเข็มที่ฉีดแล้ว"
-                    v-model="form.vaccination.doses"
-                    :error="form.errors.doses"
-                    name="vaccination_doses"
-                    :options="[1, 2, 3]"
-                    @autosave="autosave('vaccination.doses')"
-                />
+                <div class="mt-2">
+                    <label class="form-label">จำนวนเข็มที่ฉีดแล้ว</label>
+                    <FormRadio
+                        class="md:grid grid-cols-2 gap-x-2"
+                        v-model="form.vaccination.doses"
+                        :error="form.errors.doses"
+                        name="vaccination_doses"
+                        :options="configs.vaccination_doses"
+                        :allow-reset="true"
+                        @autosave="autosave('vaccination.doses')"
+                    />
+                </div>
                 <FormDatetime
                     class="mt-2"
                     label="วันที่ฉีดล่าสุด"
@@ -309,7 +414,7 @@
                 วินิจฉัย
             </h2>
             <small
-                class="my-t text-red-700 text-sm"
+                class="my-2 text-red-700 text-sm"
                 v-if="form.errors.diagnosis"
             >{{ form.errors.diagnosis }}</small>
             <FormCheckbox
@@ -374,422 +479,91 @@
             />
         </div>
 
-        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+        <div
+            class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
+            v-if="form.visit.patient_type"
+        >
             <h2 class="font-semibold text-thick-theme-light">
-                คำแนะนำสำหรับผู้ป่วย
+                คำแนะนำสำหรับ{{ isEmployee ? 'เจ้าหน้าที่ศิริราช' : 'ผู้ป่วย' }}
             </h2>
-            <template v-if="visit.patient_type === 'บุคคลทั่วไป'">
-                <div class="flex my-4">
-                    <p class="text-bitter-theme-light">
-                        <input
-                            class="form-radio"
-                            type="radio"
-                            name="recommendation_choice"
-                            value="11"
-                            v-model="form.recommendation.choice"
-                        >
-                    </p>
-                    <p
-                        class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                        @click="form.recommendation.choice = 11"
-                    >
-                        ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา
-                    </p>
-                </div>
-                <div class="flex my-4">
-                    <p class="text-bitter-theme-light">
-                        <input
-                            class="form-radio"
-                            type="radio"
-                            name="recommendation_choice"
-                            value="12"
-                            v-model="form.recommendation.choice"
-                        >
-                    </p>
-                    <p
-                        class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                        @click="form.recommendation.choice = 12"
-                    >
-                        ลางาน 1 - 2 วัน หากอาการดีขึ้น ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา
-                    </p>
-                </div>
-                <div class="flex my-4">
-                    <p class="text-bitter-theme-light">
-                        <input
-                            class="form-radio"
-                            type="radio"
-                            name="recommendation_choice"
-                            value="13"
-                            v-model="form.recommendation.choice"
-                        >
-                    </p>
-                    <div class="w-full">
-                        <p
-                            class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                            @click="form.recommendation.choice = 13"
-                        >
-                            ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 14 วัน
-                        </p>
-                        <template v-if="form.recommendation.choice == 13">
-                            <div class="ml-3 pl-2 border-l-2 border-bitter-theme-light">
-                                <FormDatetime
-                                    label="กักตัวถึงวันที่"
-                                    v-model="form.recommendation.date_isolation_end"
-                                    :error="form.errors.date_isolation_end"
-                                    name="date_isolation_end"
-                                    ref="dateIsolationEndInput"
-                                    @autosave="autosave('recommendation.date_isolation_end')"
-                                />
-                                <button
-                                    @click="
-                                        $refs.dateIsolationEndInput.setDate(configs.next_14_days);
-                                        form.recommendation.date_isolation_end = configs.next_14_days;
-                                        autosave('recommendation.date_isolation_end')
-                                    "
-                                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    14 วันถัดไป
-                                </button>
-                                <FormDatetime
-                                    class="mt-2"
-                                    label="นัดทำ Reswab"
-                                    v-model="form.recommendation.date_reswab"
-                                    :error="form.errors.date_reswab"
-                                    name="date_reswab"
-                                    @autosave="autosave('recommendation.date_reswab')"
-                                    ref="dateReswabInput"
-                                />
-                                <button
-                                    @click="
-                                        $refs.dateReswabInput.setDate(configs.next_7_days);
-                                        form.recommendation.date_reswab = configs.next_7_days;
-                                        autosave('recommendation.date_reswab')
-                                    "
-                                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    7 วันถัดไป
-                                </button>
-                                <button
-                                    @click="
-                                        $refs.dateReswabInput.setDate(configs.next_14_days);
-                                        form.recommendation.date_reswab = configs.next_14_days;
-                                        autosave('recommendation.date_reswab')
-                                    "
-                                    class="ml-2 text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    14 วันถัดไป
-                                </button>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-            </template>
-            <template v-else>
-                <div class="flex my-4">
-                    <p class="text-bitter-theme-light">
-                        <input
-                            class="form-radio"
-                            type="radio"
-                            name="recommendation_choice"
-                            value="21"
-                            v-model="form.recommendation.choice"
-                        >
-                    </p>
-                    <p
-                        class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                        @click="form.recommendation.choice = 21"
-                    >
-                        ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา
-                    </p>
-                </div>
-                <div class="flex my-4">
-                    <p class="text-bitter-theme-light">
-                        <input
-                            class="form-radio"
-                            type="radio"
-                            name="recommendation_choice"
-                            value="22"
-                            v-model="form.recommendation.choice"
-                        >
-                    </p>
-                    <div class="w-full">
-                        <p
-                            class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                            @click="form.recommendation.choice = 22"
-                        >
-                            ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา และ นัด swab ซ้ำ
-                        </p>
-                        <template v-if="form.recommendation.choice == 22">
-                            <div class="ml-3 pl-2 border-l-2 border-bitter-theme-light">
-                                <FormDatetime
-                                    class="mt-2"
-                                    label="นัดทำ Reswab"
-                                    v-model="form.recommendation.date_reswab"
-                                    :error="form.errors.date_reswab"
-                                    name="date_reswab"
-                                    @autosave="autosave('recommendation.date_reswab')"
-                                    ref="dateReswabInput"
-                                />
-                                <button
-                                    @click="
-                                        $refs.dateReswabInput.setDate(configs.next_7_days);
-                                        form.recommendation.date_reswab = configs.next_7_days;
-                                        autosave('recommendation.date_reswab')
-                                    "
-                                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    7 วันถัดไป
-                                </button>
-                                <button
-                                    @click="
-                                        $refs.dateReswabInput.setDate(configs.next_14_days);
-                                        form.recommendation.date_reswab = configs.next_14_days;
-                                        autosave('recommendation.date_reswab')
-                                    "
-                                    class="ml-2 text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    14 วันถัดไป
-                                </button>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-                <div class="flex my-4">
-                    <p class="text-bitter-theme-light">
-                        <input
-                            class="form-radio"
-                            type="radio"
-                            name="recommendation_choice"
-                            value="23"
-                            v-model="form.recommendation.choice"
-                        >
-                    </p>
-                    <p
-                        class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                        @click="form.recommendation.choice = 23"
-                    >
-                        ลางาน 1 - 2 วัน หากอาการดีขึ้น ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา
-                    </p>
-                </div>
-                <div class="flex my-4">
-                    <p class="text-bitter-theme-light">
-                        <input
-                            class="form-radio"
-                            type="radio"
-                            name="recommendation_choice"
-                            value="24"
-                            v-model="form.recommendation.choice"
-                        >
-                    </p>
-                    <div class="w-full">
-                        <p
-                            class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                            @click="form.recommendation.choice = 24"
-                        >
-                            ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 7 วัน
-                        </p>
-                        <template v-if="form.recommendation.choice == 24">
-                            <div class="ml-3 pl-2 border-l-2 border-bitter-theme-light">
-                                <FormDatetime
-                                    label="กักตัวถึงวันที่"
-                                    v-model="form.recommendation.date_isolation_end"
-                                    :error="form.errors.date_isolation_end"
-                                    name="date_isolation_end"
-                                    ref="dateIsolationEndInput"
-                                    @autosave="autosave('recommendation.date_isolation_end')"
-                                />
-                                <button
-                                    @click="
-                                        $refs.dateIsolationEndInput.setDate(configs.next_7_days);
-                                        form.recommendation.date_isolation_end = configs.next_7_days;
-                                        autosave('recommendation.date_isolation_end')
-                                    "
-                                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    7 วันถัดไป
-                                </button>
-                                <FormDatetime
-                                    class="mt-2"
-                                    label="นัดทำ Reswab"
-                                    v-model="form.recommendation.date_reswab"
-                                    :error="form.errors.date_reswab"
-                                    name="date_reswab"
-                                    @autosave="autosave('recommendation.date_reswab')"
-                                    ref="dateReswabInput"
-                                />
-                                <button
-                                    @click="
-                                        $refs.dateReswabInput.setDate(configs.next_7_days);
-                                        form.recommendation.date_reswab = configs.next_7_days;
-                                        autosave('recommendation.date_reswab')
-                                    "
-                                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    7 วันถัดไป
-                                </button>
-                                <button
-                                    @click="
-                                        $refs.dateReswabInput.setDate(configs.next_14_days);
-                                        form.recommendation.date_reswab = configs.next_14_days;
-                                        autosave('recommendation.date_reswab')
-                                    "
-                                    class="ml-2 text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    14 วันถัดไป
-                                </button>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-                <div class="flex my-4">
-                    <p class="text-bitter-theme-light">
-                        <input
-                            class="form-radio"
-                            type="radio"
-                            name="recommendation_choice"
-                            value="25"
-                            v-model="form.recommendation.choice"
-                        >
-                    </p>
-                    <div class="w-full">
-                        <p
-                            class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                            @click="form.recommendation.choice = 25"
-                        >
-                            ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นเป็นเวลา 7 - 14 วัน หากผลตรวจที่วันที่ 7 หลังสัมผัสโรคไม่พบเชื้อ ผู้บังคับบัญชาอาจพิจารณาอนุญาตให้กลับมาทำงานได้
-                        </p>
-                        <template v-if="form.recommendation.choice == 25">
-                            <div class="ml-3 pl-2 border-l-2 border-bitter-theme-light">
-                                <FormDatetime
-                                    label="กักตัวถึงวันที่"
-                                    v-model="form.recommendation.date_isolation_end"
-                                    :error="form.errors.date_isolation_end"
-                                    name="date_isolation_end"
-                                    ref="dateIsolationEndInput"
-                                    @autosave="autosave('recommendation.date_isolation_end')"
-                                />
-                                <button
-                                    @click="
-                                        $refs.dateIsolationEndInput.setDate(configs.next_7_days);
-                                        form.recommendation.date_isolation_end = configs.next_7_days;
-                                        autosave('recommendation.date_isolation_end')
-                                    "
-                                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    7 วันถัดไป
-                                </button>
-                                <button
-                                    @click="
-                                        $refs.dateIsolationEndInput.setDate(configs.next_14_days);
-                                        form.recommendation.date_isolation_end = configs.next_14_days;
-                                        autosave('recommendation.date_isolation_end')
-                                    "
-                                    class="ml-2 text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    14 วันถัดไป
-                                </button>
-                                <FormDatetime
-                                    class="mt-2"
-                                    label="นัดทำ Reswab"
-                                    v-model="form.recommendation.date_reswab"
-                                    :error="form.errors.date_reswab"
-                                    name="date_reswab"
-                                    @autosave="autosave('recommendation.date_reswab')"
-                                    ref="dateReswabInput"
-                                />
-                                <button
-                                    @click="
-                                        $refs.dateReswabInput.setDate(configs.next_7_days);
-                                        form.recommendation.date_reswab = configs.next_7_days;
-                                        autosave('recommendation.date_reswab')
-                                    "
-                                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    7 วันถัดไป
-                                </button>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-                <div class="flex my-4">
-                    <p class="text-bitter-theme-light">
-                        <input
-                            class="form-radio"
-                            type="radio"
-                            name="recommendation_choice"
-                            value="26"
-                            v-model="form.recommendation.choice"
-                        >
-                    </p>
-                    <div class="w-full">
-                        <p
-                            class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                            @click="form.recommendation.choice = 26"
-                        >
-                            ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 14 วัน
-                        </p>
-                        <template v-if="form.recommendation.choice == 26">
-                            <div class="ml-3 pl-2 border-l-2 border-bitter-theme-light">
-                                <FormDatetime
-                                    label="กักตัวถึงวันที่"
-                                    v-model="form.recommendation.date_isolation_end"
-                                    :error="form.errors.date_isolation_end"
-                                    name="date_isolation_end"
-                                    ref="dateIsolationEndInput"
-                                    @autosave="autosave('recommendation.date_isolation_end')"
-                                />
-                                <button
-                                    @click="
-                                        $refs.dateIsolationEndInput.setDate(configs.next_14_days);
-                                        form.recommendation.date_isolation_end = configs.next_14_days;
-                                        autosave('recommendation.date_isolation_end')
-                                    "
-                                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    14 วันถัดไป
-                                </button>
-                                <FormDatetime
-                                    class="mt-2"
-                                    label="นัดทำ Reswab"
-                                    v-model="form.recommendation.date_reswab"
-                                    :error="form.errors.date_reswab"
-                                    name="date_reswab"
-                                    @autosave="autosave('recommendation.date_reswab')"
-                                    ref="dateReswabInput"
-                                />
-                                <button
-                                    @click="
-                                        $refs.dateReswabInput.setDate(configs.next_7_days);
-                                        form.recommendation.date_reswab = configs.next_7_days;
-                                        autosave('recommendation.date_reswab')
-                                    "
-                                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    7 วันถัดไป
-                                </button>
-                                <FormDatetime
-                                    class="mt-2"
-                                    label="นัดทำ Reswab ครั้งที่ถัดไป"
-                                    v-model="form.recommendation.date_reswab_next"
-                                    :error="form.errors.date_reswab_next"
-                                    name="date_reswab_next"
-                                    @autosave="autosave('recommendation.date_reswab_next')"
-                                    ref="dateReswabNextInput"
-                                />
-                                <button
-                                    @click="
-                                        $refs.dateReswabNextInput.setDate(configs.next_14_days);
-                                        form.recommendation.date_reswab_next = configs.next_14_days;
-                                        autosave('recommendation.date_reswab_next')
-                                    "
-                                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white"
-                                >
-                                    14 วันถัดไป
-                                </button>
-                            </div>
-                        </template>
-                    </div>
-                </div>
+            <small
+                v-if="isEmployee"
+                class="text-bitter-theme-light italic"
+            >
+                ๏ อ้างอิงจากคำแนะนำของ staff center หรือจากการประเมินผ่าน incident manager
+            </small>
+            <FormRadio
+                class="mt-2"
+                v-model="form.recommendation.choice"
+                :error="form.errors.recommendation_choice"
+                name="recommendation_choice"
+                :options="isEmployee ? configs.employee_recommendations : configs.public_recommendations"
+                @autosave="autosave('recommendation.choice')"
+            />
+
+            <template v-if="form.recommendation.choice == 13">
+                <FormDatetime
+                    label="กักตัวถึงวันที่"
+                    v-model="form.recommendation.date_isolation_end"
+                    :error="form.errors.date_isolation_end"
+                    name="date_isolation_end"
+                    ref="dateIsolationEndInput"
+                    @autosave="autosave('recommendation.date_isolation_end')"
+                />
+                <button
+                    @click="addDays(form.exposure.date_latest_expose, dateIsolationEndInput, 14)"
+                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    :disabled="!(form.exposure.date_latest_expose && true)"
+                >
+                    14 วัน
+                </button>
+                <FormDatetime
+                    class="mt-2"
+                    label="นัดทำ Reswab"
+                    v-model="form.recommendation.date_reswab"
+                    :error="form.errors.date_reswab"
+                    name="date_reswab"
+                    @autosave="autosave('recommendation.date_reswab')"
+                    ref="dateReswabInput"
+                />
+                <button
+                    @click="addDays(form.exposure.date_latest_expose, dateReswabInput, 7)"
+                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    :disabled="!(form.exposure.date_latest_expose && true)"
+                >
+                    7 วัน
+                </button>
+                <button
+                    @click="addDays(form.exposure.date_latest_expose, dateReswabInput, 14)"
+                    class="ml-2 text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    :disabled="!(form.exposure.date_latest_expose && true)"
+                >
+                    14 วัน
+                </button>
+                <FormDatetime
+                    class="mt-2"
+                    label="นัดทำ Reswab ครั้งที่ 2 (ถ้ามี)"
+                    v-model="form.recommendation.date_reswab_next"
+                    :error="form.errors.date_reswab_next"
+                    name="date_reswab_next"
+                    @autosave="autosave('recommendation.date_reswab_next')"
+                    ref="dateReswabNextInput"
+                    :disabled="!(form.recommendation.date_reswab && true)"
+                />
+                <button
+                    @click="addDays(form.recommendation.date_reswab, dateReswabNextInput, 7)"
+                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    :disabled="!(form.recommendation.date_reswab && true)"
+                >
+                    7 วัน
+                </button>
+                <button
+                    @click="addDays(form.recommendation.date_reswab, dateReswabNextInput, 14)"
+                    class="ml-2 text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    :disabled="!(form.recommendation.date_reswab && true)"
+                >
+                    14 วัน
+                </button>
             </template>
         </div>
 
@@ -802,6 +576,8 @@
 </template>
 
 <script>
+import FormRadio from '@/Components/Controls/FormRadio';
+import FormReveal from '@/Components/Controls/FormReveal';
 import FormCheckbox from '@/Components/Controls/FormCheckbox';
 import FormDatetime from '@/Components/Controls/FormDatetime';
 import FormInput from '@/Components/Controls/FormInput';
@@ -816,6 +592,8 @@ import lodashGet from 'lodash/get';
 export default {
     layout: Layout,
     components: {
+        FormRadio,
+        FormReveal,
         FormCheckbox,
         FormDatetime,
         FormInput,
@@ -828,21 +606,96 @@ export default {
         formConfigs: { type: Object, required: true },
     },
     setup(props) {
-        const form = useForm({
-            ...props.visit.form,
-        });
-
-        const isAppointment = computed(() => {
-            return props.visit.screen_type !== 'เริ่มตรวจใหม่';
-        });
-
-        const showExposureForm = computed(() => {
-            return form.exposure.evaluation && form.exposure.evaluation.indexOf('มี') === 0;
-        });
-
         const configs = reactive({
             ...props.formConfigs,
         });
+        const form = useForm({
+            ...props.visit.form,
+            visit: {
+                screen_type: props.visit.screen_type,
+                patient_type: props.visit.patient_type,
+                date_visit: props.visit.date_visit,
+            }
+        });
+
+        const isEmployee = computed(() => {
+            return form.visit.patient_type === 'เจ้าหน้าที่ศิริราช';
+        });
+        watch (
+            () => form.visit.patient_type,
+            () => {
+                form.recommendation.choice = null;
+                form.recommendation.date_isolation_end = null;
+                form.recommendation.date_reswab = null;
+                form.recommendation.date_reswab_next = null;
+                autosave('recommendation');
+
+                form.patient.no_sap_id = false;
+                form.patient.sap_id = null;
+                form.patient.position = null;
+                form.patient.division = null;
+                form.patient.division = null;
+
+                if (isEmployee) {
+                    form.patient.insurance = 'ประกันสังคม';
+                }
+
+                autosave('patient');
+            }
+        );
+        watch (
+            () => form.patient.no_sap_id,
+            () => {
+                form.patient.sap_id = null;
+                form.patient.position = null;
+                form.patient.division = null;
+                autosave('patient');
+            }
+        );
+
+        const isAppointment = computed(() => {
+            return form.visit.screen_type !== 'เริ่มตรวจใหม่';
+        });
+        const showExposureForm = computed(() => {
+            return form.exposure.evaluation && form.exposure.evaluation.indexOf('มี') === 0;
+        });
+        watch (
+            () => form.visit.screen_type,
+            (val, old) => {
+                if (val === 'เริ่มตรวจใหม่' || old === 'เริ่มตรวจใหม่') {
+                    form.exposure.evaluation = null;
+                    form.exposure.date_latest_expose = null;
+                    form.exposure.contact = false;
+                    form.exposure.contact_type = null;
+                    form.exposure.contact_name = null;
+                    form.exposure.hot_spot = false;
+                    form.exposure.hot_spot_detail = null;
+                    form.exposure.other_detail = null;
+                    autosave('exposure');
+                }
+            }
+        );
+
+        const addDaysAvailable = computed(() => {
+            return form.exposure.date_latest_expose && true;
+        });
+        const addDays = (ref, target, days) => {
+            let thatDay = new Date(ref);
+            target.setDate(thatDay.setDate(thatDay.getDate() + days));
+        };
+
+        const autosave = (field, saveForm = true) => {
+            nextTick(() => {
+                let payload = {};
+
+                if (saveForm) {
+                    payload['form->' + (field.split('.').join('->'))] = lodashGet(form, field);
+                } else {
+                    payload[field] = form.visit[field];
+                }
+                window.axios.patch(configs.patchEndpoint, payload);
+            });
+        };
 
         const selectOtherInput = ref(null);
         const selectOther = reactive({
@@ -858,14 +711,6 @@ export default {
 
             configs[selectOther.configs].push(val);
             selectOther.input.setOther(val);
-        };
-
-        const autosave = (field) => {
-            nextTick(() => {
-                let payload = {};
-                payload['form->' + (field.split('.').join('->'))] = lodashGet(form, field);
-                window.axios.patch(configs.patchEndpoint, payload);
-            });
         };
 
         const insurance = ref(null);
@@ -886,6 +731,31 @@ export default {
             configs.insurances.push(form.patient.insurance);
         }
 
+        const position = ref(null);
+        watch (
+            () => form.patient.position,
+            (val) => {
+                if (val !== 'other') {
+                    return;
+                }
+
+                selectOther.placeholder = 'ระบุอื่นๆ';
+                selectOther.configs = 'positions';
+                selectOther.input = position.value;
+                selectOtherInput.value.open();
+            }
+        );
+        if (form.patient.position && !configs.positions.includes(form.patient.position)) {
+            configs.positions.push(form.patient.position);
+        }
+
+        const BMI = computed(() => {
+            if (form.patient.weight && form.patient.height) {
+                return (form.patient.weight / form.patient.height / form.patient.height * 10000).toFixed(2);
+            }
+            return null;
+        });
+
         watch (
             () => form.recommendation.choice,
             () => {
@@ -898,7 +768,7 @@ export default {
 
         const sapIdUpdated = () => {
             autosave('patient.sap_id');
-            if (!(form.patient.sap_id.length === 8 && Number.isInteger(parseInt(form.patient.sap_id)))) {
+            if (!((form.patient.sap_id.length === 8 || form.patient.sap_id.length === 7) && Number.isInteger(parseInt(form.patient.sap_id)))) {
                 return;
             }
 
@@ -925,12 +795,17 @@ export default {
             selectOtherInput,
             selectOtherClosed,
             insurance,
+            position,
             sapIdUpdated,
             isAppointment,
             showExposureForm,
             dateIsolationEndInput,
             dateReswabInput,
             dateReswabNextInput,
+            isEmployee,
+            addDays,
+            addDaysAvailable,
+            BMI,
         };
     },
 };
