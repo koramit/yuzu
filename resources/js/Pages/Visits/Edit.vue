@@ -636,7 +636,7 @@ export default {
                 form.patient.division = null;
                 form.patient.division = null;
 
-                if (isEmployee) {
+                if (form.visit.patient_type === 'เจ้าหน้าที่ศิริราช') {
                     form.patient.insurance = 'ประกันสังคม';
                 }
 
