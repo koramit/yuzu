@@ -63,7 +63,6 @@ class VisitsController extends Controller
                 return Redirect::route('visits.edit', $visit);
             }
             $visit = new Visit();
-            $visit->date_visit = $todayStr;
             $visit->patient_id = $patient['patient']->id;
             $form['patient']['hn'] = $patient['patient']->hn;
             $form['patient']['name'] = $patient['patient']->full_name;
@@ -76,16 +75,12 @@ class VisitsController extends Controller
                 return Redirect::route('visits.edit', $visit);
             }
             $visit = new Visit();
-            $visit->date_visit = $todayStr;
+
             $form['patient']['name'] = $data['patient_name'];
         }
 
         $visit->slug = Str::uuid()->toString();
-        $visit->patient_type = $data['patient_type'];
-        if ($data['patient_type'] === 'เจ้าหน้าที่ศิริราช') {
-            $form['patient']['insurance'] = 'ประกันสังคม';
-        }
-        $visit->screen_type = $data['screen_type'];
+        $visit->date_visit = $todayStr;
         $visit->form = $form;
         $visit->creator_id = Auth::id();
         $visit->updater_id = Auth::id();
@@ -104,6 +99,14 @@ class VisitsController extends Controller
         $visit->load('patient');
 
         Request::session()->flash('page-title', $visit->patient_name.'@'.$visit->date_visit->format('d M Y'));
+
+        if ($visit->patient) {
+            $visit->patient_document_id = $visit->patient->profile['document_id'];
+            $visit->has_patient = true;
+            unset($visit->patient);
+        } else {
+            $visit->has_patient = false;
+        }
 
         return Inertia::render('Visits/Edit', [
             'visit' => $visit,

@@ -15,10 +15,14 @@ class VisitManager
                 'insurance' => null,
                 'tel_no' => null,
                 'tel_no_alt' => null,
+                'no_sap_id' => false,
                 'sap_id' => null,
                 'position' => null,
                 'division' => null,
                 'risk' => null,
+                'temperature_celsius' => null,
+                'weight' => null,
+                'height' => null,
             ],
             'symptoms' => [
                 'asymptomatic_symptom' => false,
@@ -50,6 +54,7 @@ class VisitManager
                 'dm' => false,
                 'ht' => false,
                 'dlp' => false,
+                'obesity' => false,
                 'other_comorbids' => null,
             ],
             'vaccination' => [
@@ -82,8 +87,11 @@ class VisitManager
     public function getConfigs(Visit $visit)
     {
         return [
+            'patient_types' => ['บุคคลทั่วไป', 'เจ้าหน้าที่ศิริราช'],
+            'screen_types' => ['เริ่มตรวจใหม่', 'นัดมา swab', 'นัดมา swab day 7', 'นัดมา swab day 14'],
             'insurances' => ['กรมบัญชีกลาง', 'ประกันสังคม', '30 บาท', 'ชำระเงินเอง'],
-            'risk_levels' => ['ไม่มี', 'ต่ำ', 'ปานกลาง', 'สูง', 'ต้อง Reswab ก่อนกลับไปทำงาน'],
+            'positions' => ['อาจารย์คณะพยาบาล', 'เจ้าหน้าที่คณะพยาบาล', 'นักศึกษาคณะพยาบาล', 'outsource'],
+            'risk_levels' => ['ไม่มีความเสี่ยง', 'ความเสี่ยงต่ำ', 'ความเสี่ยงปานกลาง', 'ความเสี่ยงสูง', 'ต้อง Reswab ก่อนกลับไปทำงาน'],
             'symptoms' => [
                 ['label' => 'ไข้', 'name' => 'fever'],
                 ['label' => 'ไอ', 'name' => 'cough'],
@@ -100,9 +108,54 @@ class VisitManager
             'appointment_evaluations' => ['ความเสี่ยงเดิม', 'มีความเสี่ยงเพิ่มเติม'],
             'contact_types' => ['สัมผัสใกล้ชิด หรือ household contact', 'สัมผัสเป็นเวลาสั้นๆ'],
             'vaccines' => ['Sinovac', 'Sinopharm', 'AstraZeneca', 'Moderna', 'Pfizer'],
+            'vaccination_doses' => [
+                ['value' => 1, 'label' => '1 เข็ม'],
+                ['value' => 2, 'label' => '2 เข็ม'],
+                ['value' => 3, 'label' => '3 เข็ม'],
+            ],
             'next_7_days' => $visit->date_visit->addDays(7)->format('Y-m-d'),
             'next_14_days' => $visit->date_visit->addDays(14)->format('Y-m-d'),
             'patchEndpoint' => route('visits.update', $visit),
+            'public_recommendations' => [
+                [
+                    'value' => 11,
+                    'label' => 'ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา',
+                ],
+                [
+                    'value' => 12,
+                    'label' => 'ลางาน 1 - 2 วัน หากอาการดีขึ้น ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา',
+                ],
+                [
+                    'value' => 13,
+                    'label' => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 14 วัน',
+                ],
+            ],
+            'employee_recommendations' => [
+                [
+                    'value' => 21,
+                    'label' => 'ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา',
+                ],
+                [
+                    'value' => 22,
+                    'label' => 'ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา และ นัด swab ซ้ำ',
+                ],
+                [
+                    'value' => 23,
+                    'label' => 'ลางาน 1 - 2 วัน หากอาการดีขึ้น ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา',
+                ],
+                [
+                    'value' => 24,
+                    'label' => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 7 วัน',
+                ],
+                [
+                    'value' => 25,
+                    'label' => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นเป็นเวลา 7 - 14 วัน หากผลตรวจที่วันที่ 7 หลังสัมผัสโรคไม่พบเชื้อ ผู้บังคับบัญชาอาจพิจารณาอนุญาตให้กลับมาทำงานได้',
+                ],
+                [
+                    'value' => 26,
+                    'label' => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 14 วัน',
+                ],
+            ],
         ];
     }
 }

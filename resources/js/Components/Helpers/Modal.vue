@@ -8,7 +8,7 @@
         <!-- modal -->
         <div
             v-if="show"
-            class="bg-gray-100 rounded shadow p-4 md:p-8 xl:p-10 modal-appear-from-top"
+            class="bg-white rounded shadow p-4 md:p-8 xl:p-10 modal-appear-from-top"
             :class="{
                 'open': animate,
                 'w-11/12 md:10/12': widthMode == 'document',

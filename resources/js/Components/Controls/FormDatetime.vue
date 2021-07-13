@@ -74,12 +74,21 @@ export default {
             this.flatpickrOptions[this.mode] = {... this.flatpickrOptions[this.mode], ...this.options};
         }
     },
+    watch: {
+        disabled (val) {
+            this.fp._input.disabled = val;
+        }
+    },
     mounted () {
         this.fp = flatpickr(this.$refs.input, this.flatpickrOptions[this.mode]);
     },
     methods: {
         setDate (date) {
             this.fp.setDate(date);
+            // update model
+            this.$emit('update:modelValue', this.$refs.input.value);
+            // Emit autosave if field name available
+            this.$emit('autosave');
         }
     }
 };
