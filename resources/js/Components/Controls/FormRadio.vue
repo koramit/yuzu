@@ -45,6 +45,7 @@ export default {
         disabled: { type: Boolean },
         error: { type: String, default: '' },
         allowReset: { type:Boolean },
+        allowOther: { type:Boolean },
     },
     setup(props, context) {
         const selected = ref(props.modelValue);
@@ -63,16 +64,30 @@ export default {
                     return { value: option, label: option };
                 })
                 :   [...props.options];
+
+            if (props.allowOther) {
+                options.push({ label: 'อืนๆ', value: 'other' });
+            }
+
             if (!props.allowReset || selected.value === null) {
                 return options;
             } else {
-                return [...options, { label: 'ยกเลิก', value: null }];
+                options.push({ label: 'ยกเลิก', value: null });
+                return options;
+                // return [...options, { label: 'ยกเลิก', value: null }];
             }
         });
+
+        const setOther = (val) => {
+            selected.value = val;
+            // context.emit('update:modelValue', val);
+            // context.emit('autosave');
+        };
 
         return {
             selected,
             computeItems,
+            setOther,
         };
     },
 };
