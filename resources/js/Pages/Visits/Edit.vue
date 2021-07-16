@@ -58,18 +58,20 @@
                 label="เลขประจำตัวประชาชน"
                 :secret="visit.patient_document_id"
             />
-            <FormSelect
-                class="mt-2"
-                label="สิทธิ์การรักษา"
-                v-model="form.patient.insurance"
-                :error="form.errors.insurance"
-                name="insurance"
-                :options="configs.insurances"
-                :allow-other="true"
-                ref="insurance"
-                :disabled="isEmployee"
-                @autosave="autosave('patient.insurance')"
-            />
+            <div class="mt-2">
+                <label class="form-label">สิทธิ์การรักษา</label>
+                <FormRadio
+                    class="md:grid grid-cols-2 gap-x-2"
+                    v-model="form.patient.insurance"
+                    :error="form.errors.insurance"
+                    name="insurance"
+                    :options="configs.insurances"
+                    :allow-other="true"
+                    :allow-reset="true"
+                    ref="insurance"
+                    @autosave="autosave('patient.insurance')"
+                />
+            </div>
             <FormInput
                 class="mt-2"
                 name="tel_no"
@@ -104,17 +106,22 @@
                 @autosave="autosave('patient.no_sap_id')"
             />
             <template v-if="form.patient.no_sap_id">
-                <FormSelect
-                    class="mt-2"
-                    name="position"
-                    label="ปฏิบัติงาน"
-                    v-model="form.patient.position"
-                    :error="form.errors.position"
-                    :options="configs.positions"
-                    :allow-other="true"
-                    ref="position"
-                    @autosave="autosave('patient.position')"
-                />
+                <div class="mt-2">
+                    <label
+                        class="form-label"
+                        v-text="'ปฏิบัติงาน'"
+                    />
+                    <FormRadio
+                        class="md:grid grid-flow-col grid-cols-2 grid-rows-3 gap-x-2"
+                        name="position"
+                        v-model="form.patient.position"
+                        :error="form.errors.position"
+                        :options="configs.positions"
+                        :allow-other="true"
+                        ref="position"
+                        @autosave="autosave('patient.position')"
+                    />
+                </div>
             </template>
             <template v-else>
                 <FormInput
@@ -143,15 +150,17 @@
                     :readonly="true"
                 />
             </template>
-            <FormSelect
-                class="mt-2"
-                label="ความเสี่ยง"
-                v-model="form.patient.risk"
-                :error="form.errors.risk"
-                name="risk"
-                :options="configs.risk_levels"
-                @autosave="autosave('patient.risk')"
-            />
+            <div class="mt-2">
+                <label class="form-label">ความเสี่ยง</label>
+                <FormRadio
+                    class="md:grid grid-flow-col grid-cols-2 grid-rows-3 gap-x-2"
+                    v-model="form.patient.risk"
+                    :error="form.errors.risk"
+                    name="risk"
+                    :options="configs.risk_levels"
+                    @autosave="autosave('patient.risk')"
+                />
+            </div>
         </div>
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
@@ -210,15 +219,20 @@
             <h2 class="font-semibold text-thick-theme-light">
                 ประวัติเสี่ยง
             </h2>
-            <FormSelect
-                class="mt-2"
-                :label="form.visit.screen_type"
-                v-model="form.exposure.evaluation"
-                :error="form.errors.evaluation"
-                name="evaluation"
-                :options="isAppointment ? configs.appointment_evaluations : configs.evaluations"
-                @autosave="autosave('exposure.evaluation')"
-            />
+            <div class="mt-2">
+                <label
+                    class="form-label"
+                    v-text="form.visit.screen_type"
+                />
+                <FormRadio
+                    class="md:grid grid-cols-2 gap-x-2"
+                    v-model="form.exposure.evaluation"
+                    :error="form.errors.evaluation"
+                    name="evaluation"
+                    :options="isAppointment ? configs.appointment_evaluations : configs.evaluations"
+                    @autosave="autosave('exposure.evaluation')"
+                />
+            </div>
             <template v-if="showExposureForm">
                 <FormDatetime
                     class="mt-2"
@@ -243,15 +257,17 @@
                             v-model="form.exposure.contact_name"
                             @autosave="autosave('exposure.contact_name')"
                         />
-                        <FormSelect
-                            class="mt-2"
-                            label="ลักษณะการสัมผัส"
-                            v-model="form.exposure.contact_type"
-                            :error="form.errors.contact_type"
-                            name="exposure_contact_type"
-                            :options="configs.contact_types"
-                            @autosave="autosave('exposure.contact_type')"
-                        />
+                        <div class="mt-2">
+                            <label class="form-label">ลักษณะการสัมผัส</label>
+                            <FormRadio
+                                class="md:grid grid-cols-2 gap-x-2"
+                                v-model="form.exposure.contact_type"
+                                :error="form.errors.contact_type"
+                                name="exposure_contact_type"
+                                :options="configs.contact_types"
+                                @autosave="autosave('exposure.contact_type')"
+                            />
+                        </div>
                     </div>
                 </template>
                 <FormCheckbox
@@ -377,15 +393,18 @@
                 @autosave="autosave('vaccination.vaccinated')"
             />
             <div v-if="!form.vaccination.vaccinated">
-                <FormSelect
-                    class="mt-2"
-                    label="วัคซีน"
-                    v-model="form.vaccination.brand"
-                    :error="form.errors.brand"
-                    name="vaccination_brand"
-                    :options="configs.vaccines"
-                    @autosave="autosave('vaccination.brand')"
-                />
+                <div class="mt-2">
+                    <label class="form-label">วัคซีน</label>
+                    <FormRadio
+                        class="md:grid grid-flow-col grid-cols-2 grid-rows-3 gap-x-2"
+                        v-model="form.vaccination.brand"
+                        :error="form.errors.brand"
+                        name="vaccination_brand"
+                        :options="configs.vaccines"
+                        :allow-reset="true"
+                        @autosave="autosave('vaccination.brand')"
+                    />
+                </div>
                 <div class="mt-2">
                     <label class="form-label">จำนวนเข็มที่ฉีดแล้ว</label>
                     <FormRadio
@@ -493,11 +512,12 @@
                 ๏ อ้างอิงจากคำแนะนำของ staff center หรือจากการประเมินผ่าน incident manager
             </small>
             <FormRadio
+                v-if="!isEmployee"
                 class="mt-2"
                 v-model="form.recommendation.choice"
                 :error="form.errors.recommendation_choice"
                 name="recommendation_choice"
-                :options="isEmployee ? configs.employee_recommendations : configs.public_recommendations"
+                :options="configs.public_recommendations"
                 @autosave="autosave('recommendation.choice')"
             />
 
@@ -555,14 +575,7 @@
                     class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
                     :disabled="!(form.recommendation.date_reswab && true)"
                 >
-                    7 วัน
-                </button>
-                <button
-                    @click="addDays(form.recommendation.date_reswab, dateReswabNextInput, 14)"
-                    class="ml-2 text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
-                    :disabled="!(form.recommendation.date_reswab && true)"
-                >
-                    14 วัน
+                    +7
                 </button>
             </template>
         </div>
@@ -635,10 +648,6 @@ export default {
                 form.patient.position = null;
                 form.patient.division = null;
                 form.patient.division = null;
-
-                if (form.visit.patient_type === 'เจ้าหน้าที่ศิริราช') {
-                    form.patient.insurance = 'ประกันสังคม';
-                }
 
                 autosave('patient');
             }
