@@ -1,7 +1,7 @@
 <template>
     <div v-if="$page.props.flash.mainMenuLinks.length">
         <div class="mb-4">
-            <inertia-link
+            <Link
                 class="flex items-center group py-2 outline-none truncate"
                 :href="link.route[0] === '#' ? link.route : `${$page.props.app.baseUrl}/${link.route}`"
                 v-for="(link, key) in $page.props.flash.mainMenuLinks"
@@ -15,15 +15,16 @@
                 <div :class="isUrl(link.route) ? 'text-white' : 'text-soft-theme-light group-hover:text-white'">
                     {{ link.label }}
                 </div>
-            </inertia-link>
+            </Link>
         </div>
     </div>
 </template>
 
 <script>
 import Icon from '@/Components/Helpers/Icon.vue';
+import { Link } from '@inertiajs/inertia-vue3';
 export default {
-    components: { Icon },
+    components: { Icon, Link },
     props: {
         url: { type: String, default: '' }
     },

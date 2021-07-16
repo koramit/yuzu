@@ -24,7 +24,7 @@
             <div class="w-1/4 text-sm p-1 grid justify-items-center ">
                 <!-- write -->
                 <!-- v-if="userCan('write', referCase)" -->
-                <InertiaLink
+                <Link
                     class="w-full flex text-yellow-200 justify-start"
                     :href="route('visits.edit', visit)"
                 >
@@ -33,10 +33,10 @@
                         name="edit"
                     />
                     <span class="block font-normal text-thick-theme-light">เขียนต่อ</span>
-                </InertiaLink>
+                </Link>
                 <!-- edit -->
                 <!-- v-if="userCan('edit', referCase)" -->
-                <!-- <InertiaLink
+                <!-- <Link
                     class="w-full flex text-alt-theme-light justify-start"
                     :href="route('visits.edit', visit)"
                 >
@@ -45,7 +45,7 @@
                         name="eraser"
                     />
                     <span class="block font-normal text-thick-theme-light">แก้ไข</span>
-                </InertiaLink> -->
+                </Link> -->
             </div>
         </div>
 
@@ -59,7 +59,7 @@
                         class="mr-1 mb-1 px-4 py-3 text-sm leading-4 bg-gray-200 text-gray-400 border rounded cursor-not-allowed"
                         v-html="link.label"
                     />
-                    <InertiaLink
+                    <Link
                         v-else
                         :key="key+'theLink'"
                         class="mr-1 mb-1 px-4 py-3 text-sm text-dark-theme-light leading-4 border border-alt-theme-light rounded hover:bg-white focus:border-dark-theme-light focus:text-dark-theme-light transition-colors"
@@ -82,9 +82,10 @@ import Layout from '@/Components/Layouts/Layout';
 import Icon from '@/Components/Helpers/Icon';
 import Visit from '@/Components/Forms/Visit';
 import { inject, nextTick, ref } from '@vue/runtime-core';
+import { Link } from '@inertiajs/inertia-vue3';
 export default {
     layout: Layout,
-    components: { Visit, Icon },
+    components: { Visit, Icon, Link },
     props: {
         visits: { type: Object, required: true }
     },

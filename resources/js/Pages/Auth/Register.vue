@@ -1,7 +1,7 @@
 <template>
-    <InertiaHead>
+    <Head>
         <title>Yuzu: ลงทะเบียน</title>
-    </InertiaHead>
+    </Head>
 
     <div
         class="flex flex-col justify-center items-center w-full min-h-screen"
@@ -86,8 +86,9 @@ import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import { useCheckSessionTimeout } from '@/Functions/useCheckSessionTimeout';
 import { useRemoveLoader } from '@/Functions/useRemoveLoader';
 import { computed, nextTick, onMounted, ref } from '@vue/runtime-core';
+import { Head } from '@inertiajs/inertia-vue3';
 export default {
-    components: { FormCheckbox, FormInput, SpinnerButton },
+    components: { FormCheckbox, FormInput, SpinnerButton, Head },
     props: {
         profile: { type: Object, required: true }
     },
