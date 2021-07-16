@@ -21,6 +21,7 @@
                     :value="item.value"
                     :name="name"
                     v-model="selected"
+                    :checked="item.value === selected"
                 >
             </div>
             <label
