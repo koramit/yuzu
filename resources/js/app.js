@@ -13,7 +13,7 @@ const emitter = mitt();
 
 InertiaProgress.init({
     delay: 200,
-    color: '#AD9C68'
+    color: '#9EDE73'
 });
 
 createInertiaApp({

@@ -15,8 +15,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Krub:ital,wght@0,300;0,400;0,500;0,600;1,300;1,600&display=swap"
         rel="stylesheet">
 
-    <link href="{{ mix('/css/app.css') }}" rel="stylesheet" />
-    <script src="{{ mix('/js/app.js') }}" defer></script>
+    <link href="{{ asset(mix('/css/app.css')) }}" rel="stylesheet" />
+    <script src="{{ asset(mix('/js/app.js')) }}" defer></script>
     @routes
 
     <style>

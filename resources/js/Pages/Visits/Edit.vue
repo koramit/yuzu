@@ -43,7 +43,7 @@
             <div>
                 <label class="form-label">ประเภทการตรวจ</label>
                 <FormRadio
-                    class="md:grid grid-cols-2 gap-x-2"
+                    class="md:grid grid-flow-col grid-cols-2 grid-rows-2 gap-x-2"
                     v-model="form.visit.screen_type"
                     :error="form.errors.screen_type"
                     name="screen_type"
@@ -61,7 +61,7 @@
             <div class="mt-2">
                 <label class="form-label">สิทธิ์การรักษา</label>
                 <FormRadio
-                    class="md:grid grid-cols-2 gap-x-2"
+                    class="md:grid grid-flow-col grid-cols-2 grid-rows-3 gap-x-2"
                     v-model="form.patient.insurance"
                     :error="form.errors.insurance"
                     name="insurance"
@@ -225,7 +225,7 @@
                     v-text="form.visit.screen_type"
                 />
                 <FormRadio
-                    class="md:grid grid-cols-2 gap-x-2"
+                    class="md:grid grid-flow-col grid-cols-2 grid-rows-2 gap-x-2"
                     v-model="form.exposure.evaluation"
                     :error="form.errors.evaluation"
                     name="evaluation"
@@ -408,7 +408,7 @@
                 <div class="mt-2">
                     <label class="form-label">จำนวนเข็มที่ฉีดแล้ว</label>
                     <FormRadio
-                        class="md:grid grid-cols-2 gap-x-2"
+                        class="md:grid grid-flow-col grid-cols-2 grid-rows-2 gap-x-2"
                         v-model="form.vaccination.doses"
                         :error="form.errors.doses"
                         name="vaccination_doses"
@@ -594,7 +594,6 @@ import FormReveal from '@/Components/Controls/FormReveal';
 import FormCheckbox from '@/Components/Controls/FormCheckbox';
 import FormDatetime from '@/Components/Controls/FormDatetime';
 import FormInput from '@/Components/Controls/FormInput';
-import FormSelect from '@/Components/Controls/FormSelect';
 import FormSelectOther from '@/Components/Controls/FormSelectOther';
 import FormTextarea from '@/Components/Controls/FormTextarea';
 import { useForm } from '@inertiajs/inertia-vue3';
@@ -610,7 +609,6 @@ export default {
         FormCheckbox,
         FormDatetime,
         FormInput,
-        FormSelect,
         FormSelectOther,
         FormTextarea,
     },
@@ -648,7 +646,6 @@ export default {
                 form.patient.position = null;
                 form.patient.division = null;
                 form.patient.division = null;
-
                 autosave('patient');
             }
         );
