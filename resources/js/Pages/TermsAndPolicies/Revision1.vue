@@ -1,7 +1,7 @@
 <template>
-    <InertiaHead>
+    <Head>
         <title>Policies and Terms</title>
-    </InertiaHead>
+    </Head>
     <div class=" bg-soft-theme-light w-full p-12">
         <h1 class=" font-semibold text-xl text-dark-theme-light">
             นโยบายความเป็นส่วนตัว
@@ -69,9 +69,13 @@
 
 <script>
 import { useCheckSessionTimeout } from '@/Functions/useCheckSessionTimeout';
+import { useRemoveLoader } from '@/Functions/useRemoveLoader';
+import { Head } from '@inertiajs/inertia-vue3';
 export default {
+    components: { Head },
     setup () {
         useCheckSessionTimeout();
+        useRemoveLoader();
     }
 };
 </script>
