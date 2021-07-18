@@ -37,7 +37,7 @@ return [
     'date_format' => 'The :attribute does not match the format :format.',
     'different' => 'The :attribute and :other must be different.',
     'digits' => ':attribute ต้องเป็นตัวเลข :digits หลัก.',
-    'digits_between' => 'The :attribute must be between :min and :max digits.',
+    'digits_between' => ':attribute ต้องมีจำนวน :min ถึง :max ตัวเลข',
     'dimensions' => 'The :attribute has invalid image dimensions.',
     'distinct' => 'The :attribute field has a duplicate value.',
     'email' => 'The :attribute must be a valid email address.',
@@ -94,11 +94,11 @@ return [
     'multiple_of' => 'The :attribute must be a multiple of :value.',
     'not_in' => 'The selected :attribute is invalid.',
     'not_regex' => 'The :attribute format is invalid.',
-    'numeric' => 'The :attribute must be a number.',
+    'numeric' => ':attribute ต้องเป็นตัวเลข',
     'password' => 'The password is incorrect.',
     'present' => 'The :attribute field must be present.',
     'regex' => 'The :attribute format is invalid.',
-    'required' => 'The :attribute field is required.',
+    'required' => 'จำเป็นต้องลง :attribute',
     'required_if' => 'The :attribute field is required when :other is :value.',
     'required_unless' => 'The :attribute field is required unless :other is in :values.',
     'required_with' => 'The :attribute field is required when :values is present.',
@@ -152,7 +152,25 @@ return [
     */
 
     'attributes' => [
+        'login' => 'ชื่อบัญชี',
+        'password' => 'รหัสผ่าน',
+        'email' => 'อีเมล์',
+        'name' => 'นามแสดง',
+        'full_name' => 'ชื่อเต็ม',
+        'tel_no' => 'หมายเลขโทรศัพท์',
+        'tel_no_alt' => 'หมายเลขโทรศัพท์สำรอง',
         'pln' => 'เลข ว.',
+
+        'hn' => 'HN',
+        'patient_name' => 'ชื่อผู้ป่วย',
+        'insurance' => 'สิทธิ์การรักษา',
+
+        'temperature_celsius' => 'อุณหภูมิ (℃)',
+        'o2_sat' => 'O₂ sat (% RA)',
+        'height' => 'ส่วนสูง',
+        'weight' => 'น้ำหนัก',
+
+        'evaluation' => 'ประวัติความเสี่ยง',
     ],
 
 ];

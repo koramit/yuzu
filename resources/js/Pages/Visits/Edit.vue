@@ -12,13 +12,14 @@
                 v-model="form.patient.hn"
                 :error="form.errors.hn"
                 :readonly="visit.has_patient"
-                @autosave="autosave('patient.hn')"
+                @autosave="updateHn"
             />
             <FormInput
                 class="mt-2"
                 name="name"
                 label="ชื่อผู้ป่วย"
                 v-model="form.patient.name"
+                :readonly="visit.has_patient"
                 :error="form.errors.name"
                 @autosave="autosave('patient.name')"
             />
@@ -26,7 +27,7 @@
                 class="mt-2"
                 label="วันที่ตรวจ"
                 v-model="form.visit.date_visit"
-                name="date_latest_expose"
+                name="date_visit"
                 :disabled="true"
             />
             <div class="mt-2">
@@ -39,6 +40,7 @@
                     :options="configs.patient_types"
                     @autosave="autosave('patient_type', false)"
                 />
+                <Error :error="form.errors.patient_type" />
             </div>
             <div>
                 <label class="form-label">ประเภทการตรวจ</label>
@@ -67,10 +69,10 @@
                     name="insurance"
                     :options="configs.insurances"
                     :allow-other="true"
-                    :allow-reset="true"
                     ref="insurance"
                     @autosave="autosave('patient.insurance')"
                 />
+                <Error :error="form.errors.insurance" />
             </div>
             <FormInput
                 class="mt-2"
@@ -121,6 +123,7 @@
                         ref="position"
                         @autosave="autosave('patient.position')"
                     />
+                    <Error :error="form.errors.position" />
                 </div>
             </template>
             <template v-else>
@@ -128,7 +131,7 @@
                     class="mt-2"
                     name="sap_id"
                     type="tel"
-                    label="sap id หรือรหัสนักศึกษาแพทย์"
+                    label="sap id หรือรหัสนักศึกษา"
                     v-model="form.patient.sap_id"
                     :error="form.errors.sap_id"
                     @autosave="sapIdUpdated"
@@ -164,7 +167,7 @@
         </div>
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
-                อาการ
+                อาการแสดง
             </h2>
             <FormInput
                 class="mt-2"
@@ -175,26 +178,32 @@
                 :error="form.errors.temperature_celsius"
                 @autosave="autosave('patient.temperature_celsius')"
             />
-            <small
-                class="my-2 text-red-700 text-sm"
-                v-if="form.errors.symptoms"
-            >{{ form.errors.symptoms }}</small>
             <FormCheckbox
-                class="mt-2"
+                class="mt-4"
                 v-model="form.symptoms.asymptomatic_symptom"
                 label="ไม่มีอาการ"
                 :toggler="true"
                 @autosave="autosave('symptoms.asymptomatic_symptom')"
             />
             <div v-if="!form.symptoms.asymptomatic_symptom">
-                <FormCheckbox
-                    v-for="(symptom, key) in configs.symptoms"
-                    :key="key"
+                <FormDatetime
                     class="mt-2"
-                    v-model="form.symptoms[symptom.name]"
-                    :label="symptom.label"
-                    @autosave="autosave('symptoms.' + symptom.name)"
+                    label="วันแรกที่มีอาการ"
+                    v-model="form.symptoms.date_symptom_start"
+                    :error="form.errors.date_symptom_start"
+                    name="date_symptom_start"
+                    @autosave="autosave('symptoms.date_symptom_start')"
                 />
+                <div class="md:grid grid-flow-col grid-cols-2 grid-rows-5 gap-2">
+                    <FormCheckbox
+                        v-for="(symptom, key) in configs.symptoms"
+                        :key="key"
+                        class="mt-2"
+                        v-model="form.symptoms[symptom.name]"
+                        :label="symptom.label"
+                        @autosave="autosave('symptoms.' + symptom.name)"
+                    />
+                </div>
                 <FormInput
                     class="mt-2"
                     label="O₂ sat (% RA)"
@@ -213,6 +222,7 @@
                     @autosave="autosave('symptoms.other_symptoms')"
                 />
             </div>
+            <Error :error="form.errors.symptoms" />
         </div>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
@@ -225,13 +235,24 @@
                     v-text="form.visit.screen_type"
                 />
                 <FormRadio
+                    class="md:grid grid-cols-2 gap-x-2"
+                    v-model="form.exposure.evaluation"
+                    :error="form.errors.evaluation"
+                    name="evaluation"
+                    :options="configs.appointment_evaluations"
+                    @autosave="autosave('exposure.evaluation')"
+                    v-if="isAppointment"
+                />
+                <FormRadio
+                    v-else
                     class="md:grid grid-flow-col grid-cols-2 grid-rows-2 gap-x-2"
                     v-model="form.exposure.evaluation"
                     :error="form.errors.evaluation"
                     name="evaluation"
-                    :options="isAppointment ? configs.appointment_evaluations : configs.evaluations"
+                    :options="configs.evaluations"
                     @autosave="autosave('exposure.evaluation')"
                 />
+                <Error :error="form.errors.evaluation" />
             </div>
             <template v-if="showExposureForm">
                 <FormDatetime
@@ -267,6 +288,7 @@
                                 :options="configs.contact_types"
                                 @autosave="autosave('exposure.contact_type')"
                             />
+                            <Error :error="form.errors.contact_type" />
                         </div>
                     </div>
                 </template>
@@ -279,13 +301,15 @@
                 <template v-if="form.exposure.hot_spot">
                     <div class="ml-3 pl-2 pt-2 border-l-2 border-bitter-theme-light">
                         <FormTextarea
-                            placeholder="ระบุพื้นที่เสี่ยงอื่นๆ"
+                            placeholder="ระบุพื้นที่เสี่ยง"
                             name="exposure_hot_spot_detail"
                             v-model="form.exposure.hot_spot_detail"
                             @autosave="autosave('exposure.hot_spot_detail')"
                         />
+                        <Error :error="form.errors.hot_spot_detail" />
                     </div>
                 </template>
+                <Error :error="form.errors.exposure_type" />
             </template>
             <template v-if="form.exposure.evaluation === 'อื่นๆ'">
                 <FormTextarea
@@ -295,6 +319,7 @@
                     v-model="form.exposure.other_detail"
                     @autosave="autosave('exposure.other_detail')"
                 />
+                <Error :error="form.errors.exposure_other_detail" />
             </template>
         </div>
 
@@ -302,10 +327,6 @@
             <h2 class="font-semibold text-thick-theme-light">
                 โรคประจำตัว
             </h2>
-            <small
-                class="my-2 text-red-700 text-sm"
-                v-if="form.errors.comorbids"
-            >{{ form.errors.comorbids }}</small>
             <FormCheckbox
                 class="mt-2"
                 v-model="form.comorbids.no_comorbids"
@@ -375,24 +396,21 @@
                     @autosave="autosave('comorbids.other_comorbids')"
                 />
             </div>
+            <Error :error="form.errors.comorbids" />
         </div>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
                 ประวัติการฉีดวัคซีน COVID-19
             </h2>
-            <small
-                class="my-2 text-red-700 text-sm"
-                v-if="form.errors.vaccination"
-            >{{ form.errors.vaccination }}</small>
             <FormCheckbox
                 class="mt-2"
-                v-model="form.vaccination.vaccinated"
+                v-model="form.vaccination.unvaccinated"
                 label="ไม่เคยฉีด"
                 :toggler="true"
-                @autosave="autosave('vaccination.vaccinated')"
+                @autosave="autosave('vaccination.unvaccinated')"
             />
-            <div v-if="!form.vaccination.vaccinated">
+            <div v-if="!form.vaccination.unvaccinated">
                 <div class="mt-2">
                     <label class="form-label">วัคซีน</label>
                     <FormRadio
@@ -426,6 +444,7 @@
                     @autosave="autosave('vaccination.date_latest_vacciniated')"
                 />
             </div>
+            <Error :error="form.errors.unvaccinated" />
         </div>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
@@ -482,6 +501,7 @@
                 label="NP swab for PCR test of SARS-CoV-2"
                 @autosave="autosave('management.np_swab')"
             />
+            <Error :error="form.errors.np_swab" />
             <FormTextarea
                 class="mt-2"
                 label="ส่งตรวจอื่นๆ"
@@ -580,6 +600,59 @@
             </template>
         </div>
 
+        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+            <h2 class="font-semibold text-thick-theme-light">
+                อาจารย์โรคติดเชื้อเวร
+            </h2>
+            <FormSelect
+                class="mt-2"
+                v-model="form.md_name"
+                :error="form.errors.md_name"
+                name="md_name"
+                :options="configs.id_staffs"
+            />
+        </div>
+
+        <!-- note -->
+        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+            <h2 class="font-semibold text-thick-theme-light">
+                Note
+            </h2>
+            <FormTextarea
+                class="mt-2"
+                placeholder="เพิ่มเติม"
+                name="note"
+                v-model="form.note"
+                @autosave="autosave('note')"
+            />
+        </div>
+
+        <div class="mt-4 sm:mt-6 md:mt-12">
+            <SpinnerButton
+                @click="form.patch(route('visits.update', visit.slug))"
+                class="block w-full mt-2 btn btn-bitter"
+            >
+                บันทึก
+            </SpinnerButton>
+
+            <template v-if="form.visit.screen_type">
+                <SpinnerButton
+                    v-if="form.visit.screen_type === 'เริ่มตรวจใหม่'"
+                    class="block w-full mt-2 btn btn-dark"
+                    @click="form.patch(route('visits.exam-queue.store', visit))"
+                >
+                    บันทึกและส่งพบแพทย์
+                </SpinnerButton>
+                <SpinnerButton
+                    v-else
+                    class="block w-full mt-2 btn btn-dark"
+                    @click="form.patch(route('visits.swab-queue.store', visit))"
+                >
+                    บันทึกและส่งสวอบ
+                </SpinnerButton>
+            </template>
+        </div>
+
         <FormSelectOther
             :placeholder="selectOther.placeholder"
             ref="selectOtherInput"
@@ -594,8 +667,11 @@ import FormReveal from '@/Components/Controls/FormReveal';
 import FormCheckbox from '@/Components/Controls/FormCheckbox';
 import FormDatetime from '@/Components/Controls/FormDatetime';
 import FormInput from '@/Components/Controls/FormInput';
+import FormSelect from '@/Components/Controls/FormSelect';
 import FormSelectOther from '@/Components/Controls/FormSelectOther';
 import FormTextarea from '@/Components/Controls/FormTextarea';
+import SpinnerButton from '@/Components/Controls/SpinnerButton';
+import Error from '@/Components/Controls/Error';
 import { useForm } from '@inertiajs/inertia-vue3';
 import Layout from '@/Components/Layouts/Layout';
 import { reactive, ref } from '@vue/reactivity';
@@ -609,8 +685,11 @@ export default {
         FormCheckbox,
         FormDatetime,
         FormInput,
+        FormSelect,
         FormSelectOther,
         FormTextarea,
+        SpinnerButton,
+        Error,
     },
     props: {
         visit: { type: Object, required: true },
@@ -628,6 +707,26 @@ export default {
                 date_visit: props.visit.date_visit,
             }
         });
+
+        const updateHn = () => {
+            form.errors.hn = null;
+
+            if (!(form.patient.hn.length === 8 && Number.isInteger(parseInt(form.patient.hn.length)))) {
+                return;
+            }
+
+            window.axios
+                .get(window.route('resources.api.patients.show', form.patient.hn))
+                .then(response => {
+                    if (response.data.found) {
+                        form.patient.name = response.data.full_name;
+                        form.patient.tel_no = response.data.tel_no;
+                    } else {
+                        form.errors.hn = response.data.message;
+                        form.patient.name = null;
+                    }
+                });
+        };
 
         const isEmployee = computed(() => {
             return form.visit.patient_type === 'เจ้าหน้าที่ศิริราช';
@@ -679,6 +778,10 @@ export default {
                     form.exposure.other_detail = null;
                     autosave('exposure');
                 }
+
+                if (val.indexOf('swab') !== -1) {
+                    form.management.np_swab = true;
+                }
             }
         );
 
@@ -691,16 +794,16 @@ export default {
         };
 
         const autosave = (field, saveForm = true) => {
-            nextTick(() => {
-                let payload = {};
+            // nextTick(() => {
+            //     let payload = {};
 
-                if (saveForm) {
-                    payload['form->' + (field.split('.').join('->'))] = lodashGet(form, field);
-                } else {
-                    payload[field] = form.visit[field];
-                }
-                window.axios.patch(configs.patchEndpoint, payload);
-            });
+            //     if (saveForm) {
+            //         payload['form->' + (field.split('.').join('->'))] = lodashGet(form, field);
+            //     } else {
+            //         payload[field] = form.visit[field];
+            //     }
+            //     window.axios.patch(configs.patchEndpoint, payload);
+            // });
         };
 
         const selectOtherInput = ref(null);
@@ -785,9 +888,70 @@ export default {
                         form.patient.position = response.data['position'];
                         form.patient.division = response.data['division'];
                         autosave('patient');
+                    } else {
+                        form.patient.position = null;
+                        form.patient.division = null;
+                        form.errors.sap_id = 'ไม่มี ID นี้ในระบบ';
                     }
                 }).catch(error => console.log(error));
         };
+
+        watch (
+            () => form.symptoms.asymptomatic_symptom,
+            (val) => {
+                if (val) {
+                    form.symptoms.date_symptom_start = null;
+                    form.symptoms.fever = false;
+                    form.symptoms.cough = false;
+                    form.symptoms.sore_throat = false;
+                    form.symptoms.rhinorrhoea = false;
+                    form.symptoms.sputum = false;
+                    form.symptoms.fatigue = false;
+                    form.symptoms.anosmia = false;
+                    form.symptoms.loss_of_taste = false;
+                    form.symptoms.myalgia = false;
+                    form.symptoms.diarrhea = false;
+                    form.symptoms.o2_sat = null;
+                    form.symptoms.other_symptoms = null;
+                }
+            }
+        );
+
+        watch (
+            () => form.comorbids.no_comorbids,
+            (val) => {
+                if (val) {
+                    form.comorbids.dm = false;
+                    form.comorbids.ht = false;
+                    form.comorbids.dlp = false;
+                    form.comorbids.obesity = false;
+                    form.comorbids.other_comorbids = null;
+                }
+            }
+        );
+
+        watch (
+            () => form.vaccination.unvaccinated,
+            (val) => {
+                if (val) {
+                    form.vaccination.brand = null;
+                    form.vaccination.doses = null;
+                    form.vaccination.date_latest_vacciniated = null;
+                }
+            }
+        );
+
+        watch (
+            () => form.diagnosis.no_symptom,
+            (val) => {
+                if (val) {
+                    form.diagnosis.suspected_covid_19 = false;
+                    form.diagnosis.uri = false;
+                    form.diagnosis.suspected_pneumonia = false;
+                    form.diagnosis.other_diagnosis = null;
+                }
+            }
+        );
 
         const dateIsolationEndInput = ref(null);
         const dateReswabInput = ref(null);
@@ -812,6 +976,7 @@ export default {
             addDays,
             addDaysAvailable,
             BMI,
+            updateHn,
         };
     },
 };

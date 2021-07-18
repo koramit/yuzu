@@ -3,6 +3,8 @@
 namespace App\Managers;
 
 use App\Models\Visit;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class VisitManager
 {
@@ -26,6 +28,7 @@ class VisitManager
             ],
             'symptoms' => [
                 'asymptomatic_symptom' => false,
+                'date_symptom_start' => null,
                 'fever' => false,
                 'cough' => false,
                 'sore_throat' => false,
@@ -58,7 +61,7 @@ class VisitManager
                 'other_comorbids' => null,
             ],
             'vaccination' => [
-                'vaccinated' => false,
+                'unvaccinated' => false,
                 'brand' => null,
                 'doses' => null,
                 'date_latest_vacciniated' => null,
@@ -81,6 +84,8 @@ class VisitManager
                 'date_reswab' => null,
                 'date_reswab_next' => null,
             ],
+            'md_name' => null,
+            'note' => null,
         ];
     }
 
@@ -156,6 +161,181 @@ class VisitManager
                     'label' => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 14 วัน',
                 ],
             ],
+            'id_staffs' => [
+                'อ. ณสิกาญจน์',
+                'อ. พรพรรณ',
+                'อ. ภาคภูมิ',
+                'อ. ภิญโญ',
+                'อ. เมธี',
+                'อ. ยงค์',
+                'อ. ยุพิน',
+                'อ. รุจิภาส',
+                'อ. วลัยพร',
+                'อ. วิษณุ',
+                'อ. สุสัณห์',
+                'อ. อนุภพ',
+            ],
         ];
+    }
+
+    public function saveVisit(Visit $visit, array $data)
+    {
+        $visit->screen_type = $data['visit']['screen_type'];
+        $visit->patient_type = $data['visit']['patient_type'];
+        unset($data['visit']);
+
+        // check if input hn at edit form
+        if (! $visit->patient_id && $data['patient']['hn']) {
+            $patient = (new PatientManager)->manage($data['patient']['hn']);
+            if ($patient['found']) {
+                $visit->patient_id = $patient['patient']->id;
+            } else { // fallback
+                $data['patient']['hn'] = null;
+                $data['patient']['name'] = $visit->form['patient']['name'];
+            }
+        }
+
+        $visit->form = $data;
+        $visit->updater_id = Auth::id();
+        $visit->save();
+    }
+
+    public function validateScreening(array $data)
+    {
+        // validation start here
+        $rules = [
+            'hn' => 'required|digits:8',
+            'patient_type' => 'required',
+            'screen_type' => 'required',
+            'insurance' => 'required',
+            'tel_no' => 'required|digits_between:9,10',
+            'tel_no_alt' => 'digits_between:9,10|nullable',
+            'temperature_celsius' => 'required|numeric',
+            'o2_sat' => 'exclude_if:fatigue,false|required|numeric',
+            'evaluation' => 'required',
+            // 'weight' => 'numeric|nullable',
+            // 'height' => 'numeric|nullable',
+        ];
+
+        $validator = Validator::make(
+            $data['patient'] +
+            $data['visit'] +
+            $data['symptoms'] +
+            $data['exposure'] +
+            $data['comorbids'], $rules);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+        } else {
+            $errors = [];
+        }
+
+        // validate employee
+        if ($data['visit']['patient_type'] === 'เจ้าหน้าที่ศิริราช') {
+            $patient = $data['patient'];
+            if ($patient['no_sap_id'] && ! $patient['position']) {
+                $errors['position'] = 'จำเป็นต้องลงข้อมูล ปฏิบัติงาน';
+            }
+            if (! $patient['no_sap_id'] && ! $patient['sap_id']) {
+                $errors['sap_id'] = 'จำเป็นต้องลงข้อมูล SAP ID';
+            }
+            if (! $patient['no_sap_id'] && $patient['sap_id']) {
+                $employee = (new EmployeeManager)->manage($patient['sap_id']);
+                if (! $employee['found']) {
+                    $errors['sap_id'] = 'ไม่มี ID นี้ในระบบ';
+                }
+            }
+        }
+
+        // validate symptoms
+        $symptoms = $data['symptoms'];
+        if (! $symptoms['asymptomatic_symptom'] &&
+            ! ($symptoms['fever'] ||
+                $symptoms['cough'] ||
+                $symptoms['sore_throat'] ||
+                $symptoms['rhinorrhoea'] ||
+                $symptoms['sputum'] ||
+                $symptoms['fatigue'] ||
+                $symptoms['anosmia'] ||
+                $symptoms['loss_of_taste'] ||
+                $symptoms['myalgia'] ||
+                $symptoms['diarrhea'] ||
+                $symptoms['other_symptoms'])
+        ) { // if not asymptomatic then need some symptoms
+            $errors['symptoms'] = 'โปรดระบุอาการแสดง หากไม่มีอาการโปรดเลือก ไม่มีอาการ';
+        } elseif (! $symptoms['asymptomatic_symptom'] && ! $symptoms['date_symptom_start']) {
+            $errors['date_symptom_start'] = 'จำเป็นต้องลงข้อมูล วันแรกที่มีอาการ';
+        }
+
+        // validate comorbids
+        $comorbids = $data['comorbids'];
+        if (! $comorbids['no_comorbids']) {
+            if (! ($comorbids['dm'] ||
+                $comorbids['ht'] ||
+                $comorbids['dlp'] ||
+                $comorbids['obesity'] ||
+                $comorbids['other_comorbids'])
+            ) {
+                $errors['comorbids'] = 'โปรดระบุโรคประจำตัว';
+            }
+        }
+
+        // validate exposure
+        $exposure = $data['exposure'];
+        if (strpos($exposure['evaluation'], 'มีความเสี่ยง') === 0) {
+            if (! $exposure['date_latest_expose']) {
+                $errors['date_latest_expose'] = 'จำเป็นต้องลงข้อมูล วันสุดท้ายที่สัมผัส';
+            }
+            if (! $exposure['contact'] && ! $exposure['hot_spot']) {
+                $errors['exposure_type'] = 'โปรดระบุประเภทการสัมผัส';
+            }
+            if ($exposure['contact'] && ! $exposure['contact_type']) {
+                $errors['contact_type'] = 'จำเป็นต้องลงข้อมูล ลักษณะการสัมผัส';
+            }
+            if ($exposure['hot_spot'] && ! $exposure['hot_spot_detail']) {
+                $errors['hot_spot_detail'] = 'โปรดะบุพื้นที่เสี่ยง';
+            }
+        }
+
+        if (str_contains($exposure['evaluation'] ?? 'null', 'อื่นๆ')) {
+            if (! $exposure['other_detail']) {
+                $errors['exposure_other_detail'] = 'จำเป็นต้องระบุความเสี่ยงอื่นๆ';
+            }
+        }
+
+        return $errors;
+    }
+
+    public function validateSwabAppointment(array $data)
+    {
+        $errors = $this->validateScreening($data);
+
+        if (! $data['md_name']) {
+            $errors['md_name'] = 'จำเป็นต้องลง อาจารย์โรคติดเชื้อเวร';
+        }
+
+        if (! $data['management']['np_swab']) {
+            $errors['np_swab'] = 'ไม่ติ๊ก NP swab สักหน่อยหร๊าาาา';
+        }
+
+        return $errors;
+    }
+
+    public function getIdStaff($name)
+    {
+        return [
+            'อ. ณสิกาญจน์' => ['name' => 'รศ.พญ.ณสิกาญจน์ อังคเศกวินัย', 'pln' => 19796],
+            'อ. พรพรรณ' => ['name' => 'รศ.พญ.พรพรรณ กู้มานะชัย', 'pln' => 21788],
+            'อ. ภาคภูมิ' => ['name' => 'อ.นพ.ภาคภูมิ พุ่มพวง', 'pln' => 36989],
+            'อ. ภิญโญ' => ['name' => 'รศ.พญ.ภิญโญ รัตนาอัมพวัลย์', 'pln' => 25523],
+            'อ. เมธี' => ['name' => 'รศ.นพ.เมธี ชยะกุลคีรี', 'pln' => 19740],
+            'อ. ยงค์' => ['name' => 'รศ.นพ.ยงค์ รงค์รุ่งเรือง', 'pln' => 12158],
+            'อ. ยุพิน' => ['name' => 'ศ.พญ.ยุพิน ศุพุทธมงคล', 'pln' => 10622],
+            'อ. รุจิภาส' => ['name' => 'รศ.นพ.รุจิภาส สิริจตุภัทร', 'pln' => 31928],
+            'อ. วลัยพร' => ['name' => 'อ.พญ.วลัยพร วังจินดา', 'pln' => 39388],
+            'อ. วิษณุ' => ['name' => 'ศ.เกียรติคุณ นพ.วิษณุ ธรรมลิขิตกุล', 'pln' => 7965],
+            'อ. สุสัณห์' => ['name' => 'ผศ.นพ.สุสัณห์ อาศนะเสน', 'pln' => 21852],
+            'อ. อนุภพ' => ['name' => 'ผศ.นพ.อนุภพ จิตต์เมือง', 'pln' => 25707],
+        ][$name] ?? [];
     }
 }

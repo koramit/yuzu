@@ -15,10 +15,11 @@ class VisitsController extends Controller
 {
     public function index()
     {
-        // Request::session()->flash('main-menu-links', [
-        //     ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
-        //     ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
-        // ]);
+        Request::session()->flash('main-menu-links', [
+            ['icon' => 'thermometer', 'label' => 'คัดกรอง', 'route' => 'visits.screen-queue'],
+            ['icon' => 'stethoscope', 'label' => 'พบแพทย์', 'route' => 'visits.exam-queue'],
+            ['icon' => 'virus', 'label' => 'Swab', 'route' => 'visits.swab-queue'],
+        ]);
 
         Request::session()->flash('action-menu', [
             // ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
@@ -69,7 +70,7 @@ class VisitsController extends Controller
             $form['patient']['tel_no'] = $patient['patient']->profile['tel_no'];
         } else {
             $visit = Visit::whereDateVisit($todayStr)
-                          ->where('form->patient_name', $data['patient_name'])
+                          ->where('form->patient->name', $data['patient_name'])
                           ->first();
             if ($visit) {
                 return Redirect::route('visits.edit', $visit);
@@ -92,8 +93,9 @@ class VisitsController extends Controller
     public function edit(Visit $visit)
     {
         Request::session()->flash('main-menu-links', [
-            ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'visits'],
-            // ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
+            ['icon' => 'thermometer', 'label' => 'คัดกรอง', 'route' => 'visits.screen-queue'],
+            ['icon' => 'stethoscope', 'label' => 'พบแพทย์', 'route' => 'visits.exam-queue'],
+            ['icon' => 'virus', 'label' => 'Swab', 'route' => 'visits.swab-queue'],
         ]);
 
         $visit->load('patient');
@@ -120,9 +122,12 @@ class VisitsController extends Controller
 
     public function update(Visit $visit)
     {
-        $visit->forceFill(Request::all());
-        $visit->save();
+        (new VisitManager())->saveVisit($visit, Request::all());
 
-        return 'ok';
+        return Redirect::route([
+            'screen' => 'visits.screen-queue',
+            'exam' => 'visits.exam-queue',
+            'swab' => 'visits.swab-queue',
+        ][$visit->status]);
     }
 }

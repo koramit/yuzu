@@ -19,6 +19,7 @@ class CreateVisitsTable extends Migration
             $table->date('date_visit')->index();
             $table->unsignedTinyInteger('patient_type')->nullable()->index();
             $table->unsignedTinyInteger('screen_type')->nullable()->index();
+            $table->unsignedTinyInteger('status')->default(1)->index();
             $table->json('form');
             $table->foreignId('patient_id')->nullable()->constrained('patients')->onDelete('cascade');
             $table->foreignId('creator_id')->constrained('users')->onDelete('cascade');
