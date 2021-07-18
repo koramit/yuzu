@@ -46,7 +46,7 @@ Route::get('/', HomeController::class)
      ->middleware('auth')
      ->name('home');
 
-visit
+// visit
 Route::get('visits', [VisitsController::class, 'index'])
      ->middleware('auth', 'remember')
      ->name('visits');
