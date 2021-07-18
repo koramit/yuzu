@@ -46,10 +46,10 @@ Route::get('/', HomeController::class)
      ->middleware('auth')
      ->name('home');
 
-// visit
-// Route::get('visits', [VisitsController::class, 'index'])
-//      ->middleware('auth', 'remember')
-//      ->name('visits');
+visit
+Route::get('visits', [VisitsController::class, 'index'])
+     ->middleware('auth', 'remember')
+     ->name('visits');
 Route::post('visits', [VisitsController::class, 'store'])
      ->middleware('auth')
      ->name('visits.store');
