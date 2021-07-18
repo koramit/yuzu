@@ -50,11 +50,15 @@ class Visit extends Model
 
     public function setPatientTypeAttribute($value)
     {
-        $items = [
-            'บุคคลทั่วไป' => 1,
-            'เจ้าหน้าที่ศิริราช' => 2,
-        ];
-        $this->attributes['patient_type'] = $items[$value];
+        if (! $value) {
+            $this->attributes['screen_type'] = null;
+        } else {
+            $items = [
+                'บุคคลทั่วไป' => 1,
+                'เจ้าหน้าที่ศิริราช' => 2,
+            ];
+            $this->attributes['patient_type'] = $items[$value] ?? null;
+        }
     }
 
     public function getPatientTypeAttribute()
@@ -73,13 +77,17 @@ class Visit extends Model
 
     public function setScreenTypeAttribute($value)
     {
-        $items = [
-            'เริ่มตรวจใหม่' => 1,
-            'นัดมา swab' => 2,
-            'นัดมา swab day 7' => 3,
-            'นัดมา swab day 14' => 4,
-        ];
-        $this->attributes['screen_type'] = $items[$value];
+        if (! $value) {
+            $this->attributes['screen_type'] = null;
+        } else {
+            $items = [
+                'เริ่มตรวจใหม่' => 1,
+                'นัดมา swab' => 2,
+                'นัดมา swab day 7' => 3,
+                'นัดมา swab day 14' => 4,
+            ];
+            $this->attributes['screen_type'] = $items[$value] ?? null;
+        }
     }
 
     public function getScreenTypeAttribute()
@@ -97,6 +105,40 @@ class Visit extends Model
         ];
 
         return $items[$this->attributes['screen_type']];
+    }
+
+    public function setStatusAttribute($value)
+    {
+        if (! $value) {
+            $this->attributes['status'] = null;
+        } else {
+            $items = [
+                'screen' => 1,
+                'exam' => 2,
+                'swab' => 3,
+                'discharged' => 4,
+                'canceled' => 5,
+            ];
+            $this->attributes['status'] = $items[$value] ?? null;
+        }
+    }
+
+    public function getStatusAttribute()
+    {
+        if (! isset($this->attributes['status'])) {
+            return null;
+        }
+
+        $items = [
+            '',
+            'screen',
+            'exam',
+            'swab',
+            'discharged',
+            'canceled',
+        ];
+
+        return $items[$this->attributes['status']];
     }
 
     public function getHnAttribute()

@@ -120,7 +120,7 @@ export default {
             } else {
                 form.post(window.route('visits.store'), {
                     onError: () => modal.value.close(),
-                    onFinish: () => modal.value.close()
+                    onFinish: () => modal.value ? modal.value.close() : null
                 });
             }
         };

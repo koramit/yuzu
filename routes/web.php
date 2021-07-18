@@ -6,7 +6,10 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\ResourceEmployeesController;
 use App\Http\Controllers\ResourcePatientsController;
+use App\Http\Controllers\VisitExamQueueController;
 use App\Http\Controllers\VisitsController;
+use App\Http\Controllers\VisitScreenQueueController;
+use App\Http\Controllers\VisitSwabQueueController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/colors', function () {
@@ -44,18 +47,34 @@ Route::get('/', HomeController::class)
      ->name('home');
 
 // visit
-Route::get('visits', [VisitsController::class, 'index'])
-     ->middleware('auth', 'remember')
-     ->name('visits');
+// Route::get('visits', [VisitsController::class, 'index'])
+//      ->middleware('auth', 'remember')
+//      ->name('visits');
 Route::post('visits', [VisitsController::class, 'store'])
      ->middleware('auth')
      ->name('visits.store');
 Route::get('visits/{visit:slug}/edit', [VisitsController::class, 'edit'])
      ->middleware('auth')
      ->name('visits.edit');
-Route::patch('visits/{visit}', [VisitsController::class, 'update'])
+Route::patch('visits/{visit:slug}', [VisitsController::class, 'update'])
      ->middleware('auth')
      ->name('visits.update');
+
+Route::get('visits/screen-queue', [VisitScreenQueueController::class, 'index'])
+     ->middleware('auth')
+     ->name('visits.screen-queue');
+Route::get('visits/exam-queue', [VisitExamQueueController::class, 'index'])
+     ->middleware('auth')
+     ->name('visits.exam-queue');
+Route::patch('visits/exam-queue/{visit:slug}', [VisitExamQueueController::class, 'store'])
+     ->middleware('auth')
+     ->name('visits.exam-queue.store');
+Route::get('visits/swab-queue', [VisitSwabQueueController::class, 'index'])
+     ->middleware('auth')
+     ->name('visits.swab-queue');
+Route::patch('visits/swab-queue/{visit:slug}', [VisitSwabQueueController::class, 'store'])
+     ->middleware('auth')
+     ->name('visits.swab-queue.store');
 
 // resources
 Route::middleware('auth')

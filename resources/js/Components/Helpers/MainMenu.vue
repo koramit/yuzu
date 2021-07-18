@@ -3,16 +3,16 @@
         <div class="mb-4">
             <Link
                 class="flex items-center group py-2 outline-none truncate"
-                :href="link.route[0] === '#' ? link.route : `${$page.props.app.baseUrl}/${link.route}`"
+                :href="route(link.route)"
                 v-for="(link, key) in $page.props.flash.mainMenuLinks"
                 :key="key"
             >
                 <icon
                     :name="link.icon"
                     class="w-4 h-4 mr-2"
-                    :class="isUrl(link.route) ? 'text-white' : 'text-soft-theme-light group-hover:text-white'"
+                    :class="isUrl(route(link.route)) ? 'text-white' : 'text-soft-theme-light group-hover:text-white'"
                 />
-                <div :class="isUrl(link.route) ? 'text-white' : 'text-soft-theme-light group-hover:text-white'">
+                <div :class="isUrl(route(link.route)) ? 'text-white' : 'text-soft-theme-light group-hover:text-white'">
                     {{ link.label }}
                 </div>
             </Link>

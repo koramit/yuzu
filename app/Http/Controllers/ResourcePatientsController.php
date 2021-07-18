@@ -19,6 +19,7 @@ class ResourcePatientsController extends Controller
             'full_name' => $patient['patient']->full_name,
             'dob' => $patient['patient']->dob,
             'gender' => $patient['patient']->gender,
+            'tel_no' => $patient['patient']->profile['tel_no'],
         ];
     }
 }

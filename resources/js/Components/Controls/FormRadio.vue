@@ -11,6 +11,7 @@
             :class="{
                 'opacity-50': selected && selected !== item.value,
                 'border-bitter-theme-light font-medium': selected === item.value,
+                'border-red-400': error,
             }"
         >
             <div class="text-bitter-theme-light">
