@@ -79,9 +79,8 @@
                     <span class="block font-normal text-thick-theme-light">พิมพ์</span>
                 </Link>
                 <a
-                    class="w-full flex text-alt-theme-light justify-start"
-                    :href="route('visits.attach-opd-card.store', visit)"
-                    target="_blank"
+                    class="w-full flex text-alt-theme-light justify-start cursor-not-allowed"
+                    href="#"
                 >
                     <Icon
                         class="w-4 h-4 mr-1"
@@ -90,9 +89,8 @@
                     <span class="block font-normal text-thick-theme-light">พิมพ์</span>
                 </a>
                 <a
-                    class="w-full flex text-alt-theme-light justify-start"
-                    :href="route('visits.attach-opd-card.store', visit)"
-                    target="_blank"
+                    class="w-full flex text-alt-theme-light justify-start cursor-not-allowed"
+                    href="#"
                 >
                     <Icon
                         class="w-4 h-4 mr-1"
