@@ -96,6 +96,13 @@ export default {
             this.$emit('update:modelValue', this.$refs.input.value);
             // Emit autosave if field name available
             this.$emit('autosave');
+        },
+        clear() {
+            this.fp.clear();
+            // update model
+            this.$emit('update:modelValue', this.$refs.input.value);
+            // Emit autosave if field name available
+            this.$emit('autosave');
         }
     }
 };

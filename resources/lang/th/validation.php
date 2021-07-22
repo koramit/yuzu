@@ -163,6 +163,8 @@ return [
 
         'hn' => 'HN',
         'patient_name' => 'ชื่อผู้ป่วย',
+        'patient_type' => 'ประเภทผู้ป่วย',
+        'screen_type' => 'ประเภทการตรวจ',
         'insurance' => 'สิทธิ์การรักษา',
 
         'temperature_celsius' => 'อุณหภูมิ (℃)',

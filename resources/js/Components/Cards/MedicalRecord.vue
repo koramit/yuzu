@@ -1,0 +1,120 @@
+<template>
+    <!-- card -->
+    <div
+        class="rounded bg-white shadow-sm my-1 p-1 flex"
+        v-for="(visit, key) in visits"
+        :key="key"
+    >
+        <!-- left detail -->
+        <div class="w-3/4">
+            <p class="p-1 pb-0 text-thick-theme-light">
+                {{ visit.patient_type }} filterable
+            </p>
+            <div class="flex items-baseline">
+                <p class="p-1 text-lg pt-0">
+                    HN {{ visit.hn }} <br class="md:hidden"> {{ visit.patient_name }}
+                </p>
+            </div>
+            <p class="px-1 text-xs text-dark-theme-light italic">
+                เริ่มคัดกรองเมื่อ {{ visit.enlisted_screen_at_for_humans }} sortable
+            </p>
+        </div>
+        <!-- right menu -->
+        <div class="w-1/4 text-sm p-1 grid justify-items-center">
+            <!-- authorize -->
+            <button
+                class="w-full flex text-bitter-theme-light justify-start disabled:cursor-not-allowed"
+                disabled
+                v-if="visit.authorized"
+            >
+                <Icon
+                    class="w-4 h-4 mr-1"
+                    name="check-circle"
+                />
+                <span class="block font-normal text-thick-theme-light">เปิดสิทธิ์แล้ว</span>
+            </button>
+            <Link
+                class="w-full flex text-alt-theme-light justify-start disabled:cursor-not-allowed"
+                :href="route('visits.authorize.store', visit)"
+                as="button"
+                method="post"
+                preserve-state
+                preserve-scroll
+                :disabled="!visit.can.authorize_visit"
+                v-else
+            >
+                <Icon
+                    class="w-4 h-4 mr-1"
+                    name="sync-alt"
+                />
+                <span class="block font-normal text-thick-theme-light">เปิดสิทธิ์</span>
+            </Link>
+            <!-- OPD card attached -->
+            <template v-if="visit.ready_to_print">
+                <button
+                    class="w-full flex text-bitter-theme-light justify-start disabled:cursor-not-allowed"
+                    disabled
+                    v-if="visit.attached"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="check-circle"
+                    />
+                    <span class="block font-normal text-thick-theme-light">พิมพ์แล้ว</span>
+                </button>
+                <Link
+                    class="w-full flex text-alt-theme-light justify-start disabled:cursor-not-allowed"
+                    :href="route('visits.attach-opd-card.store', visit)"
+                    as="button"
+                    method="post"
+                    preserve-state
+                    preserve-scroll
+                    :disabled="!visit.can.attach_opd_card"
+                    v-else
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="sync-alt"
+                    />
+                    <span class="block font-normal text-thick-theme-light">พิมพ์</span>
+                </Link>
+                <a
+                    class="w-full flex text-alt-theme-light justify-start"
+                    :href="route('visits.attach-opd-card.store', visit)"
+                    target="_blank"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="print"
+                    />
+                    <span class="block font-normal text-thick-theme-light">พิมพ์</span>
+                </a>
+                <a
+                    class="w-full flex text-alt-theme-light justify-start"
+                    :href="route('visits.attach-opd-card.store', visit)"
+                    target="_blank"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="readme"
+                    />
+                    <span class="block font-normal text-thick-theme-light">อ่าน</span>
+                </a>
+            </template>
+        </div>
+    </div>
+</template>
+
+<script>
+import Icon from '@/Components/Helpers/Icon';
+import { Link } from '@inertiajs/inertia-vue3';
+export default {
+    components: { Icon, Link },
+    props: {
+        visits: { type: Array, required: true }
+    },
+    setup() {
+
+    },
+};
+</script>

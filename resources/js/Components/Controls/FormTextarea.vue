@@ -53,9 +53,6 @@ export default {
         focus () {
             this.$refs.textarea.focus();
         },
-        change () {
-            this.$emit('autosave');
-        },
         oninput () {
             this.$emit('update:modelValue', this.$refs.textarea.value);
             this.autosave();

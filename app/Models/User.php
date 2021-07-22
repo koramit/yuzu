@@ -46,6 +46,11 @@ class User extends Authenticatable
         return $this->belongsTo(Division::class);
     }
 
+    public function actions()
+    {
+        return $this->hasManay('App\Models\VisitAction', 'user_id', 'id');
+    }
+
     /**
      * A user may be assigned many roles.
      *
@@ -108,5 +113,10 @@ class User extends Authenticatable
     public function getTelNoAttribute()
     {
         return $this->profile['tel_no'];
+    }
+
+    public function getHomePageAttribute()
+    {
+        return $this->profile['home_page'] ?? 'visits';
     }
 }

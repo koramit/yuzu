@@ -12,6 +12,12 @@ class Visit extends Model
 
     protected $casts = [
         'date_visit' => 'date',
+        'enlisted_screen_at' => 'datetime',
+        'enlisted_exam_at' => 'datetime',
+        'enlisted_swab_at' => 'datetime',
+        'discharged_at' => 'datetime',
+        'authorized_at' => 'datetime',
+        'attached_opd_card_at' => 'datetime',
         'submitted_at' => 'datetime',
         'approved_at' => 'datetime',
         'form' => 'array',
@@ -38,15 +44,20 @@ class Visit extends Model
         return $this->belongsTo('App\Models\User', 'creator_id', 'id');
     }
 
-    public function updater()
+    public function actions()
     {
-        return $this->belongsTo('App\Models\User', 'updater_id', 'id');
+        return $this->hasMany('App\Models\VisitAction', 'visit_id', 'id');
     }
 
-    public function approver()
-    {
-        return $this->belongsTo('App\Models\User', 'approver_id', 'id');
-    }
+    // public function updater()
+    // {
+    //     return $this->belongsTo('App\Models\User', 'updater_id', 'id');
+    // }
+
+    // public function approver()
+    // {
+    //     return $this->belongsTo('App\Models\User', 'approver_id', 'id');
+    // }
 
     public function setPatientTypeAttribute($value)
     {
@@ -82,9 +93,8 @@ class Visit extends Model
         } else {
             $items = [
                 'เริ่มตรวจใหม่' => 1,
-                'นัดมา swab' => 2,
-                'นัดมา swab day 7' => 3,
-                'นัดมา swab day 14' => 4,
+                'นัดมา swab ครั้งแรก' => 2,
+                'นัดมา swab ซ้ำ' => 3,
             ];
             $this->attributes['screen_type'] = $items[$value] ?? null;
         }
@@ -99,9 +109,8 @@ class Visit extends Model
         $items = [
             '',
             'เริ่มตรวจใหม่',
-            'นัดมา swab',
-            'นัดมา swab day 7',
-            'นัดมา swab day 14',
+            'นัดมา swab ครั้งแรก',
+            'นัดมา swab ซ้ำ',
         ];
 
         return $items[$this->attributes['screen_type']];
@@ -141,6 +150,20 @@ class Visit extends Model
         return $items[$this->attributes['status']];
     }
 
+    public function getStatusIndexRouteAttribute()
+    {
+        $items = [
+            '',
+            'visits.screen-list',
+            'visits.exam-list',
+            'visits.swab-list',
+            'visits', // 'discharged',
+            'visits', //'canceled',
+        ];
+
+        return $items[$this->attributes['status']];
+    }
+
     public function getHnAttribute()
     {
         return $this->patient ? $this->patient->hn : $this->form['patient']['hn'];
@@ -154,5 +177,30 @@ class Visit extends Model
     public function getUpdatedAtForHumansAttribute()
     {
         return $this->updated_at->locale('th_TH')->diffForHumans(now());
+    }
+
+    public function getCreatedAtForHumansAttribute()
+    {
+        return $this->created_at->locale('th_TH')->diffForHumans(now());
+    }
+
+    public function getEnlistedScreenAtForHumansAttribute()
+    {
+        return $this->enlisted_screen_at->locale('th_TH')->diffForHumans(now());
+    }
+
+    public function getEnlistedExamAtForHumansAttribute()
+    {
+        return $this->enlisted_exam_at->locale('th_TH')->diffForHumans(now());
+    }
+
+    public function getEnlistedSwabAtForHumansAttribute()
+    {
+        return $this->enlisted_swab_at->locale('th_TH')->diffForHumans(now());
+    }
+
+    public function getTitleAttribute()
+    {
+        return $this->patient_name.'@'.$this->date_visit->format('d M Y');
     }
 }

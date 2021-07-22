@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use App\Events\Registered;
+use App\Events\VisitUpdated;
 use App\Listeners\InitRole;
-use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use App\Listeners\ManageVisitEvent;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 
@@ -18,6 +19,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             InitRole::class,
+        ],
+        VisitUpdated::class => [
+            ManageVisitEvent::class,
         ],
     ];
 

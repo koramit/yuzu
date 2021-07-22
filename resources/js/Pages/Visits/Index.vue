@@ -83,13 +83,14 @@ import Icon from '@/Components/Helpers/Icon';
 import Visit from '@/Components/Forms/Visit';
 import { inject, nextTick, ref } from '@vue/runtime-core';
 import { Link } from '@inertiajs/inertia-vue3';
+
 export default {
     layout: Layout,
     components: { Visit, Icon, Link },
     props: {
-        visits: { type: Object, required: true }
+        visits: { type: Object, required: true },
     },
-    setup() {
+    setup () {
         const createVisitForm = ref(null);
         const emitter = inject('emitter');
 

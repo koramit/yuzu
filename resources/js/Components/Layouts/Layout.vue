@@ -43,7 +43,7 @@
                         {{ $page.props.flash.title }}
                     </div>
                     <!-- username and menu -->
-                    <dropdown>
+                    <Dropdown>
                         <template #default>
                             <div class="flex items-center cursor-pointer select-none group">
                                 <div class="group-hover:text-bitter-theme-light focus:text-bitter-theme-light mr-1 whitespace-no-wrap">
@@ -57,11 +57,11 @@
                         </template>
                         <template #dropdown>
                             <div class="mt-2 py-2 shadow-xl min-w-max bg-thick-theme-light text-white cursor-pointer rounded text-sm">
-                                <template v-if="hasRoles">
+                                <template v-if="$page.props.user.roles.length">
                                     <Link
                                         class="block px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
                                         :href="route('home')"
-                                        v-if="! currentPage('home')"
+                                        v-if="! isUrl(route('home'))"
                                     >
                                         หน้าหลัก
                                     </Link>
@@ -77,7 +77,7 @@
                                 </Link>
                             </div>
                         </template>
-                    </dropdown>
+                    </Dropdown>
                 </div>
                 <!-- menu on mobile -->
                 <div
@@ -103,11 +103,11 @@
                                 </div>
                             </div> -->
                             <span class="inline-block py-1 text-white">{{ $page.props.user.name }}</span>
-                            <template v-if="hasRoles">
+                            <template v-if="$page.props.user.roles.length">
                                 <Link
                                     class="block py-1"
                                     :href="route('home')"
-                                    v-if="! currentPage('home')"
+                                    v-if="! isUrl(route('home'))"
                                 >
                                     หน้าหลัก
                                 </Link>
@@ -123,11 +123,8 @@
                             </Link>
                         </div>
                         <hr class="my-4">
-                        <main-menu
-                            @click="mobileMenuVisible = false"
-                            :url="url()"
-                        />
-                        <action-menu @action-clicked="actionClicked" />
+                        <MainMenu @click="mobileMenuVisible = false" />
+                        <ActionMenu @action-clicked="actionClicked" />
                     </div>
                 </div>
             </div>
@@ -135,28 +132,22 @@
             <div class="md:flex md:flex-grow md:overflow-hidden">
                 <!-- this is sidebar menu on desktop -->
                 <div class="hidden md:block bg-thick-theme-light flex-shrink-0 w-56 xl:w-64 py-12 px-6 overflow-y-auto">
-                    <!-- class="hidden md:block bg-thick-theme-light flex-shrink-0 w-56 xl:w-64 py-12 px-6 overflow-y-auto" -->
-                    <main-menu
-                        :url="url()"
-                    />
-                    <!-- class="hidden md:block bg-thick-theme-light flex-shrink-0 w-56 xl:w-64 py-12 px-6 overflow-y-auto" -->
-                    <action-menu
-                        @action-clicked="actionClicked"
-                    />
+                    <MainMenu />
+                    <ActionMenu @action-clicked="actionClicked" />
                 </div>
                 <!-- this is main page -->
                 <div
                     class="w-full p-4 md:overflow-y-auto sm:p-8 md:p-16 lg:px-24"
                     scroll-region
                 >
-                    <flash-messages />
+                    <FlashMessages />
 
                     <slot />
                 </div>
             </div>
         </div>
 
-        <confirm-form ref="confirmForm" />
+        <ConfirmForm ref="confirmForm" />
     </div>
 </template>
 
@@ -167,7 +158,7 @@ import MainMenu from '@/Components/Helpers/MainMenu';
 import ActionMenu from '@/Components/Helpers/ActionMenu';
 import FlashMessages from '@/Components/Helpers/FlashMessages';
 import ConfirmForm from '@/Components/Forms/ConfirmForm';
-import { computed, inject, nextTick, ref } from '@vue/runtime-core';
+import { inject, nextTick, ref } from '@vue/runtime-core';
 import { useCheckSessionTimeout } from '@/Functions/useCheckSessionTimeout';
 import { useRemoveLoader } from '@/Functions/useRemoveLoader';
 import { Head, Link } from '@inertiajs/inertia-vue3';
@@ -184,20 +175,11 @@ export default {
         const confirmForm = ref(null);
         const mobileMenuVisible = ref(false);
         const avatarSrcError = ref(false);
-
-        const hasRoles = computed(() => {
-            return false;
-        });
-
         const emitter = inject('emitter');
 
         emitter.on('need-confirm', (cinfigs) => {
             setTimeout(() => nextTick(() => confirmForm.value.open(cinfigs)), 300);
         });
-
-        const url = () => {
-            return location.pathname.substr(1);
-        };
 
         const actionClicked = (action) => {
             mobileMenuVisible.value = false;
@@ -208,18 +190,16 @@ export default {
             });
         };
 
-        const currentPage = (route) => {
-            return location.pathname.substr(1) === route;
+        const isUrl = (url) => {
+            return (location.origin + location.pathname) === url;
         };
 
         return {
             confirmForm,
             mobileMenuVisible,
             avatarSrcError,
-            hasRoles,
-            url,
             actionClicked,
-            currentPage,
+            isUrl
         };
     },
 };
