@@ -2,8 +2,9 @@
 
 namespace App\Managers;
 
+use App\Models\User;
 use App\Models\Visit;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 
 class VisitManager
@@ -25,6 +26,8 @@ class VisitManager
                 'temperature_celsius' => null,
                 'weight' => null,
                 'height' => null,
+                'date_swabbed' => null,
+                'date_reswabbed' => null,
             ],
             'symptoms' => [
                 'asymptomatic_symptom' => false,
@@ -93,7 +96,7 @@ class VisitManager
     {
         return [
             'patient_types' => ['บุคคลทั่วไป', 'เจ้าหน้าที่ศิริราช'],
-            'screen_types' => ['เริ่มตรวจใหม่', 'นัดมา swab', 'นัดมา swab day 7', 'นัดมา swab day 14'],
+            'screen_types' => ['เริ่มตรวจใหม่', 'นัดมา swab ครั้งแรก', 'นัดมา swab ซ้ำ'],
             'insurances' => ['กรมบัญชีกลาง', 'ประกันสังคม', '30 บาท', 'ชำระเงินเอง'],
             'positions' => ['อาจารย์คณะพยาบาล', 'เจ้าหน้าที่คณะพยาบาล', 'นักศึกษาคณะพยาบาล', 'outsource'],
             'risk_levels' => ['ไม่มีความเสี่ยง', 'ความเสี่ยงต่ำ', 'ความเสี่ยงปานกลาง', 'ความเสี่ยงสูง', 'ต้อง Reswab ก่อนกลับไปทำงาน'],
@@ -178,7 +181,7 @@ class VisitManager
         ];
     }
 
-    public function saveVisit(Visit $visit, array $data)
+    public function saveVisit(Visit $visit, array $data, User $user)
     {
         $visit->screen_type = $data['visit']['screen_type'];
         $visit->patient_type = $data['visit']['patient_type'];
@@ -196,8 +199,10 @@ class VisitManager
         }
 
         $visit->form = $data;
-        $visit->updater_id = Auth::id();
+        // $visit->updater_id = $user->id;
         $visit->save();
+
+        $visit->actions()->create(['action' => 'update', 'user_id' => $user->id]);
     }
 
     public function validateScreening(array $data)
@@ -213,8 +218,6 @@ class VisitManager
             'temperature_celsius' => 'required|numeric',
             'o2_sat' => 'exclude_if:fatigue,false|required|numeric',
             'evaluation' => 'required',
-            // 'weight' => 'numeric|nullable',
-            // 'height' => 'numeric|nullable',
         ];
 
         $validator = Validator::make(
@@ -306,7 +309,7 @@ class VisitManager
         return $errors;
     }
 
-    public function validateSwabAppointment(array $data)
+    public function validateSwabByNurse(array $data)
     {
         $errors = $this->validateScreening($data);
 
@@ -316,6 +319,41 @@ class VisitManager
 
         if (! $data['management']['np_swab']) {
             $errors['np_swab'] = 'ไม่ติ๊ก NP swab สักหน่อยหร๊าาาา';
+        }
+
+        return $errors;
+    }
+
+    protected function validateDiagnosis(array $data)
+    {
+        if ($data['no_symptom'] || $data['suspected_covid_19'] || $data['uri'] || $data['suspected_pneumonia'] || $data['other_diagnosis']) {
+            return null;
+        } else {
+            return ['diagnosis' => 'โปรดระบุการวินิจฉัย'];
+        }
+    }
+
+    public function validateSwabByMD(array $data)
+    {
+        $errors = $this->validateScreening($data);
+
+        if ($diagErrors = $this->validateDiagnosis($data['diagnosis'])) {
+            $errors += $diagErrors;
+        }
+
+        if (! $data['management']['np_swab']) {
+            $errors['np_swab'] = 'ไม่ติ๊ก NP swab สักหน่อยหร๊าาาา';
+        }
+
+        return $errors;
+    }
+
+    public function validateDischarge(array $data)
+    {
+        $errors = $this->validateScreening($data);
+
+        if ($diagErrors = $this->validateDiagnosis($data['diagnosis'])) {
+            $errors += $diagErrors;
         }
 
         return $errors;
@@ -337,5 +375,33 @@ class VisitManager
             'อ. สุสัณห์' => ['name' => 'ผศ.นพ.สุสัณห์ อาศนะเสน', 'pln' => 21852],
             'อ. อนุภพ' => ['name' => 'ผศ.นพ.อนุภพ จิตต์เมือง', 'pln' => 25707],
         ][$name] ?? [];
+    }
+
+    public function getFlash($user)
+    {
+        return [
+            'page-title' => 'MISSING',
+            'main-menu-links' => [
+                ['icon' => 'thermometer', 'label' => 'ห้องคัดกรอง', 'route' => 'visits.screen-list', 'can' => $user->can('view_screen_list')],
+                ['icon' => 'stethoscope', 'label' => 'ห้องตรวจ', 'route' => 'visits.exam-list', 'can' => $user->can('view_exam_list')],
+                ['icon' => 'virus', 'label' => 'ห้อง Swab', 'route' => 'visits.swab-list', 'can' => $user->can('view_swab_list')],
+                ['icon' => 'address-book', 'label' => 'เวชระเบียน', 'route' => 'visits.mr-list', 'can' => $user->can('view_mr_list')],
+                ['icon' => 'calculator', 'label' => 'ประเมิน', 'route' => 'visits.evaluation-list', 'can' => $user->can('view_evaluation_list')],
+                ['icon' => 'archive', 'label' => 'รายการเคส', 'route' => 'visits', 'can' => $user->can('view_any_visits')],
+            ],
+            'action-menu' => [
+                ['icon' => 'notes-medical', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-visit', 'can' => $user->can('create_visit')],
+            ],
+        ];
+    }
+
+    public function setFlash(array $flash)
+    {
+        Request::session()->flash('page-title', $flash['page-title']);
+        Request::session()->flash('main-menu-links', $flash['main-menu-links']);
+        Request::session()->flash('action-menu', $flash['action-menu']);
+        if ($flash['messages'] ?? null) {
+            Request::session()->flash('messages', $flash['messages']);
+        }
     }
 }

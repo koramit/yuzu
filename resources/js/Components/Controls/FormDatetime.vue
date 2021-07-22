@@ -13,7 +13,7 @@
             :disabled="disabled"
             readonly
             :value="modelValue"
-            class="appearance-none form-input"
+            class="form-input"
         >
         <div
             v-if="error"
@@ -77,6 +77,13 @@ export default {
     watch: {
         disabled (val) {
             this.fp._input.disabled = val;
+        },
+        error (val) {
+            if (val) {
+                this.fp._input.classList.add('border-red-400', 'text-red-400');
+            } else {
+                this.fp._input.classList.remove('border-red-400', 'text-red-400');
+            }
         }
     },
     mounted () {
@@ -85,6 +92,13 @@ export default {
     methods: {
         setDate (date) {
             this.fp.setDate(date);
+            // update model
+            this.$emit('update:modelValue', this.$refs.input.value);
+            // Emit autosave if field name available
+            this.$emit('autosave');
+        },
+        clear() {
+            this.fp.clear();
             // update model
             this.$emit('update:modelValue', this.$refs.input.value);
             // Emit autosave if field name available

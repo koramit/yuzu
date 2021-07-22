@@ -20,23 +20,23 @@
         v-else-if="$page.props.flash.messages && !Object.keys($page.props.errors).length"
         class="flex items-center rounded-tl-lg rounded-tr-lg border-8 border-t-0 border-l-0 border-r-0 shadow p-4 mb-2"
         :class="{
-            'border-alt-theme-light': $page.props.flash.messages.status === 'info',
-            'border-green-200': $page.props.flash.messages.status === 'success',
-            'border-yellow-400': $page.props.flash.messages.status === 'warning',
+            'border-thick-theme-light': $page.props.flash.messages.status === 'info',
+            'border-bitter-theme-light': $page.props.flash.messages.status === 'success',
+            'border-dark-theme-light': $page.props.flash.messages.status === 'warning',
         }"
     >
         <icon
-            class="block w-12 h-12 text-alt-theme-light"
+            class="block w-12 h-12 text-thick-theme-light"
             name="info-circle"
             v-if="$page.props.flash.messages.status === 'info'"
         />
         <icon
-            class="block w-12 h-12 text-green-200"
+            class="block w-12 h-12 text-bitter-theme-light"
             name="check-circle"
             v-else-if="$page.props.flash.messages.status === 'success'"
         />
         <icon
-            class="block w-12 h-12 text-yellow-400"
+            class="block w-12 h-12 text-dark-theme-light"
             name="exclamation-circle"
             v-else-if="$page.props.flash.messages.status === 'warning'"
         />

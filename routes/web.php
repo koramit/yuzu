@@ -6,10 +6,16 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\ResourceEmployeesController;
 use App\Http\Controllers\ResourcePatientsController;
-use App\Http\Controllers\VisitExamQueueController;
+use App\Http\Controllers\ServerSendEventsController;
+use App\Http\Controllers\VisitAttachOPDCardController;
+use App\Http\Controllers\VisitAuthorizationController;
+use App\Http\Controllers\VisitDischargeListController;
+use App\Http\Controllers\VisitEvaluationListController;
+use App\Http\Controllers\VisitExamListController;
+use App\Http\Controllers\VisitMedicalRecordListController;
 use App\Http\Controllers\VisitsController;
-use App\Http\Controllers\VisitScreenQueueController;
-use App\Http\Controllers\VisitSwabQueueController;
+use App\Http\Controllers\VisitScreenListController;
+use App\Http\Controllers\VisitSwabListController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/colors', function () {
@@ -48,33 +54,66 @@ Route::get('/', HomeController::class)
 
 // visit
 Route::get('visits', [VisitsController::class, 'index'])
-     ->middleware('auth', 'remember')
+     ->middleware('auth', 'remember', 'can:view_any_visits')
      ->name('visits');
 Route::post('visits', [VisitsController::class, 'store'])
-     ->middleware('auth')
+     ->middleware('auth', 'can:create_visit')
      ->name('visits.store');
 Route::get('visits/{visit:slug}/edit', [VisitsController::class, 'edit'])
-     ->middleware('auth')
+     ->middleware('auth', 'can:update,visit')
      ->name('visits.edit');
 Route::patch('visits/{visit:slug}', [VisitsController::class, 'update'])
-     ->middleware('auth')
+     ->middleware('auth', 'can:update,visit')
      ->name('visits.update');
 
-Route::get('visits/screen-queue', [VisitScreenQueueController::class, 'index'])
-     ->middleware('auth')
-     ->name('visits.screen-queue');
-Route::get('visits/exam-queue', [VisitExamQueueController::class, 'index'])
-     ->middleware('auth')
-     ->name('visits.exam-queue');
-Route::patch('visits/exam-queue/{visit:slug}', [VisitExamQueueController::class, 'store'])
-     ->middleware('auth')
-     ->name('visits.exam-queue.store');
-Route::get('visits/swab-queue', [VisitSwabQueueController::class, 'index'])
-     ->middleware('auth')
-     ->name('visits.swab-queue');
-Route::patch('visits/swab-queue/{visit:slug}', [VisitSwabQueueController::class, 'store'])
-     ->middleware('auth')
-     ->name('visits.swab-queue.store');
+// screen list
+Route::get('visits/screen-list', [VisitScreenListController::class, 'index'])
+     ->middleware('auth', 'can:view_screen_list')
+     ->name('visits.screen-list');
+
+// exam list
+Route::get('visits/exam-list', [VisitExamListController::class, 'index'])
+     ->middleware('auth', 'can:view_exam_list')
+     ->name('visits.exam-list');
+Route::patch('visits/exam-list/{visit:slug}', [VisitExamListController::class, 'store'])
+     ->middleware('auth', 'can:update,visit')
+     ->name('visits.exam-list.store');
+
+// swab list
+Route::get('visits/swab-list', [VisitSwabListController::class, 'index'])
+     ->middleware('auth', 'can:view_swab_list')
+     ->name('visits.swab-list');
+Route::patch('visits/swab-list/{visit:slug}', [VisitSwabListController::class, 'store'])
+     ->middleware('auth', 'can:update,visit')
+     ->name('visits.swab-list.store');
+
+//discharge
+Route::patch('visits/discharge-list/{visit:slug}', [VisitDischargeListController::class, 'store'])
+     ->middleware('auth', 'can:discharge,visit')
+     ->name('visits.discharge-list.store');
+
+// medical record
+Route::get('visits/mr-list', [VisitMedicalRecordListController::class, 'index'])
+     ->middleware('auth', 'can:view_mr_list')
+     ->name('visits.mr-list');
+
+Route::post('visits/authorize/{visit:slug}', [VisitAuthorizationController::class, 'store'])
+     ->middleware('auth', 'can:authorize_visit')
+     ->name('visits.authorize.store');
+// Route::delete('visits/authorize/{visit:slug}', [VisitAuthorizationController::class, 'destroy'])
+//      ->middleware('auth', 'can:authorize_visit')
+//      ->name('visits.authorize.store');
+Route::post('visits/attach-opd-card/{visit:slug}', [VisitAttachOPDCardController::class, 'store'])
+     ->middleware('auth', 'can:attach_opd_card')
+     ->name('visits.attach-opd-card.store');
+// Route::delete('visits/attach-opd-card/{visit:slug}', [VisitAttachOPDCardController::class, 'destroy'])
+//      ->middleware('auth', 'can:attach_opd_card')
+//      ->name('visits.attach-opd-card.store');
+
+//evaluation
+Route::get('visits/evaluation-list', [VisitEvaluationListController::class, 'index'])
+     ->middleware('auth', 'can:view_evaluation_list')
+     ->name('visits.evaluation-list');
 
 // resources
 Route::middleware('auth')
@@ -90,3 +129,16 @@ Route::middleware('auth')
           // Route::get('wards', WardsController::class)
           //      ->name('wards');
      });
+
+// test role
+Route::get('login-as/{role}', function ($role) {
+    $user = \App\Models\User::whereName($role)->first();
+    \Auth::login($user);
+
+    return redirect(route($user->home_page));
+});
+
+// sse
+Route::get('sse', ServerSendEventsController::class)
+     ->middleware('auth')
+     ->name('sse');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\VisitUpdated;
 use App\Managers\PatientManager;
 use App\Managers\VisitManager;
 use App\Models\Visit;
@@ -13,18 +14,18 @@ use Inertia\Inertia;
 
 class VisitsController extends Controller
 {
+    protected $manager;
+
+    public function __construct()
+    {
+        $this->manager = new VisitManager();
+    }
+
     public function index()
     {
-        Request::session()->flash('main-menu-links', [
-            ['icon' => 'thermometer', 'label' => 'คัดกรอง', 'route' => 'visits.screen-queue'],
-            ['icon' => 'stethoscope', 'label' => 'พบแพทย์', 'route' => 'visits.exam-queue'],
-            ['icon' => 'virus', 'label' => 'Swab', 'route' => 'visits.swab-queue'],
-        ]);
-
-        Request::session()->flash('action-menu', [
-            // ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
-            ['icon' => 'notes-medical', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-visit'],
-        ]);
+        $flash = $this->manager->getFlash(Auth::user());
+        $flash['page-title'] = 'รายการเคส';
+        $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
                        ->orderByDesc('updated_at')
@@ -46,10 +47,11 @@ class VisitsController extends Controller
     public function store()
     {
         $data = Request::all();
+        $user = Auth::user();
 
-        $todayStr = now(Auth::user()->timezone)->format('Y-m-d');
+        $todayStr = now($user->timezone)->format('Y-m-d');
 
-        $form = (new VisitManager)->initForm();
+        $form = $this->manager->initForm();
 
         if ($data['hn']) {
             $patient = (new PatientManager())->manage($data['hn']);
@@ -83,24 +85,62 @@ class VisitsController extends Controller
         $visit->slug = Str::uuid()->toString();
         $visit->date_visit = $todayStr;
         $visit->form = $form;
-        $visit->creator_id = Auth::id();
-        $visit->updater_id = Auth::id();
+        $visit->creator_id = $user->id;
+        // $visit->updater_id = $visit->creator_id;
+        // ** auto enlisted_screen_at for now
+        $visit->status = 'screen';
+        $visit->enlisted_screen_at = now();
         $visit->save();
+
+        $visit->actions()->createMany([
+            ['action' => 'create', 'user_id' => $user->id],
+            ['action' => 'enlist_screen', 'user_id' => $user->id],
+        ]);
+
+        VisitUpdated::dispatch($visit);
 
         return Redirect::route('visits.edit', $visit);
     }
 
     public function edit(Visit $visit)
     {
-        Request::session()->flash('main-menu-links', [
-            ['icon' => 'thermometer', 'label' => 'คัดกรอง', 'route' => 'visits.screen-queue'],
-            ['icon' => 'stethoscope', 'label' => 'พบแพทย์', 'route' => 'visits.exam-queue'],
-            ['icon' => 'virus', 'label' => 'Swab', 'route' => 'visits.swab-queue'],
-        ]);
+        $flash['page-title'] = $visit->title;
+        $flash['main-menu-links'] = [
+            ['icon' => 'arrow-circle-left', 'label' => 'ย้อนกลับ', 'route' => $visit->status_index_route],
+        ];
+        $flash['action-menu'] = [];
+        $flash['messages'] = [
+            'status' => 'info',
+            'messages' => [
+                'หากยังไม่ส่งผู้ป่วยไปขั้นตอนอื่น โปรดทำการ <span class="font-semibold">บันทึก</span> ทุกครั้งก่อนออกจากฟอร์ม',
+            ],
+        ];
 
-        $visit->load('patient');
+        $user = Auth::user();
+        $can = [];
+        if ($user->can('update', $visit)) { // save only
+            $flash['action-menu'][] = ['icon' => 'save', 'label' => 'บันทึก', 'action' => 'save', 'can' => true];
+            $can[] = 'save';
+        }
+        if ($user->can('enlist_exam')) { // save to exam -- NURSE only
+            $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่งตรวจ', 'action' => 'save-exam', 'can' => true];
+            $can[] = 'save-exam';
+        }
+        if ($user->can('sign_opd_card')) { // save to discharge -- MD only
+            $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'จำหน่าย', 'action' => 'save-discharge', 'can' => true];
+            $can[] = 'save-discharge';
+        }
+        if ($user->role_names->contains('nurse')) { // NURSE save to swab
+            if ($visit->screen_type && $visit->screen_type !== 'เริ่มตรวจใหม่') {
+                $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่ง swab', 'action' => 'save-swab', 'can' => true];
+            }
+        } elseif ($user->role_names->contains('md')) { // MD save to swab
+            if ($visit->form['management']['np_swab']) {
+                $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่ง swab', 'action' => 'save-swab', 'can' => true];
+            }
+        }
 
-        Request::session()->flash('page-title', $visit->patient_name.'@'.$visit->date_visit->format('d M Y'));
+        $this->manager->setFlash($flash);
 
         if ($visit->patient) {
             $visit->patient_document_id = $visit->patient->profile['document_id'];
@@ -110,24 +150,24 @@ class VisitsController extends Controller
             $visit->has_patient = false;
         }
 
+        $configs = $this->manager->getConfigs($visit);
+        $configs['can'] = $can;
+
         return Inertia::render('Visits/Edit', [
             'visit' => $visit,
-            'formConfigs' => (new VisitManager)->getConfigs($visit),
-            'configDates' => [
-                'next_7_days' => now(Auth::user()->timezone)->addDays(7)->format('Y-m-d'),
-                'next_14_days' => now(Auth::user()->timezone)->addDays(14)->format('Y-m-d'),
-            ],
+            'formConfigs' => $configs,
         ]);
     }
 
     public function update(Visit $visit)
     {
-        (new VisitManager())->saveVisit($visit, Request::all());
+        (new VisitManager())->saveVisit($visit, Request::all(), Auth::user());
 
-        return Redirect::route([
-            'screen' => 'visits.screen-queue',
-            'exam' => 'visits.exam-queue',
-            'swab' => 'visits.swab-queue',
-        ][$visit->status]);
+        return Redirect::route($visit->status_index_route)->with('messages', [
+            'status' => 'success',
+            'messages' => [
+                'บันทึก '.$visit->title.' สำเร็จ',
+            ],
+        ]);
     }
 }

@@ -2,27 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Managers\VisitManager;
 use App\Models\Visit;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class VisitScreenQueueController extends Controller
+class VisitEvaluationListController extends Controller
 {
+    protected $manager;
+
+    public function __construct()
+    {
+        $this->manager = new VisitManager();
+    }
+
     public function index()
     {
-        Request::session()->flash('main-menu-links', [
-            ['icon' => 'thermometer', 'label' => 'คัดกรอง', 'route' => 'visits.screen-queue'],
-            ['icon' => 'stethoscope', 'label' => 'พบแพทย์', 'route' => 'visits.exam-queue'],
-            ['icon' => 'virus', 'label' => 'Swab', 'route' => 'visits.swab-queue'],
-        ]);
-
-        Request::session()->flash('action-menu', [
-            // ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
-            ['icon' => 'notes-medical', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-visit'],
-        ]);
+        $flash = $this->manager->getFlash(Auth::user());
+        $flash['page-title'] = 'ตรวจ';
+        $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
-                       ->whereStatus(1)
+                       ->whereDateVisit(now()->today('asia/bangkok'))
+                       ->whereStatus(2)
                        ->orderByDesc('updated_at')
                        ->paginate()
                        ->through(function ($visit) {
