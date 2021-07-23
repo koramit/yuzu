@@ -49,6 +49,11 @@ class Visit extends Model
         return $this->hasMany('App\Models\VisitAction', 'visit_id', 'id');
     }
 
+    public function versions()
+    {
+        return $this->hasMany('App\Models\VisitFormVersion', 'visit_id', 'id');
+    }
+
     // public function updater()
     // {
     //     return $this->belongsTo('App\Models\User', 'updater_id', 'id');
@@ -202,5 +207,43 @@ class Visit extends Model
     public function getTitleAttribute()
     {
         return $this->patient_name.'@'.$this->date_visit->format('d M Y');
+    }
+
+    public function getAgeAtVisitAttribute()
+    {
+        if (! $this->patient->dob || ! $this->date_visit) {
+            return null;
+        }
+
+        $ageInMonths = $this->date_visit->diffInMonths($this->patient->dob);
+        if ($ageInMonths < 12) {
+            return $ageInMonths;
+        }
+
+        return $this->date_visit->diffInYears($this->patient->dob);
+    }
+
+    public function getAgeAtVisitUnitAttribute()
+    {
+        if (! $this->patient->dob || ! $this->date_visit) {
+            return null;
+        }
+
+        $ageInYears = $this->date_visit->diffInYears($this->patient->dob);
+        if ($ageInYears >= 1) {
+            return 'ปี';
+        }
+
+        return 'เดือน';
+    }
+
+    public function getAgeAtVisitLabelAttribute()
+    {
+        return trim($this->age_at_visit.' '.$this->age_at_visit_unit);
+    }
+
+    public function getReadyToPrintAttribute()
+    {
+        return $this->discharged_at || $this->enlisted_swab_at;
     }
 }

@@ -22,10 +22,14 @@ class VisitPolicy
 
     public function update(User $user, Visit $visit)
     {
-        if ($user->role_names->contains('md')) {
+        if ($visit->ready_to_print) {
+            return false;
+        }
+
+        if ($user->isRole('md')) {
             return true;
         // except printed
-        } elseif ($user->role_names->contains('nurse')) {
+        } elseif ($user->isRole('nurse')) {
             if ($visit->status === 'screen') {
                 return true;
             } else {
@@ -37,10 +41,25 @@ class VisitPolicy
 
     public function discharge(User $user, Visit $visit)
     {
-        if ($user->role_names->contains('md')) {
+        if ($user->isRole('md')) {
             return true;
-        } elseif ($user->role_names->contains('nurse')) {
+        } elseif ($user->isRole('nurse')) { // nurse discharge from swab
             return $visit->submitted_at ? true : false;
         }
+    }
+
+    public function replace(User $user, Visit $visit)
+    {
+        if (! $visit->ready_to_print || ! $user->can('replace_visit')) {
+            return false;
+        }
+
+        if ($user->isRole('md')) {
+            return true;
+        } elseif ($user->isRole('nurse')) {
+            return $visit->form['md']['signed_on_behalf'];
+        }
+
+        return true;
     }
 }

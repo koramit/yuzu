@@ -12,26 +12,46 @@
 </template>
 
 <script>
+import { computed } from '@vue/runtime-core';
 export default {
     props: {
         label: { type: String, default: '' },
         data: { type: String, default: '' },
         format: { type: String, default: '' },
     },
-    computed: {
-        formattedData () {
-            if (!this.data || !this.format) {
-                return this.data;
+    setup (props) {
+        const formattedData = computed(() => {
+            if (props.data || props.format) {
+                return props.data;
             }
 
-            if (this.format === 'date') {
+            if (props.format === 'date') {
                 let months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                 let ymd = this.data.split('-');
                 return ymd[2] + ' ' + months[parseInt(ymd[1])] + ' ' + ymd[0];
             }
 
-            return this.data;
-        }
-    },
+            return props.data;
+        });
+
+        return {
+            formattedData,
+        };
+    }
+    // computed: {
+    //     formattedData () {
+    //         if (!this.data || !this.format) {
+    //             return this.data;
+    //         }
+
+    //         if (this.format === 'date') {
+    //             let months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    //             let ymd = this.data.split('-');
+    //             return ymd[2] + ' ' + months[parseInt(ymd[1])] + ' ' + ymd[0];
+    //         }
+
+    //         return this.data;
+    //     }
+    // },
 };
 </script>

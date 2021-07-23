@@ -119,4 +119,9 @@ class User extends Authenticatable
     {
         return $this->profile['home_page'] ?? 'visits';
     }
+
+    public function isRole($name)
+    {
+        return $this->role_names->contains($name);
+    }
 }

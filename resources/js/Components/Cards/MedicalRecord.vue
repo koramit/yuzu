@@ -81,6 +81,7 @@
                 <a
                     class="w-full flex text-alt-theme-light justify-start cursor-not-allowed"
                     href="#"
+                    v-if="visit.can.attach_opd_card"
                 >
                     <Icon
                         class="w-4 h-4 mr-1"
@@ -88,16 +89,28 @@
                     />
                     <span class="block font-normal text-thick-theme-light">พิมพ์</span>
                 </a>
-                <a
-                    class="w-full flex text-alt-theme-light justify-start cursor-not-allowed"
-                    href="#"
+                <Link
+                    class="w-full flex text-alt-theme-light justify-start"
+                    :href="route('visits.show', visit)"
+                    v-if="visit.can.print_opd_card"
                 >
                     <Icon
                         class="w-4 h-4 mr-1"
                         name="readme"
                     />
                     <span class="block font-normal text-thick-theme-light">อ่าน</span>
-                </a>
+                </Link>
+                <Link
+                    class="w-full flex text-alt-theme-light justify-start"
+                    :href="route('visits.replace', visit)"
+                    v-if="visit.can.replace"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="eraser"
+                    />
+                    <span class="block font-normal text-thick-theme-light">แก้ไข</span>
+                </Link>
             </template>
         </div>
     </div>

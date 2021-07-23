@@ -170,4 +170,43 @@ class VisitsController extends Controller
             ],
         ]);
     }
+
+    public function show(Visit $visit)
+    {
+        return Inertia::render('Visits/Show', [
+            'content' => $this->manager->getReportContent($visit),
+            'configs' => [
+                'topics' => ['ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย'],
+            ],
+        ]);
+    }
+
+    public function replace(Visit $visit)
+    {
+        // it actually is unlocking visit to updatable
+
+        // reset discharged_at & enlisted_swab_at (ready_to_print = false)
+        $visit->discharged_at = null;
+        $visit->enlisted_swab_at = null;
+        // reset attached_opd_card_at
+        $visit->attached_opd_card_at = null;
+        // if unlock by md set status to exam and update enlisted_exam_at if needed
+        // if unlock by nurse set status to screen
+        $user = Auth::user();
+        if ($user->isRole('md')) {
+            $visit->status = 'exam';
+        // $visit->enlisted_exam_at = null;
+        } elseif ($user->isRole('nurse')) {
+            $visit->status = 'screen';
+        }
+        $visit->save();
+        // backup version
+        $visit->versions()->create(['form' => $visit->form, 'user_id' => $user->id]);
+        // log action
+        $visit->actions()->create(['action' => 'unlock', 'user_id' => $user->id]);
+        // dispatch event
+        VisitUpdated::dispatch($visit);
+        // redirect to edit
+        return Redirect::route('visits.edit', $visit);
+    }
 }

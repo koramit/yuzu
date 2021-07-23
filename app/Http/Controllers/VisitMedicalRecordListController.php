@@ -21,7 +21,7 @@ class VisitMedicalRecordListController extends Controller
         $user = Auth::user();
         $today = now()->today('asia/bangkok');
         $flash = $this->manager->getFlash($user);
-        $flash['page-title'] = 'เวชระเบียน';
+        $flash['page-title'] = 'เวชระเบียน @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
@@ -37,10 +37,12 @@ class VisitMedicalRecordListController extends Controller
                                'authorized' => $visit->authorized_at ? true : false,
                                'attached' => $visit->attached_opd_card_at ? true : false,
                                'enlisted_screen_at_for_humans' => $visit->enlisted_screen_at_for_humans,
-                               'ready_to_print' => $visit->discharged_at || $visit->enlisted_swab_at,
+                               'ready_to_print' => $visit->ready_to_print,
                                'can' => [
                                     'authorize_visit' => $user->can('authorize_visit'),
                                     'attach_opd_card' => $user->can('attach_opd_card'),
+                                    'print_opd_card' => $user->can('print_opd_card'),
+                                    'replace' => $user->can('replace', $visit),
                                ],
                            ];
                        });

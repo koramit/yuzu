@@ -4,6 +4,7 @@ namespace App\Managers;
 
 use App\Models\User;
 use App\Models\Visit;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -24,6 +25,7 @@ class VisitManager
                 'division' => null,
                 'risk' => null,
                 'temperature_celsius' => null,
+                'o2_sat' => null,
                 'weight' => null,
                 'height' => null,
                 'date_swabbed' => null,
@@ -42,7 +44,6 @@ class VisitManager
                 'loss_of_taste' => false,
                 'myalgia' => false,
                 'diarrhea' => false,
-                'o2_sat' => null,
                 'other_symptoms' => null,
             ],
             'exposure' => [
@@ -403,5 +404,202 @@ class VisitManager
         if ($flash['messages'] ?? null) {
             Request::session()->flash('messages', $flash['messages']);
         }
+    }
+
+    public function getReportContent(Visit $visit)
+    {
+        $contentVisit = [
+            'hn' => $visit->form['patient']['hn'],
+            'ชื่อ' => $visit->form['patient']['name'],
+            'เพศ/อายุ' => trim($visit->patient->gender.' '.$visit->age_at_visit_label),
+            // 'อายุ' => $visit->age_at_visit_label,
+            'สิทธิ์การรักษา' => $visit->form['patient']['insurance'],
+            'ประเภทการตรวจ' => $visit->screen_type,
+            'ประเภทผู้ป่วย' => $visit->patient_type,
+            // 'temp (℃)' => $visit->form['patient']['temperature_celsius'],
+        ];
+        if ($visit->patient_type === 'เจ้าหน้าที่ศิริราช') {
+            $contentVisit['sap id'] = $visit->form['patient']['sap_id'];
+            $contentVisit['ปฏิบัติงาน'] = $visit->form['patient']['position'];
+            $contentVisit['ความเสี่ยง'] = $visit->form['patient']['risk'];
+        }
+        $contentVisit['หมายเลขโทรศัพท์'] = $visit->form['patient']['tel_no']; // make api
+
+        // symptoms
+        $symptoms = $visit->form['symptoms'];
+        $symptomHeaders = ['อุณหภูมิ (℃)' => $visit->form['patient']['temperature_celsius']];
+        if ($visit->form['patient']['o2_sat']) {
+            $symptomHeaders['O₂ sat (% RA)'] = $visit->form['patient']['o2_sat'];
+        }
+        if ($symptoms['date_symptom_start']) {
+            $symptomHeaders['วันแรกที่มีอาการ'] = Carbon::create($symptoms['date_symptom_start'])->format('d M Y');
+        }
+
+        if ($symptoms['asymptomatic_symptom']) {
+            $symptoms = 'ไม่มีอาการ';
+        } else {
+            $symptomsList = $this->getConfigs($visit)['symptoms'];
+            $text = '';
+            foreach ($symptomsList as $symptom) {
+                if ($symptoms[$symptom['name']]) {
+                    $text .= "{$symptom['label']} ";
+                }
+            }
+
+            $text .= $symptoms['other_symptoms'];
+            $symptoms = $text;
+        }
+
+        // exposure
+        $exposure = $visit->form['exposure'];
+        if ($exposure['evaluation'] === 'ไม่มีความเสี่ยง' || $exposure['evaluation'] === 'ความเสี่ยงเดิม') {
+            $exposure = $exposure['evaluation'];
+        } elseif ($exposure['evaluation'] === 'อื่นๆ') {
+            $exposure = $exposure['other_detail'];
+            $lines = explode("\n", $exposure);
+            if (count($lines) > 1) {
+                $exposure = collect($lines)->map(function ($line) {
+                    return "<p>{$line}</p>";
+                })->join('');
+            }
+        } else {
+            $text = $exposure['evaluation'].'<br>';
+            $text .= ('วันสุดท้ายที่สัมผัส - '.Carbon::create($exposure['date_latest_expose'])->format('d M Y').'<br>');
+            if ($exposure['contact']) {
+                $text .= ('สัมผัสผู้ติดเชื้อยืนยัน - '.$exposure['contact_name'].' '.$exposure['contact_type'].'<br>');
+            }
+            if ($exposure['hot_spot']) {
+                $text .= ('ไปพื้นที่เสี่ยง - '.$exposure['hot_spot_detail'].'<br>');
+            }
+
+            $exposure = $text;
+        }
+
+        // comordibs
+        $comorbids = $visit->form['comorbids'];
+        if ($comorbids['no_comorbids']) {
+            $comorbids = 'ไม่มี';
+        } else {
+            $text = '';
+            if ($comorbids['dm']) {
+                $text .= 'เบาหวาน ';
+            }
+
+            if ($comorbids['ht']) {
+                $text .= 'ความดันโลหิตสูง ';
+            }
+
+            if ($comorbids['dlp']) {
+                $text .= 'ไขมันในเลือดสูง ';
+            }
+
+            if ($comorbids['obesity']) {
+                $text .= 'ภาวะอ้วน ';
+                if ($visit->form['patient']['weight'] && $visit->form['patient']['height']) {
+                    $bmi = number_format(((float) $visit->form['patient']['weight']) /
+                        ((float) $visit->form['patient']['height']) /
+                        ((float) $visit->form['patient']['height']) *
+                        10000, 2);
+                    $text .= "(W {$visit->form['patient']['weight']}/H {$visit->form['patient']['height']}/BMI {$bmi})";
+                } elseif ($visit->form['patient']['weight'] || $visit->form['patient']['height']) {
+                    if ($visit->form['patient']['weight']) {
+                        $text .= "(W{$visit->form['patient']['weight']})";
+                    } else {
+                        $text .= "(H{$visit->form['patient']['height']})";
+                    }
+                }
+            }
+
+            $text .= $comorbids['other_comorbids'];
+            $comorbids = $text;
+        }
+
+        // vaccination
+        $vaccination = $visit->form['vaccination'];
+        if ($vaccination['unvaccinated']) {
+            $vaccination = 'ไม่เคยฉีด';
+        } else {
+            $text = trim('เคยฉีด '.$vaccination['brand'].' '.($vaccination['doses'] ? $vaccination['doses'].' เข็ม' : ''));
+            if ($vaccination['date_latest_vacciniated']) {
+                $text .= ' เมื่อ '.Carbon::create($vaccination['date_latest_vacciniated'])->format('d M Y');
+            }
+            $vaccination = $text;
+        }
+
+        // diagnosis
+        $diagnosis = $visit->form['diagnosis'];
+        if ($diagnosis['no_symptom']) {
+            $diagnosis = 'ไม่มีอาการ';
+        } else {
+            $text = '';
+            if ($diagnosis['suspected_covid_19']) {
+                $text .= 'Suspected COVID-19 infection<br>';
+            }
+
+            if ($diagnosis['uri']) {
+                $text .= 'Upper respiratory tract infection (URI)<br>';
+            }
+
+            if ($diagnosis['suspected_pneumonia']) {
+                $text .= 'Suspected pneumonia<br>';
+            }
+
+            $text .= $diagnosis['other_diagnosis'];
+            $diagnosis = $text;
+        }
+
+        // management
+        $management = $visit->form['management'];
+        $text = null;
+        if ($management['np_swab']) {
+            $text .= 'NP swab for PCR test of SARS-CoV-2';
+        }
+        if ($management['other_tests']) {
+            $text .= (', '.$management['other_tests']);
+        }
+        $text = $text ? trim($text) : null;
+        if ($management['home_medication']) {
+            if ($text) {
+                $text .= '<br>';
+            }
+            $lines = explode("\n", $management['home_medication']);
+            if (count($lines) > 1) {
+                $text .= collect($lines)->map(function ($line) {
+                    return "<p>{$line}</p>";
+                })->join('');
+            }
+        }
+        $management = $text;
+
+        // recommendation
+        $recommendation = $visit->form['recommendation'];
+        if ($recommendation['choice']) {
+            $choices = collect($this->getConfigs($visit)['public_recommendations']);
+            $text = $choices->firstWhere('value', $recommendation['choice'])['label'];
+            if ($recommendation['date_isolation_end']) {
+                $text .= ('<br>กักตัวถึงวันที่ - '.Carbon::create($recommendation['date_isolation_end'])->format('d M Y'));
+            }
+            if ($recommendation['date_reswab']) {
+                $text .= ('<br>นัดทำ swab - '.Carbon::create($recommendation['date_reswab'])->format('d M Y'));
+            }
+            if ($recommendation['date_reswab_next']) {
+                $text .= ('<br>นัดทำ Reswab ครั้งที่ 2 - '.Carbon::create($recommendation['date_reswab_next'])->format('d M Y'));
+            }
+            $recommendation = $text;
+        } else {
+            $recommendation = null;
+        }
+
+        return [
+            'visit' => $contentVisit,
+            'symptom_headers' => $symptomHeaders,
+            'symptoms' => $symptoms,
+            'ประวัติเสี่ยง' => $exposure,
+            'โรคประจำตัว' => $comorbids,
+            'ประวัติการฉีดวัคซีน COVID-19' => $vaccination,
+            'วินิจฉัย' => $diagnosis,
+            'การจัดการ' => $management,
+            'คำแนะนำสำหรับผู้ป่วย' => $recommendation,
+        ];
     }
 }

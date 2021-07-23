@@ -33,6 +33,7 @@ class VisitDischargeListController extends Controller
         $visit->forceFill([
             'form->md->name' => $user->profile['full_name'],
             'form->md->pln' => $user->profile['pln'],
+            'form->md->self_on_behalf' => false,
         ]);
         $visit->save();
 
