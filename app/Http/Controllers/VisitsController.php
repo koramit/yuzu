@@ -106,7 +106,7 @@ class VisitsController extends Controller
     {
         $flash['page-title'] = $visit->title;
         $flash['main-menu-links'] = [
-            ['icon' => 'arrow-circle-left', 'label' => 'ย้อนกลับ', 'route' => $visit->status_index_route],
+            ['icon' => 'arrow-circle-left', 'label' => 'ย้อนกลับ', 'route' => $visit->status_index_route, 'can' => true],
         ];
         $flash['action-menu'] = [];
         $flash['messages'] = [

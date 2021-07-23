@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Session;
 
 class InitRole
 {
+    protected $roles;
+
     /**
      * Create the event listener.
      *
@@ -14,7 +16,12 @@ class InitRole
      */
     public function __construct()
     {
-        //
+        $this->roles = [
+            'root' => [10022569],
+            'admin' => [10022743, 10010205, 10019410, 10035479, 10039018, 10034123],
+            'id_md' => [10004523, 10004410, 10005617, 10006561, 10011383, 10017612, 10011229, 10018518, 10018516, 10030820, 10034123],
+            'pm_md' => [10003963, 10022783, 10027514, 10028530, 10032666],
+        ];
     }
 
     /**
@@ -26,6 +33,20 @@ class InitRole
     public function handle(Registered $event)
     {
         $profile = Session::get('profile');
+
+        if ($profile['is_md']) {
+            $event->user->assignRole('md');
+        } elseif ($event->user->profile['position'] === 'พยาบาล') {
+            $event->user->assignRole('nurse');
+        } elseif (str_contains($event->user->profile['remark'], 'งานเวชระเบียน')) {
+            $event->user->assignRole('staff');
+        }
+
+        foreach ($this->roles as $role => $ids) {
+            if (collect($ids)->contains($profile['org_id'])) {
+                $event->user->assignRole($role);
+            }
+        }
 
         Session::forget('profile');
     }
