@@ -248,9 +248,9 @@
                         label="O₂ sat (% RA)"
                         type="tel"
                         name="o2_sat"
-                        v-model="form.symptoms.o2_sat"
+                        v-model="form.patient.o2_sat"
                         :error="form.errors.o2_sat"
-                        @autosave="autosave('symptoms.o2_sat')"
+                        @autosave="autosave('patient.o2_sat')"
                         v-if="form.symptoms.fatigue || form.symptoms.cough"
                     />
                     <FormInput
@@ -1043,7 +1043,7 @@ export default {
                     form.symptoms.loss_of_taste = false;
                     form.symptoms.myalgia = false;
                     form.symptoms.diarrhea = false;
-                    form.symptoms.o2_sat = null;
+                    form.patient.o2_sat = null;
                     form.symptoms.other_symptoms = null;
                 }
             }

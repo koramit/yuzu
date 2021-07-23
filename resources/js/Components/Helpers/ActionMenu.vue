@@ -9,9 +9,9 @@
             >
                 <icon
                     :name="action.icon"
-                    class="w-4 h-4 mr-2 group-hover:text-white transition-colors duration-300 ease-in-out"
+                    class="w-4 h-4 mr-2 group-hover:text-alt-theme-light transition-colors duration-200 ease-in-out"
                 />
-                <div class="group-hover:text-white transition-colors duration-300 ease-in-out">
+                <div class="group-hover:text-alt-theme-light transition-colors duration-200 ease-in-out">
                     {{ action.label }}
                 </div>
             </button>

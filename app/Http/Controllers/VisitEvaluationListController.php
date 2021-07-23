@@ -18,13 +18,12 @@ class VisitEvaluationListController extends Controller
 
     public function index()
     {
-        $flash = $this->manager->getFlash(Auth::user());
-        $flash['page-title'] = 'ตรวจ';
+        $user = Auth::user();
+        $flash = $this->manager->getFlash($user);
+        $flash['page-title'] = 'ประเมิน';
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
-                       ->whereDateVisit(now()->today('asia/bangkok'))
-                       ->whereStatus(2)
                        ->orderByDesc('updated_at')
                        ->paginate()
                        ->through(function ($visit) {

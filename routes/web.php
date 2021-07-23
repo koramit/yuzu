@@ -52,20 +52,6 @@ Route::get('/', HomeController::class)
      ->middleware('auth')
      ->name('home');
 
-// visit
-Route::get('visits', [VisitsController::class, 'index'])
-     ->middleware('auth', 'remember', 'can:view_any_visits')
-     ->name('visits');
-Route::post('visits', [VisitsController::class, 'store'])
-     ->middleware('auth', 'can:create_visit')
-     ->name('visits.store');
-Route::get('visits/{visit:slug}/edit', [VisitsController::class, 'edit'])
-     ->middleware('auth', 'can:update,visit')
-     ->name('visits.edit');
-Route::patch('visits/{visit:slug}', [VisitsController::class, 'update'])
-     ->middleware('auth', 'can:update,visit')
-     ->name('visits.update');
-
 // screen list
 Route::get('visits/screen-list', [VisitScreenListController::class, 'index'])
      ->middleware('auth', 'can:view_screen_list')
@@ -115,6 +101,29 @@ Route::get('visits/evaluation-list', [VisitEvaluationListController::class, 'ind
      ->middleware('auth', 'can:view_evaluation_list')
      ->name('visits.evaluation-list');
 
+// visit
+Route::get('visits', [VisitsController::class, 'index'])
+     ->middleware('auth', 'remember', 'can:view_any_visits')
+     ->name('visits');
+Route::post('visits', [VisitsController::class, 'store'])
+     ->middleware('auth', 'can:create_visit')
+     ->name('visits.store');
+Route::get('visits/{visit:slug}/edit', [VisitsController::class, 'edit'])
+     ->middleware('auth', 'can:update,visit')
+     ->name('visits.edit');
+Route::patch('visits/{visit:slug}', [VisitsController::class, 'update'])
+     ->middleware('auth', 'can:update,visit')
+     ->name('visits.update');
+Route::get('visits/{visit:slug}', [VisitsController::class, 'show'])
+     ->middleware('auth')
+     ->name('visits.show');
+Route::get('visits/{visit:slug}/replace', [VisitsController::class, 'replace'])
+     ->middleware('auth', 'can:replace,visit')
+     ->name('visits.replace');
+Route::put('visits/{visit:slug}', [VisitsController::class, 'put'])
+     ->middleware('auth', 'can:replace,visit')
+     ->name('visits.put');
+
 // resources
 Route::middleware('auth')
      ->prefix('resources/api')
@@ -130,6 +139,11 @@ Route::middleware('auth')
           //      ->name('wards');
      });
 
+// server push
+Route::get('sse', ServerSendEventsController::class)
+     ->middleware('auth')
+     ->name('sse');
+
 // test role
 Route::get('login-as/{role}', function ($role) {
     $user = \App\Models\User::whereName($role)->first();
@@ -137,8 +151,3 @@ Route::get('login-as/{role}', function ($role) {
 
     return redirect(route($user->home_page));
 });
-
-// sse
-Route::get('sse', ServerSendEventsController::class)
-     ->middleware('auth')
-     ->name('sse');

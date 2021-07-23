@@ -25,6 +25,7 @@ class RegisteredUserController extends Controller
         if ($profile = Session::get('profile', null)) {
             if (! isset($profile['is_md'])) {
                 $profile['is_md'] = str_contains($profile['name'], 'พญ.') || str_contains($profile['name'], 'นพ.');
+                Session::put('profile', $profile);
             }
 
             return Inertia::render('Auth/Register', ['profile' => $profile]);

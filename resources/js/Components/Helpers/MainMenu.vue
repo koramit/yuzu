@@ -7,14 +7,14 @@
                 v-for="(link, key) in $page.props.flash.mainMenuLinks.filter(menu => menu.can)"
                 :key="key"
             >
-                <icon
+                <Icon
                     :name="link.icon"
-                    class="w-4 h-4 mr-2 transition-colors duration-300 ease-linear"
-                    :class="isUrl(route(link.route)) ? 'text-white' : 'text-soft-theme-light group-hover:text-white'"
+                    class="w-4 h-4 mr-2 transition-colors duration-200 ease-linear"
+                    :class="isUrl(route(link.route)) ? 'text-white' : 'text-soft-theme-light group-hover:text-bitter-theme-light'"
                 />
                 <div
                     class="duration-300 ease-linear"
-                    :class="isUrl(route(link.route)) ? 'text-white' : 'text-soft-theme-light group-hover:text-white'"
+                    :class="isUrl(route(link.route)) ? 'text-white' : 'text-soft-theme-light group-hover:text-bitter-theme-light'"
                 >
                     {{ link.label }}
                 </div>

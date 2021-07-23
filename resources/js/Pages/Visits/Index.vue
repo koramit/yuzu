@@ -24,7 +24,7 @@
             <div class="w-1/4 text-sm p-1 grid justify-items-center ">
                 <!-- write -->
                 <!-- v-if="userCan('write', referCase)" -->
-                <Link
+                <!-- <Link
                     class="w-full flex text-yellow-200 justify-start"
                     :href="route('visits.edit', visit)"
                 >
@@ -33,7 +33,7 @@
                         name="edit"
                     />
                     <span class="block font-normal text-thick-theme-light">เขียนต่อ</span>
-                </Link>
+                </Link> -->
                 <!-- edit -->
                 <!-- v-if="userCan('edit', referCase)" -->
                 <!-- <Link
