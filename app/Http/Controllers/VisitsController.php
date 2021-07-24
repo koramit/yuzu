@@ -193,10 +193,10 @@ class VisitsController extends Controller
         // if unlock by md set status to exam and update enlisted_exam_at if needed
         // if unlock by nurse set status to screen
         $user = Auth::user();
-        if ($user->isRole('md')) {
+        if ($user->hasRole('md')) {
             $visit->status = 'exam';
         // $visit->enlisted_exam_at = null;
-        } elseif ($user->isRole('nurse')) {
+        } elseif ($user->hasRole('nurse')) {
             $visit->status = 'screen';
         }
         $visit->save();

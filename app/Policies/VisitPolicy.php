@@ -26,10 +26,10 @@ class VisitPolicy
             return false;
         }
 
-        if ($user->isRole('md')) {
+        if ($user->hasRole('md')) {
             return true;
         // except printed
-        } elseif ($user->isRole('nurse')) {
+        } elseif ($user->hasRole('nurse')) {
             if ($visit->status === 'screen') {
                 return true;
             } else {
@@ -41,9 +41,9 @@ class VisitPolicy
 
     public function discharge(User $user, Visit $visit)
     {
-        if ($user->isRole('md')) {
+        if ($user->hasRole('md')) {
             return true;
-        } elseif ($user->isRole('nurse')) { // nurse discharge from swab
+        } elseif ($user->hasRole('nurse')) { // nurse discharge from swab
             return $visit->submitted_at ? true : false;
         }
     }
@@ -54,9 +54,9 @@ class VisitPolicy
             return false;
         }
 
-        if ($user->isRole('md')) {
+        if ($user->hasRole('md')) {
             return true;
-        } elseif ($user->isRole('nurse')) {
+        } elseif ($user->hasRole('nurse')) {
             return $visit->form['md']['signed_on_behalf'];
         }
 
@@ -65,8 +65,6 @@ class VisitPolicy
 
     public function view(User $user, Visit $visit)
     {
-        return true;
-
-        return $visit->ready_to_print;
+        return $visit->ready_to_print || $user->hasRole('admin');
     }
 }
