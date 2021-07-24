@@ -1094,6 +1094,19 @@ export default {
             }
         );
 
+        watch (
+            () => form.exposure.evaluation,
+            () => {
+                form.exposure.date_latest_expose = null;
+                form.exposure.contact = false;
+                form.exposure.contact_type = null;
+                form.exposure.contact_name = null;
+                form.exposure.hot_spot = false;
+                form.exposure.hot_spot_detail = null;
+                form.exposure.other_detail = null;
+            }
+        );
+
         const canSaveToSwab = computed(() => {
             if (usePage().props.value.user.roles.includes('nurse')) {
                 return form.visit.screen_type && form.visit.screen_type !== 'เริ่มตรวจใหม่';
@@ -1102,8 +1115,6 @@ export default {
             }
             return false;
         });
-
-
 
         const dateIsolationEndInput = ref(null);
         const dateReswabInput = ref(null);

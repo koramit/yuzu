@@ -62,4 +62,11 @@ class VisitPolicy
 
         return true;
     }
+
+    public function view(User $user, Visit $visit)
+    {
+        return true;
+
+        return $visit->ready_to_print;
+    }
 }

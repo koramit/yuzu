@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagesController;
+use App\Http\Controllers\PrintOPDCardController;
 use App\Http\Controllers\ResourceEmployeesController;
 use App\Http\Controllers\ResourcePatientsController;
 use App\Http\Controllers\ServerSendEventsController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\VisitDischargeListController;
 use App\Http\Controllers\VisitEvaluationListController;
 use App\Http\Controllers\VisitExamListController;
 use App\Http\Controllers\VisitMedicalRecordListController;
+use App\Http\Controllers\VisitPrintoutController;
 use App\Http\Controllers\VisitsController;
 use App\Http\Controllers\VisitScreenListController;
 use App\Http\Controllers\VisitSwabListController;
@@ -115,14 +117,17 @@ Route::patch('visits/{visit:slug}', [VisitsController::class, 'update'])
      ->middleware('auth', 'can:update,visit')
      ->name('visits.update');
 Route::get('visits/{visit:slug}', [VisitsController::class, 'show'])
-     ->middleware('auth')
+     ->middleware('auth', 'can:view,visit')
      ->name('visits.show');
 Route::get('visits/{visit:slug}/replace', [VisitsController::class, 'replace'])
      ->middleware('auth', 'can:replace,visit')
      ->name('visits.replace');
-Route::put('visits/{visit:slug}', [VisitsController::class, 'put'])
-     ->middleware('auth', 'can:replace,visit')
-     ->name('visits.put');
+Route::get('print-opd-card/{visit:slug}', PrintOPDCardController::class)
+     ->middleware('auth')
+     ->name('print-opd-card');
+// Route::put('visits/{visit:slug}', [VisitsController::class, 'put'])
+//      ->middleware('auth', 'can:replace,visit')
+//      ->name('visits.put');
 
 // resources
 Route::middleware('auth')

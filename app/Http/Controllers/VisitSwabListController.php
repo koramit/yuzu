@@ -77,10 +77,11 @@ class VisitSwabListController extends Controller
                 'form->md->name' => $user->profile['full_name'],
                 'form->md->pln' => $user->profile['pln'],
                 'form->md->signed_on_behalf' => false,
+                'form->md->signed_at' => now(),
             ]);
         } else {
             $visit->forceFill([
-                'form->md' => $manager->getIdStaff($data['md_name'] + ['signed_on_behalf' => true]),
+                'form->md' => $manager->getIdStaff($data['md_name']) + ['signed_on_behalf' => true, 'signed_at' => now()],
             ]);
         }
         $visit->save();

@@ -246,4 +246,9 @@ class Visit extends Model
     {
         return $this->discharged_at || $this->enlisted_swab_at;
     }
+
+    public function getTelNoAttribute()
+    {
+        return $this->form['patient']['tel_no'].' '.$this->form['patient']['tel_no_alt'];
+    }
 }

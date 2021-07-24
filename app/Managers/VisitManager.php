@@ -412,18 +412,26 @@ class VisitManager
             'hn' => $visit->form['patient']['hn'],
             'ชื่อ' => $visit->form['patient']['name'],
             'เพศ/อายุ' => trim($visit->patient->gender.' '.$visit->age_at_visit_label),
-            // 'อายุ' => $visit->age_at_visit_label,
             'สิทธิ์การรักษา' => $visit->form['patient']['insurance'],
+            'วันที่ตรวจ' => $visit->date_visit->format('d M Y'),
             'ประเภทการตรวจ' => $visit->screen_type,
-            'ประเภทผู้ป่วย' => $visit->patient_type,
-            // 'temp (℃)' => $visit->form['patient']['temperature_celsius'],
         ];
+        if ($visit->screen_type === 'นัดมา swab ซ้ำ') {
+            if ($visit->form['patient']['date_swabbed']) {
+                $contentVisit['เคย swab ครั้งที่ 1 เมื่อวันที่'] = Carbon::create($visit->form['patient']['date_swabbed'])->format('d M Y');
+            }
+            if ($visit->form['patient']['date_reswabbed']) {
+                $contentVisit['เคย swab ครั้งที่ 2 เมื่อวันที่'] = Carbon::create($visit->form['patient']['date_reswabbed'])->format('d M Y');
+            }
+        }
+        $contentVisit['ประเภทผู้ป่วย'] = $visit->patient_type;
+
         if ($visit->patient_type === 'เจ้าหน้าที่ศิริราช') {
             $contentVisit['sap id'] = $visit->form['patient']['sap_id'];
             $contentVisit['ปฏิบัติงาน'] = $visit->form['patient']['position'];
             $contentVisit['ความเสี่ยง'] = $visit->form['patient']['risk'];
         }
-        $contentVisit['หมายเลขโทรศัพท์'] = $visit->form['patient']['tel_no']; // make api
+        $contentVisit['หมายเลขโทรศัพท์'] = $visit->tel_no;
 
         // symptoms
         $symptoms = $visit->form['symptoms'];
@@ -500,12 +508,12 @@ class VisitManager
                         ((float) $visit->form['patient']['height']) /
                         ((float) $visit->form['patient']['height']) *
                         10000, 2);
-                    $text .= "(W {$visit->form['patient']['weight']}/H {$visit->form['patient']['height']}/BMI {$bmi})";
+                    $text .= "(W {$visit->form['patient']['weight']}/H {$visit->form['patient']['height']}/BMI {$bmi}) ";
                 } elseif ($visit->form['patient']['weight'] || $visit->form['patient']['height']) {
                     if ($visit->form['patient']['weight']) {
-                        $text .= "(W{$visit->form['patient']['weight']})";
+                        $text .= "(W{$visit->form['patient']['weight']}) ";
                     } else {
-                        $text .= "(H{$visit->form['patient']['height']})";
+                        $text .= "(H{$visit->form['patient']['height']}) ";
                     }
                 }
             }
@@ -560,7 +568,7 @@ class VisitManager
         $text = $text ? trim($text) : null;
         if ($management['home_medication']) {
             if ($text) {
-                $text .= '<br>';
+                $text .= '<p class="underline">home medication</p>';
             }
             $lines = explode("\n", $management['home_medication']);
             if (count($lines) > 1) {
@@ -590,7 +598,17 @@ class VisitManager
             $recommendation = null;
         }
 
+        // note
+        $note = $visit->form['note'];
+        $lines = explode("\n", $note);
+        if (count($lines) > 1) {
+            $note = collect($lines)->map(function ($line) {
+                return "<p>{$line}</p>";
+            })->join('');
+        }
+
         return [
+            'slug' => $visit->slug,
             'visit' => $contentVisit,
             'symptom_headers' => $symptomHeaders,
             'symptoms' => $symptoms,
@@ -600,6 +618,28 @@ class VisitManager
             'วินิจฉัย' => $diagnosis,
             'การจัดการ' => $management,
             'คำแนะนำสำหรับผู้ป่วย' => $recommendation,
+            'note' => $note,
         ];
+    }
+
+    public function getPrintConent(Visit $visit)
+    {
+        $content = $this->getReportContent($visit);
+
+        // unset($content['visit']['ประเภทผู้ป่วย']);
+        unset($content['visit']['sap id']);
+        // unset($content['visit']['ปฏิบัติงาน']);
+        // unset($content['visit']['ความเสี่ยง']);
+        // unset($content['visit']['หมายเลขโทรศัพท์']);
+
+        $content['อาการแสดง'] = '';
+        foreach ($content['symptom_headers'] as $key => $value) {
+            $content['อาการแสดง'] .= " {$key} {$value},";
+        }
+        $content['อาการแสดง'] = trim(trim($content['อาการแสดง'], ',').'<br>'.$content['symptoms']);
+        $content['md'] = $visit->form['md'];
+        $content['md']['signed_at'] = Carbon::create($visit->form['md']['signed_at'])->tz('asia/bangkok')->format('d M Y H:i');
+
+        return $content;
     }
 }

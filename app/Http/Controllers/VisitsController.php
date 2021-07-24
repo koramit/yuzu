@@ -176,7 +176,7 @@ class VisitsController extends Controller
         return Inertia::render('Visits/Show', [
             'content' => $this->manager->getReportContent($visit),
             'configs' => [
-                'topics' => ['ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย'],
+                'topics' => ['ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย', 'note'],
             ],
         ]);
     }
