@@ -216,6 +216,15 @@
                 :error="form.errors.temperature_celsius"
                 @autosave="autosave('patient.temperature_celsius')"
             />
+            <FormInput
+                class="mt-2"
+                label="O₂ sat (% RA)"
+                type="tel"
+                name="o2_sat"
+                v-model="form.patient.o2_sat"
+                :error="form.errors.o2_sat"
+                @autosave="autosave('patient.o2_sat')"
+            />
             <div :class="{'mt-2 rounded border-2 border-red-400 p-2': form.errors.symptoms}">
                 <FormCheckbox
                     class="mt-4"
@@ -243,16 +252,6 @@
                             @autosave="autosave('symptoms.' + symptom.name)"
                         />
                     </div>
-                    <FormInput
-                        class="mt-2"
-                        label="O₂ sat (% RA)"
-                        type="tel"
-                        name="o2_sat"
-                        v-model="form.patient.o2_sat"
-                        :error="form.errors.o2_sat"
-                        @autosave="autosave('patient.o2_sat')"
-                        v-if="form.symptoms.fatigue || form.symptoms.cough"
-                    />
                     <FormInput
                         class="mt-2"
                         placeholder="อาการอื่นๆ คือ"
@@ -827,6 +826,7 @@ export default {
                 form.patient.position = null;
                 form.patient.division = null;
                 form.patient.division = null;
+                form.patient.risk = null;
                 autosave('patient');
             }
         );
@@ -1043,7 +1043,6 @@ export default {
                     form.symptoms.loss_of_taste = false;
                     form.symptoms.myalgia = false;
                     form.symptoms.diarrhea = false;
-                    form.patient.o2_sat = null;
                     form.symptoms.other_symptoms = null;
                 }
             }

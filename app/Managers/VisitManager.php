@@ -187,7 +187,6 @@ class VisitManager
         $visit->screen_type = $data['visit']['screen_type'];
         $visit->patient_type = $data['visit']['patient_type'];
         unset($data['visit']);
-
         // check if input hn at edit form
         if (! $visit->patient_id && $data['patient']['hn']) {
             $patient = (new PatientManager)->manage($data['patient']['hn']);
@@ -198,9 +197,7 @@ class VisitManager
                 $data['patient']['name'] = $visit->form['patient']['name'];
             }
         }
-
         $visit->form = $data;
-        // $visit->updater_id = $user->id;
         $visit->save();
 
         $visit->actions()->create(['action' => 'update', 'user_id' => $user->id]);
@@ -300,7 +297,6 @@ class VisitManager
                 $errors['hot_spot_detail'] = 'โปรดะบุพื้นที่เสี่ยง';
             }
         }
-
         if (str_contains($exposure['evaluation'] ?? 'null', 'อื่นๆ')) {
             if (! $exposure['other_detail']) {
                 $errors['exposure_other_detail'] = 'จำเป็นต้องระบุความเสี่ยงอื่นๆ';
@@ -313,13 +309,34 @@ class VisitManager
     public function validateSwabByNurse(array $data)
     {
         $errors = $this->validateScreening($data);
-
         if (! $data['md_name']) {
             $errors['md_name'] = 'จำเป็นต้องลง อาจารย์โรคติดเชื้อเวร';
         }
-
         if (! $data['management']['np_swab']) {
             $errors['np_swab'] = 'ไม่ติ๊ก NP swab สักหน่อยหร๊าาาา';
+        }
+
+        return $errors;
+    }
+
+    public function validateSwabByMD(array $data)
+    {
+        $errors = $this->validateScreening($data);
+        if ($diagErrors = $this->validateDiagnosis($data['diagnosis'])) {
+            $errors += $diagErrors;
+        }
+        if (! $data['management']['np_swab']) {
+            $errors['np_swab'] = 'ไม่ติ๊ก NP swab สักหน่อยหร๊าาาา';
+        }
+
+        return $errors;
+    }
+
+    public function validateDischarge(array $data)
+    {
+        $errors = $this->validateScreening($data);
+        if ($diagErrors = $this->validateDiagnosis($data['diagnosis'])) {
+            $errors += $diagErrors;
         }
 
         return $errors;
@@ -332,32 +349,6 @@ class VisitManager
         } else {
             return ['diagnosis' => 'โปรดระบุการวินิจฉัย'];
         }
-    }
-
-    public function validateSwabByMD(array $data)
-    {
-        $errors = $this->validateScreening($data);
-
-        if ($diagErrors = $this->validateDiagnosis($data['diagnosis'])) {
-            $errors += $diagErrors;
-        }
-
-        if (! $data['management']['np_swab']) {
-            $errors['np_swab'] = 'ไม่ติ๊ก NP swab สักหน่อยหร๊าาาา';
-        }
-
-        return $errors;
-    }
-
-    public function validateDischarge(array $data)
-    {
-        $errors = $this->validateScreening($data);
-
-        if ($diagErrors = $this->validateDiagnosis($data['diagnosis'])) {
-            $errors += $diagErrors;
-        }
-
-        return $errors;
     }
 
     public function getIdStaff($name)
@@ -416,6 +407,7 @@ class VisitManager
             'วันที่ตรวจ' => $visit->date_visit->format('d M Y'),
             'ประเภทการตรวจ' => $visit->screen_type,
         ];
+
         if ($visit->screen_type === 'นัดมา swab ซ้ำ') {
             if ($visit->form['patient']['date_swabbed']) {
                 $contentVisit['เคย swab ครั้งที่ 1 เมื่อวันที่'] = Carbon::create($visit->form['patient']['date_swabbed'])->format('d M Y');
@@ -424,8 +416,8 @@ class VisitManager
                 $contentVisit['เคย swab ครั้งที่ 2 เมื่อวันที่'] = Carbon::create($visit->form['patient']['date_reswabbed'])->format('d M Y');
             }
         }
-        $contentVisit['ประเภทผู้ป่วย'] = $visit->patient_type;
 
+        $contentVisit['ประเภทผู้ป่วย'] = $visit->patient_type;
         if ($visit->patient_type === 'เจ้าหน้าที่ศิริราช') {
             $contentVisit['sap id'] = $visit->form['patient']['sap_id'];
             $contentVisit['ปฏิบัติงาน'] = $visit->form['patient']['position'];
@@ -442,7 +434,6 @@ class VisitManager
         if ($symptoms['date_symptom_start']) {
             $symptomHeaders['วันแรกที่มีอาการ'] = Carbon::create($symptoms['date_symptom_start'])->format('d M Y');
         }
-
         if ($symptoms['asymptomatic_symptom']) {
             $symptoms = 'ไม่มีอาการ';
         } else {
@@ -453,7 +444,6 @@ class VisitManager
                     $text .= "{$symptom['label']} ";
                 }
             }
-
             $text .= $symptoms['other_symptoms'];
             $symptoms = $text;
         }
@@ -479,7 +469,6 @@ class VisitManager
             if ($exposure['hot_spot']) {
                 $text .= ('ไปพื้นที่เสี่ยง - '.$exposure['hot_spot_detail'].'<br>');
             }
-
             $exposure = $text;
         }
 
@@ -492,15 +481,12 @@ class VisitManager
             if ($comorbids['dm']) {
                 $text .= 'เบาหวาน ';
             }
-
             if ($comorbids['ht']) {
                 $text .= 'ความดันโลหิตสูง ';
             }
-
             if ($comorbids['dlp']) {
                 $text .= 'ไขมันในเลือดสูง ';
             }
-
             if ($comorbids['obesity']) {
                 $text .= 'ภาวะอ้วน ';
                 if ($visit->form['patient']['weight'] && $visit->form['patient']['height']) {
@@ -517,7 +503,6 @@ class VisitManager
                     }
                 }
             }
-
             $text .= $comorbids['other_comorbids'];
             $comorbids = $text;
         }
@@ -543,15 +528,12 @@ class VisitManager
             if ($diagnosis['suspected_covid_19']) {
                 $text .= 'Suspected COVID-19 infection<br>';
             }
-
             if ($diagnosis['uri']) {
                 $text .= 'Upper respiratory tract infection (URI)<br>';
             }
-
             if ($diagnosis['suspected_pneumonia']) {
                 $text .= 'Suspected pneumonia<br>';
             }
-
             $text .= $diagnosis['other_diagnosis'];
             $diagnosis = $text;
         }
@@ -591,7 +573,7 @@ class VisitManager
                 $text .= ('<br>นัดทำ swab - '.Carbon::create($recommendation['date_reswab'])->format('d M Y'));
             }
             if ($recommendation['date_reswab_next']) {
-                $text .= ('<br>นัดทำ Reswab ครั้งที่ 2 - '.Carbon::create($recommendation['date_reswab_next'])->format('d M Y'));
+                $text .= ('<br>นัดทำ reswab ครั้งที่ 2 - '.Carbon::create($recommendation['date_reswab_next'])->format('d M Y'));
             }
             $recommendation = $text;
         } else {
@@ -625,18 +607,15 @@ class VisitManager
     public function getPrintConent(Visit $visit)
     {
         $content = $this->getReportContent($visit);
-
-        // unset($content['visit']['ประเภทผู้ป่วย']);
         unset($content['visit']['sap id']);
-        // unset($content['visit']['ปฏิบัติงาน']);
-        // unset($content['visit']['ความเสี่ยง']);
-        // unset($content['visit']['หมายเลขโทรศัพท์']);
-
         $content['อาการแสดง'] = '';
         foreach ($content['symptom_headers'] as $key => $value) {
-            $content['อาการแสดง'] .= " {$key} {$value},";
+            if ($key !== 'วันแรกที่มีอาการ') {
+                $content['อาการแสดง'] .= " {$key} {$value},";
+            }
         }
-        $content['อาการแสดง'] = trim(trim($content['อาการแสดง'], ',').'<br>'.$content['symptoms']);
+        $content['อาการแสดง'] = trim($content['อาการแสดง'], ',').'<br>วันแรกที่มีอาการ '.$content['symptom_headers']['วันแรกที่มีอาการ'];
+        $content['อาการแสดง'] = trim($content['อาการแสดง'].'<br>'.$content['symptoms']);
         $content['md'] = $visit->form['md'];
         $content['md']['signed_at'] = Carbon::create($visit->form['md']['signed_at'])->tz('asia/bangkok')->format('d M Y H:i');
 

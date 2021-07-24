@@ -65,6 +65,6 @@ class VisitPolicy
 
     public function view(User $user, Visit $visit)
     {
-        return $visit->ready_to_print || $user->hasRole('admin');
+        return $visit->ready_to_print || $user->can('view_evaluation_list');
     }
 }

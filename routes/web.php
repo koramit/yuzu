@@ -14,15 +14,10 @@ use App\Http\Controllers\VisitDischargeListController;
 use App\Http\Controllers\VisitEvaluationListController;
 use App\Http\Controllers\VisitExamListController;
 use App\Http\Controllers\VisitMedicalRecordListController;
-use App\Http\Controllers\VisitPrintoutController;
 use App\Http\Controllers\VisitsController;
 use App\Http\Controllers\VisitScreenListController;
 use App\Http\Controllers\VisitSwabListController;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/colors', function () {
-    return Inertia\Inertia::render('Welcome');
-});
 
 // Auth
 Route::get('login', [AuthenticatedSessionController::class, 'create'])
@@ -84,19 +79,12 @@ Route::patch('visits/discharge-list/{visit:slug}', [VisitDischargeListController
 Route::get('visits/mr-list', [VisitMedicalRecordListController::class, 'index'])
      ->middleware('auth', 'can:view_mr_list')
      ->name('visits.mr-list');
-
 Route::post('visits/authorize/{visit:slug}', [VisitAuthorizationController::class, 'store'])
      ->middleware('auth', 'can:authorize_visit')
      ->name('visits.authorize.store');
-// Route::delete('visits/authorize/{visit:slug}', [VisitAuthorizationController::class, 'destroy'])
-//      ->middleware('auth', 'can:authorize_visit')
-//      ->name('visits.authorize.store');
 Route::post('visits/attach-opd-card/{visit:slug}', [VisitAttachOPDCardController::class, 'store'])
      ->middleware('auth', 'can:attach_opd_card')
      ->name('visits.attach-opd-card.store');
-// Route::delete('visits/attach-opd-card/{visit:slug}', [VisitAttachOPDCardController::class, 'destroy'])
-//      ->middleware('auth', 'can:attach_opd_card')
-//      ->name('visits.attach-opd-card.store');
 
 //evaluation
 Route::get('visits/evaluation-list', [VisitEvaluationListController::class, 'index'])
@@ -125,9 +113,6 @@ Route::get('visits/{visit:slug}/replace', [VisitsController::class, 'replace'])
 Route::get('print-opd-card/{visit:slug}', PrintOPDCardController::class)
      ->middleware('auth')
      ->name('print-opd-card');
-// Route::put('visits/{visit:slug}', [VisitsController::class, 'put'])
-//      ->middleware('auth', 'can:replace,visit')
-//      ->name('visits.put');
 
 // resources
 Route::middleware('auth')
@@ -138,10 +123,6 @@ Route::middleware('auth')
               ->name('patients.show');
          Route::get('employees/{id}', ResourceEmployeesController::class)
               ->name('employees.show');
-         // Route::get('admissions/{an}', AdmissionsController::class)
-          //      ->name('admissions.show');
-          // Route::get('wards', WardsController::class)
-          //      ->name('wards');
      });
 
 // server push

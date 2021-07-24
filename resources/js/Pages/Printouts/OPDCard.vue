@@ -3,7 +3,7 @@
         <template #default>
             <div class="px-12 py-6 print-p-0">
                 <h2 class="font-semibold pb-2 border-b-2 border-dashed text-xl text-center">
-                    แบบเวชระเบียนผู้ป่วยนอก
+                    แบบเวชระเบียนผู้ป่วยนอก (ARI Clinic)
                 </h2>
                 <h3 class="font-normal underline mt-4">
                     ข้อมูลผู้ป่วย

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Managers\VisitManager;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
 class VisitMedicalRecordListController extends Controller
@@ -46,6 +47,7 @@ class VisitMedicalRecordListController extends Controller
                                ],
                            ];
                        });
+        Session::put('back-from-show', 'visits.mr-list');
 
         return Inertia::render('Visits/List', [
             'visits' => $visits,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Managers\VisitManager;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
 class VisitEvaluationListController extends Controller
@@ -36,7 +37,7 @@ class VisitEvaluationListController extends Controller
                                'updated_at_for_humans' => $visit->updated_at_for_humans,
                            ];
                        });
-
+        Session::put('back-from-show', 'visits.evaluation-list');
         return Inertia::render('Visits/Index', ['visits' => $visits]);
     }
 }

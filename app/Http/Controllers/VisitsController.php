@@ -9,6 +9,7 @@ use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -40,6 +41,7 @@ class VisitsController extends Controller
                                'updated_at_for_humans' => $visit->updated_at_for_humans,
                            ];
                        });
+        Session::put('back-from-show', 'visits');
 
         return Inertia::render('Visits/Index', ['visits' => $visits]);
     }
@@ -48,9 +50,7 @@ class VisitsController extends Controller
     {
         $data = Request::all();
         $user = Auth::user();
-
         $todayStr = now($user->timezone)->format('Y-m-d');
-
         $form = $this->manager->initForm();
 
         if ($data['hn']) {
@@ -78,7 +78,6 @@ class VisitsController extends Controller
                 return Redirect::route('visits.edit', $visit);
             }
             $visit = new Visit();
-
             $form['patient']['name'] = $data['patient_name'];
         }
 
@@ -86,12 +85,9 @@ class VisitsController extends Controller
         $visit->date_visit = $todayStr;
         $visit->form = $form;
         $visit->creator_id = $user->id;
-        // $visit->updater_id = $visit->creator_id;
-        // ** auto enlisted_screen_at for now
         $visit->status = 'screen';
         $visit->enlisted_screen_at = now();
         $visit->save();
-
         $visit->actions()->createMany([
             ['action' => 'create', 'user_id' => $user->id],
             ['action' => 'enlist_screen', 'user_id' => $user->id],
@@ -173,6 +169,13 @@ class VisitsController extends Controller
 
     public function show(Visit $visit)
     {
+        $flash['page-title'] = $visit->title;
+        $flash['main-menu-links'] = [
+            ['icon' => 'arrow-circle-left', 'label' => 'ย้อนกลับ', 'route' => Session::get('back-from-show', 'visits.mr-list'), 'can' => true],
+        ];
+        $flash['action-menu'] = [];
+        $this->manager->setFlash($flash);
+
         return Inertia::render('Visits/Show', [
             'content' => $this->manager->getReportContent($visit),
             'configs' => [
