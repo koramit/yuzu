@@ -9,6 +9,7 @@ use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -23,23 +24,29 @@ class VisitsController extends Controller
 
     public function index()
     {
-        $flash = $this->manager->getFlash(Auth::user());
+        $user = Auth::user();
+        $flash = $this->manager->getFlash($user);
         $flash['page-title'] = 'รายการเคส';
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
+                       ->orderByDesc('date_visit')
                        ->orderByDesc('updated_at')
                        ->paginate()
-                       ->through(function ($visit) {
+                       ->through(function ($visit) use ($user) {
                            return [
                                'slug' => $visit->slug,
-                               'hn' => $visit->patient->hn ?? null,
+                               'hn' => $visit->hn,
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
                                'date_visit' => $visit->date_visit->format('d M Y'),
                                'updated_at_for_humans' => $visit->updated_at_for_humans,
+                               'can' => [
+                                   'view' => $user->can('view', $visit),
+                               ],
                            ];
                        });
+        Session::put('back-from-show', 'visits');
 
         return Inertia::render('Visits/Index', ['visits' => $visits]);
     }
@@ -48,9 +55,7 @@ class VisitsController extends Controller
     {
         $data = Request::all();
         $user = Auth::user();
-
         $todayStr = now($user->timezone)->format('Y-m-d');
-
         $form = $this->manager->initForm();
 
         if ($data['hn']) {
@@ -78,7 +83,6 @@ class VisitsController extends Controller
                 return Redirect::route('visits.edit', $visit);
             }
             $visit = new Visit();
-
             $form['patient']['name'] = $data['patient_name'];
         }
 
@@ -86,12 +90,9 @@ class VisitsController extends Controller
         $visit->date_visit = $todayStr;
         $visit->form = $form;
         $visit->creator_id = $user->id;
-        // $visit->updater_id = $visit->creator_id;
-        // ** auto enlisted_screen_at for now
         $visit->status = 'screen';
         $visit->enlisted_screen_at = now();
         $visit->save();
-
         $visit->actions()->createMany([
             ['action' => 'create', 'user_id' => $user->id],
             ['action' => 'enlist_screen', 'user_id' => $user->id],
@@ -173,10 +174,20 @@ class VisitsController extends Controller
 
     public function show(Visit $visit)
     {
+        $flash['page-title'] = $visit->title;
+        $flash['main-menu-links'] = [
+            ['icon' => 'arrow-circle-left', 'label' => 'ย้อนกลับ', 'route' => Session::get('back-from-show', 'visits.mr-list'), 'can' => true],
+        ];
+        $flash['action-menu'] = [];
+        $this->manager->setFlash($flash);
+
         return Inertia::render('Visits/Show', [
             'content' => $this->manager->getReportContent($visit),
             'configs' => [
-                'topics' => ['ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย'],
+                'topics' => ['ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย', 'note'],
+            ],
+            'can' => [
+                'evaluate' => Auth::user()->can('evaluate'),
             ],
         ]);
     }
@@ -193,10 +204,10 @@ class VisitsController extends Controller
         // if unlock by md set status to exam and update enlisted_exam_at if needed
         // if unlock by nurse set status to screen
         $user = Auth::user();
-        if ($user->isRole('md')) {
+        if ($user->hasRole('md')) {
             $visit->status = 'exam';
         // $visit->enlisted_exam_at = null;
-        } elseif ($user->isRole('nurse')) {
+        } elseif ($user->hasRole('nurse')) {
             $visit->status = 'screen';
         }
         $visit->save();
@@ -208,5 +219,21 @@ class VisitsController extends Controller
         VisitUpdated::dispatch($visit);
         // redirect to edit
         return Redirect::route('visits.edit', $visit);
+    }
+
+    public function destroy(Visit $visit)
+    {
+        $visit->forceFill([
+            'status' => 'canceled',
+            'form->cancel_reason' => Request::input('reason'),
+        ]);
+        $visit->save();
+        $visit->actions()->create([
+            'action' => 'cancel',
+            'user_id' => Auth::id(),
+        ]);
+        VisitUpdated::dispatch($visit);
+
+        return Redirect::back();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\VisitUpdated;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,6 +17,7 @@ class VisitAttachOPDCardController extends Controller
             'visit_id' => $visit->id,
             'user_id' => Auth::id(),
         ]);
+        VisitUpdated::dispatch($visit);
 
         return redirect()->back();
     }

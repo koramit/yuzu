@@ -216,6 +216,15 @@
                 :error="form.errors.temperature_celsius"
                 @autosave="autosave('patient.temperature_celsius')"
             />
+            <FormInput
+                class="mt-2"
+                label="O₂ sat (% RA)"
+                type="tel"
+                name="o2_sat"
+                v-model="form.patient.o2_sat"
+                :error="form.errors.o2_sat"
+                @autosave="autosave('patient.o2_sat')"
+            />
             <div :class="{'mt-2 rounded border-2 border-red-400 p-2': form.errors.symptoms}">
                 <FormCheckbox
                     class="mt-4"
@@ -243,16 +252,6 @@
                             @autosave="autosave('symptoms.' + symptom.name)"
                         />
                     </div>
-                    <FormInput
-                        class="mt-2"
-                        label="O₂ sat (% RA)"
-                        type="tel"
-                        name="o2_sat"
-                        v-model="form.patient.o2_sat"
-                        :error="form.errors.o2_sat"
-                        @autosave="autosave('patient.o2_sat')"
-                        v-if="form.symptoms.fatigue || form.symptoms.cough"
-                    />
                     <FormInput
                         class="mt-2"
                         placeholder="อาการอื่นๆ คือ"
@@ -764,7 +763,7 @@ export default {
             form.patch(window.route('visits.swab-list.store', props.visit.slug));
         };
         const saveToDischarge = () => {
-            form.patch(window.route('visits.discharge-list.store', props.visit.slug));
+            form.post(window.route('visits.discharge-list.store', props.visit.slug));
         };
         const emitter = inject('emitter');
         emitter.on('action-clicked', (action) => {
@@ -827,6 +826,7 @@ export default {
                 form.patient.position = null;
                 form.patient.division = null;
                 form.patient.division = null;
+                form.patient.risk = null;
                 autosave('patient');
             }
         );
@@ -1043,7 +1043,6 @@ export default {
                     form.symptoms.loss_of_taste = false;
                     form.symptoms.myalgia = false;
                     form.symptoms.diarrhea = false;
-                    form.patient.o2_sat = null;
                     form.symptoms.other_symptoms = null;
                 }
             }
@@ -1094,6 +1093,19 @@ export default {
             }
         );
 
+        watch (
+            () => form.exposure.evaluation,
+            () => {
+                form.exposure.date_latest_expose = null;
+                form.exposure.contact = false;
+                form.exposure.contact_type = null;
+                form.exposure.contact_name = null;
+                form.exposure.hot_spot = false;
+                form.exposure.hot_spot_detail = null;
+                form.exposure.other_detail = null;
+            }
+        );
+
         const canSaveToSwab = computed(() => {
             if (usePage().props.value.user.roles.includes('nurse')) {
                 return form.visit.screen_type && form.visit.screen_type !== 'เริ่มตรวจใหม่';
@@ -1102,8 +1114,6 @@ export default {
             }
             return false;
         });
-
-
 
         const dateIsolationEndInput = ref(null);
         const dateReswabInput = ref(null);

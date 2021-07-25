@@ -1,5 +1,26 @@
 <template>
     <div>
+        <div class="grid grid-cols-3 gap-x-2 mb-4 text-center">
+            <a
+                :href="route('export.visits')"
+                class="btn btn-bitter"
+            >
+                Export Visits
+            </a>
+            <SpinnerButton
+                @click="importColab.click()"
+                class="btn btn-dark"
+                :spin="colabUploader.processing"
+            >
+                Import Colab
+            </SpinnerButton>
+            <button
+                class="btn btn-bitter"
+                disabled
+            >
+                Import Visits
+            </button>
+        </div>
         <!-- card -->
         <div
             class="rounded bg-white shadow-sm my-1 p-1 flex"
@@ -9,7 +30,7 @@
             <!-- left detail -->
             <div class="w-3/4">
                 <p class="p-1 pb-0 text-thick-theme-light">
-                    {{ visit.patient_type }} filterable
+                    {{ visit.patient_type }}
                 </p>
                 <div class="flex items-baseline">
                     <p class="p-1 text-lg pt-0">
@@ -17,12 +38,23 @@
                     </p>
                 </div>
                 <p class="px-1 text-xs text-dark-theme-light italic">
-                    ปรับปรุงล่าสุด {{ visit.updated_at_for_humans }} sortable
+                    ปรับปรุงล่าสุด {{ visit.updated_at_for_humans }}
                 </p>
             </div>
             <!-- right menu -->
             <div class="w-1/4 text-sm p-1 grid justify-items-center ">
-                <!-- write -->
+                <Link
+                    class="w-full flex text-alt-theme-light justify-start"
+                    :href="route('visits.show', visit)"
+                    v-if="visit.can.view"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="readme"
+                    />
+                    <span class="block font-normal text-thick-theme-light">อ่าน</span>
+                </Link>
+                <!-- evaluate -->
                 <!-- v-if="userCan('write', referCase)" -->
                 <!-- <Link
                     class="w-full flex text-yellow-200 justify-start"
@@ -73,6 +105,14 @@
             </div>
         </div>
 
+        <input
+            class="hidden"
+            type="file"
+            ref="importColab"
+            @input="colabSelected"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+        >
+
         <Visit ref="createVisitForm" />
     </div>
 </template>
@@ -81,18 +121,32 @@
 import Layout from '@/Components/Layouts/Layout';
 import Icon from '@/Components/Helpers/Icon';
 import Visit from '@/Components/Forms/Visit';
-import { inject, nextTick, ref } from '@vue/runtime-core';
-import { Link } from '@inertiajs/inertia-vue3';
+import SpinnerButton from '@/Components/Controls/SpinnerButton';
+import { inject, nextTick, reactive, ref } from '@vue/runtime-core';
+import { Link, useForm } from '@inertiajs/inertia-vue3';
 
 export default {
     layout: Layout,
-    components: { Visit, Icon, Link },
+    components: { Visit, Icon, Link, SpinnerButton },
     props: {
         visits: { type: Object, required: true },
     },
     setup () {
         const createVisitForm = ref(null);
         const emitter = inject('emitter');
+
+        const currentConfirm = reactive({
+            action: null,
+            resource_id: null,
+        });
+        const cancel = (visit) => {
+            currentConfirm.action = 'cancel',
+            currentConfirm.resource_id = visit.slug,
+            emitter.emit('need-confirm', {
+                cofirmText: 'ยกเลิกการตรวจ ' + visit.title,
+                needReason: true,
+            });
+        };
 
         emitter.on('action-clicked', (action) => {
             // please expect console log error in case of revisit this page
@@ -103,8 +157,21 @@ export default {
             }
         });
 
+        const importColab = ref(null);
+        const colabUploader = useForm({file: null});
+        const colabSelected = (event) => {
+            console.log(event.target.files[0]);
+            colabUploader.file = event.target.files[0];
+            console.log(colabUploader.file);
+            colabUploader.post(window.route('import.colab'));
+        };
+
         return {
             createVisitForm,
+            cancel,
+            importColab,
+            colabSelected,
+            colabUploader,
         };
     },
 };

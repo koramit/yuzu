@@ -32,6 +32,7 @@ class Visit extends Model
         'hn',
         'patient_name',
         'updated_at_for_humans',
+        'title',
     ];
 
     public function patient()
@@ -244,6 +245,11 @@ class Visit extends Model
 
     public function getReadyToPrintAttribute()
     {
-        return $this->discharged_at || $this->enlisted_swab_at;
+        return $this->status !== 'canceled' && ($this->discharged_at || $this->enlisted_swab_at);
+    }
+
+    public function getTelNoAttribute()
+    {
+        return $this->form['patient']['tel_no'].' '.$this->form['patient']['tel_no_alt'];
     }
 }

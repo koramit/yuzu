@@ -20,6 +20,7 @@
         "eslint": "^7.30.0",
         "eslint-plugin-vue": "^7.13.0",
         "flatpickr": "^4.6.9",
+        "jsbarcode": "^3.11.4",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "mitt": "^3.0.0",

@@ -32,12 +32,14 @@ class VisitScreenListController extends Controller
                        ->transform(function ($visit) use ($user) {
                            return [
                                'slug' => $visit->slug,
-                               'hn' => $visit->patient->hn ?? null,
+                               'title' => $visit->title,
+                               'hn' => $visit->hn,
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
                                'enlisted_screen_at_for_humans' => $visit->enlisted_screen_at_for_humans,
                                'can' => [
                                     'update' => $user->can('update', $visit),
+                                    'cancel' => $user->can('cancel', $visit),
                                 ],
                            ];
                        });
