@@ -28,8 +28,6 @@ class VisitDischargeListController extends Controller
         $route = $visit->status_index_route;
         $visit->status = 'discharged';
         $visit->discharged_at = now();
-        // $visit->submitter_id = $user->id;
-        // $visit->submitted_at = $visit->discharged_at;
         $visit->forceFill([
             'form->md->name' => $user->profile['full_name'],
             'form->md->pln' => $user->profile['pln'],
@@ -48,5 +46,16 @@ class VisitDischargeListController extends Controller
                 'จำหน่าย '.$visit->title.' สำเร็จ',
             ],
         ]);
+    }
+
+    public function update(Visit $visit)
+    {
+        $visit->status = 'discharged';
+        $visit->discharged_at = now();
+        $visit->save();
+        $visit->actions()->create(['action' => 'discharge', 'user_id' => Auth::id()]);
+        VisitUpdated::dispatch($visit);
+
+        return Redirect::back();
     }
 }

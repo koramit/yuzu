@@ -88,6 +88,13 @@ class VisitManager
                 'date_reswab' => null,
                 'date_reswab_next' => null,
             ],
+            'evaluation' => [
+                'consultation' => null,
+                'outcome' => null,
+                'outcome' => null,
+                'recommendation' => null,
+                'note' => null,
+            ],
             'md_name' => null,
             'note' => null,
         ];
@@ -378,7 +385,7 @@ class VisitManager
                 ['icon' => 'stethoscope', 'label' => 'ห้องตรวจ', 'route' => 'visits.exam-list', 'can' => $user->can('view_exam_list')],
                 ['icon' => 'virus', 'label' => 'ห้อง Swab', 'route' => 'visits.swab-list', 'can' => $user->can('view_swab_list')],
                 ['icon' => 'address-book', 'label' => 'เวชระเบียน', 'route' => 'visits.mr-list', 'can' => $user->can('view_mr_list')],
-                ['icon' => 'calculator', 'label' => 'ประเมิน', 'route' => 'visits.evaluation-list', 'can' => $user->can('view_evaluation_list')],
+                // ['icon' => 'calculator', 'label' => 'ประเมิน', 'route' => 'visits.evaluation-list', 'can' => $user->can('view_evaluation_list')],
                 ['icon' => 'archive', 'label' => 'รายการเคส', 'route' => 'visits', 'can' => $user->can('view_any_visits')],
             ],
             'action-menu' => [
@@ -601,6 +608,7 @@ class VisitManager
             'การจัดการ' => $management,
             'คำแนะนำสำหรับผู้ป่วย' => $recommendation,
             'note' => $note,
+            'evaluation' => $visit->form['evaluation'] ?? [],
         ];
     }
 
@@ -614,10 +622,14 @@ class VisitManager
                 $content['อาการแสดง'] .= " {$key} {$value},";
             }
         }
-        $content['อาการแสดง'] = trim($content['อาการแสดง'], ',').'<br>วันแรกที่มีอาการ '.$content['symptom_headers']['วันแรกที่มีอาการ'];
+        $content['อาการแสดง'] = trim($content['อาการแสดง'], ',');
+        if ($content['symptom_headers']['วันแรกที่มีอาการ'] ?? false) {
+            $content['อาการแสดง'] .= '<br>วันแรกที่มีอาการ '.$content['symptom_headers']['วันแรกที่มีอาการ'];
+        }
         $content['อาการแสดง'] = trim($content['อาการแสดง'].'<br>'.$content['symptoms']);
         $content['md'] = $visit->form['md'];
         $content['md']['signed_at'] = Carbon::create($visit->form['md']['signed_at'])->tz('asia/bangkok')->format('d M Y H:i');
+        $content['t_barcode'] = 'T'.$content['visit']['hn'].'$'.($visit->date_visit->year + 543).$visit->date_visit->format('md').'$1402$';
 
         return $content;
     }

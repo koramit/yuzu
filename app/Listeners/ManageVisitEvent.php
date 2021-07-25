@@ -25,7 +25,7 @@ class ManageVisitEvent
      */
     public function handle(VisitUpdated $event)
     {
-        if (collect(['screen', 'discharged', 'swab'])->contains($event->visit->status)) {
+        if (collect(['screen', 'discharged', 'swab', 'canceled'])->contains($event->visit->status)) {
             Cache::put('mr-list-new', time());
         } else {
             Cache::put('exam-list-new', time());

@@ -1,21 +1,41 @@
 <template>
     <div>
+        <div class="mb-2 relative">
+            <input
+                autocomplete="off"
+                type="text"
+                name="search"
+                placeholder="🔍 ด้วย HN หรือ ชื่อ"
+                v-model="search"
+                class="form-input"
+            >
+            <button
+                class="absolute inset-y-0 right-0 flex items-center px-2 text-thick-theme-light cursor-pointer"
+                @click="reload"
+            >
+                <Icon
+                    class="w-4 h-4"
+                    name="sync-alt"
+                />
+            </button>
+        </div>
         <!-- card -->
         <CardScreen
             v-if="card === 'screen'"
-            :visits="visits"
+            :visits="filteredVisits"
+            @cancel="cancel"
         />
         <CardExam
             v-else-if="card === 'exam'"
-            :visits="visits"
+            :visits="filteredVisits"
         />
         <CardSwab
             v-else-if="card === 'swab'"
-            :visits="visits"
+            :visits="filteredVisits"
         />
         <CardMedicalRecord
             v-else-if="card === 'mr'"
-            :visits="visits"
+            :visits="filteredVisits"
         />
 
         <Visit ref="createVisitForm" />
@@ -30,7 +50,7 @@ import CardExam from '@/Components/Cards/Exam';
 import CardSwab from '@/Components/Cards/Swab';
 import CardMedicalRecord from '@/Components/Cards/MedicalRecord';
 import Visit from '@/Components/Forms/Visit';
-import { inject, nextTick, onUnmounted, ref } from '@vue/runtime-core';
+import { computed, inject, nextTick, onUnmounted, reactive, ref } from '@vue/runtime-core';
 import { Link } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
 
@@ -45,6 +65,28 @@ export default {
     setup (props) {
         const createVisitForm = ref(null);
         const emitter = inject('emitter');
+
+        const currentConfirm = reactive({
+            action: null,
+            resource_id: null,
+        });
+        const cancel = (visit) => {
+            currentConfirm.action = 'cancel',
+            currentConfirm.resource_id = visit.slug,
+            emitter.emit('need-confirm', {
+                confirmText: 'ยกเลิกการตรวจ ' + visit.title,
+                needReason: true,
+            });
+        };
+        emitter.on('confirmed', (text) => {
+            if (currentConfirm.action === 'cancel') {
+                Inertia.delete(window.route('visits.cancel', currentConfirm.resource_id), {
+                    data: {reason: text},
+                    preserveState: true,
+                    preserveScroll: true,
+                });
+            }
+        });
 
         emitter.on('action-clicked', (action) => {
             // please expect console log error in case of revisit this page
@@ -78,8 +120,25 @@ export default {
             });
         }
 
+        const search = ref('');
+        const filteredVisits = computed(() => {
+            if (! search.value) {
+                return props.visits;
+            }
+
+            return props.visits.filter(v => v.hn.indexOf(search.value) !== -1 || v.patient_name.indexOf(search.value) !== -1);
+        });
+        const reload = () => {
+            search.value = '';
+            Inertia.reload();
+        };
+
         return {
             createVisitForm,
+            cancel,
+            search,
+            filteredVisits,
+            reload
         };
     },
 };

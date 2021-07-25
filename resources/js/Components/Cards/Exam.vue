@@ -8,7 +8,7 @@
         <!-- left detail -->
         <div class="w-3/4">
             <p class="p-1 pb-0 text-thick-theme-light">
-                {{ visit.patient_type }} filterable
+                {{ visit.patient_type }}
             </p>
             <div class="flex items-baseline">
                 <p class="p-1 text-lg pt-0">
@@ -16,7 +16,7 @@
                 </p>
             </div>
             <p class="px-1 text-xs text-dark-theme-light italic">
-                ส่งตรวจเมื่อ {{ visit.enlisted_exam_at_for_humans }} sortable
+                ส่งตรวจเมื่อ {{ visit.enlisted_exam_at_for_humans }}
             </p>
         </div>
         <!-- right menu -->
@@ -33,6 +33,19 @@
                 />
                 <span class="block font-normal text-thick-theme-light">เขียน</span>
             </Link>
+            <!-- cancel -->
+            <button
+                class="w-full flex text-red-200 justify-start"
+                :href="route('visits.edit', visit)"
+                @click="$emit('cancel', visit)"
+                v-if="visit.can.cancel"
+            >
+                <Icon
+                    class="w-4 h-4 mr-1"
+                    name="trash-alt"
+                />
+                <span class="block font-normal text-thick-theme-light">ยกเลิก</span>
+            </button>
         </div>
     </div>
 </template>
@@ -41,6 +54,7 @@
 import Icon from '@/Components/Helpers/Icon';
 import { Link } from '@inertiajs/inertia-vue3';
 export default {
+    emits: ['cancel'],
     components: { Icon, Link },
     props: {
         visits: { type: Array, required: true }

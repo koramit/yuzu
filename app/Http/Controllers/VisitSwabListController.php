@@ -35,11 +35,13 @@ class VisitSwabListController extends Controller
                        ->transform(function ($visit) use ($user) {
                            return [
                                'slug' => $visit->slug,
-                               'hn' => $visit->patient->hn ?? null,
+                               'hn' => $visit->hn,
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
                                'enlisted_swab_at_for_humans' => $visit->enlisted_swab_at_for_humans,
-                               'can' => [],
+                               'can' => [
+                                'discharge' => $user->can('discharge', $visit),
+                               ],
                            ];
                        });
 
@@ -70,8 +72,6 @@ class VisitSwabListController extends Controller
         $route = $visit->status_index_route;
         $visit->status = 'swab';
         $visit->enlisted_swab_at = now();
-        // $visit->submitter_id = $user->id;
-        // $visit->submitted_at = $visit->enlisted_swab_at;
         if ($user->role_names->contains('md')) {
             $visit->forceFill([
                 'form->md->name' => $user->profile['full_name'],

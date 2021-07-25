@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImportColabController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PrintOPDCardController;
 use App\Http\Controllers\ResourceEmployeesController;
@@ -11,8 +12,9 @@ use App\Http\Controllers\ServerSendEventsController;
 use App\Http\Controllers\VisitAttachOPDCardController;
 use App\Http\Controllers\VisitAuthorizationController;
 use App\Http\Controllers\VisitDischargeListController;
-use App\Http\Controllers\VisitEvaluationListController;
+use App\Http\Controllers\VisitEvaluateController;
 use App\Http\Controllers\VisitExamListController;
+use App\Http\Controllers\VisitExportController;
 use App\Http\Controllers\VisitMedicalRecordListController;
 use App\Http\Controllers\VisitsController;
 use App\Http\Controllers\VisitScreenListController;
@@ -70,26 +72,36 @@ Route::patch('visits/swab-list/{visit:slug}', [VisitSwabListController::class, '
      ->middleware('auth', 'can:update,visit')
      ->name('visits.swab-list.store');
 
-//discharge
-Route::patch('visits/discharge-list/{visit:slug}', [VisitDischargeListController::class, 'store'])
+// discharge from exam
+Route::post('visits/discharge-list/{visit:slug}', [VisitDischargeListController::class, 'store'])
      ->middleware('auth', 'can:discharge,visit')
      ->name('visits.discharge-list.store');
+// discharge from swab
+Route::patch('visits/discharge-list/{visit:slug}', [VisitDischargeListController::class, 'update'])
+     ->middleware('auth', 'can:discharge,visit')
+     ->name('visits.discharge-list.update');
 
 // medical record
 Route::get('visits/mr-list', [VisitMedicalRecordListController::class, 'index'])
      ->middleware('auth', 'can:view_mr_list')
      ->name('visits.mr-list');
 Route::post('visits/authorize/{visit:slug}', [VisitAuthorizationController::class, 'store'])
-     ->middleware('auth', 'can:authorize_visit')
+     ->middleware('auth', 'can:authorize,visit')
      ->name('visits.authorize.store');
 Route::post('visits/attach-opd-card/{visit:slug}', [VisitAttachOPDCardController::class, 'store'])
-     ->middleware('auth', 'can:attach_opd_card')
+     ->middleware('auth', 'can:attachOPDCard,visit')
      ->name('visits.attach-opd-card.store');
 
 //evaluation
-Route::get('visits/evaluation-list', [VisitEvaluationListController::class, 'index'])
-     ->middleware('auth', 'can:view_evaluation_list')
-     ->name('visits.evaluation-list');
+Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class)
+     ->middleware('auth', 'can:evaluate')
+     ->name('visits.evaluate');
+Route::get('export/visits', VisitExportController::class)
+     ->middleware('auth', 'can:evaluate')
+     ->name('export.visits');
+Route::post('import/colab', ImportColabController::class)
+     ->middleware('auth', 'can:evaluate')
+     ->name('import.colab');
 
 // visit
 Route::get('visits', [VisitsController::class, 'index'])
@@ -107,11 +119,16 @@ Route::patch('visits/{visit:slug}', [VisitsController::class, 'update'])
 Route::get('visits/{visit:slug}', [VisitsController::class, 'show'])
      ->middleware('auth', 'can:view,visit')
      ->name('visits.show');
+Route::delete('visits/{visit:slug}', [VisitsController::class, 'destroy'])
+     ->middleware('auth', 'can:cancel,visit')
+     ->name('visits.cancel');
 Route::get('visits/{visit:slug}/replace', [VisitsController::class, 'replace'])
      ->middleware('auth', 'can:replace,visit')
      ->name('visits.replace');
+
+// print OPD card
 Route::get('print-opd-card/{visit:slug}', PrintOPDCardController::class)
-     ->middleware('auth')
+     ->middleware('auth', 'can:printOPDCard,visit')
      ->name('print-opd-card');
 
 // resources

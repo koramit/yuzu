@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\VisitUpdated;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,17 +17,8 @@ class VisitAuthorizationController extends Controller
             'visit_id' => $visit->id,
             'user_id' => Auth::id(),
         ]);
+        VisitUpdated::dispatch($visit);
 
         return redirect()->back();
-    }
-
-    public function destroy(Visit $visit)
-    {
-        $visit->authorized_at = null;
-        $visit->actions()->create([
-            'action' => 'unauthorize',
-            'visit_id' => $visit->id,
-            'user_id' => Auth::id(),
-        ]);
     }
 }

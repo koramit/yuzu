@@ -50,10 +50,17 @@
         </template>
 
         <template #footer-left>
-            <p class="text-xs">
-                1001 - แบบเวชระเบียนผู้ป่วยนอก
-            </p>
-            <svg id="document-code" />
+            <div class="flex">
+                <svg id="document-code" />
+                <p class="text-xs">
+                    1001 - แบบเวชระเบียนผู้ป่วยนอก
+                </p>
+            </div>
+        </template>
+        <template #footer-right>
+            <div class="flex justify-end align-bottom h-full">
+                <svg id="t-barcode" />
+            </div>
         </template>
     </Paper>
 </template>
@@ -86,6 +93,13 @@ export default {
 
             JsBarcode('#document-code', 'D1001', {
                 format: 'CODE39',
+                width: 1,
+                height: 25,
+                displayValue: false
+            });
+
+            JsBarcode('#t-barcode', props.content.t_barcode, {
+                format: 'CODE128',
                 width: 1,
                 height: 25,
                 displayValue: false

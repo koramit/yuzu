@@ -67,28 +67,60 @@
                 </div>
             </template>
         </div>
+        <template v-if="can.evaluate">
+            <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+                <h2 class="font-semibold text-thick-theme-light">
+                    Consultation note
+                </h2>
+                <FormTextarea
+                    class="mt-2"
+                    name="consultaion"
+                    v-model="form.consultation"
+                />
+            </div>
+            <div class="mt-4 sm:mt-6 md:mt-12">
+                <SpinnerButton
+                    @click="saveForm"
+                    class="block w-full mt-2 btn btn-bitter"
+                >
+                    บันทึก
+                </SpinnerButton>
+            </div>
+        </template>
     </div>
 </template>
 
 <script>
 import Layout from '@/Components/Layouts/Layout';
 import DisplayInput from '@/Components/Helpers/DisplayInput';
+import FormTextarea from '@/Components/Controls/FormTextarea';
+import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import Icon from '@/Components/Helpers/Icon';
 import { computed } from '@vue/runtime-core';
+import { useForm } from '@inertiajs/inertia-vue3';
 export default {
     layout: Layout,
-    components: { DisplayInput, Icon },
+    components: { DisplayInput, Icon, FormTextarea, SpinnerButton },
     props: {
         content: { type: Object, required: true },
         configs: { type: Object, required: true },
+        can: { type: Object, required: true },
     },
     setup (props) {
         const visit = computed(() => {
             return Object.keys(props.content.visit).filter(d => props.content.visit[d]);
         });
 
+        const form = useForm({...props.content.evaluation});
+
+        const saveForm = () => {
+            form.patch(window.route('visits.evaluate', props.content.slug));
+        };
+
         return {
-            visit
+            visit,
+            form,
+            saveForm,
         };
     }
 };

@@ -25,27 +25,27 @@ class VisitPolicy
         if ($visit->ready_to_print) {
             return false;
         }
-
         if ($user->hasRole('md')) {
             return true;
-        // except printed
         } elseif ($user->hasRole('nurse')) {
-            if ($visit->status === 'screen') {
-                return true;
-            } else {
-                return false;
-                // except sign on behalf
-            }
+            return $visit->status === 'screen';
         }
+
+        return false;
     }
 
     public function discharge(User $user, Visit $visit)
     {
+        if (collect(['canceled', 'discharged'])->contains($visit->status)) {
+            return false;
+        }
         if ($user->hasRole('md')) {
             return true;
         } elseif ($user->hasRole('nurse')) { // nurse discharge from swab
-            return $visit->submitted_at ? true : false;
+            return $visit->status === 'swab';
         }
+
+        return false;
     }
 
     public function replace(User $user, Visit $visit)
@@ -53,18 +53,38 @@ class VisitPolicy
         if (! $visit->ready_to_print || ! $user->can('replace_visit')) {
             return false;
         }
-
         if ($user->hasRole('md')) {
             return true;
         } elseif ($user->hasRole('nurse')) {
             return $visit->form['md']['signed_on_behalf'];
         }
 
-        return true;
+        return false;
     }
 
     public function view(User $user, Visit $visit)
     {
-        return $visit->ready_to_print || $user->can('view_evaluation_list');
+        return $visit->ready_to_print || $user->can('evaluate');
+    }
+
+    public function cancel(User $user, Visit $visit)
+    {
+        return $user->hasRole('admin') ||
+            ($user->can('cancel_visit') && collect(['screen', 'exam'])->contains($visit->status));
+    }
+
+    public function authorize(User $user, Visit $visit)
+    {
+        return $user->can('authorize_visit') && $visit->status !== 'canceled';
+    }
+
+    public function attachOPDCard(User $user, Visit $visit)
+    {
+        return $user->can('attach_opd_card') && $visit->status !== 'canceled';
+    }
+
+    public function printOPDCard(User $user, Visit $visit)
+    {
+        return $user->can('print_opd_card') && $visit->status !== 'canceled';
     }
 }

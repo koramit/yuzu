@@ -24,21 +24,26 @@ class VisitsController extends Controller
 
     public function index()
     {
-        $flash = $this->manager->getFlash(Auth::user());
+        $user = Auth::user();
+        $flash = $this->manager->getFlash($user);
         $flash['page-title'] = 'รายการเคส';
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
+                       ->orderByDesc('date_visit')
                        ->orderByDesc('updated_at')
                        ->paginate()
-                       ->through(function ($visit) {
+                       ->through(function ($visit) use ($user) {
                            return [
                                'slug' => $visit->slug,
-                               'hn' => $visit->patient->hn ?? null,
+                               'hn' => $visit->hn,
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
                                'date_visit' => $visit->date_visit->format('d M Y'),
                                'updated_at_for_humans' => $visit->updated_at_for_humans,
+                               'can' => [
+                                   'view' => $user->can('view', $visit),
+                               ],
                            ];
                        });
         Session::put('back-from-show', 'visits');
@@ -181,6 +186,9 @@ class VisitsController extends Controller
             'configs' => [
                 'topics' => ['ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย', 'note'],
             ],
+            'can' => [
+                'evaluate' => Auth::user()->can('evaluate'),
+            ],
         ]);
     }
 
@@ -211,5 +219,21 @@ class VisitsController extends Controller
         VisitUpdated::dispatch($visit);
         // redirect to edit
         return Redirect::route('visits.edit', $visit);
+    }
+
+    public function destroy(Visit $visit)
+    {
+        $visit->forceFill([
+            'status' => 'canceled',
+            'form->cancel_reason' => Request::input('reason'),
+        ]);
+        $visit->save();
+        $visit->actions()->create([
+            'action' => 'cancel',
+            'user_id' => Auth::id(),
+        ]);
+        VisitUpdated::dispatch($visit);
+
+        return Redirect::back();
     }
 }

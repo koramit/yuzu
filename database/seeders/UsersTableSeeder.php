@@ -79,7 +79,7 @@ class UsersTableSeeder extends Seeder
         $u->profile = [
             'full_name' => 'คุณ ธุรการ ชำนาญกเกม',
             'tel_no' => '084111888',
-            'org_id' => '10010001',
+            'org_id' => '10010004',
             'division' => 'ฝ่ายการธุรการ',
             'position' => 'ธุรการ',
             'pln' => null,
@@ -88,5 +88,24 @@ class UsersTableSeeder extends Seeder
         ];
         $u->save();
         $u->assignRole('admin');
+
+        // id
+        $u = new User();
+        $u->name = 'id';
+        $u->login = 'id.sri';
+        $u->password = $password;
+        $u->profile = [
+            'full_name' => 'พญ. เขตร้อน ชำนาญเชื้อ',
+            'tel_no' => '084123987',
+            'org_id' => '10010005',
+            'division' => 'คณะแพทย์',
+            'position' => 'แพทย์',
+            'pln' => 54321,
+            'remark' => 'แพทย์ แพทย์ คณะแพทย์',
+            'home_page' => 'visits.exam-list',
+        ];
+        $u->save();
+        $u->assignRole('md');
+        $u->assignRole('id_md');
     }
 }

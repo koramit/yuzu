@@ -763,7 +763,7 @@ export default {
             form.patch(window.route('visits.swab-list.store', props.visit.slug));
         };
         const saveToDischarge = () => {
-            form.patch(window.route('visits.discharge-list.store', props.visit.slug));
+            form.post(window.route('visits.discharge-list.store', props.visit.slug));
         };
         const emitter = inject('emitter');
         emitter.on('action-clicked', (action) => {

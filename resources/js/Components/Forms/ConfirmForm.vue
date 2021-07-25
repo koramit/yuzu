@@ -27,7 +27,6 @@
             </template>
             <template #footer>
                 <spinner-button
-                    :spin="busy"
                     class="btn-dark w-full mt-6"
                     @click="confirmed"
                     :disabled="needReason && !reason"
@@ -42,27 +41,37 @@
 import FormInput from '@/Components/Controls/FormInput';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import Modal from '@/Components/Helpers/Modal';
+import { ref } from '@vue/reactivity';
+import { inject } from '@vue/runtime-core';
 export default {
     emits: ['closed'],
     components: { FormInput, Modal, SpinnerButton },
-    data () {
-        return {
-            busy: false,
-            reason: null,
-            confirmText: null,
-            needReason: false
+    setup () {
+        const emitter = inject('emitter');
+        const reason = ref(null);
+        const confirmText = ref(null);
+        const needReason = ref(false);
+        const modal = ref(null);
+
+        const open = (configs) => {
+            needReason.value = configs.needReason;
+            confirmText.value = configs.confirmText;
+            modal.value.open();
         };
-    },
-    methods: {
-        open (configs) {
-            this.needReason = configs.needReason;
-            this.confirmText = configs.confirmText;
-            this.$refs.modal.open();
-        },
-        confirmed () {
-            this.eventBus.emit('confirmed', this.reason);
-            this.$refs.modal.close();
-        }
+
+        const confirmed = () => {
+            emitter.emit('confirmed', reason.value);
+            modal.value.close();
+        };
+
+        return {
+            needReason,
+            reason,
+            confirmText,
+            modal,
+            open,
+            confirmed
+        };
     }
 };
 </script>
