@@ -37,6 +37,7 @@ class VisitExamListController extends Controller
                                 'slug' => $visit->slug,
                                 'title' => $visit->title,
                                 'hn' => $visit->hn,
+                                'patient_name' => $visit->patient_name,
                                 'patient_type' => $visit->patient_type,
                                 'enlisted_exam_at_for_humans' => $visit->enlisted_exam_at_for_humans,
                                 'can' => [
