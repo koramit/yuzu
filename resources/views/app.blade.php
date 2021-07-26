@@ -14,7 +14,12 @@
 
     {{-- <link href="https://fonts.googleapis.com/css2?family=Krub:ital,wght@0,300;0,400;0,500;0,600;1,300;1,600&display=swap"
         rel="stylesheet"> --}}
-    @googlefonts
+
+    @if(config('app.font_workaround'))
+        {{ str_replace('http:', 'https:', app(Spatie\GoogleFonts\GoogleFonts::class)->load()->toHtml()); }}
+    @else
+        @googlefonts
+    @endif
 
     <link href="{{ asset(mix('/css/app.css')) }}" rel="stylesheet" />
     <script src="{{ asset(mix('/js/app.js')) }}" defer></script>
