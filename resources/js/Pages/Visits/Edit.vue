@@ -101,7 +101,7 @@
             <div class="mt-2">
                 <label class="form-label">สิทธิ์การรักษา</label>
                 <FormRadio
-                    class="md:grid grid-flow-col grid-cols-2 grid-rows-3 gap-x-2"
+                    class="md:grid grid-flow-col grid-cols-3 grid-rows-3 gap-x-2"
                     v-model="form.patient.insurance"
                     :error="form.errors.insurance"
                     name="insurance"
@@ -579,6 +579,7 @@
                 :error="form.errors.recommendation_choice"
                 name="recommendation_choice"
                 :options="configs.public_recommendations"
+                :allow-reset="true"
                 @autosave="autosave('recommendation.choice')"
             />
 
