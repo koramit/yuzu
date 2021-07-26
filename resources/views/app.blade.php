@@ -16,7 +16,7 @@
         rel="stylesheet"> --}}
 
     @if(config('app.font_workaround'))
-        {{ str_replace('http:', 'https:', app(Spatie\GoogleFonts\GoogleFonts::class)->load()->toHtml()); }}
+        {!! str_replace('http:', 'https:', app(Spatie\GoogleFonts\GoogleFonts::class)->load()->toHtml()); !!}
     @else
         @googlefonts
     @endif
