@@ -66,7 +66,11 @@ class VisitManager
             ],
             'vaccination' => [
                 'unvaccinated' => false,
-                'brand' => null,
+                'Sinovac' => false,
+                'Sinopharm' => false,
+                'AstraZeneca' => false,
+                'Moderna' => false,
+                'Pfizer' => false,
                 'doses' => null,
                 'date_latest_vacciniated' => null,
             ],
@@ -519,7 +523,18 @@ class VisitManager
         if ($vaccination['unvaccinated']) {
             $vaccination = 'ไม่เคยฉีด';
         } else {
-            $text = trim('เคยฉีด '.$vaccination['brand'].' '.($vaccination['doses'] ? $vaccination['doses'].' เข็ม' : ''));
+            $vaccines = $this->getConfigs($visit)['vaccines'];
+            $text = '';
+            foreach ($vaccines as $vaccine) {
+                if ($vaccination[$vaccine] ?? false) {
+                    $text .= " {$vaccine},";
+                }
+            }
+            $text = trim(trim($text, ','));
+            $text = 'เคยฉีด '.$text;
+            if ($vaccination['doses']) {
+                $text .= ' รวม '.$vaccination['doses'].' เข็ม';
+            }
             if ($vaccination['date_latest_vacciniated']) {
                 $text .= ' เมื่อ '.Carbon::create($vaccination['date_latest_vacciniated'])->format('d M Y');
             }

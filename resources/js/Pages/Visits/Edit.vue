@@ -452,16 +452,14 @@
                 @autosave="autosave('vaccination.unvaccinated')"
             />
             <div v-if="!form.vaccination.unvaccinated">
-                <div class="mt-2">
-                    <label class="form-label">วัคซีน</label>
-                    <FormRadio
-                        class="md:grid grid-flow-col grid-cols-2 grid-rows-3 gap-x-2"
-                        v-model="form.vaccination.brand"
-                        :error="form.errors.brand"
-                        name="vaccination_brand"
-                        :options="configs.vaccines"
-                        :allow-reset="true"
-                        @autosave="autosave('vaccination.brand')"
+                <label class="mt-2 form-label">วัคซีน</label>
+                <div class="md:grid grid-flow-col grid-cols-2 grid-rows-3 gap-2">
+                    <FormCheckbox
+                        v-for="(vaccine, key) in configs.vaccines"
+                        :key="key"
+                        class="mt-2 md:mt-0"
+                        v-model="form.vaccination[vaccine]"
+                        :label="vaccine"
                     />
                 </div>
                 <div class="mt-2">

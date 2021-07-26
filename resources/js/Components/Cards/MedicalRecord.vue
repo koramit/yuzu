@@ -104,7 +104,7 @@
                     </Link>
                     <a
                         class="w-full flex text-alt-theme-light justify-start cursor-not-allowed"
-                        href="#"
+                        :href="route('print-opd-card', visit)"
                         v-if="visit.can.attach_opd_card"
                     >
                         <Icon
