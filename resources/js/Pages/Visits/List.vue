@@ -28,6 +28,7 @@
         <CardExam
             v-else-if="card === 'exam'"
             :visits="filteredVisits"
+            @cancel="cancel"
         />
         <CardSwab
             v-else-if="card === 'swab'"
