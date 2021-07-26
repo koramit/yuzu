@@ -206,7 +206,9 @@ class VisitsController extends Controller
         $user = Auth::user();
         if ($user->hasRole('md')) {
             $visit->status = 'exam';
-        // $visit->enlisted_exam_at = null;
+            if (! $visit->enlisted_exam_at) {
+                $visit->enlisted_exam_at = now();
+            }
         } elseif ($user->hasRole('nurse')) {
             $visit->status = 'screen';
         }
