@@ -32,7 +32,7 @@ class VisitMedicalRecordListController extends Controller
                        ->transform(function ($visit) use ($user) {
                            return [
                                'slug' => $visit->slug,
-                               'hn' => $visit->hn,
+                               'hn' => $visit->hn ?? '',
                                'status' => $visit->status,
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,

@@ -33,7 +33,7 @@ class VisitScreenListController extends Controller
                            return [
                                'slug' => $visit->slug,
                                'title' => $visit->title,
-                               'hn' => $visit->hn,
+                               'hn' => $visit->hn ?? '',
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
                                'enlisted_screen_at_for_humans' => $visit->enlisted_screen_at_for_humans,
