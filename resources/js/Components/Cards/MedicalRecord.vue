@@ -103,8 +103,9 @@
                         <span class="block font-normal text-thick-theme-light">พิมพ์</span>
                     </Link>
                     <a
-                        class="w-full flex text-alt-theme-light justify-start cursor-not-allowed"
+                        class="w-full flex text-alt-theme-light justify-start"
                         :href="route('print-opd-card', visit)"
+                        target="_blank"
                         v-if="visit.can.attach_opd_card"
                     >
                         <Icon
