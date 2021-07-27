@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportColabController;
+use App\Http\Controllers\OPDCardExportController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PrintOPDCardController;
 use App\Http\Controllers\ResourceEmployeesController;
@@ -109,8 +110,11 @@ Route::post('visits/fill-hn/{visit:slug}', VisitFillHnController::class)
 Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class)
      ->middleware('auth', 'can:evaluate')
      ->name('visits.evaluate');
-Route::get('export/visits', VisitExportController::class)
+Route::get('export/opd_cards', OPDCardExportController::class)
      ->middleware('auth', 'can:evaluate')
+     ->name('export.opd_cards');
+Route::get('export/visits', VisitExportController::class)
+     ->middleware('auth', 'can:export_visits')
      ->name('export.visits');
 Route::post('import/colab', ImportColabController::class)
      ->middleware('auth', 'can:evaluate')

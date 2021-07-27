@@ -2,10 +2,10 @@
     <div>
         <div class="grid grid-cols-3 gap-x-2 mb-4 text-center">
             <a
-                :href="route('export.visits')"
+                :href="route('export.opd_cards')"
                 class="btn btn-bitter"
             >
-                Export Visits
+                Export OPD cards
             </a>
             <SpinnerButton
                 @click="importColab.click()"
