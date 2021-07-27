@@ -84,6 +84,9 @@ class VisitSwabListController extends Controller
                 'form->md' => $manager->getIdStaff($data['md_name']) + ['signed_on_behalf' => true, 'signed_at' => now()],
             ]);
         }
+        if ($visit->patient_type === 'เจ้าหน้าที่ศิริราช' && $visit->patient_id) {
+            $visit->enqueued_at = now();
+        }
         $visit->save();
 
         $visit->actions()->createMany([

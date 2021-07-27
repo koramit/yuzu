@@ -217,8 +217,9 @@ class VisitManager
     public function validateScreening(array $data)
     {
         // validation start here
+        // 'hn' => 'required|digits:8',
         $rules = [
-            'hn' => 'required|digits:8',
+            'name' => 'required|string',
             'patient_type' => 'required',
             'screen_type' => 'required',
             'insurance' => 'required',
@@ -234,7 +235,7 @@ class VisitManager
             $data['visit'] +
             $data['symptoms'] +
             $data['exposure'] +
-            $data['comorbids'], $rules);
+            $data['comorbids'], $rules, ['name.required' => 'จำเป็นต้องลง ชื่อผู้ป่วย']);
 
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
@@ -389,7 +390,7 @@ class VisitManager
                 ['icon' => 'stethoscope', 'label' => 'ห้องตรวจ', 'route' => 'visits.exam-list', 'can' => $user->can('view_exam_list')],
                 ['icon' => 'virus', 'label' => 'ห้อง Swab', 'route' => 'visits.swab-list', 'can' => $user->can('view_swab_list')],
                 ['icon' => 'address-book', 'label' => 'เวชระเบียน', 'route' => 'visits.mr-list', 'can' => $user->can('view_mr_list')],
-                // ['icon' => 'calculator', 'label' => 'ประเมิน', 'route' => 'visits.evaluation-list', 'can' => $user->can('view_evaluation_list')],
+                ['icon' => 'list-ol', 'label' => 'SI Flow', 'route' => 'visits.queue-list', 'can' => $user->can('view_queue_list')],
                 ['icon' => 'archive', 'label' => 'รายการเคส', 'route' => 'visits', 'can' => $user->can('view_any_visits')],
             ],
             'action-menu' => [

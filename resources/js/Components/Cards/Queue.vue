@@ -36,7 +36,7 @@
                     <p
                         class="p-1 text-lg pt-0"
                     >
-                        HN {{ visit.hn }} <br class="md:hidden"> {{ visit.patient_name }}
+                        HN {{ visit.hn ?? ' ยังไม่มี HN ' }} <br class="md:hidden"> {{ visit.patient_name }}
                     </p>
                 </div>
                 <p class="px-1 text-xs text-dark-theme-light italic">
@@ -45,49 +45,36 @@
             </div>
             <!-- right menu -->
             <div class="w-1/4 text-sm p-1 grid justify-items-center">
-                <!-- authorize -->
-                <template v-if="visit.queued">
-                    <button
-                        class="w-full flex text-bitter-theme-light justify-start disabled:cursor-not-allowed"
-                        disabled
-                        v-if="visit.authorized"
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="check-circle"
-                        />
-                        <span class="block font-normal text-thick-theme-light">เปิด Visit แล้ว</span>
-                    </button>
-                    <Link
-                        class="w-full flex text-alt-theme-light justify-start disabled:cursor-not-allowed"
-                        :href="route('visits.authorize.store', visit)"
-                        as="button"
-                        method="post"
-                        preserve-state
-                        preserve-scroll
-                        :disabled="!visit.can.authorize_visit"
-                        v-else
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="sync-alt"
-                        />
-                        <span class="block font-normal text-thick-theme-light">เปิด Visit</span>
-                    </Link>
-                </template>
-                <button
-                    v-else
-                    disabled
-                    class="w-full flex text-thick-theme-light justify-start disabled:cursor-not-allowed"
+                <!-- queue -->
+                <Link
+                    class="w-full flex text-alt-theme-light justify-start"
+                    :href="route('visits.queue.store', visit)"
+                    as="button"
+                    method="post"
+                    preserve-state
+                    preserve-scroll
+                    v-if="visit.can.queue"
                 >
                     <Icon
                         class="w-4 h-4 mr-1"
-                        name="hourglass-half"
+                        name="sync-alt"
                     />
-                    <span class="block font-normal text-thick-theme-light">ยังไม่มีคิว</span>
+                    <span class="block font-normal text-thick-theme-light">SI Flow</span>
+                </Link>
+                <!-- fill hn -->
+                <button
+                    class="w-full flex text-alt-theme-light justify-start"
+                    v-if="visit.can.fill_hn"
+                    @click="fillHn(visit)"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="sync-alt"
+                    />
+                    <span class="block font-normal text-thick-theme-light">บันทึก HN</span>
                 </button>
                 <!-- OPD card attached -->
-                <template v-if="visit.ready_to_print">
+                <!-- <template v-if="visit.ready_to_print">
                     <button
                         class="w-full flex text-bitter-theme-light justify-start disabled:cursor-not-allowed"
                         disabled
@@ -149,22 +136,35 @@
                         />
                         <span class="block font-normal text-thick-theme-light">แก้ไข</span>
                     </Link>
-                </template>
+                </template> -->
             </div>
         </template>
     </div>
+    <FillHn
+        ref="fillHnModal"
+    />
 </template>
 
 <script>
 import Icon from '@/Components/Helpers/Icon';
 import { Link } from '@inertiajs/inertia-vue3';
+import FillHn from '@/Components/Forms/FillHn';
+import { ref } from '@vue/reactivity';
 export default {
-    components: { Icon, Link },
+    components: { Icon, Link, FillHn },
     props: {
         visits: { type: Array, required: true }
     },
     setup() {
+        const fillHnModal = ref(null);
+        const fillHn = (visit) => {
+            fillHnModal.value.open(visit);
+        };
 
+        return {
+            fillHn,
+            fillHnModal,
+        };
     },
 };
 </script>

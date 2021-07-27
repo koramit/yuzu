@@ -75,16 +75,34 @@ class VisitPolicy
 
     public function authorize(User $user, Visit $visit)
     {
-        return $user->can('authorize_visit') && $visit->status !== 'canceled';
+        return $user->can('authorize_visit')
+            && $visit->patient_id
+            && $visit->enqueued_at
+            && $visit->status !== 'canceled';
     }
 
     public function attachOPDCard(User $user, Visit $visit)
     {
-        return $user->can('attach_opd_card') && $visit->status !== 'canceled';
+        return $user->can('attach_opd_card')
+            && $visit->patient_id
+            && $visit->enqueued_at
+            && $visit->status !== 'canceled';
     }
 
     public function printOPDCard(User $user, Visit $visit)
     {
         return $user->can('print_opd_card') && $visit->status !== 'canceled';
+    }
+
+    public function queue(User $user, Visit $visit)
+    {
+        return $user->can('authorize_visit')
+            && $visit->patient_id
+            && $visit->status !== 'canceled';
+    }
+
+    public function fillHn(User $user, Visit $visit)
+    {
+        return $user->can('authorize_visit') && ! $visit->patient_id && $visit->status !== 'canceled';
     }
 }

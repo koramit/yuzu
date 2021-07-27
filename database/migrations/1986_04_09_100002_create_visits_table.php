@@ -22,14 +22,13 @@ class CreateVisitsTable extends Migration
             $table->unsignedTinyInteger('status')->default(1)->index();
             $table->json('form');
             $table->foreignId('patient_id')->nullable()->constrained('patients')->onDelete('cascade');
-            $table->foreignId('creator_id')->constrained('users')->onDelete('cascade');
             $table->timestamp('enlisted_screen_at')->nullable()->index();
+            $table->timestamp('enqueued_at')->nullable()->index();
             $table->timestamp('enlisted_exam_at')->nullable()->index();
             $table->timestamp('enlisted_swab_at')->nullable()->index();
             $table->timestamp('discharged_at')->nullable()->index();
             $table->timestamp('authorized_at')->nullable()->index();
             $table->timestamp('attached_opd_card_at')->nullable()->index();
-            $table->foreignId('evaluator_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

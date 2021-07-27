@@ -38,6 +38,10 @@
             v-else-if="card === 'mr'"
             :visits="filteredVisits"
         />
+        <Queue
+            v-else-if="card === 'queue'"
+            :visits="filteredVisits"
+        />
 
         <Visit ref="createVisitForm" />
     </div>
@@ -50,6 +54,7 @@ import CardScreen from '@/Components/Cards/Screen';
 import CardExam from '@/Components/Cards/Exam';
 import CardSwab from '@/Components/Cards/Swab';
 import CardMedicalRecord from '@/Components/Cards/MedicalRecord';
+import Queue from '@/Components/Cards/Queue';
 import Visit from '@/Components/Forms/Visit';
 import { computed, inject, nextTick, onUnmounted, reactive, ref } from '@vue/runtime-core';
 import { Link } from '@inertiajs/inertia-vue3';
@@ -57,7 +62,7 @@ import { Inertia } from '@inertiajs/inertia';
 
 export default {
     layout: Layout,
-    components: { Visit, Icon, Link, CardScreen, CardExam, CardSwab, CardMedicalRecord },
+    components: { Visit, Icon, Link, CardScreen, CardExam, CardSwab, CardMedicalRecord, Queue },
     props: {
         visits: { type: Object, required: true },
         card: { type: String, required: true },

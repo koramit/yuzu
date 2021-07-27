@@ -89,7 +89,6 @@ class VisitsController extends Controller
         $visit->slug = Str::uuid()->toString();
         $visit->date_visit = $todayStr;
         $visit->form = $form;
-        $visit->creator_id = $user->id;
         $visit->status = 'screen';
         $visit->enlisted_screen_at = now();
         $visit->save();

@@ -68,7 +68,7 @@ export default {
                 :   [...props.options];
 
             if (props.allowOther) {
-                options.push({ label: 'อืนๆ', value: 'other' });
+                options.push({ label: 'อื่นๆ', value: 'other' });
             }
 
             if (!props.allowReset || selected.value === null) {

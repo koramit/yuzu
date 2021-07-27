@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\VisitUpdated;
 use App\Managers\VisitManager;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
-class VisitMedicalRecordListController extends Controller
+class VisitQueueListController extends Controller
 {
     protected $manager;
 
@@ -22,7 +23,7 @@ class VisitMedicalRecordListController extends Controller
         $user = Auth::user();
         $today = now()->today('asia/bangkok');
         $flash = $this->manager->getFlash($user);
-        $flash['page-title'] = 'เวชระเบียน @ '.$today->format('d M Y');
+        $flash['page-title'] = 'SI Flow @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
@@ -31,6 +32,8 @@ class VisitMedicalRecordListController extends Controller
                            $query->whereNotNull('enlisted_exam_at')
                                  ->orWhereNotNull('enlisted_swab_at');
                        })
+                       ->whereNull('enqueued_at')
+                       ->orWhere('patient_id', null)
                        ->orderBy('enlisted_screen_at')
                        ->get()
                        ->transform(function ($visit) use ($user) {
@@ -40,25 +43,39 @@ class VisitMedicalRecordListController extends Controller
                                'status' => $visit->status,
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
-                               'queued' => $visit->enqueued_at !== null,
-                               'authorized' => $visit->authorized_at !== null,
-                               'attached' => $visit->attached_opd_card_at !== null,
+                            //    'enqueued' => $visit->enqueued_at !== null,
+                            //    'attached' => $visit->attached_opd_card_at !== null,
                                'enlisted_screen_at_for_humans' => $visit->enlisted_screen_at_for_humans,
                                'ready_to_print' => $visit->ready_to_print,
                                'can' => [
-                                    'authorize_visit' => $user->can('authorize', $visit),
-                                    'attach_opd_card' => $user->can('attachOPDCard', $visit),
-                                    'print_opd_card' => $user->can('printOPDCard', $visit),
-                                    'replace' => $user->can('replace', $visit),
+                                    'queue' => $user->can('queue', $visit),
+                                    'fill_hn' => $user->can('fillHn', $visit),
+                                    // 'attach_opd_card' => $user->can('attachOPDCard', $visit),
+                                    // 'print_opd_card' => $user->can('printOPDCard', $visit),
+                                    // 'replace' => $user->can('replace', $visit),
                                ],
                            ];
                        });
-        Session::put('back-from-show', 'visits.mr-list');
+        // Session::put('back-from-show', 'visits.mr-list');
 
         return Inertia::render('Visits/List', [
             'visits' => $visits,
-            'card' => 'mr',
+            'card' => 'queue',
             'eventSource' => 'mr',
         ]);
+    }
+
+    public function store(Visit $visit)
+    {
+        $visit->enqueued_at = now();
+        $visit->save();
+        $visit->actions()->create([
+            'action' => 'enqueue',
+            'visit_id' => $visit->id,
+            'user_id' => Auth::id(),
+        ]);
+        VisitUpdated::dispatch($visit);
+
+        return redirect()->back();
     }
 }
