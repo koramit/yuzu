@@ -19,7 +19,7 @@ class InitRole
         $this->roles = [
             'root' => [10022569],
             'admin' => [10022743, 10010205, 10019410, 10035479, 10039018, 10034123],
-            'md' => [10022569,  10010205, 10019410, 10035479, 10039018, 10034123],
+            'md' => [10022743,  10010205, 10019410, 10035479, 10039018, 10034123],
             'id_md' => [
                 10004523, 10004410, 10005617, 10006561, 10011383, 10017612, 10011229, 10018518, 10018516, 10030820, 10034123,
                 10038506, 10038274, 10038336, 10038490, 10038177,
@@ -40,10 +40,22 @@ class InitRole
 
         if ($profile['is_md']) {
             $event->user->assignRole('md');
+            $event->user->forceFill([
+                'profile->home_page' => 'visits.exam-list',
+            ]);
+            $event->user->save();
         } elseif ($event->user->profile['position'] === 'พยาบาล') {
             $event->user->assignRole('nurse');
+            $event->user->forceFill([
+                'profile->home_page' => 'visits.screen-list',
+            ]);
+            $event->user->save();
         } elseif (str_contains($event->user->profile['remark'], 'งานเวชระเบียน')) {
             $event->user->assignRole('staff');
+            $event->user->forceFill([
+                'profile->home_page' => 'visits.mr-list',
+            ]);
+            $event->user->save();
         }
 
         foreach ($this->roles as $role => $ids) {
