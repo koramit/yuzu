@@ -15,7 +15,9 @@ use App\Http\Controllers\VisitDischargeListController;
 use App\Http\Controllers\VisitEvaluateController;
 use App\Http\Controllers\VisitExamListController;
 use App\Http\Controllers\VisitExportController;
+use App\Http\Controllers\VisitFillHnController;
 use App\Http\Controllers\VisitMedicalRecordListController;
+use App\Http\Controllers\VisitQueueListController;
 use App\Http\Controllers\VisitsController;
 use App\Http\Controllers\VisitScreenListController;
 use App\Http\Controllers\VisitSwabListController;
@@ -91,6 +93,17 @@ Route::post('visits/authorize/{visit:slug}', [VisitAuthorizationController::clas
 Route::post('visits/attach-opd-card/{visit:slug}', [VisitAttachOPDCardController::class, 'store'])
      ->middleware('auth', 'can:attachOPDCard,visit')
      ->name('visits.attach-opd-card.store');
+
+// queue
+Route::get('visits/queue-list', [VisitQueueListController::class, 'index'])
+     ->middleware('auth', 'can:view_queue_list')
+     ->name('visits.queue-list');
+Route::post('visits/queue/{visit:slug}', [VisitQueueListController::class, 'store'])
+     ->middleware('auth', 'can:queue,visit')
+     ->name('visits.queue.store');
+Route::post('visits/fill-hn/{visit:slug}', VisitFillHnController::class)
+     ->middleware('auth', 'can:fillHn,visit')
+     ->name('visits.fill-hn.store');
 
 //evaluation
 Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class)
