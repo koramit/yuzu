@@ -25,7 +25,11 @@ class VisitScreenListController extends Controller
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
-                       ->whereBetween('date_visit', [$today->addDays(-1), $today->addDays(1)])
+                       ->where(function ($query) use ($today) {
+                           $query->orWhere('date_visit', $today)
+                                  ->orWhere('date_visit', $today->addDays(1));
+                       })
+                    //    ->whereBetween('date_visit', [$today->addDays(-1), $today->addDays(1)])
                        ->whereIn('status', [1, 6]) // screen, appointment
                        ->orderBy('enlisted_screen_at')
                        ->get()
