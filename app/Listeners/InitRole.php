@@ -61,6 +61,10 @@ class InitRole
         foreach ($this->roles as $role => $ids) {
             if (collect($ids)->contains($profile['org_id'])) {
                 $event->user->assignRole($role);
+                $event->user->forceFill([
+                    'profile->home_page' => 'visits',
+                ]);
+                $event->user->save();
             }
         }
 
