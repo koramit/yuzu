@@ -122,6 +122,13 @@ class VisitsController extends Controller
             $flash['action-menu'][] = ['icon' => 'save', 'label' => 'บันทึก', 'action' => 'save', 'can' => true];
             $can[] = 'save';
         }
+        // update appointment to screen
+        if ($visit->date_visit->format('Ymd') === today('asia/bangkok')->format('Ymd')) {
+            $visit->status = 'screen';
+            $visit->enlisted_screen_at = now();
+            $visit->save();
+            $visit->actions()->create(['action' => 'enlist_screen', 'user_id' => $user->id]);
+        }
         if ($visit->status !== 'appointment') {
             if ($user->can('enlist_exam')) { // save to exam -- NURSE only
                 $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่งตรวจ', 'action' => 'save-exam', 'can' => true];
@@ -189,6 +196,7 @@ class VisitsController extends Controller
             ],
             'can' => [
                 'evaluate' => Auth::user()->can('evaluate'),
+                'print_opd_card' => Auth::user()->can('printOpdCard', $visit),
             ],
         ]);
     }

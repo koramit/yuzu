@@ -13,7 +13,7 @@
                     class="underline"
                     v-if="visit.status === 'appointment'"
                 >
-                    {{ ('ทำล่วงหน้า ' + visit.date_visit) }}
+                    {{ ('เขียนล่วงหน้าสำหรับวันที่ ' + visit.date_visit) }}
                 </span>
             </p>
             <div class="flex items-baseline">

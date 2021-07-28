@@ -85,6 +85,7 @@ class VisitManager
             ],
             'management' => [
                 'np_swab' => false,
+                'specimen_no' => null,
                 'other_tests' => null,
                 'home_medication' => null,
             ],
@@ -484,7 +485,7 @@ class VisitManager
             $text = $exposure['evaluation'].'<br>';
             $text .= ('วันสุดท้ายที่สัมผัส - '.Carbon::create($exposure['date_latest_expose'])->format('d M Y').'<br>');
             if ($exposure['contact']) {
-                $text .= ('สัมผัสผู้ติดเชื้อยืนยัน - '.$exposure['contact_type'].' '.$exposure['contact_detail'].'<br>');
+                $text .= ('สัมผัสผู้ติดเชื้อยืนยัน - '.$exposure['contact_type'].' '.($exposure['contact_detail'] ?? '').'<br>');
             }
             if ($exposure['hot_spot']) {
                 $text .= ('ไปพื้นที่เสี่ยง - '.$exposure['hot_spot_detail'].'<br>');

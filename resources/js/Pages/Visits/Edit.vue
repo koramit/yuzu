@@ -318,7 +318,6 @@
                                     'ทำงานห้องเดียวกัน',
                                     'โต๊ะทำงานใกล้กัน',
                                     'นั่งรถคันเดียวกัน',
-                                    'สุดท้ายก็แค่เพื่อนกัน',
                                 ]"
                                 :key="choice"
                                 @click="form.exposure.contact_detail = (form.exposure.contact_detail ?? '') + ' ' + choice"

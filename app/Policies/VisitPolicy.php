@@ -91,7 +91,7 @@ class VisitPolicy
 
     public function printOPDCard(User $user, Visit $visit)
     {
-        return $user->can('print_opd_card') && $visit->status !== 'canceled';
+        return $user->can('print_opd_card') && $visit->ready_to_print;
     }
 
     public function queue(User $user, Visit $visit)
