@@ -26,9 +26,9 @@ class VisitPolicy
             return false;
         }
         if ($user->hasRole('md')) {
-            return true;
+            return $visit->status !== 'appointment';
         } elseif ($user->hasRole('nurse')) {
-            return $visit->status === 'screen';
+            return $visit->status === 'screen' || $visit->status === 'appointment';
         }
 
         return false;

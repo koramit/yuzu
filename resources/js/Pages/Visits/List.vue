@@ -55,6 +55,7 @@
         />
 
         <Visit ref="createVisitForm" />
+        <Appointment ref="appointmentForm" />
     </div>
 </template>
 
@@ -67,13 +68,13 @@ import CardSwab from '@/Components/Cards/Swab';
 import CardMedicalRecord from '@/Components/Cards/MedicalRecord';
 import Queue from '@/Components/Cards/Queue';
 import Visit from '@/Components/Forms/Visit';
+import Appointment from '@/Components/Forms/Appointment';
 import { computed, inject, nextTick, onUnmounted, reactive, ref } from '@vue/runtime-core';
-import { Link } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
 
 export default {
     layout: Layout,
-    components: { Visit, Icon, Link, CardScreen, CardExam, CardSwab, CardMedicalRecord, Queue },
+    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, Queue, Appointment },
     props: {
         visits: { type: Object, required: true },
         card: { type: String, required: true },
@@ -81,6 +82,7 @@ export default {
     },
     setup (props) {
         const createVisitForm = ref(null);
+        const appointmentForm = ref(null);
         const emitter = inject('emitter');
 
         const currentConfirm = reactive({
@@ -111,6 +113,8 @@ export default {
             // ready to use and need some kind of "activate"
             if (action === 'create-visit') {
                 nextTick(() => createVisitForm.value.open());
+            } else if (action === 'create-appointment') {
+                nextTick(() => appointmentForm.value.open());
             }
         });
 
@@ -152,6 +156,7 @@ export default {
 
         return {
             createVisitForm,
+            appointmentForm,
             cancel,
             search,
             filteredVisits,

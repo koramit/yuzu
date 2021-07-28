@@ -19,14 +19,14 @@ class VisitScreenListController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $today = now()->today('asia/bangkok');
+        $today = today('asia/bangkok');
         $flash = $this->manager->getFlash($user);
         $flash['page-title'] = 'ห้องคัดกรอง @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
-                       ->whereDateVisit($today)
-                       ->whereStatus(1)
+                       ->whereBetween('date_visit', [$today->addDays(-1), $today->addDays(1)])
+                       ->whereIn('status', [1, 6]) // screen, appointment
                        ->orderBy('enlisted_screen_at')
                        ->get()
                        ->transform(function ($visit) use ($user) {

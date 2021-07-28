@@ -122,21 +122,23 @@ class VisitsController extends Controller
             $flash['action-menu'][] = ['icon' => 'save', 'label' => 'บันทึก', 'action' => 'save', 'can' => true];
             $can[] = 'save';
         }
-        if ($user->can('enlist_exam')) { // save to exam -- NURSE only
-            $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่งตรวจ', 'action' => 'save-exam', 'can' => true];
-            $can[] = 'save-exam';
-        }
-        if ($user->can('sign_opd_card')) { // save to discharge -- MD only
-            $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'จำหน่าย', 'action' => 'save-discharge', 'can' => true];
-            $can[] = 'save-discharge';
-        }
-        if ($user->role_names->contains('nurse')) { // NURSE save to swab
-            if ($visit->screen_type && $visit->screen_type !== 'เริ่มตรวจใหม่') {
-                $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่ง swab', 'action' => 'save-swab', 'can' => true];
+        if ($visit->status !== 'appointment') {
+            if ($user->can('enlist_exam')) { // save to exam -- NURSE only
+                $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่งตรวจ', 'action' => 'save-exam', 'can' => true];
+                $can[] = 'save-exam';
             }
-        } elseif ($user->role_names->contains('md')) { // MD save to swab
-            if ($visit->form['management']['np_swab']) {
-                $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่ง swab', 'action' => 'save-swab', 'can' => true];
+            if ($user->can('sign_opd_card')) { // save to discharge -- MD only
+                $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'จำหน่าย', 'action' => 'save-discharge', 'can' => true];
+                $can[] = 'save-discharge';
+            }
+            if ($user->role_names->contains('nurse')) { // NURSE save to swab
+                if ($visit->screen_type && $visit->screen_type !== 'เริ่มตรวจใหม่') {
+                    $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่ง swab', 'action' => 'save-swab', 'can' => true];
+                }
+            } elseif ($user->role_names->contains('md')) { // MD save to swab
+                if ($visit->form['management']['np_swab']) {
+                    $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่ง swab', 'action' => 'save-swab', 'can' => true];
+                }
             }
         }
 
