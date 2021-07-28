@@ -1,5 +1,16 @@
 <template>
     <div>
+        <a
+            class="flex items-center text-green-600"
+            :href="route('export.visits')"
+            v-if="card === 'mr' && $page.props.user.roles.includes('nurse')"
+        >
+            <Icon
+                class="w-4 h-4 mr-1"
+                name="file-excel"
+            />
+            <span class="block font-normal text-thick-theme-light">รายงาน</span>
+        </a>
         <div class="mb-2 relative">
             <input
                 autocomplete="off"
