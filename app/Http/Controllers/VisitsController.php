@@ -189,6 +189,7 @@ class VisitsController extends Controller
             ],
             'can' => [
                 'evaluate' => Auth::user()->can('evaluate'),
+                'print_opd_card' => Auth::user()->can('printOpdCard', $visit),
             ],
         ]);
     }

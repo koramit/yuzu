@@ -6,6 +6,7 @@ use App\Events\VisitUpdated;
 use App\Managers\VisitManager;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
@@ -74,10 +75,12 @@ class VisitSwabListController extends Controller
         $visit->enlisted_swab_at = now();
         if ($user->role_names->contains('md')) {
             $visit->forceFill([
-                'form->md->name' => $user->profile['full_name'],
-                'form->md->pln' => $user->profile['pln'],
-                'form->md->signed_on_behalf' => false,
-                'form->md->signed_at' => now(),
+                'form->md' => [
+                    'name' => $user->profile['full_name'],
+                    'pln' => $user->profile['pln'],
+                    'signed_on_behalf' => false,
+                    'signed_at' => now(),
+                ],
             ]);
         } else {
             $visit->forceFill([
@@ -87,10 +90,16 @@ class VisitSwabListController extends Controller
         if ($visit->patient_type === 'เจ้าหน้าที่ศิริราช' && $visit->patient_id) {
             $visit->enqueued_at = now();
         }
+        // running specimen no
+        $cacheName = today('asia/bangkok')->format('Y-m-d').'-specimen-running-no';
+        $visit->forceFill([
+            'form->management->specimen_no' => Cache::increment($cacheName),
+        ]);
+
         $visit->save();
 
         $visit->actions()->createMany([
-            ['action' => 'sign', 'user_id' => $user->id],
+            ['action' => 'sign_opd_card', 'user_id' => $user->id],
             ['action' => 'enlist_swab', 'user_id' => $user->id],
         ]);
 

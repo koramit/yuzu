@@ -24,7 +24,7 @@ class VisitDischargeListController extends Controller
             return back()->withErrors($errors);
         }
 
-        // status
+        // discharge by md from exam
         $route = $visit->status_index_route;
         $visit->status = 'discharged';
         $visit->discharged_at = now();
@@ -36,7 +36,10 @@ class VisitDischargeListController extends Controller
         ]);
         $visit->save();
 
-        $visit->actions()->create(['action' => 'discharge', 'user_id' => $user->id]);
+        $visit->actions()->createMany([
+            ['action' => 'sign_opd_card', 'user_id' => $user->id],
+            ['action' => 'discharge', 'user_id' => $user->id],
+        ]);
 
         VisitUpdated::dispatch($visit);
 

@@ -7,6 +7,7 @@
                     :href="route('print-opd-card', content.slug)"
                     class="ml-6 text-sm font-normal text-dark-theme-light flex"
                     target="_blank"
+                    v-if="can.print_opd_card"
                 >
                     <icon
                         class="mr-2 h-4 w-4"
@@ -14,6 +15,10 @@
                     />
                     พิมพ์
                 </a>
+                <span
+                    v-else
+                    class="ml-6 text-sm font-normal text-dark-theme-light flex"
+                >ยังเขียนไม่เสร็จ</span>
             </h2>
             <h3 class="font-normal underline text-dark-theme-light mt-6">
                 ข้อมูลผู้ป่วย

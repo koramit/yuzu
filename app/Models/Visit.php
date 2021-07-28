@@ -246,6 +246,15 @@ class Visit extends Model
         return trim($this->age_at_visit.' '.$this->age_at_visit_unit);
     }
 
+    public function getPatientDepartmentAttribute()
+    {
+        if ($this->age_at_visit_unit === 'เดือน') {
+            return 'กุมารฯ';
+        }
+
+        return $this->age_at_visit < 18 ? 'กุมารฯ' : 'อายุรศาสตร์';
+    }
+
     public function getReadyToPrintAttribute()
     {
         return $this->status !== 'canceled' && ($this->discharged_at || $this->enlisted_swab_at);
