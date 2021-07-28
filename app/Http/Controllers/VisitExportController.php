@@ -14,10 +14,16 @@ class VisitExportController extends Controller
                        ->get()
                        ->transform(function ($visit) {
                            return [
-                                'id' => $visit->id,
+                                'วันที่ตรวจ' => $visit->date_visit->format('d-M-Y'),
                                 'HN' => $visit->hn,
-                                'name' => $visit->patient_name,
-                                'result' => $visit->form['result'] ?? null,
+                                'ชื่อผู้ป่วย' => $visit->patient_name,
+                                'ประเภทผู้ป่วย' => $visit->patient_type,
+                                'ประเภทการตรวจ' => $visit->screen_type,
+                                'สิทธิ์' => $visit->form['patient']['insurance'],
+                                'กลุ่ม' => ($visit->patient_type === 'บุคคลทั่วไป' && $visit->screen_type === 'เริ่มตรวจใหม่') ? 'walk-in' : 'นัด-staff',
+                                'เริ่มคัดกรอง' => $visit->enlisted_screen_at ? $visit->enlisted_screen_at->tz('asia/bangkok')->format('H:i') : null,
+                                'จำหน่าย' => $visit->discharged_at ? $visit->discharged_at->tz('asia/bangkok')->format('H:i') : null,
+                                'ใช้เวลา' => ($visit->enlisted_screen_at && $visit->discharged_at) ? $visit->discharged_at->diffInMinutes($visit->enlisted_screen_at) : null,
                             ];
                        });
 
