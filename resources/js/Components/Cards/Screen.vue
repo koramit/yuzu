@@ -9,6 +9,12 @@
         <div class="w-3/4">
             <p class="p-1 pb-0 text-thick-theme-light">
                 {{ visit.patient_type ?? 'ยังไม่ระบุประเภท' }}
+                <span
+                    class="underline"
+                    v-if="visit.status === 'appointment'"
+                >
+                    {{ ('ทำล่วงหน้า ' + visit.date_visit) }}
+                </span>
             </p>
             <div class="flex items-baseline">
                 <p class="p-1 text-lg pt-0">
