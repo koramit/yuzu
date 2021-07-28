@@ -7,6 +7,7 @@ use App\Models\Visit;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class VisitManager
 {
@@ -19,6 +20,7 @@ class VisitManager
                 'insurance' => null,
                 'tel_no' => null,
                 'tel_no_alt' => null,
+                'tel_confirm' => null,
                 'no_sap_id' => false,
                 'sap_id' => null,
                 'position' => null,
@@ -51,7 +53,7 @@ class VisitManager
                 'date_latest_expose' => null,
                 'contact' => false,
                 'contact_type' => null,
-                'contact_name' => null,
+                'contact_detail' => null,
                 'hot_spot' => false,
                 'hot_spot_detail' => null,
                 'other_detail' => null,
@@ -225,6 +227,7 @@ class VisitManager
             'insurance' => 'required',
             'tel_no' => 'required|digits_between:9,10',
             'tel_no_alt' => 'digits_between:9,10|nullable',
+            'tel_no_confirmed' => ['required', 'boolean', Rule::in([true])],
             'temperature_celsius' => 'required|numeric',
             'o2_sat' => 'exclude_if:fatigue,false|required|numeric',
             'evaluation' => 'required',
@@ -235,7 +238,10 @@ class VisitManager
             $data['visit'] +
             $data['symptoms'] +
             $data['exposure'] +
-            $data['comorbids'], $rules, ['name.required' => 'จำเป็นต้องลง ชื่อผู้ป่วย']);
+            $data['comorbids'], $rules, [
+                'name.required' => 'จำเป็นต้องลง ชื่อผู้ป่วย',
+                'tel_no_confirmed.in' => 'โปรดยืนยันหมายเลขโทรศัพท์ของผู้ป่วย',
+            ]);
 
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
@@ -390,7 +396,7 @@ class VisitManager
                 ['icon' => 'stethoscope', 'label' => 'ห้องตรวจ', 'route' => 'visits.exam-list', 'can' => $user->can('view_exam_list')],
                 ['icon' => 'virus', 'label' => 'ห้อง Swab', 'route' => 'visits.swab-list', 'can' => $user->can('view_swab_list')],
                 ['icon' => 'address-book', 'label' => 'เวชระเบียน', 'route' => 'visits.mr-list', 'can' => $user->can('view_mr_list')],
-                ['icon' => 'list-ol', 'label' => 'SI Flow', 'route' => 'visits.queue-list', 'can' => $user->can('view_queue_list')],
+                ['icon' => 'list-ol', 'label' => 'ธุรการ', 'route' => 'visits.queue-list', 'can' => $user->can('view_queue_list')],
                 ['icon' => 'archive', 'label' => 'รายการเคส', 'route' => 'visits', 'can' => $user->can('view_any_visits')],
             ],
             'action-menu' => [
@@ -476,7 +482,7 @@ class VisitManager
             $text = $exposure['evaluation'].'<br>';
             $text .= ('วันสุดท้ายที่สัมผัส - '.Carbon::create($exposure['date_latest_expose'])->format('d M Y').'<br>');
             if ($exposure['contact']) {
-                $text .= ('สัมผัสผู้ติดเชื้อยืนยัน - '.$exposure['contact_name'].' '.$exposure['contact_type'].'<br>');
+                $text .= ('สัมผัสผู้ติดเชื้อยืนยัน - '.$exposure['contact_type'].' '.$exposure['contact_detail'].'<br>');
             }
             if ($exposure['hot_spot']) {
                 $text .= ('ไปพื้นที่เสี่ยง - '.$exposure['hot_spot_detail'].'<br>');

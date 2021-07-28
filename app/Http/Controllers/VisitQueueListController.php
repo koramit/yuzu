@@ -23,7 +23,7 @@ class VisitQueueListController extends Controller
         $user = Auth::user();
         $today = now()->today('asia/bangkok');
         $flash = $this->manager->getFlash($user);
-        $flash['page-title'] = 'SI Flow @ '.$today->format('d M Y');
+        $flash['page-title'] = 'ธุรการ @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
