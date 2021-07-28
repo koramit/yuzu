@@ -40,6 +40,8 @@ class VisitScreenListController extends Controller
                                'hn' => $visit->hn ?? '',
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
+                               'status' => $visit->status,
+                               'date_visit' => $visit->date_visit->format('d M Y'),
                                'enlisted_screen_at_for_humans' => $visit->enlisted_screen_at_for_humans,
                                'can' => [
                                     'update' => $user->can('update', $visit),
