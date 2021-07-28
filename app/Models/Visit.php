@@ -133,6 +133,7 @@ class Visit extends Model
                 'swab' => 3,
                 'discharged' => 4,
                 'canceled' => 5,
+                'appointment' => 6,
             ];
             $this->attributes['status'] = $items[$value] ?? null;
         }
@@ -151,6 +152,7 @@ class Visit extends Model
             'swab',
             'discharged',
             'canceled',
+            'appointment',
         ];
 
         return $items[$this->attributes['status']];
@@ -165,6 +167,7 @@ class Visit extends Model
             'visits.swab-list',
             'visits', // 'discharged',
             'visits', //'canceled',
+            'visits.screen-list', // 'appointment
         ];
 
         return $items[$this->attributes['status']];

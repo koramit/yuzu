@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\HomeController;
@@ -147,6 +148,10 @@ Route::get('visits/{visit:slug}/replace', [VisitsController::class, 'replace'])
 Route::get('print-opd-card/{visit:slug}', PrintOPDCardController::class)
      ->middleware('auth', 'can:printOPDCard,visit')
      ->name('print-opd-card');
+
+Route::post('appointments', AppointmentsController::class)
+     ->middleware('auth', 'can:create_visit')
+     ->name('appointments.store');
 
 // resources
 Route::middleware('auth')

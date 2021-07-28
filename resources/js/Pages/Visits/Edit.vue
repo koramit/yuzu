@@ -853,11 +853,13 @@ export default {
                     form.exposure.other_detail = null;
                 }
 
-                if (val.indexOf('swab') !== -1) {
-                    form.management.np_swab = true;
-                    toggleSaveToSwab(true);
-                } else {
-                    toggleSaveToSwab(false);
+                if (props.visit.status !== 'appointment') {
+                    if (val.indexOf('swab') !== -1) {
+                        form.management.np_swab = true;
+                        toggleSaveToSwab(true);
+                    } else {
+                        toggleSaveToSwab(false);
+                    }
                 }
 
                 form.patient.date_swabbed = null;
@@ -1059,10 +1061,12 @@ export default {
         );
 
         const canSaveToSwab = computed(() => {
-            if (usePage().props.value.user.roles.includes('nurse')) {
-                return form.visit.screen_type && form.visit.screen_type !== 'เริ่มตรวจใหม่';
-            } else if (usePage().props.value.user.roles.includes('md')) {
-                return form.management.np_swab;
+            if (props.visit.status !== 'appointment') {
+                if (usePage().props.value.user.roles.includes('nurse')) {
+                    return form.visit.screen_type && form.visit.screen_type !== 'เริ่มตรวจใหม่';
+                } else if (usePage().props.value.user.roles.includes('md')) {
+                    return form.management.np_swab;
+                }
             }
             return false;
         });

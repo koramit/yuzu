@@ -20,7 +20,7 @@ class VisitManager
                 'insurance' => null,
                 'tel_no' => null,
                 'tel_no_alt' => null,
-                'tel_confirm' => null,
+                'tel_no_confirmed' => null,
                 'no_sap_id' => false,
                 'sap_id' => null,
                 'position' => null,
@@ -240,6 +240,7 @@ class VisitManager
             $data['exposure'] +
             $data['comorbids'], $rules, [
                 'name.required' => 'จำเป็นต้องลง ชื่อผู้ป่วย',
+                'tel_no_confirmed.required' => 'โปรดยืนยันหมายเลขโทรศัพท์ของผู้ป่วย',
                 'tel_no_confirmed.in' => 'โปรดยืนยันหมายเลขโทรศัพท์ของผู้ป่วย',
             ]);
 
@@ -401,6 +402,7 @@ class VisitManager
             ],
             'action-menu' => [
                 ['icon' => 'notes-medical', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-visit', 'can' => $user->can('create_visit')],
+                ['icon' => 'calendar-alt', 'label' => 'เพิ่มเคสล่วงหน้า', 'action' => 'create-appointment', 'can' => $user->hasRole('nurse')],
             ],
         ];
     }
