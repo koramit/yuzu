@@ -24,8 +24,13 @@ class VisitDischargeListController extends Controller
             return back()->withErrors($errors);
         }
 
+        if ($user->hasRole('md')) {
+            $route = 'visits.exam-list';
+        } else {
+            $route = $visit->status_index_route;
+        }
+
         // discharge by md from exam
-        $route = $visit->status_index_route;
         $visit->status = 'discharged';
         $visit->discharged_at = now();
         $visit->forceFill([

@@ -58,9 +58,9 @@ class VisitSwabListController extends Controller
 
         $manager = new VisitManager();
         $user = Auth::user();
-        if ($user->role_names->contains('md')) {
+        if ($user->hasRole('md')) {
             $errors = $manager->validateSwabByMD($data);
-        } elseif ($user->role_names->contains('nurse')) {
+        } elseif ($user->hasRole('nurse')) {
             $errors = $manager->validateSwabByNurse($data);
         }
         $manager->saveVisit($visit, $data, $user);
@@ -70,10 +70,9 @@ class VisitSwabListController extends Controller
         }
 
         // status
-        $route = $visit->status_index_route;
         $visit->status = 'swab';
         $visit->enlisted_swab_at = now();
-        if ($user->role_names->contains('md')) {
+        if ($user->hasRole('md')) {
             $visit->forceFill([
                 'form->md' => [
                     'name' => $user->profile['full_name'],
@@ -82,19 +81,23 @@ class VisitSwabListController extends Controller
                     'signed_at' => now(),
                 ],
             ]);
-        } else {
+            $route = 'visits.exam-list';
+        } elseif ($user->hasRole('nurse')) {
             $visit->forceFill([
                 'form->md' => $manager->getIdStaff($data['md_name']) + ['signed_on_behalf' => true, 'signed_at' => now()],
             ]);
+            $route = 'visits.screen-list';
         }
         if ($visit->patient_type === 'เจ้าหน้าที่ศิริราช' && $visit->patient_id) {
             $visit->enqueued_at = now();
         }
         // running specimen no
-        $cacheName = today('asia/bangkok')->format('Y-m-d').'-specimen-running-no';
-        $visit->forceFill([
-            'form->management->specimen_no' => Cache::increment($cacheName),
-        ]);
+        if (! ($visit->form['management']['specimen_no'])) {
+            $cacheName = today('asia/bangkok')->format('Y-m-d').'-specimen-running-no';
+            $visit->forceFill([
+                'form->management->specimen_no' => Cache::increment($cacheName),
+            ]);
+        }
 
         $visit->save();
 
