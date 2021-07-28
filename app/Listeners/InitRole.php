@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\Registered;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class InitRole
@@ -66,6 +67,15 @@ class InitRole
                 ]);
                 $event->user->save();
             }
+        }
+
+        if ($event->user->roles->count() === 0) {
+            $event->user->assignRole('staff');
+            $event->user->forceFill([
+                'profile->home_page' => 'visits.mr-list',
+            ]);
+            $event->user->save();
+            Log::notice('fallback assign role staff for '.$event->user->profile['full_name'].' '.$event->user->profile['org_id'].' '.$event->user->profile['remark']);
         }
 
         Session::forget('profile');
