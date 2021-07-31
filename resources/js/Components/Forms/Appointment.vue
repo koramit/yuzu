@@ -33,16 +33,29 @@
                 </div>
             </template>
             <template #footer>
-                <div class="flex justify-end items-center">
-                    <SpinnerButton
-                        :spin="form.busy"
-                        class="btn-dark w-full mt-6"
-                        @click="store"
-                        :disabled="!form.hn"
-                    >
-                        {{ form.confirmed ? 'ยืนยัน':'ตรวจสอบ' }}
-                    </SpinnerButton>
-                </div>
+                <!-- <div class="flex items-center"> -->
+                <SpinnerButton
+                    :spin="form.busy"
+                    class="btn-dark w-full mt-6"
+                    @click="store"
+                    :disabled="!form.hn"
+                >
+                    {{ form.confirmed ? 'ยืนยัน':'ตรวจสอบ' }}
+                </SpinnerButton>
+                <SpinnerButton
+                    :spin="fileUploader.processing"
+                    class="btn-bitter w-full mt-6"
+                    @click="importAppointments.click()"
+                >
+                    นำเข้า Excel
+                </SpinnerButton>
+                <input
+                    class="hidden"
+                    type="file"
+                    ref="importAppointments"
+                    @input="fileSelected"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                >
             </template>
         </Modal>
     </Teleport>
@@ -112,12 +125,25 @@ export default {
             }
         };
 
+        const importAppointments = ref(null);
+        const fileUploader = useForm({file: null});
+        const fileSelected = (event) => {
+            fileUploader.file = event.target.files[0];
+            fileUploader.post(window.route('import.appointments'), {
+                onError: () => modal.value.close(),
+                onFinish: () => modal.value ? modal.value.close() : null
+            });
+        };
+
         return {
             modal,
             hnInput,
+            importAppointments,
             form,
             open,
             store,
+            fileSelected,
+            fileUploader
         };
     }
 

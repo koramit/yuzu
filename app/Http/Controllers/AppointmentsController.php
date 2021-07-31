@@ -36,13 +36,12 @@ class AppointmentsController extends Controller
         $form['patient']['tel_no'] = $patient['patient']->profile['tel_no'];
         $visit->slug = Str::uuid()->toString();
         $visit->date_visit = $data['date_visit'];
+        $visit->patient_type = 'เจ้าหน้าที่ศิริราช';
         $visit->form = $form;
         $visit->status = 'appointment';
         $visit->enlisted_screen_at = now();
         $visit->save();
-        $visit->actions()->createMany([
-            ['action' => 'create', 'user_id' => $user->id],
-        ]);
+        $visit->actions()->create(['action' => 'create', 'user_id' => $user->id]);
 
         return Redirect::route('visits.edit', $visit);
     }

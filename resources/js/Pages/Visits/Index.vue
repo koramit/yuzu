@@ -114,6 +114,7 @@
         >
 
         <Visit ref="createVisitForm" />
+        <Appointment ref="appointmentForm" />
     </div>
 </template>
 
@@ -124,15 +125,17 @@ import Visit from '@/Components/Forms/Visit';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import { inject, nextTick, reactive, ref } from '@vue/runtime-core';
 import { Link, useForm } from '@inertiajs/inertia-vue3';
+import Appointment from '@/Components/Forms/Appointment';
 
 export default {
     layout: Layout,
-    components: { Visit, Icon, Link, SpinnerButton },
+    components: { Visit, Icon, Link, SpinnerButton, Appointment },
     props: {
         visits: { type: Object, required: true },
     },
     setup () {
         const createVisitForm = ref(null);
+        const appointmentForm = ref(null);
         const emitter = inject('emitter');
 
         const currentConfirm = reactive({
@@ -154,20 +157,21 @@ export default {
             // ready to use and need some kind of "activate"
             if (action === 'create-visit') {
                 nextTick(() => createVisitForm.value.open());
+            } else if (action === 'create-appointment') {
+                nextTick(() => appointmentForm.value.open());
             }
         });
 
         const importColab = ref(null);
         const colabUploader = useForm({file: null});
         const colabSelected = (event) => {
-            console.log(event.target.files[0]);
             colabUploader.file = event.target.files[0];
-            console.log(colabUploader.file);
             colabUploader.post(window.route('import.colab'));
         };
 
         return {
             createVisitForm,
+            appointmentForm,
             cancel,
             importColab,
             colabSelected,
