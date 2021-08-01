@@ -173,14 +173,3 @@ Route::middleware('auth')
 Route::get('sse', ServerSendEventsController::class)
      ->middleware('auth')
      ->name('sse');
-
-// test role
-Route::get('login-as/{role}', function ($role) {
-    $user = \App\Models\User::whereName($role)->first();
-    if (! $user) {
-        abort(404);
-    }
-    \Auth::login($user);
-
-    return redirect(route($user->home_page));
-});

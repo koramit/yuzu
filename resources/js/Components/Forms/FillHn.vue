@@ -76,9 +76,12 @@ export default {
         });
         const modal = ref(null);
         const open = (visit) => {
-            form.reset();
+            form.hn = null;
+            form.patient_name = null;
             form.patient_name_org = visit.patient_name;
+            form.confirmed = false;
             form.slug = visit.slug;
+            form.busy = false;
             modal.value.open();
         };
         const hnInput = ref(null);
