@@ -3,7 +3,7 @@
         <a
             class="flex items-center text-green-600"
             :href="route('export.visits')"
-            v-if="card === 'mr' && $page.props.user.roles.includes('nurse')"
+            v-if="card === 'mr' && ($page.props.user.roles.includes('nurse') || $page.props.user.roles.includes('admin') || $page.props.user.roles.includes('root'))"
         >
             <Icon
                 class="w-4 h-4 mr-1"
