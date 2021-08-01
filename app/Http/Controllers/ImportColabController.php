@@ -11,14 +11,9 @@ class ImportColabController extends Controller
 {
     public function __invoke()
     {
-        // dd(Request::all());
         $path = Request::file('file')->store('uploads');
-        // dd($path);
-
         $colabs = FastExcel::import(storage_path('app/'.$path));
-
         $visits = Visit::with('patient')->get();
-
         foreach ($visits as $visit) {
             $index = $colabs->search(function ($lab) use ($visit) {
                 return $lab['HN'] === $visit->hn;
@@ -31,8 +26,6 @@ class ImportColabController extends Controller
                 $visit->save();
             }
         }
-
-        // return $colabs;
 
         return Redirect::back();
     }

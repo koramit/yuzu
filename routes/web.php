@@ -4,6 +4,7 @@ use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImportAppointmentsController;
 use App\Http\Controllers\ImportColabController;
 use App\Http\Controllers\OPDCardExportController;
 use App\Http\Controllers\PagesController;
@@ -144,14 +145,18 @@ Route::get('visits/{visit:slug}/replace', [VisitsController::class, 'replace'])
      ->middleware('auth', 'can:replace,visit')
      ->name('visits.replace');
 
+// appointments
+Route::post('import/appointments', ImportAppointmentsController::class)
+     ->middleware('auth', 'can:create_visit')
+     ->name('import.appointments');
+Route::post('appointments', AppointmentsController::class)
+     ->middleware('auth', 'can:create_visit')
+     ->name('appointments.store');
+
 // print OPD card
 Route::get('print-opd-card/{visit:slug}', PrintOPDCardController::class)
      ->middleware('auth', 'can:printOPDCard,visit')
      ->name('print-opd-card');
-
-Route::post('appointments', AppointmentsController::class)
-     ->middleware('auth', 'can:create_visit')
-     ->name('appointments.store');
 
 // resources
 Route::middleware('auth')

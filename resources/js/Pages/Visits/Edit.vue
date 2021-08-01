@@ -198,6 +198,13 @@
                     :options="configs.risk_levels"
                 />
             </div>
+            <FormDatetime
+                class="mt-2"
+                label="วันที่สัมผัสที่ประเมินจาก Incident manager"
+                v-model="form.patient.date_latest_expose_by_im"
+                :error="form.errors.date_latest_expose_by_im"
+                name="date_latest_expose_by_im"
+            />
         </div>
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">

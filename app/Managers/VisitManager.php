@@ -26,6 +26,7 @@ class VisitManager
                 'position' => null,
                 'division' => null,
                 'risk' => null,
+                'date_latest_expose_by_im' => null,
                 'temperature_celsius' => null,
                 'o2_sat' => null,
                 'weight' => null,
@@ -403,7 +404,7 @@ class VisitManager
             ],
             'action-menu' => [
                 ['icon' => 'notes-medical', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-visit', 'can' => $user->can('create_visit')],
-                ['icon' => 'calendar-alt', 'label' => 'เพิ่มเคสล่วงหน้า', 'action' => 'create-appointment', 'can' => $user->hasRole('nurse')],
+                ['icon' => 'calendar-alt', 'label' => 'เพิ่มเคสล่วงหน้า', 'action' => 'create-appointment', 'can' => $user->hasRole('nurse') || $user->hasRole('admin') || $user->hasRole('root')],
             ],
         ];
     }
