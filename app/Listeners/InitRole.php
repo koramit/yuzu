@@ -26,7 +26,6 @@ class InitRole
                 10038506, 10038274, 10038336, 10038490, 10038177,
             ],
             'pm_md' => [10003963, 10022783, 10027514, 10028530, 10032666],
-            'nurse' => [10004789, 10026310],
         ];
     }
 
@@ -48,6 +47,13 @@ class InitRole
             $event->user->save();
         } elseif ($event->user->profile['position'] === 'พยาบาล') {
             $event->user->assignRole('nurse');
+            $event->user->forceFill([
+                'profile->home_page' => 'visits.screen-list',
+            ]);
+            $event->user->save();
+        } elseif ($event->user->profile['position'] === 'ผู้ช่วยพยาบาล') {
+            $event->user->assignRole('nurse');
+            $event->user->assignRole('staff');
             $event->user->forceFill([
                 'profile->home_page' => 'visits.screen-list',
             ]);
