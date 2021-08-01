@@ -189,14 +189,17 @@ class VisitsController extends Controller
         $flash['action-menu'] = [];
         $this->manager->setFlash($flash);
 
+        $user = Auth::user();
+        $visit->actions()->create(['action' => 'view', 'user_id' => $user->id]);
+
         return Inertia::render('Visits/Show', [
             'content' => $this->manager->getReportContent($visit),
             'configs' => [
                 'topics' => ['ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย', 'note'],
             ],
             'can' => [
-                'evaluate' => Auth::user()->can('evaluate'),
-                'print_opd_card' => Auth::user()->can('printOpdCard', $visit),
+                'evaluate' => $user->can('evaluate'),
+                'print_opd_card' => $user->can('printOpdCard', $visit),
             ],
         ]);
     }
