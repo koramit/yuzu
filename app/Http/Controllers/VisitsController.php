@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\VisitUpdated;
 use App\Managers\PatientManager;
 use App\Managers\VisitManager;
+use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -68,7 +69,7 @@ class VisitsController extends Controller
                           ->wherePatientId($patient['patient']->id)
                           ->first();
             if ($visit) {
-                return Redirect::route('visits.edit', $visit);
+                return $this->handleDuplicate($visit, $user);
             }
             $visit = new Visit();
             $visit->patient_id = $patient['patient']->id;
@@ -80,7 +81,7 @@ class VisitsController extends Controller
                           ->where('form->patient->name', $data['patient_name'])
                           ->first();
             if ($visit) {
-                return Redirect::route('visits.edit', $visit);
+                return $this->handleDuplicate($visit, $user);
             }
             $visit = new Visit();
             $form['patient']['name'] = $data['patient_name'];
@@ -189,14 +190,17 @@ class VisitsController extends Controller
         $flash['action-menu'] = [];
         $this->manager->setFlash($flash);
 
+        $user = Auth::user();
+        $visit->actions()->create(['action' => 'view', 'user_id' => $user->id]);
+
         return Inertia::render('Visits/Show', [
             'content' => $this->manager->getReportContent($visit),
             'configs' => [
                 'topics' => ['ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย', 'note'],
             ],
             'can' => [
-                'evaluate' => Auth::user()->can('evaluate'),
-                'print_opd_card' => Auth::user()->can('printOpdCard', $visit),
+                'evaluate' => $user->can('evaluate'),
+                'print_opd_card' => $user->can('printOpdCard', $visit),
             ],
         ]);
     }
@@ -246,5 +250,32 @@ class VisitsController extends Controller
         VisitUpdated::dispatch($visit);
 
         return Redirect::back();
+    }
+
+    protected function handleDuplicate(Visit $visit, User $user)
+    {
+        if (
+            ($user->hasRole('nurse') && ($visit->status === 'screen')) ||
+            (($user->hasRole('md')) && ($visit->status === 'exam'))
+        ) {
+            return Redirect::route('visits.edit', $visit);
+        } elseif (collect(['swab', 'discharged'])->contains($visit->status)) {
+            return Redirect::route('visits.show', $visit);
+        } elseif ($visit->status === 'canceled') {
+            $visit->enqueued_at = null;
+            $visit->attached_opd_card_at = null;
+            $visit->authorized_at = null;
+            if ($user->hasRole('nurse')) {
+                $visit->status = 'screen';
+            } elseif ($user->hasRole('md')) {
+                $visit->enlisted_exam_at = $visit->enlisted_exam_at ?? now();
+                $visit->status = 'exam';
+            }
+            $visit->save();
+            $visit->actions()->create(['action' => 'recreate', 'user_id' => $user->id]);
+            VisitUpdated::dispatch($visit);
+
+            return Redirect::route('visits.edit', $visit);
+        }
     }
 }
