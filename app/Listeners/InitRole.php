@@ -26,6 +26,7 @@ class InitRole
                 10038506, 10038274, 10038336, 10038490, 10038177,
             ],
             'pm_md' => [10003963, 10022783, 10027514, 10028530, 10032666],
+            'nurse' => [10004789],
         ];
     }
 
@@ -63,7 +64,7 @@ class InitRole
             if (collect($ids)->contains($profile['org_id'])) {
                 $event->user->assignRole($role);
                 $event->user->forceFill([
-                    'profile->home_page' => 'visits',
+                    'profile->home_page' => $role === 'nurse' ? 'visits.screen-list' : 'visits',
                 ]);
                 $event->user->save();
             }
