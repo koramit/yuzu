@@ -14,6 +14,10 @@ class VisitFillHnController extends Controller
     {
         $patient = (new PatientManager())->manage(Request::input('hn'));
         $visit->patient_id = $patient['patient']->id;
+        $visit->forceFill([
+            'form->patient->hn' => $patient['patient']->hn,
+            'form->patient->name' => $patient['patient']->full_name,
+        ]);
         $visit->save();
         $visit->actions()->create([
             'action' => 'fill-hn',

@@ -152,23 +152,9 @@ class VisitsController extends Controller
 
         $this->manager->setFlash($flash);
 
-        if ($visit->patient_id && $visit->patient_name !== $visit->form['patient']['name']) {
-            $visit->forceFill([
-                'form->patient->name' => $visit->patient_name,
-                'form->patient->hn' => $visit->hn,
-            ]);
-        }
-
         if ($visit->patient) {
             $visit->patient_document_id = $visit->patient->profile['document_id'];
             $visit->has_patient = true;
-            if ($visit->patient_name !== $visit->form['patient']['name']) {
-                $form = $visit->form;
-                $form['patient']['name'] = $visit->patient_name;
-                $form['patient']['hn'] = $visit->hn;
-                $visit->form = $form;
-            }
-
             unset($visit->patient);
         } else {
             $visit->has_patient = false;
