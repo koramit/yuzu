@@ -422,8 +422,8 @@ class VisitManager
     public function getReportContent(Visit $visit)
     {
         $contentVisit = [
-            'hn' => $visit->form['patient']['hn'],
-            'ชื่อ' => $visit->form['patient']['name'],
+            'hn' => $visit->hn,
+            'ชื่อ' => $visit->patient_name,
             'เพศ/อายุ' => trim($visit->patient->gender.' '.$visit->age_at_visit_label),
             'สิทธิ์การรักษา' => $visit->form['patient']['insurance'],
             'วันที่ตรวจ' => $visit->date_visit->format('d M Y'),
