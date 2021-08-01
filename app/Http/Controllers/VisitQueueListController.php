@@ -31,8 +31,10 @@ class VisitQueueListController extends Controller
                            $query->whereNotNull('enlisted_exam_at')
                                  ->orWhereNotNull('enlisted_swab_at');
                        })
-                       ->whereNull('enqueued_at')
-                       ->orWhere('patient_id', null)
+                       ->where(function ($query) {
+                           $query->whereNull('enqueued_at')
+                                 ->orWhere('patient_id', null);
+                       })
                        ->orderBy('enlisted_screen_at')
                        ->get()
                        ->transform(function ($visit) use ($user) {
