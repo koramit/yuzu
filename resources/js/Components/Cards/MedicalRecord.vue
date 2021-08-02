@@ -30,13 +30,13 @@
             <!-- left detail -->
             <div class="w-3/4">
                 <p class="p-1 pb-0 text-thick-theme-light">
-                    <button
+                    <span
                         class="font-semibold mr-1"
                     >
                         {{ visit.patient_type ?? 'ยังไม่ระบุประเภท' }}
-                    </button>
-                    <button
-                        class="text-sm shadow-sm italic px-2 rounded-xl mr-1 bg-green-200 text-green-400"
+                    </span>
+                    <span
+                        class="text-sm italic px-2 mr-1 text-bitter-theme-light"
                         v-if="visit.swab"
                     >
                         <Icon
@@ -44,12 +44,7 @@
                             name="virus"
                         />
                         Swab
-                        <!-- <Icon
-                            class="ml-1 inline w-2 h-2"
-                            name="filter"
-                        /> -->
-                        <!-- v-if="referCase.meta.type === filters.type" -->
-                    </button>
+                    </span>
                 </p>
                 <div class="flex items-baseline">
                     <p

@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- export -->
         <a
             class="flex items-center text-green-600"
             :href="route('export.visits')"
@@ -11,6 +12,8 @@
             />
             <span class="block font-normal text-thick-theme-light">รายงาน</span>
         </a>
+
+        <!-- search -->
         <div class="mb-2 relative">
             <input
                 autocomplete="off"
@@ -30,6 +33,59 @@
                 />
             </button>
         </div>
+
+        <!-- filter  -->
+        <div
+            class="mb-2"
+            v-if="card === 'mr'"
+        >
+            <button
+                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
+                :class="{
+                    'border-2 border-white text-white': filters.swab,
+                    'text-soft-theme-light': !filters.swab,
+                }"
+                @click="filters.swab = !filters.swab"
+            >
+                <Icon
+                    class="ml-1 inline w-2 h-2"
+                    name="filter"
+                    v-if="filters.swab"
+                />
+                Swab
+            </button>
+            <button
+                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
+                :class="{
+                    'border-2 border-white text-white': filters.staff,
+                    'text-soft-theme-light': !filters.staff,
+                }"
+                @click="filters.staff = !filters.staff"
+            >
+                <Icon
+                    class="ml-1 inline w-2 h-2"
+                    name="filter"
+                    v-if="filters.staff"
+                />
+                เจ้าหน้าที่ศิริราช
+            </button>
+            <button
+                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
+                :class="{
+                    'border-2 border-white text-white': filters.public,
+                    'text-soft-theme-light': !filters.public,
+                }"
+                @click="filters.public = !filters.public"
+            >
+                <Icon
+                    class="ml-1 inline w-2 h-2"
+                    name="filter"
+                    v-if="filters.public"
+                />
+                บุคคลทั่วไป
+            </button>
+        </div>
+
         <!-- card -->
         <CardScreen
             v-if="card === 'screen'"
@@ -142,15 +198,27 @@ export default {
         }
 
         const search = ref('');
+        const filters = reactive({
+            swab: false,
+            public: false,
+            staff: false,
+        });
         const filteredVisits = computed(() => {
             if (! search.value) {
-                return props.visits;
+                return props.visits
+                    .filter(v => filters.swab ? v.swab : true)
+                    .filter(v => filters.staff ? v.patient_type === 'เจ้าหน้าที่ศิริราช' : true)
+                    .filter(v => filters.public ? v.patient_type === 'บุคคลทั่วไป' : true);
             }
 
             return props.visits.filter(v => v.hn.indexOf(search.value) !== -1 || v.patient_name.indexOf(search.value) !== -1);
         });
+
         const reload = () => {
             search.value = '';
+            filters.swab = false;
+            filters.staff = false;
+            filters.public = false;
             Inertia.reload();
         };
 
@@ -160,7 +228,8 @@ export default {
             cancel,
             search,
             filteredVisits,
-            reload
+            reload,
+            filters,
         };
     },
 };
