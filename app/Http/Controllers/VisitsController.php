@@ -31,9 +31,11 @@ class VisitsController extends Controller
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
+                       ->filter(Request::only('search'))
                        ->orderByDesc('date_visit')
                        ->orderByDesc('updated_at')
                        ->paginate()
+                       ->withQueryString()
                        ->through(function ($visit) use ($user) {
                            return [
                                'slug' => $visit->slug,
@@ -49,7 +51,10 @@ class VisitsController extends Controller
                        });
         Session::put('back-from-show', 'visits');
 
-        return Inertia::render('Visits/Index', ['visits' => $visits]);
+        return Inertia::render('Visits/Index', [
+            'visits' => $visits,
+            'filters' => Request::all('search'),
+        ]);
     }
 
     public function store()

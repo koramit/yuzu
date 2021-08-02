@@ -55,15 +55,16 @@ class Visit extends Model
         return $this->hasMany('App\Models\VisitFormVersion', 'visit_id', 'id');
     }
 
-    // public function updater()
-    // {
-    //     return $this->belongsTo('App\Models\User', 'updater_id', 'id');
-    // }
-
-    // public function approver()
-    // {
-    //     return $this->belongsTo('App\Models\User', 'approver_id', 'id');
-    // }
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['search'] ?? null, function ($query, $search) {
+            if (is_numeric($search)) {
+                $query->where('form->patient->hn', 'like', "{$search}%");
+            } else {
+                $query->where('form->patient->name', 'like', "%{$search}%");
+            }
+        });
+    }
 
     public function setPatientTypeAttribute($value)
     {

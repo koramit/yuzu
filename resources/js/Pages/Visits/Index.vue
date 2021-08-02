@@ -21,6 +21,15 @@
                 Import Visits
             </button>
         </div>
+        <!-- search -->
+        <input
+            autocomplete="off"
+            type="text"
+            name="search"
+            placeholder="🔍 ด้วย HN หรือ ชื่อ"
+            v-model="search"
+            class="form-input w-full mb-4"
+        >
         <!-- card -->
         <div
             class="rounded bg-white shadow-sm my-1 p-1 flex"
@@ -43,6 +52,7 @@
             </div>
             <!-- right menu -->
             <div class="w-1/4 text-sm p-1 grid justify-items-center ">
+                <!-- read -->
                 <Link
                     class="w-full flex text-alt-theme-light justify-start"
                     :href="route('visits.show', visit)"
@@ -54,30 +64,6 @@
                     />
                     <span class="block font-normal text-thick-theme-light">อ่าน</span>
                 </Link>
-                <!-- evaluate -->
-                <!-- v-if="userCan('write', referCase)" -->
-                <!-- <Link
-                    class="w-full flex text-yellow-200 justify-start"
-                    :href="route('visits.edit', visit)"
-                >
-                    <Icon
-                        class="w-4 h-4 mr-1"
-                        name="edit"
-                    />
-                    <span class="block font-normal text-thick-theme-light">เขียนต่อ</span>
-                </Link> -->
-                <!-- edit -->
-                <!-- v-if="userCan('edit', referCase)" -->
-                <!-- <Link
-                    class="w-full flex text-alt-theme-light justify-start"
-                    :href="route('visits.edit', visit)"
-                >
-                    <Icon
-                        class="w-4 h-4 mr-1"
-                        name="eraser"
-                    />
-                    <span class="block font-normal text-thick-theme-light">แก้ไข</span>
-                </Link> -->
             </div>
         </div>
 
@@ -123,17 +109,20 @@ import Layout from '@/Components/Layouts/Layout';
 import Icon from '@/Components/Helpers/Icon';
 import Visit from '@/Components/Forms/Visit';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
-import { inject, nextTick, reactive, ref } from '@vue/runtime-core';
+import { inject, nextTick, reactive, ref, watch } from '@vue/runtime-core';
 import { Link, useForm } from '@inertiajs/inertia-vue3';
 import Appointment from '@/Components/Forms/Appointment';
+import throttle from 'lodash/throttle';
+import { Inertia } from '@inertiajs/inertia';
 
 export default {
     layout: Layout,
     components: { Visit, Icon, Link, SpinnerButton, Appointment },
     props: {
         visits: { type: Object, required: true },
+        filters: { type: Object, required: true },
     },
-    setup () {
+    setup (props) {
         const createVisitForm = ref(null);
         const appointmentForm = ref(null);
         const emitter = inject('emitter');
@@ -169,6 +158,14 @@ export default {
             colabUploader.post(window.route('import.colab'));
         };
 
+        const search = ref(props.filters.search);
+        watch (
+            () => search.value,
+            throttle(function(val) {
+                Inertia.visit(window.route('visits') + '?search=' + val, { preserveState: true });
+            }, 450),
+        );
+
         return {
             createVisitForm,
             appointmentForm,
@@ -176,6 +173,7 @@ export default {
             importColab,
             colabSelected,
             colabUploader,
+            search,
         };
     },
 };
