@@ -28,6 +28,8 @@ class VisitExamListController extends Controller
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
+                       ->whereNotNull('patient_id')
+                       ->whereNotNull('authorized_at')
                        ->whereDateVisit($today)
                        ->whereStatus(2)
                        ->orderBy('enlisted_exam_at')
