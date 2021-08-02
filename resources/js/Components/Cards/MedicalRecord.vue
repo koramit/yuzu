@@ -30,7 +30,26 @@
             <!-- left detail -->
             <div class="w-3/4">
                 <p class="p-1 pb-0 text-thick-theme-light">
-                    {{ visit.patient_type ?? 'ยังไม่ระบุประเภท' }}
+                    <button
+                        class="font-semibold mr-1"
+                    >
+                        {{ visit.patient_type ?? 'ยังไม่ระบุประเภท' }}
+                    </button>
+                    <button
+                        class="text-sm shadow-sm italic px-2 rounded-xl mr-1 bg-green-200 text-green-400"
+                        v-if="visit.swab"
+                    >
+                        <Icon
+                            class="inline w-4 h-4"
+                            name="virus"
+                        />
+                        Swab
+                        <!-- <Icon
+                            class="ml-1 inline w-2 h-2"
+                            name="filter"
+                        /> -->
+                        <!-- v-if="referCase.meta.type === filters.type" -->
+                    </button>
                 </p>
                 <div class="flex items-baseline">
                     <p
@@ -44,111 +63,121 @@
                 </p>
             </div>
             <!-- right menu -->
-            <div class="w-1/4 text-sm p-1 grid justify-items-center">
+            <div class="w-1/4 text-sm p-1 grid justify-items-start">
                 <!-- authorize -->
                 <template v-if="visit.queued">
-                    <button
-                        class="w-full flex text-bitter-theme-light justify-start disabled:cursor-not-allowed"
-                        disabled
-                        v-if="visit.authorized"
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="check-circle"
-                        />
-                        <span class="block font-normal text-thick-theme-light">เปิด Visit แล้ว</span>
-                    </button>
-                    <Link
-                        class="w-full flex text-alt-theme-light justify-start disabled:cursor-not-allowed"
-                        :href="route('visits.authorize.store', visit)"
-                        as="button"
-                        method="post"
-                        preserve-state
-                        preserve-scroll
-                        :disabled="!visit.can.authorize_visit"
-                        v-else
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="sync-alt"
-                        />
-                        <span class="block font-normal text-thick-theme-light">เปิด Visit</span>
-                    </Link>
+                    <div v-if="visit.authorized">
+                        <button
+                            class="inline-flex text-bitter-theme-light justify-start disabled:cursor-not-allowed"
+                            disabled
+                        >
+                            <Icon
+                                class="w-4 h-4 mr-1"
+                                name="check-circle"
+                            />
+                            <span class="block font-normal text-thick-theme-light">เปิด Visit แล้ว</span>
+                        </button>
+                    </div>
+                    <div v-else>
+                        <Link
+                            class="inline-flex text-alt-theme-light justify-start disabled:cursor-not-allowed"
+                            :href="route('visits.authorize.store', visit)"
+                            as="button"
+                            method="post"
+                            preserve-state
+                            preserve-scroll
+                            :disabled="!visit.can.authorize_visit"
+                        >
+                            <Icon
+                                class="w-4 h-4 mr-1"
+                                name="sync-alt"
+                            />
+                            <span class="block font-normal text-thick-theme-light">เปิด Visit</span>
+                        </Link>
+                    </div>
                 </template>
-                <button
-                    v-else
-                    disabled
-                    class="w-full flex text-thick-theme-light justify-start disabled:cursor-not-allowed"
-                >
-                    <Icon
-                        class="w-4 h-4 mr-1"
-                        name="hourglass-half"
-                    />
-                    <span class="block font-normal text-thick-theme-light">ยังไม่มีคิว</span>
-                </button>
+
+                <div v-else>
+                    <button
+
+                        disabled
+                        class="inline-flex text-thick-theme-light justify-start disabled:cursor-not-allowed"
+                    >
+                        <Icon
+                            class="w-4 h-4 mr-1"
+                            name="hourglass-half"
+                        />
+                        <span class="block font-normal text-thick-theme-light">ยังไม่มีคิว</span>
+                    </button>
+                </div>
                 <!-- OPD card attached -->
                 <template v-if="visit.ready_to_print">
-                    <button
-                        class="w-full flex text-bitter-theme-light justify-start disabled:cursor-not-allowed"
-                        disabled
-                        v-if="visit.attached"
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="check-circle"
-                        />
-                        <span class="block font-normal text-thick-theme-light">พิมพ์แล้ว</span>
-                    </button>
-                    <Link
-                        class="w-full flex text-alt-theme-light justify-start disabled:cursor-not-allowed"
-                        :href="route('visits.attach-opd-card.store', visit)"
-                        as="button"
-                        method="post"
-                        preserve-state
-                        preserve-scroll
-                        :disabled="!visit.can.attach_opd_card"
-                        v-else
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="sync-alt"
-                        />
-                        <span class="block font-normal text-thick-theme-light">พิมพ์</span>
-                    </Link>
-                    <a
-                        class="w-full flex text-alt-theme-light justify-start"
-                        :href="route('print-opd-card', visit)"
-                        target="_blank"
-                        v-if="visit.can.attach_opd_card"
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="print"
-                        />
-                        <span class="block font-normal text-thick-theme-light">พิมพ์</span>
-                    </a>
-                    <Link
-                        class="w-full flex text-alt-theme-light justify-start"
-                        :href="route('visits.show', visit)"
-                        v-if="visit.can.print_opd_card"
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="readme"
-                        />
-                        <span class="block font-normal text-thick-theme-light">อ่าน</span>
-                    </Link>
-                    <Link
-                        class="w-full flex text-alt-theme-light justify-start"
-                        :href="route('visits.replace', visit)"
-                        v-if="visit.can.replace"
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="eraser"
-                        />
-                        <span class="block font-normal text-thick-theme-light">แก้ไข</span>
-                    </Link>
+                    <div v-if="visit.attached">
+                        <button
+                            class="inline-flex text-bitter-theme-light justify-start disabled:cursor-not-allowed"
+                            disabled
+                        >
+                            <Icon
+                                class="w-4 h-4 mr-1"
+                                name="check-circle"
+                            />
+                            <span class="block font-normal text-thick-theme-light">พิมพ์แล้ว</span>
+                        </button>
+                    </div>
+                    <div v-else>
+                        <Link
+                            class="inline-flex text-alt-theme-light justify-start disabled:cursor-not-allowed"
+                            :href="route('visits.attach-opd-card.store', visit)"
+                            as="button"
+                            method="post"
+                            preserve-state
+                            preserve-scroll
+                            :disabled="!visit.can.attach_opd_card"
+                        >
+                            <Icon
+                                class="w-4 h-4 mr-1"
+                                name="sync-alt"
+                            />
+                            <span class="block font-normal text-thick-theme-light">พิมพ์</span>
+                        </Link>
+                    </div>
+                    <div v-if="visit.can.attach_opd_card">
+                        <a
+                            class="inline-flex text-alt-theme-light justify-start"
+                            :href="route('print-opd-card', visit)"
+                            target="_blank"
+                        >
+                            <Icon
+                                class="w-4 h-4 mr-1"
+                                name="print"
+                            />
+                            <span class="block font-normal text-thick-theme-light">พิมพ์</span>
+                        </a>
+                    </div>
+                    <div v-if="visit.can.print_opd_card">
+                        <Link
+                            class="inline-flex text-alt-theme-light justify-start"
+                            :href="route('visits.show', visit)"
+                        >
+                            <Icon
+                                class="w-4 h-4 mr-1"
+                                name="readme"
+                            />
+                            <span class="block font-normal text-thick-theme-light">อ่าน</span>
+                        </Link>
+                    </div>
+                    <div v-if="visit.can.replace">
+                        <Link
+                            class="inline-flex text-alt-theme-light justify-start"
+                            :href="route('visits.replace', visit)"
+                        >
+                            <Icon
+                                class="w-4 h-4 mr-1"
+                                name="eraser"
+                            />
+                            <span class="block font-normal text-thick-theme-light">แก้ไข</span>
+                        </Link>
+                    </div>
                 </template>
             </div>
         </template>

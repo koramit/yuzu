@@ -46,97 +46,37 @@
             <!-- right menu -->
             <div class="w-1/4 text-sm p-1 grid justify-items-center">
                 <!-- queue -->
-                <Link
-                    class="w-full flex text-alt-theme-light justify-start"
-                    :href="route('visits.queue.store', visit)"
-                    as="button"
-                    method="post"
-                    preserve-state
-                    preserve-scroll
-                    v-if="visit.can.queue"
-                >
-                    <Icon
-                        class="w-4 h-4 mr-1"
-                        name="sync-alt"
-                    />
-                    <span class="block font-normal text-thick-theme-light">SI Flow</span>
-                </Link>
-                <!-- fill hn -->
-                <button
-                    class="w-full flex text-alt-theme-light justify-start"
-                    v-if="visit.can.fill_hn"
-                    @click="fillHn(visit)"
-                >
-                    <Icon
-                        class="w-4 h-4 mr-1"
-                        name="sync-alt"
-                    />
-                    <span class="block font-normal text-thick-theme-light">บันทึก HN</span>
-                </button>
-                <!-- OPD card attached -->
-                <!-- <template v-if="visit.ready_to_print">
-                    <button
-                        class="w-full flex text-bitter-theme-light justify-start disabled:cursor-not-allowed"
-                        disabled
-                        v-if="visit.attached"
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="check-circle"
-                        />
-                        <span class="block font-normal text-thick-theme-light">พิมพ์แล้ว</span>
-                    </button>
+                <div>
                     <Link
-                        class="w-full flex text-alt-theme-light justify-start disabled:cursor-not-allowed"
-                        :href="route('visits.attach-opd-card.store', visit)"
+                        class="inline-flex text-alt-theme-light justify-start"
+                        :href="route('visits.queue.store', visit)"
                         as="button"
                         method="post"
                         preserve-state
                         preserve-scroll
-                        :disabled="!visit.can.attach_opd_card"
-                        v-else
+                        v-if="visit.can.queue"
                     >
                         <Icon
                             class="w-4 h-4 mr-1"
                             name="sync-alt"
                         />
-                        <span class="block font-normal text-thick-theme-light">พิมพ์</span>
+                        <span class="block font-normal text-thick-theme-light">SI Flow</span>
                     </Link>
-                    <a
-                        class="w-full flex text-alt-theme-light justify-start"
-                        :href="route('print-opd-card', visit)"
-                        target="_blank"
-                        v-if="visit.can.attach_opd_card"
+                </div>
+                <!-- fill hn -->
+                <div>
+                    <button
+                        class="inline-flex text-alt-theme-light justify-start"
+                        v-if="visit.can.fill_hn"
+                        @click="fillHn(visit)"
                     >
                         <Icon
                             class="w-4 h-4 mr-1"
-                            name="print"
+                            name="sync-alt"
                         />
-                        <span class="block font-normal text-thick-theme-light">พิมพ์</span>
-                    </a>
-                    <Link
-                        class="w-full flex text-alt-theme-light justify-start"
-                        :href="route('visits.show', visit)"
-                        v-if="visit.can.print_opd_card"
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="readme"
-                        />
-                        <span class="block font-normal text-thick-theme-light">อ่าน</span>
-                    </Link>
-                    <Link
-                        class="w-full flex text-alt-theme-light justify-start"
-                        :href="route('visits.replace', visit)"
-                        v-if="visit.can.replace"
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1"
-                            name="eraser"
-                        />
-                        <span class="block font-normal text-thick-theme-light">แก้ไข</span>
-                    </Link>
-                </template> -->
+                        <span class="block font-normal text-thick-theme-light">บันทึก HN</span>
+                    </button>
+                </div>
             </div>
         </template>
     </div>

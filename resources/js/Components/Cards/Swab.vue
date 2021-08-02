@@ -20,7 +20,7 @@
             </p>
         </div>
         <!-- right menu -->
-        <div class="w-1/4 text-sm p-1 grid justify-items-center ">
+        <div class="w-1/4 text-sm p-1 grid justify-items-start">
             <!-- discharge -->
             <!-- <Link
                 class="w-full flex text-bitter-theme-light justify-start"
@@ -36,17 +36,19 @@
                 />
                 <span class="block font-normal text-thick-theme-light">จำหน่าย</span>
             </Link> -->
-            <button
-                class="w-full flex text-bitter-theme-light justify-start"
-                v-if="visit.can.discharge"
-                @click="discharge(visit)"
-            >
-                <Icon
-                    class="w-4 h-4 mr-1"
-                    name="share-square"
-                />
-                <span class="block font-normal text-thick-theme-light">จำหน่าย</span>
-            </button>
+            <div>
+                <button
+                    class="inline-flex text-bitter-theme-light justify-start"
+                    v-if="visit.can.discharge"
+                    @click="discharge(visit)"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="share-square"
+                    />
+                    <span class="block font-normal text-thick-theme-light">จำหน่าย</span>
+                </button>
+            </div>
         </div>
     </div>
 </template>
