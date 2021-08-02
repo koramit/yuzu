@@ -424,7 +424,7 @@ class VisitManager
         $contentVisit = [
             'hn' => $visit->hn,
             'ชื่อ' => $visit->patient_name,
-            'เพศ/อายุ' => trim($visit->patient->gender.' '.$visit->age_at_visit_label),
+            'เพศ/อายุ' => trim($visit->gender.' '.$visit->age_at_visit_label),
             'สิทธิ์การรักษา' => $visit->form['patient']['insurance'],
             'วันที่ตรวจ' => $visit->date_visit->format('d M Y'),
             'ประเภทการตรวจ' => $visit->screen_type,

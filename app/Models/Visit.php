@@ -216,7 +216,7 @@ class Visit extends Model
 
     public function getAgeAtVisitAttribute()
     {
-        if (! $this->patient->dob || ! $this->date_visit) {
+        if (! $this->patient || ! $this->patient->dob || ! $this->date_visit) {
             return null;
         }
 
@@ -230,7 +230,7 @@ class Visit extends Model
 
     public function getAgeAtVisitUnitAttribute()
     {
-        if (! $this->patient->dob || ! $this->date_visit) {
+        if (! $this->patient || ! $this->patient->dob || ! $this->date_visit) {
             return null;
         }
 
@@ -244,11 +244,19 @@ class Visit extends Model
 
     public function getAgeAtVisitLabelAttribute()
     {
+        if (! $this->patient) {
+            return null;
+        }
+
         return trim($this->age_at_visit.' '.$this->age_at_visit_unit);
     }
 
     public function getPatientDepartmentAttribute()
     {
+        if (! $this->patient) {
+            return null;
+        }
+
         if ($this->age_at_visit_unit === 'เดือน') {
             return 'กุมารฯ';
         }
@@ -264,5 +272,14 @@ class Visit extends Model
     public function getTelNoAttribute()
     {
         return $this->form['patient']['tel_no'].' '.$this->form['patient']['tel_no_alt'];
+    }
+
+    public function getGenderAttribute()
+    {
+        if (! $this->patient) {
+            return null;
+        }
+
+        return $this->patient->gender;
     }
 }
