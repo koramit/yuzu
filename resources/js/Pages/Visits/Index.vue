@@ -51,19 +51,21 @@
                 </p>
             </div>
             <!-- right menu -->
-            <div class="w-1/4 text-sm p-1 grid justify-items-center ">
+            <div class="w-1/4 text-sm p-1 grid justify-items-start">
                 <!-- read -->
-                <Link
-                    class="w-full flex text-alt-theme-light justify-start"
-                    :href="route('visits.show', visit)"
-                    v-if="visit.can.view"
-                >
-                    <Icon
-                        class="w-4 h-4 mr-1"
-                        name="readme"
-                    />
-                    <span class="block font-normal text-thick-theme-light">อ่าน</span>
-                </Link>
+                <div>
+                    <Link
+                        class="inline-flex text-alt-theme-light justify-start"
+                        :href="route('visits.show', visit)"
+                        v-if="visit.can.view"
+                    >
+                        <Icon
+                            class="w-4 h-4 mr-1"
+                            name="readme"
+                        />
+                        <span class="block font-normal text-thick-theme-light">อ่าน</span>
+                    </Link>
+                </div>
             </div>
         </div>
 

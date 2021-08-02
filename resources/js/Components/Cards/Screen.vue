@@ -26,32 +26,36 @@
             </p>
         </div>
         <!-- right menu -->
-        <div class="w-1/4 text-sm p-1 grid justify-items-center ">
+        <div class="w-1/4 text-sm p-1 grid justify-items-start">
             <!-- update -->
-            <Link
-                class="w-full flex text-yellow-200 justify-start"
-                :href="route('visits.edit', visit)"
-                v-if="visit.can.update"
-            >
-                <Icon
-                    class="w-4 h-4 mr-1"
-                    name="edit"
-                />
-                <span class="block font-normal text-thick-theme-light">เขียน</span>
-            </Link>
+            <div>
+                <Link
+                    class="inline-flex text-yellow-200 justify-start"
+                    :href="route('visits.edit', visit)"
+                    v-if="visit.can.update"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="edit"
+                    />
+                    <span class="block font-normal text-thick-theme-light">เขียน</span>
+                </Link>
+            </div>
             <!-- cancel -->
-            <button
-                class="w-full flex text-red-200 justify-start"
-                :href="route('visits.edit', visit)"
-                @click="$emit('cancel', visit)"
-                v-if="visit.can.cancel"
-            >
-                <Icon
-                    class="w-4 h-4 mr-1"
-                    name="trash-alt"
-                />
-                <span class="block font-normal text-thick-theme-light">ยกเลิก</span>
-            </button>
+            <div>
+                <button
+                    class="inline-flex text-red-200 justify-start"
+                    :href="route('visits.edit', visit)"
+                    @click="$emit('cancel', visit)"
+                    v-if="visit.can.cancel"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="trash-alt"
+                    />
+                    <span class="block font-normal text-thick-theme-light">ยกเลิก</span>
+                </button>
+            </div>
         </div>
     </div>
 </template>
