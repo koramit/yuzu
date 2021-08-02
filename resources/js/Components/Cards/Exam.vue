@@ -22,11 +22,10 @@
         <!-- right menu -->
         <div class="w-1/4 text-sm p-1 grid justify-items-start">
             <!-- update -->
-            <div>
+            <div v-if="visit.can.update">
                 <Link
                     class="inline-flex text-yellow-200 justify-start"
                     :href="route('visits.edit', visit)"
-                    v-if="visit.can.update"
                 >
                     <Icon
                         class="w-4 h-4 mr-1"
@@ -36,12 +35,11 @@
                 </Link>
             </div>
             <!-- cancel -->
-            <div>
+            <div v-if="visit.can.cancel">
                 <button
                     class="inline-flex text-red-200 justify-start"
                     :href="route('visits.edit', visit)"
                     @click="$emit('cancel', visit)"
-                    v-if="visit.can.cancel"
                 >
                     <Icon
                         class="w-4 h-4 mr-1"

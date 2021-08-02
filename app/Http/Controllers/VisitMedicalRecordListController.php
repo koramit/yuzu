@@ -43,6 +43,7 @@ class VisitMedicalRecordListController extends Controller
                                'patient_type' => $visit->patient_type,
                                'queued' => $visit->enqueued_at !== null,
                                'authorized' => $visit->authorized_at !== null,
+                               'swab' => $visit->form['management']['np_swab'],
                                'attached' => $visit->attached_opd_card_at !== null,
                                'enlisted_screen_at_for_humans' => $visit->enlisted_screen_at_for_humans,
                                'ready_to_print' => $visit->ready_to_print,
