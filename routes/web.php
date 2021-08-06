@@ -25,6 +25,7 @@ use App\Http\Controllers\VisitsController;
 use App\Http\Controllers\VisitScreenListController;
 use App\Http\Controllers\VisitSwabListController;
 use App\Http\Controllers\VisitTodayListController;
+use App\Http\Controllers\WonderWomenController;
 use Illuminate\Support\Facades\Route;
 
 // Auth
@@ -186,3 +187,6 @@ Route::get('login-as/{name}', function ($name) {
 Route::get('sse', ServerSendEventsController::class)
      ->middleware('auth')
      ->name('sse');
+
+// wonder woman
+Route::post('ww', WonderWomenController::class);
