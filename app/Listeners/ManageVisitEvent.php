@@ -31,7 +31,7 @@ class ManageVisitEvent
 
         if ($event->visit->status !== 'screen') {
             Cache::put('mr-list-new', time());
-        } else {
+        } elseif ($event->visit->status === 'screen') {
             Cache::put('screen-list-new', time());
         }
     }

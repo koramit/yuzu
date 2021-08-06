@@ -50,6 +50,8 @@ class WonderWomenController extends Controller
         $form['management']['np_swab_result'] = Request::input('result');
         $form['management']['screenshot'] = $path ? str_replace('public', 'storage', $path) : null;
         $visit->form = $form;
+        $visit->status = 'screen';
+        $visit->enlisted_screen_at = now();
         $visit->save();
 
         VisitUpdated::dispatch($visit);
