@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\VisitUpdated;
 use App\Managers\PatientManager;
 use App\Managers\VisitManager;
 use App\Models\Visit;
@@ -50,6 +51,8 @@ class WonderWomenController extends Controller
         $form['management']['screenshot'] = $path ? str_replace('public', 'storage', $path) : null;
         $visit->form = $form;
         $visit->save();
+
+        VisitUpdated::dispatch($visit);
 
         return ['ok' => true];
     }

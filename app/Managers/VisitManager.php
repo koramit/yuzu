@@ -401,6 +401,7 @@ class VisitManager
                 ['icon' => 'address-book', 'label' => 'เวชระเบียน', 'route' => 'visits.mr-list', 'can' => $user->can('view_mr_list')],
                 ['icon' => 'list-ol', 'label' => 'ธุรการ', 'route' => 'visits.queue-list', 'can' => $user->can('view_queue_list')],
                 ['icon' => 'inbox', 'label' => 'รายการเคสวันนี้', 'route' => 'visits.today-list', 'can' => $user->can('view_mr_list')],
+                ['icon' => 'satellite-dish', 'label' => 'ผลแลปวันนี้', 'route' => 'visits.lab-list', 'can' => $user->can('view_mr_list')],
                 ['icon' => 'archive', 'label' => 'รายการเคสทั้งหมด', 'route' => 'visits', 'can' => $user->can('view_any_visits')],
             ],
             'action-menu' => [

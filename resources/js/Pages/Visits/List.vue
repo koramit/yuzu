@@ -131,6 +131,25 @@
             </button>
         </div>
 
+        <!-- lab summary -->
+        <div
+            class="mb-2"
+            v-if="card === 'lab'"
+        >
+            <span class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-green-400 text-white">
+                Not detected {{ visits.filter(v => v.result.toLowerCase() === 'not detected' ).length }}
+            </span>
+            <span class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-yellow-400 text-white">
+                Inconclusive {{ visits.filter(v => v.result.toLowerCase() === 'inconclusive' ).length }}
+            </span>
+            <span class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-red-400 text-white">
+                Detected {{ visits.filter(v => v.result.toLowerCase() === 'detected' ).length }}
+            </span>
+            <span class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-gray-600 text-white">
+                Not found {{ visits.filter(v => v.result.toLowerCase() === 'not found' ).length }}
+            </span>
+        </div>
+
         <!-- card -->
         <CardScreen
             v-if="card === 'screen'"
@@ -154,6 +173,10 @@
             v-else-if="card === 'queue'"
             :visits="filteredVisits"
         />
+        <CardLab
+            v-else-if="card === 'lab'"
+            :visits="filteredVisits"
+        />
 
         <Visit ref="createVisitForm" />
         <Appointment ref="appointmentForm" />
@@ -164,6 +187,7 @@
 import Layout from '@/Components/Layouts/Layout';
 import Icon from '@/Components/Helpers/Icon';
 import CardScreen from '@/Components/Cards/Screen';
+import CardLab from '@/Components/Cards/Lab';
 import CardExam from '@/Components/Cards/Exam';
 import CardSwab from '@/Components/Cards/Swab';
 import CardMedicalRecord from '@/Components/Cards/MedicalRecord';
@@ -175,7 +199,7 @@ import { Inertia } from '@inertiajs/inertia';
 
 export default {
     layout: Layout,
-    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, Queue, Appointment },
+    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, Queue, CardLab, Appointment },
     props: {
         visits: { type: Object, required: true },
         card: { type: String, required: true },
