@@ -19,6 +19,7 @@ use App\Http\Controllers\VisitEvaluateController;
 use App\Http\Controllers\VisitExamListController;
 use App\Http\Controllers\VisitExportController;
 use App\Http\Controllers\VisitFillHnController;
+use App\Http\Controllers\VisitLabListController;
 use App\Http\Controllers\VisitMedicalRecordListController;
 use App\Http\Controllers\VisitQueueListController;
 use App\Http\Controllers\VisitsController;
@@ -103,6 +104,11 @@ Route::post('visits/attach-opd-card/{visit:slug}', [VisitAttachOPDCardController
 Route::get('visits/today-list', [VisitTodayListController::class, 'index'])
      ->middleware('auth', 'can:view_mr_list')
      ->name('visits.today-list');
+
+// lab list
+Route::get('visits/lab-list', [VisitLabListController::class, 'index'])
+     ->middleware('auth', 'can:view_mr_list')
+     ->name('visits.lab-list');
 
 // queue
 Route::get('visits/queue-list', [VisitQueueListController::class, 'index'])
