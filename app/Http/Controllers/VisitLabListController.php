@@ -36,7 +36,7 @@ class VisitLabListController extends Controller
                                'status' => $visit->status,
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
-                               'result' => $visit->form['management']['np_swap_result'] ?? null,
+                               'result' => $visit->form['management']['np_swab_result'] ?? '',
                                'screenshot' => $visit->form['management']['screenshot'] ?? null,
                                'updated_at_for_humans' => $visit->updated_at_for_humans,
                            ];
