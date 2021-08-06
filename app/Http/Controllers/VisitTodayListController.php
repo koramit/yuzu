@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
-class VisitMedicalRecordListController extends Controller
+class VisitTodayListController extends Controller
 {
     protected $manager;
 

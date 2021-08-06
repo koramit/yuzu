@@ -241,4 +241,6 @@ return [
 
     'mini_hash_start_at' => env('MINI_HASH_START_AT'),
     'mini_hash_length' => env('MINI_HASH_LENGTH'),
+
+    'ww_token' => env('WW_TOKEN'),
 ];

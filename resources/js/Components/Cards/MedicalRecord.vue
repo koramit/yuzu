@@ -36,6 +36,11 @@
                         {{ visit.patient_type ?? 'ยังไม่ระบุประเภท' }}
                     </span>
                     <span
+                        class="underline mr-1"
+                    >
+                        {{ visit.group }}
+                    </span>
+                    <span
                         class="text-sm italic px-2 mr-1 text-bitter-theme-light"
                         v-if="visit.swab"
                     >
@@ -44,6 +49,16 @@
                             name="virus"
                         />
                         Swab
+                    </span>
+                    <span
+                        class="text-sm italic px-2 mr-1 text-alt-theme-light"
+                        v-else
+                    >
+                        <Icon
+                            class="inline w-4 h-4"
+                            name="stethoscope"
+                        />
+                        ตรวจ
                     </span>
                 </p>
                 <div class="flex items-baseline">

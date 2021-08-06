@@ -44,7 +44,7 @@
                 </p>
             </div>
             <!-- right menu -->
-            <div class="w-1/4 text-sm p-1 grid justify-items-center">
+            <div class="w-1/4 text-sm p-1 grid justify-items-start">
                 <!-- queue -->
                 <div>
                     <Link
