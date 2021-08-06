@@ -400,7 +400,8 @@ class VisitManager
                 ['icon' => 'virus', 'label' => 'ห้อง Swab', 'route' => 'visits.swab-list', 'can' => $user->can('view_swab_list')],
                 ['icon' => 'address-book', 'label' => 'เวชระเบียน', 'route' => 'visits.mr-list', 'can' => $user->can('view_mr_list')],
                 ['icon' => 'list-ol', 'label' => 'ธุรการ', 'route' => 'visits.queue-list', 'can' => $user->can('view_queue_list')],
-                ['icon' => 'archive', 'label' => 'รายการเคส', 'route' => 'visits', 'can' => $user->can('view_any_visits')],
+                ['icon' => 'inbox', 'label' => 'รายการเคสวันนี้', 'route' => 'visits.today-list', 'can' => $user->can('view_mr_list')],
+                ['icon' => 'archive', 'label' => 'รายการเคสทั้งหมด', 'route' => 'visits', 'can' => $user->can('view_any_visits')],
             ],
             'action-menu' => [
                 ['icon' => 'notes-medical', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-visit', 'can' => $user->can('create_visit')],
@@ -641,6 +642,7 @@ class VisitManager
     public function getPrintConent(Visit $visit)
     {
         $content = $this->getReportContent($visit);
+        $content['visit']['เลขประจำตัวประชาชน'] = $visit->patient->profile['document_id'];
         unset($content['visit']['sap id']);
         $content['อาการแสดง'] = '';
         foreach ($content['symptom_headers'] as $key => $value) {

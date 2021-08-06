@@ -42,6 +42,21 @@
             <button
                 class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
                 :class="{
+                    'border-2 border-white text-white': filters.exam,
+                    'text-soft-theme-light': !filters.exam,
+                }"
+                @click="filters.exam = !filters.exam"
+            >
+                <Icon
+                    class="ml-1 inline w-2 h-2"
+                    name="filter"
+                    v-if="filters.exam"
+                />
+                ตรวจ
+            </button>
+            <button
+                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
+                :class="{
                     'border-2 border-white text-white': filters.swab,
                     'text-soft-theme-light': !filters.swab,
                 }"
@@ -83,6 +98,36 @@
                     v-if="filters.public"
                 />
                 บุคคลทั่วไป
+            </button>
+            <button
+                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
+                :class="{
+                    'border-2 border-white text-white': filters.walk_in,
+                    'text-soft-theme-light': !filters.walk_in,
+                }"
+                @click="filters.walk_in = !filters.walk_in"
+            >
+                <Icon
+                    class="ml-1 inline w-2 h-2"
+                    name="filter"
+                    v-if="filters.walk_in"
+                />
+                Walk-in
+            </button>
+            <button
+                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
+                :class="{
+                    'border-2 border-white text-white': filters.appointment,
+                    'text-soft-theme-light': !filters.appointment,
+                }"
+                @click="filters.appointment = !filters.appointment"
+            >
+                <Icon
+                    class="ml-1 inline w-2 h-2"
+                    name="filter"
+                    v-if="filters.appointment"
+                />
+                นัด-staff
             </button>
         </div>
 
@@ -199,16 +244,22 @@ export default {
 
         const search = ref('');
         const filters = reactive({
+            exam: false,
             swab: false,
             public: false,
             staff: false,
+            walk_in: false,
+            appointment: false,
         });
         const filteredVisits = computed(() => {
             if (! search.value) {
                 return props.visits
+                    .filter(v => filters.exam ? !v.swab : true)
                     .filter(v => filters.swab ? v.swab : true)
                     .filter(v => filters.staff ? v.patient_type === 'เจ้าหน้าที่ศิริราช' : true)
-                    .filter(v => filters.public ? v.patient_type === 'บุคคลทั่วไป' : true);
+                    .filter(v => filters.public ? v.patient_type === 'บุคคลทั่วไป' : true)
+                    .filter(v => filters.walk_in ? v.group === 'walk-in' : true)
+                    .filter(v => filters.appointment ? v.group === 'นัด-staff' : true);
             }
 
             return props.visits.filter(v => v.hn.indexOf(search.value) !== -1 || v.patient_name.indexOf(search.value) !== -1);
@@ -216,9 +267,13 @@ export default {
 
         const reload = () => {
             search.value = '';
+            filters.exam = false;
             filters.swab = false;
             filters.staff = false;
             filters.public = false;
+            filters.walk_in = false;
+            filters.appointment = false;
+
             Inertia.reload();
         };
 
