@@ -10,7 +10,6 @@
             <p class="p-1 pb-0 text-thick-theme-light">
                 {{ visit.patient_type ?? 'ยังไม่ระบุประเภท' }}
                 <span
-                    class="underline"
                     :class="{
                         'text-red-400': visit.result.toLowerCase() === 'detected',
                         'text-yellow-400': visit.result.toLowerCase() === 'inconclusive',
@@ -18,10 +17,10 @@
                     }"
                     v-if="visit.result"
                 >
-                    {{ visit.result }}
+                    <span class="mr-1 underline">{{ visit.result }}</span>
                     <span
                         v-if="visit.note"
-                        class="ml-1 italic no-underline"
+                        class="mr-1 italic"
                     >{{ visit.note }}</span>
                 </span>
             </p>
