@@ -166,13 +166,13 @@
                 </p>
                 <div class="flex flex-wrap ">
                     <span
-                        v-for="(result, key) in ['Not detected', 'Detected', 'Inconclusive', 'Not found']"
+                        v-for="(result, key) in ['Not detected', 'Inconclusive', 'Detected', 'Not found']"
                         :key="key"
                         class="inline-block my-1 whitespace-nowrap text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 text-white"
                         :class="{
                             'bg-green-400': result === 'Not detected',
-                            'bg-yellow-400': result === 'Detected',
-                            'bg-red-400': result === 'Inconclusive',
+                            'bg-yellow-400': result === 'Inconclusive',
+                            'bg-red-400': result === 'Detected',
                             'bg-gray-600': result === 'Not found',
                         }"
                     >
