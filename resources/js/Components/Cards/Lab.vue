@@ -19,6 +19,10 @@
                     v-if="visit.result"
                 >
                     {{ visit.result }}
+                    <span
+                        v-if="visit.note"
+                        class="ml-1 italic"
+                    >{{ visit.note }}</span>
                 </span>
             </p>
             <div class="flex items-baseline">
