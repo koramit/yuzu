@@ -41,9 +41,20 @@ class WonderWomenController extends Controller
             abort(422);
         }
 
+        $visitDateStr = Carbon::createFromFormat('d-m-y', Request::input('date'))->format('Y-m-d');
+        $visit = Visit::wherePatientId($patient['patient']->id)
+                      ->whereDateVisit($visitDateStr)
+                      ->first();
+
+        if ($visit) {
+            return [
+                'ok' => true,
+            ];
+        }
+
         $visit = new Visit();
         $visit->slug = Str::uuid()->toString();
-        $visit->date_visit = Carbon::createFromFormat('d-m-y', Request::input('date'))->format('Y-m-d');
+        $visit->date_visit = $visitDateStr;
         $visit->patient_id = $patient['patient']->id;
         $visit->patient_type = str_contains(Request::input('type'), 'SI') ? 'เจ้าหน้าที่ศิริราช' : 'บุคคลทั่วไป';
         $form = (new VisitManager)->initForm();
