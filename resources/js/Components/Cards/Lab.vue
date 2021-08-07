@@ -21,7 +21,7 @@
                     {{ visit.result }}
                     <span
                         v-if="visit.note"
-                        class="ml-1 italic"
+                        class="ml-1 italic no-underline"
                     >{{ visit.note }}</span>
                 </span>
             </p>
