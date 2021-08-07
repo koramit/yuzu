@@ -48,6 +48,9 @@ class WonderWomenController extends Controller
         $visit->patient_type = str_contains(Request::input('type'), 'SI') ? 'เจ้าหน้าที่ศิริราช' : 'บุคคลทั่วไป';
         $form = (new VisitManager)->initForm();
         $form['management']['np_swab_result'] = Request::input('result');
+        if (Request::has('note')) {
+            $form['management']['np_swab_result_note'] = Request::input('note');
+        }
         $form['management']['screenshot'] = $path ? str_replace('public', 'storage', $path) : null;
         $visit->form = $form;
         $visit->status = 'screen';

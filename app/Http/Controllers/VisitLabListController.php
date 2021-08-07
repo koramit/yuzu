@@ -26,7 +26,8 @@ class VisitLabListController extends Controller
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
-                       ->whereDateVisit($today->format('Y-m-d'))
+                    //    ->whereDateVisit($today->format('Y-m-d'))
+                       ->whereDateVisit('2021-08-06')
                        ->orderByDesc('id')
                        ->get()
                        ->transform(function ($visit) use ($user) {
@@ -37,6 +38,7 @@ class VisitLabListController extends Controller
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
                                'result' => $visit->form['management']['np_swab_result'] ?? '',
+                               'note' => $visit->form['management']['np_swab_result_note'] ?? '',
                                'screenshot' => $visit->form['management']['screenshot'] ?? null,
                                'updated_at_for_humans' => $visit->updated_at_for_humans,
                            ];
