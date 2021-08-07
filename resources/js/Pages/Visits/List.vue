@@ -138,7 +138,7 @@
         >
             <div class="p-2 rounded-md bg-white my-2">
                 <p class="text-md font-semibold text-thick-theme-light underline">
-                    รวม
+                    รวม {{ visits.length }}
                 </p>
                 <div class="flex flex-wrap ">
                     <span
@@ -162,7 +162,7 @@
                 :key="type"
             >
                 <p class="text-md font-semibold text-thick-theme-light underline">
-                    {{ type }}
+                    {{ type }} {{ visits.filter(v => v.patient_type === type).length }}
                 </p>
                 <div class="flex flex-wrap ">
                     <span
