@@ -20,6 +20,7 @@ use App\Http\Controllers\VisitExamListController;
 use App\Http\Controllers\VisitExportController;
 use App\Http\Controllers\VisitFillHnController;
 use App\Http\Controllers\VisitLabListController;
+use App\Http\Controllers\VisitManageSwabListController;
 use App\Http\Controllers\VisitMedicalRecordListController;
 use App\Http\Controllers\VisitQueueListController;
 use App\Http\Controllers\VisitsController;
@@ -72,6 +73,11 @@ Route::patch('visits/exam-list/{visit:slug}', [VisitExamListController::class, '
      ->middleware('auth', 'can:update,visit')
      ->name('visits.exam-list.store');
 
+// manage swab list
+Route::get('visits/manage-swab-list', [VisitManageSwabListController::class, 'index'])
+     ->middleware('auth', 'can:view_manage_swab_list')
+     ->name('visits.manage-swab-list');
+
 // swab list
 Route::get('visits/swab-list', [VisitSwabListController::class, 'index'])
      ->middleware('auth', 'can:view_swab_list')
@@ -84,6 +90,7 @@ Route::patch('visits/swab-list/{visit:slug}', [VisitSwabListController::class, '
 Route::post('visits/discharge-list/{visit:slug}', [VisitDischargeListController::class, 'store'])
      ->middleware('auth', 'can:discharge,visit')
      ->name('visits.discharge-list.store');
+
 // discharge from swab
 Route::patch('visits/discharge-list/{visit:slug}', [VisitDischargeListController::class, 'update'])
      ->middleware('auth', 'can:discharge,visit')
@@ -183,6 +190,9 @@ Route::middleware('auth')
      });
 
 Route::get('login-as/{name}', function ($name) {
+    if (config('app.env') === 'production') {
+        abort(404);
+    }
     $user = \App\Models\User::whereName($name)->first();
     \Auth::login($user);
 
