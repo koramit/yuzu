@@ -42,7 +42,7 @@ class VisitPolicy
         if ($user->hasRole('md')) {
             return true;
         } elseif ($user->hasRole('nurse')) { // nurse discharge from swab
-            return $visit->status === 'swab';
+            return $visit->status === 'enqueue_swab';
         }
 
         return false;

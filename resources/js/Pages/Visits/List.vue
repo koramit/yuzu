@@ -34,102 +34,12 @@
             </button>
         </div>
 
-        <!-- filter  -->
-        <div
-            class="mb-2"
-            v-if="card === 'mr'"
-        >
-            <button
-                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
-                :class="{
-                    'border-2 border-white text-white': filters.exam,
-                    'text-soft-theme-light': !filters.exam,
-                }"
-                @click="filters.exam = !filters.exam"
-            >
-                <Icon
-                    class="ml-1 inline w-2 h-2"
-                    name="filter"
-                    v-if="filters.exam"
-                />
-                ตรวจ
-            </button>
-            <button
-                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
-                :class="{
-                    'border-2 border-white text-white': filters.swab,
-                    'text-soft-theme-light': !filters.swab,
-                }"
-                @click="filters.swab = !filters.swab"
-            >
-                <Icon
-                    class="ml-1 inline w-2 h-2"
-                    name="filter"
-                    v-if="filters.swab"
-                />
-                Swab
-            </button>
-            <button
-                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
-                :class="{
-                    'border-2 border-white text-white': filters.staff,
-                    'text-soft-theme-light': !filters.staff,
-                }"
-                @click="filters.staff = !filters.staff"
-            >
-                <Icon
-                    class="ml-1 inline w-2 h-2"
-                    name="filter"
-                    v-if="filters.staff"
-                />
-                เจ้าหน้าที่ศิริราช
-            </button>
-            <button
-                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
-                :class="{
-                    'border-2 border-white text-white': filters.public,
-                    'text-soft-theme-light': !filters.public,
-                }"
-                @click="filters.public = !filters.public"
-            >
-                <Icon
-                    class="ml-1 inline w-2 h-2"
-                    name="filter"
-                    v-if="filters.public"
-                />
-                บุคคลทั่วไป
-            </button>
-            <button
-                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
-                :class="{
-                    'border-2 border-white text-white': filters.walk_in,
-                    'text-soft-theme-light': !filters.walk_in,
-                }"
-                @click="filters.walk_in = !filters.walk_in"
-            >
-                <Icon
-                    class="ml-1 inline w-2 h-2"
-                    name="filter"
-                    v-if="filters.walk_in"
-                />
-                Walk-in
-            </button>
-            <button
-                class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
-                :class="{
-                    'border-2 border-white text-white': filters.appointment,
-                    'text-soft-theme-light': !filters.appointment,
-                }"
-                @click="filters.appointment = !filters.appointment"
-            >
-                <Icon
-                    class="ml-1 inline w-2 h-2"
-                    name="filter"
-                    v-if="filters.appointment"
-                />
-                นัด-staff
-            </button>
-        </div>
+        <Filters
+            v-if="cardfilters.length && filteredVisits.length"
+            :filters="cardfilters"
+            @toggle="filtered"
+            @filtered="(name, value) => filters[name] = value"
+        />
 
         <!-- lab summary -->
         <template
@@ -197,11 +107,15 @@
             v-else-if="card === 'swab'"
             :visits="filteredVisits"
         />
+        <CardEnqueueSwab
+            v-else-if="card === 'enqueue-swab'"
+            :visits="filteredVisits"
+        />
         <CardMedicalRecord
             v-else-if="card === 'mr'"
             :visits="filteredVisits"
         />
-        <Queue
+        <CardQueue
             v-else-if="card === 'queue'"
             :visits="filteredVisits"
         />
@@ -222,8 +136,10 @@ import CardScreen from '@/Components/Cards/Screen';
 import CardLab from '@/Components/Cards/Lab';
 import CardExam from '@/Components/Cards/Exam';
 import CardSwab from '@/Components/Cards/Swab';
+import CardEnqueueSwab from '@/Components/Cards/EnqueueSwab';
 import CardMedicalRecord from '@/Components/Cards/MedicalRecord';
-import Queue from '@/Components/Cards/Queue';
+import CardQueue from '@/Components/Cards/Queue';
+import Filters from '@/Components/Cards/Filters';
 import Visit from '@/Components/Forms/Visit';
 import Appointment from '@/Components/Forms/Appointment';
 import { computed, inject, nextTick, onUnmounted, reactive, ref } from '@vue/runtime-core';
@@ -231,7 +147,7 @@ import { Inertia } from '@inertiajs/inertia';
 
 export default {
     layout: Layout,
-    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, Queue, CardLab, Appointment },
+    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, CardEnqueueSwab, CardQueue, CardLab, Filters, Appointment },
     props: {
         visits: { type: Object, required: true },
         card: { type: String, required: true },
@@ -306,6 +222,8 @@ export default {
             staff: false,
             walk_in: false,
             appointment: false,
+            swab_at_scg: false,
+            swab_at_sky_walk: false,
         });
         const filteredVisits = computed(() => {
             if (! search.value) {
@@ -315,11 +233,36 @@ export default {
                     .filter(v => filters.staff ? v.patient_type === 'เจ้าหน้าที่ศิริราช' : true)
                     .filter(v => filters.public ? v.patient_type === 'บุคคลทั่วไป' : true)
                     .filter(v => filters.walk_in ? v.group === 'walk-in' : true)
-                    .filter(v => filters.appointment ? v.group === 'นัด-staff' : true);
+                    .filter(v => filters.appointment ? v.group === 'นัด-staff' : true)
+                    .filter(v => filters.swab_at_scg ? v.swab_at === 'SCG' : true)
+                    .filter(v => filters.swab_at_sky_walk ? v.swab_at === 'Sky Walk' : true);
             }
 
             return props.visits.filter(v => v.hn.indexOf(search.value) !== -1 || v.patient_name.indexOf(search.value) !== -1);
         });
+
+        const cardfilters = computed(() => {
+            if (props.card === 'mr') {
+                return [
+                    { name: 'exam', label: 'ตรวจ', on: false },
+                    { name: 'swab', label: 'Swab', on: false },
+                    { name: 'staff', label: 'เจ้าหน้าที่ศิริราช', on: false },
+                    { name: 'public', label: 'บุคคลทั่วไป', on: false },
+                    { name: 'appointment', label: 'นัด-staff', on: false },
+                    { name: 'walk_in', label: 'Walk-in', on: false },
+                ];
+            } else if (props.card === 'enqueue-swab') {
+                return [
+                    { name: 'swab_at_scg', label: 'SCG', on: false },
+                    { name: 'swab_at_sky_walk', label: 'Sky Walk', on: false },
+                ];
+            } else {
+                return [];
+            }
+        });
+        const filtered = (name) => {
+            filters[name] = !filters[name];
+        };
 
         const reload = () => {
             search.value = '';
@@ -329,6 +272,8 @@ export default {
             filters.public = false;
             filters.walk_in = false;
             filters.appointment = false;
+            filters.swab_at_scg = false;
+            filters.swab_at_sky_walk = false;
 
             Inertia.reload();
         };
@@ -341,6 +286,8 @@ export default {
             filteredVisits,
             reload,
             filters,
+            cardfilters,
+            filtered,
         };
     },
 };

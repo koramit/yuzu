@@ -34,6 +34,7 @@ class UsersTableSeeder extends Seeder
         ];
         $u->save();
         $u->assignRole('nurse');
+        $u->assignRole('staff');
 
         // md
         $u = new User();
@@ -77,7 +78,7 @@ class UsersTableSeeder extends Seeder
         $u->login = 'admin.sri';
         $u->password = $password;
         $u->profile = [
-            'full_name' => 'คุณ ธุรการ ชำนาญกเกม',
+            'full_name' => 'คุณ ธุรการ ชำนาญเกม',
             'tel_no' => '084111888',
             'org_id' => '10010004',
             'division' => 'ฝ่ายการธุรการ',

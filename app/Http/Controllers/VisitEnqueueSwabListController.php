@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\VisitUpdated;
 use App\Managers\VisitManager;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
-class VisitManageSwabListController extends Controller
+class VisitEnqueueSwabListController extends Controller
 {
     protected $manager;
 
@@ -19,13 +23,13 @@ class VisitManageSwabListController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $todayStr = now('asia/bangkok')->format('Y-m-d');
+        $today = now('asia/bangkok');
         $flash = $this->manager->getFlash($user);
-        $flash['page-title'] = 'จัดกระติก @ '.now('asia/bangkok')->format('d M Y');
+        $flash['page-title'] = 'จัดกระติก @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
-                       ->whereDateVisit($todayStr)
+                       ->whereDateVisit($today->format('Y-m-d'))
                        ->whereStatus(3)
                        ->orderBy('enlisted_swab_at')
                        ->get()
@@ -36,6 +40,10 @@ class VisitManageSwabListController extends Controller
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
                                'enlisted_swab_at_for_humans' => $visit->enlisted_swab_at_for_humans,
+                               'swab_at' => $visit->swab_at,
+                               'specimen_no' => $visit->specimen_no,
+                               'selected' => false,
+                               'id' => $visit->id,
                                'can' => [
                                 'discharge' => $user->can('discharge', $visit),
                                ],
@@ -44,7 +52,25 @@ class VisitManageSwabListController extends Controller
 
         return Inertia::render('Visits/List', [
             'visits' => $visits,
-            'card' => 'swab',
+            'card' => 'enqueue-swab',
         ]);
+    }
+
+    public function store()
+    {
+        $cacheName = now('asia/bangkok')->format('Y-m-d').'-container-running-no';
+        Visit::unguard();
+        Visit::whereIn('id', Request::input('ids'))
+            ->update([
+                'enqueued_swab_at' => now(),
+                'status' => 7, // enqueue_swab,
+                'form->mamanagement->container_no' => Cache::increment($cacheName),
+                'form->mamanagement->container_swab_at' => Request::input('swab_at'),
+            ]);
+        Visit::reguard();
+        $visit = Visit::find(Request::input('ids')[0]);
+        VisitUpdated::dispatch($visit);
+
+        return Redirect::back();
     }
 }

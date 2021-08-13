@@ -23,14 +23,15 @@ class VisitSwabListController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $today = now()->today('asia/bangkok');
+        $today = now('asia/bangkok');
         $flash = $this->manager->getFlash($user);
         $flash['page-title'] = 'ห้อง Swab @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
-                       ->whereDateVisit($today)
-                       ->whereStatus(3)
+                       ->whereDateVisit($today->format('Y-m-d'))
+                       ->whereStatus(7) // enqueue_swab
+                       ->orderBy('enqueued_swab_at')
                        ->orderBy('enlisted_swab_at')
                        ->get()
                        ->transform(function ($visit) use ($user) {
@@ -93,7 +94,7 @@ class VisitSwabListController extends Controller
         }
         // running specimen no
         if (! ($visit->form['management']['specimen_no'])) {
-            $cacheName = today('asia/bangkok')->format('Y-m-d').'-specimen-running-no';
+            $cacheName = now('asia/bangkok')->format('Y-m-d').'-specimen-running-no';
             $visit->forceFill([
                 'form->management->specimen_no' => Cache::increment($cacheName),
             ]);

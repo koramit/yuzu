@@ -15,12 +15,12 @@ use App\Http\Controllers\ServerSendEventsController;
 use App\Http\Controllers\VisitAttachOPDCardController;
 use App\Http\Controllers\VisitAuthorizationController;
 use App\Http\Controllers\VisitDischargeListController;
+use App\Http\Controllers\VisitEnqueueSwabListController;
 use App\Http\Controllers\VisitEvaluateController;
 use App\Http\Controllers\VisitExamListController;
 use App\Http\Controllers\VisitExportController;
 use App\Http\Controllers\VisitFillHnController;
 use App\Http\Controllers\VisitLabListController;
-use App\Http\Controllers\VisitManageSwabListController;
 use App\Http\Controllers\VisitMedicalRecordListController;
 use App\Http\Controllers\VisitQueueListController;
 use App\Http\Controllers\VisitsController;
@@ -73,10 +73,13 @@ Route::patch('visits/exam-list/{visit:slug}', [VisitExamListController::class, '
      ->middleware('auth', 'can:update,visit')
      ->name('visits.exam-list.store');
 
-// manage swab list
-Route::get('visits/manage-swab-list', [VisitManageSwabListController::class, 'index'])
-     ->middleware('auth', 'can:view_manage_swab_list')
-     ->name('visits.manage-swab-list');
+// enqueue swab list
+Route::get('visits/enqueue-swab-list', [VisitEnqueueSwabListController::class, 'index'])
+     ->middleware('auth', 'can:view_enqueue_swab_list')
+     ->name('visits.enqueue-swab-list');
+Route::post('visits/enqueue-swab-list', [VisitEnqueueSwabListController::class, 'store'])
+     ->middleware('auth', 'can:enqueue_swab')
+     ->name('visits.enqueue-swab-list.store');
 
 // swab list
 Route::get('visits/swab-list', [VisitSwabListController::class, 'index'])

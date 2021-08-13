@@ -49,7 +49,7 @@
                                 <div class="group-hover:text-bitter-theme-light focus:text-bitter-theme-light mr-1 whitespace-no-wrap">
                                     <span>{{ $page.props.user.name }}</span>
                                 </div>
-                                <icon
+                                <Icon
                                     class="w-4 h-4 group-hover:text-bitter-theme-light focus:text-bitter-theme-light"
                                     name="double-down"
                                 />

@@ -135,6 +135,7 @@ class Visit extends Model
                 'discharged' => 4,
                 'canceled' => 5,
                 'appointment' => 6,
+                'enqueue_swab' => 7,
             ];
             $this->attributes['status'] = $items[$value] ?? null;
         }
@@ -154,6 +155,7 @@ class Visit extends Model
             'discharged',
             'canceled',
             'appointment',
+            'enqueue_swab',
         ];
 
         return $items[$this->attributes['status']];
@@ -169,6 +171,7 @@ class Visit extends Model
             'visits', // 'discharged',
             'visits', //'canceled',
             'visits.screen-list', // 'appointment
+            'visits.swab-list', // swab_manage
         ];
 
         return $items[$this->attributes['status']];
@@ -281,5 +284,15 @@ class Visit extends Model
         }
 
         return $this->patient->gender;
+    }
+
+    public function getSwabAtAttribute()
+    {
+        return $this->form['management']['swab_at'] ?? '';
+    }
+
+    public function getSpecimenNoAttribute()
+    {
+        return $this->form['management']['specimen_no'] ?? '';
     }
 }
