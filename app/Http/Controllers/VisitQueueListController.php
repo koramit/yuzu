@@ -20,13 +20,13 @@ class VisitQueueListController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $today = now()->today('asia/bangkok');
+        $today = now($user->time_zone);
         $flash = $this->manager->getFlash($user);
         $flash['page-title'] = 'ธุรการ @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
-                       ->whereDateVisit($today)
+                       ->whereDateVisit($today->format('Y-m-d'))
                        ->where(function ($query) {
                            $query->whereNotNull('enlisted_exam_at')
                                  ->orWhereNotNull('enlisted_swab_at');

@@ -10,7 +10,7 @@
             <template #default>
                 <div class="flex items-center cursor-pointer select-none group text-dark-theme-light">
                     <div class="group-hover:text-bitter-theme-light focus:text-bitter-theme-light mr-1 whitespace-no-wrap">
-                        <span>ส่งกระติก</span>
+                        ({{ selectedVisits.length }}) ส่งกระติก
                     </div>
                     <Icon
                         class="w-4 h-4 group-hover:text-bitter-theme-light focus:text-bitter-theme-light"
