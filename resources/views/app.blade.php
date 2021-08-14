@@ -30,7 +30,7 @@
 </head>
 
 <body
-    class="m-0 font-krub font-light text-gray-600 {{ config('app.env') === 'dev' ? 'bg-test' : 'bg-soft-theme-light' }}">
+    class="m-0 font-krub font-light text-gray-600 {{ config('app.env') === 'test' ? 'bg-test' : 'bg-soft-theme-light' }}">
     <div id="page-loading-indicator"
         style="height: 100vh; display: flex; align-items: center; justify-content: center;">
         <img
