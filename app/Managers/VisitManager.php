@@ -90,6 +90,7 @@ class VisitManager
                 'container_no' => null,
                 'container_swab_at' => null,
                 'swab_at' => null,
+                'on_hold' => false,
                 'other_tests' => null,
                 'home_medication' => null,
             ],

@@ -46,6 +46,9 @@ class VisitQueueListController extends Controller
                                'patient_type' => $visit->patient_type,
                                'enlisted_screen_at_for_humans' => $visit->enlisted_screen_at_for_humans,
                                'ready_to_print' => $visit->ready_to_print,
+                               'swab' => $visit->form['management']['np_swab'],
+                               'swab_at' => $visit->swab_at ?? $visit->container_swab_at ?? '',
+                               'group' => ($visit->patient_type === 'บุคคลทั่วไป' && $visit->screen_type === 'เริ่มตรวจใหม่') ? 'walk-in' : 'นัด-staff',
                                'can' => [
                                     'queue' => $user->can('queue', $visit),
                                     'fill_hn' => $user->can('fillHn', $visit),

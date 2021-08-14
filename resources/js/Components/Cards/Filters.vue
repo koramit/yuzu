@@ -1,12 +1,12 @@
 <template>
-    <div class="mb-2">
+    <div class="flex flex-wrap">
         <button
             v-for="(filter, key) in cardFilters"
             :key="key"
-            class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 bg-bitter-theme-light "
+            class="text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 mb-2 transition-all duration-300 ease-in-out"
             :class="{
-                'border-2 border-white text-white': filter.on,
-                'text-soft-theme-light': !filter.on,
+                'bg-white text-bitter-theme-light': filter.on,
+                'text-white bg-bitter-theme-light': !filter.on,
             }"
             @click="toggle(filter.name)"
         >
@@ -57,9 +57,14 @@ export default {
             }
         };
 
+        const reset = () => {
+            cardFilters.forEach(f => f.on = false);
+        };
+
         return {
             cardFilters,
             toggle,
+            reset,
         };
     },
 };

@@ -35,8 +35,9 @@
         </div>
 
         <Filters
-            v-if="cardfilters.length && filteredVisits.length"
+            v-if="cardfilters.length"
             :filters="cardfilters"
+            ref="filtersComponent"
             @toggle="filtered"
             @filtered="(name, value) => filters[name] = value"
         />
@@ -119,6 +120,10 @@
             v-else-if="card === 'queue'"
             :visits="filteredVisits"
         />
+        <CardVisit
+            v-else-if="card === 'visit'"
+            :visits="filteredVisits"
+        />
         <CardLab
             v-else-if="card === 'lab'"
             :visits="filteredVisits"
@@ -136,6 +141,7 @@ import CardScreen from '@/Components/Cards/Screen';
 import CardLab from '@/Components/Cards/Lab';
 import CardExam from '@/Components/Cards/Exam';
 import CardSwab from '@/Components/Cards/Swab';
+import CardVisit from '@/Components/Cards/Visit';
 import CardEnqueueSwab from '@/Components/Cards/EnqueueSwab';
 import CardMedicalRecord from '@/Components/Cards/MedicalRecord';
 import CardQueue from '@/Components/Cards/Queue';
@@ -147,7 +153,7 @@ import { Inertia } from '@inertiajs/inertia';
 
 export default {
     layout: Layout,
-    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, CardEnqueueSwab, CardQueue, CardLab, Filters, Appointment },
+    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, CardEnqueueSwab, CardQueue, CardLab, CardVisit, Filters, Appointment },
     props: {
         visits: { type: Object, required: true },
         card: { type: String, required: true },
@@ -242,7 +248,7 @@ export default {
         });
 
         const cardfilters = computed(() => {
-            if (props.card === 'mr') {
+            if (['queue', 'mr', 'visit'].includes(props.card)) {
                 return [
                     { name: 'exam', label: 'ตรวจ', on: false },
                     { name: 'swab', label: 'Swab', on: false },
@@ -250,8 +256,10 @@ export default {
                     { name: 'public', label: 'บุคคลทั่วไป', on: false },
                     { name: 'appointment', label: 'นัด-staff', on: false },
                     { name: 'walk_in', label: 'Walk-in', on: false },
+                    { name: 'swab_at_scg', label: 'SCG', on: false },
+                    { name: 'swab_at_sky_walk', label: 'Sky Walk', on: false },
                 ];
-            } else if (props.card === 'enqueue-swab') {
+            } else if (props.card === 'enqueue-swab' || props.card === 'swab') {
                 return [
                     { name: 'swab_at_scg', label: 'SCG', on: false },
                     { name: 'swab_at_sky_walk', label: 'Sky Walk', on: false },
@@ -264,6 +272,8 @@ export default {
             filters[name] = !filters[name];
         };
 
+        const filtersComponent = ref(null);
+
         const reload = () => {
             search.value = '';
             filters.exam = false;
@@ -275,6 +285,9 @@ export default {
             filters.swab_at_scg = false;
             filters.swab_at_sky_walk = false;
 
+            if (cardfilters.value.length) {
+                filtersComponent.value.reset();
+            }
             Inertia.reload();
         };
 
@@ -288,6 +301,7 @@ export default {
             filters,
             cardfilters,
             filtered,
+            filtersComponent
         };
     },
 };

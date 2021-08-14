@@ -27,11 +27,11 @@ class VisitTodayListController extends Controller
 
         $visits = Visit::with('patient')
                        ->whereDateVisit($today->format('Y-m-d'))
-                       ->where(function ($query) {
-                           $query->whereNotNull('enlisted_exam_at')
-                                 ->orWhereNotNull('enlisted_swab_at')
-                                 ->orWhere('status', 5); // cancled
-                       })
+                    //    ->where(function ($query) {
+                    //        $query->whereNotNull('enlisted_exam_at')
+                    //              ->orWhereNotNull('enlisted_swab_at')
+                    //              ->orWhere('status', 5); // cancled
+                    //    })
                        ->orderBy('enlisted_screen_at')
                        ->get()
                        ->transform(function ($visit) use ($user) {
@@ -47,6 +47,7 @@ class VisitTodayListController extends Controller
                                'attached' => $visit->attached_opd_card_at !== null,
                                'enlisted_screen_at_for_humans' => $visit->enlisted_screen_at_for_humans,
                                'ready_to_print' => $visit->ready_to_print,
+                               'swab_at' => $visit->swab_at ?? $visit->container_swab_at ?? '',
                                'group' => ($visit->patient_type === 'บุคคลทั่วไป' && $visit->screen_type === 'เริ่มตรวจใหม่') ? 'walk-in' : 'นัด-staff',
                                'can' => [
                                     'authorize_visit' => $user->can('authorize', $visit),
@@ -60,7 +61,7 @@ class VisitTodayListController extends Controller
 
         return Inertia::render('Visits/List', [
             'visits' => $visits,
-            'card' => 'mr',
+            'card' => 'visit',
             'eventSource' => 'mr',
         ]);
     }

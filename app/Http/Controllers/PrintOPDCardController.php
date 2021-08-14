@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\VisitUpdated;
 use App\Managers\VisitManager;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,12 @@ class PrintOPDCardController extends Controller
     {
         Request::session()->flash('page-title', $visit->title);
         $visit->actions()->create(['action' => 'view', 'user_id' => Auth::id()]);
+
+        if (! $visit->attached_opd_card_at) {
+            $visit->attached_opd_card_at = now();
+            $visit->save();
+            VisitUpdated::dispatch($visit);
+        }
 
         return Inertia::render('Printouts/OPDCard', [
             'content' => (new VisitManager())->getPrintConent($visit),

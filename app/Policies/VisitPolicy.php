@@ -39,10 +39,14 @@ class VisitPolicy
         if (collect(['canceled', 'discharged'])->contains($visit->status)) {
             return false;
         }
-        if ($user->hasRole('md')) {
+        if ($visit->authorized_at && $visit->attached_opd_card_at) {
+            if ($user->hasRole('md')) {
+                return true;
+            } elseif ($user->hasRole('nurse')) { // nurse discharge from swab
+                return $visit->status === 'enqueue_swab';
+            }
+        } elseif (! $visit->form['management']['np_swab'] && $user->hasRole('md')) {
             return true;
-        } elseif ($user->hasRole('nurse')) { // nurse discharge from swab
-            return $visit->status === 'enqueue_swab';
         }
 
         return false;

@@ -41,8 +41,21 @@ class VisitSwabListController extends Controller
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
                                'enlisted_swab_at_for_humans' => $visit->enlisted_swab_at_for_humans,
+                               'swab_at' => $visit->container_swab_at,
+                               'specimen_no' => $visit->specimen_no,
+                               'container_no' => $visit->container_no,
+                               'queued' => $visit->enqueued_at !== null,
+                               'authorized' => $visit->authorized_at !== null,
+                               'attached' => $visit->attached_opd_card_at !== null,
+                               'ready_to_print' => $visit->ready_to_print,
+                               'on_hold' => $visit->form['management']['on_hold'] ?? false,
+                               'busy' => false,
                                'can' => [
-                                'discharge' => $user->can('discharge', $visit),
+                                    'discharge' => $user->can('discharge', $visit),
+                                    'hold' => $user->can('enqueue_swab'),
+                                    'authorize_visit' => $user->can('authorize', $visit),
+                                    'attach_opd_card' => $user->can('attachOPDCard', $visit),
+                                    'print_opd_card' => $user->can('printOPDCard', $visit),
                                ],
                            ];
                        });
@@ -50,6 +63,7 @@ class VisitSwabListController extends Controller
         return Inertia::render('Visits/List', [
             'visits' => $visits,
             'card' => 'swab',
+            'eventSource' => 'mr',
         ]);
     }
 

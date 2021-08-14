@@ -44,9 +44,6 @@ class VisitEnqueueSwabListController extends Controller
                                'specimen_no' => $visit->specimen_no,
                                'selected' => false,
                                'id' => $visit->id,
-                               'can' => [
-                                'discharge' => $user->can('discharge', $visit),
-                               ],
                            ];
                        });
 
@@ -64,13 +61,39 @@ class VisitEnqueueSwabListController extends Controller
             ->update([
                 'enqueued_swab_at' => now(),
                 'status' => 7, // enqueue_swab,
-                'form->mamanagement->container_no' => Cache::increment($cacheName),
-                'form->mamanagement->container_swab_at' => Request::input('swab_at'),
+                'form->management->container_no' => Cache::increment($cacheName),
+                'form->management->container_swab_at' => Request::input('swab_at'),
             ]);
         Visit::reguard();
         $visit = Visit::find(Request::input('ids')[0]);
         VisitUpdated::dispatch($visit);
 
         return Redirect::back();
+    }
+
+    public function update(Visit $visit)
+    {
+        $containerNo = null;
+        if (Request::has('container_no')) {
+            if (Request::input('container_no') === 'new') {
+                $cacheName = now('asia/bangkok')->format('Y-m-d').'-container-running-no';
+                $containerNo = Cache::increment($cacheName);
+            } else {
+                $containerNo = Request::input('container_no');
+            }
+            $visit->forceFill([
+                'form->management->on_hold' => false,
+                'form->management->container_no' => $containerNo,
+            ])->save();
+        } else {
+            $visit->forceFill([
+                'form->management->on_hold' => true,
+            ])->save();
+        }
+
+        return [
+            'ok' => true,
+            'container_no' => $containerNo,
+        ];
     }
 }

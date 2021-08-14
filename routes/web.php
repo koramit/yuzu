@@ -80,6 +80,9 @@ Route::get('visits/enqueue-swab-list', [VisitEnqueueSwabListController::class, '
 Route::post('visits/enqueue-swab-list', [VisitEnqueueSwabListController::class, 'store'])
      ->middleware('auth', 'can:enqueue_swab')
      ->name('visits.enqueue-swab-list.store');
+Route::patch('visits/enqueue-swab-list/{visit:slug}', [VisitEnqueueSwabListController::class, 'update']) // hold
+     ->middleware('auth', 'can:enqueue_swab')
+     ->name('visits.enqueue-swab-list.update');
 
 // swab list
 Route::get('visits/swab-list', [VisitSwabListController::class, 'index'])

@@ -28,9 +28,12 @@ class VisitMedicalRecordListController extends Controller
         $visits = Visit::with('patient')
                        ->whereDateVisit($today->format('Y-m-d'))
                        ->where(function ($query) {
+                           $query->whereNull('attached_opd_card_at')
+                               ->orWhereNull('authorized_at');
+                       })
+                       ->where(function ($query) {
                            $query->whereNotNull('enlisted_exam_at')
-                                 ->orWhereNotNull('enlisted_swab_at')
-                                 ->orWhere('status', 5); // cancled
+                                 ->orWhereNotNull('enlisted_swab_at');
                        })
                        ->orderBy('enlisted_screen_at')
                        ->get()
@@ -43,10 +46,11 @@ class VisitMedicalRecordListController extends Controller
                                'patient_type' => $visit->patient_type,
                                'queued' => $visit->enqueued_at !== null,
                                'authorized' => $visit->authorized_at !== null,
-                               'swab' => $visit->form['management']['np_swab'],
                                'attached' => $visit->attached_opd_card_at !== null,
                                'enlisted_screen_at_for_humans' => $visit->enlisted_screen_at_for_humans,
                                'ready_to_print' => $visit->ready_to_print,
+                               'swab' => $visit->form['management']['np_swab'],
+                               'swab_at' => $visit->swab_at ?? $visit->container_swab_at ?? '',
                                'group' => ($visit->patient_type === 'บุคคลทั่วไป' && $visit->screen_type === 'เริ่มตรวจใหม่') ? 'walk-in' : 'นัด-staff',
                                'can' => [
                                     'authorize_visit' => $user->can('authorize', $visit),
