@@ -20,13 +20,13 @@ class VisitQueueListController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $today = now()->today('asia/bangkok');
+        $today = now($user->time_zone);
         $flash = $this->manager->getFlash($user);
         $flash['page-title'] = 'ธุรการ @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
-                       ->whereDateVisit($today)
+                       ->whereDateVisit($today->format('Y-m-d'))
                        ->where(function ($query) {
                            $query->whereNotNull('enlisted_exam_at')
                                  ->orWhereNotNull('enlisted_swab_at');
@@ -46,6 +46,9 @@ class VisitQueueListController extends Controller
                                'patient_type' => $visit->patient_type,
                                'enlisted_screen_at_for_humans' => $visit->enlisted_screen_at_for_humans,
                                'ready_to_print' => $visit->ready_to_print,
+                               'swab' => $visit->form['management']['np_swab'],
+                               'swab_at' => $visit->container_swab_at ?? $visit->swab_at ?? '',
+                               'group' => ($visit->patient_type === 'บุคคลทั่วไป' && $visit->screen_type === 'เริ่มตรวจใหม่') ? 'walk-in' : 'นัด-staff',
                                'can' => [
                                     'queue' => $user->can('queue', $visit),
                                     'fill_hn' => $user->can('fillHn', $visit),

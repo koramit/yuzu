@@ -47,6 +47,7 @@ class InitRole
             $event->user->save();
         } elseif ($event->user->profile['position'] === 'พยาบาล') {
             $event->user->assignRole('nurse');
+            $event->user->assignRole('staff');
             $event->user->forceFill([
                 'profile->home_page' => 'visits.screen-list',
             ]);

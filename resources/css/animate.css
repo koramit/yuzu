@@ -16,3 +16,7 @@
         transform: translatex(0px);
     }
 }
+
+.flip-list-move {
+    transition: all 0.8s ease;
+}

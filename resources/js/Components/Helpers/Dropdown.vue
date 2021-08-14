@@ -16,8 +16,12 @@
         </button>
         <transition :name="dropup ? 'fade-appear-above':'fade-appear'">
             <div
-                class="origin-top-right absolute right-0 w-auto rounded-md shadow-lg z-20"
-                :class="{' -translate-y-full': dropup}"
+                class="absolute rounded-md shadow-lg z-20"
+                :class="{
+                    '-translate-y-full': dropup,
+                    'origin-top-right right-0': !dropleft,
+                    'origin-top-left left-0': dropleft,
+                }"
                 v-if="show"
             >
                 <div @click.stop="show = autoClose ? false : true">
@@ -33,6 +37,7 @@ import { onUnmounted, ref } from 'vue';
 export default {
     props: {
         autoClose: { type: Boolean, default: true },
+        dropleft: { type: Boolean },
     },
     setup () {
         const escapePressed = (e) => {

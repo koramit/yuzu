@@ -15,6 +15,7 @@ use App\Http\Controllers\ServerSendEventsController;
 use App\Http\Controllers\VisitAttachOPDCardController;
 use App\Http\Controllers\VisitAuthorizationController;
 use App\Http\Controllers\VisitDischargeListController;
+use App\Http\Controllers\VisitEnqueueSwabListController;
 use App\Http\Controllers\VisitEvaluateController;
 use App\Http\Controllers\VisitExamListController;
 use App\Http\Controllers\VisitExportController;
@@ -72,6 +73,17 @@ Route::patch('visits/exam-list/{visit:slug}', [VisitExamListController::class, '
      ->middleware('auth', 'can:update,visit')
      ->name('visits.exam-list.store');
 
+// enqueue swab list
+Route::get('visits/enqueue-swab-list', [VisitEnqueueSwabListController::class, 'index'])
+     ->middleware('auth', 'can:view_enqueue_swab_list')
+     ->name('visits.enqueue-swab-list');
+Route::post('visits/enqueue-swab-list', [VisitEnqueueSwabListController::class, 'store'])
+     ->middleware('auth', 'can:enqueue_swab')
+     ->name('visits.enqueue-swab-list.store');
+Route::patch('visits/enqueue-swab-list/{visit:slug}', [VisitEnqueueSwabListController::class, 'update']) // hold
+     ->middleware('auth', 'can:enqueue_swab')
+     ->name('visits.enqueue-swab-list.update');
+
 // swab list
 Route::get('visits/swab-list', [VisitSwabListController::class, 'index'])
      ->middleware('auth', 'can:view_swab_list')
@@ -84,6 +96,7 @@ Route::patch('visits/swab-list/{visit:slug}', [VisitSwabListController::class, '
 Route::post('visits/discharge-list/{visit:slug}', [VisitDischargeListController::class, 'store'])
      ->middleware('auth', 'can:discharge,visit')
      ->name('visits.discharge-list.store');
+
 // discharge from swab
 Route::patch('visits/discharge-list/{visit:slug}', [VisitDischargeListController::class, 'update'])
      ->middleware('auth', 'can:discharge,visit')
@@ -183,6 +196,9 @@ Route::middleware('auth')
      });
 
 Route::get('login-as/{name}', function ($name) {
+    if (config('app.env') === 'production') {
+        abort(404);
+    }
     $user = \App\Models\User::whereName($name)->first();
     \Auth::login($user);
 

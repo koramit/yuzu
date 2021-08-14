@@ -87,6 +87,10 @@ class VisitManager
             'management' => [
                 'np_swab' => false,
                 'specimen_no' => null,
+                'container_no' => null,
+                'container_swab_at' => null,
+                'swab_at' => null,
+                'on_hold' => false,
                 'other_tests' => null,
                 'home_medication' => null,
             ],
@@ -397,6 +401,7 @@ class VisitManager
             'main-menu-links' => [
                 ['icon' => 'thermometer', 'label' => 'ห้องคัดกรอง', 'route' => 'visits.screen-list', 'can' => $user->can('view_screen_list')],
                 ['icon' => 'stethoscope', 'label' => 'ห้องตรวจ', 'route' => 'visits.exam-list', 'can' => $user->can('view_exam_list')],
+                ['icon' => 'box', 'label' => 'จัดกระติก', 'route' => 'visits.enqueue-swab-list', 'can' => $user->can('view_enqueue_swab_list')],
                 ['icon' => 'virus', 'label' => 'ห้อง Swab', 'route' => 'visits.swab-list', 'can' => $user->can('view_swab_list')],
                 ['icon' => 'address-book', 'label' => 'เวชระเบียน', 'route' => 'visits.mr-list', 'can' => $user->can('view_mr_list')],
                 ['icon' => 'list-ol', 'label' => 'ธุรการ', 'route' => 'visits.queue-list', 'can' => $user->can('view_queue_list')],

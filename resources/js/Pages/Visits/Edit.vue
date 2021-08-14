@@ -530,6 +530,13 @@
                 label="NP swab for PCR test of SARS-CoV-2"
             />
             <Error :error="form.errors.np_swab" />
+            <FormRadio
+                v-if="form.management.np_swab && $page.props.user.roles.includes('nurse')"
+                label="ส่ง swab ที่"
+                name="swab_at"
+                v-model="form.management.swab_at"
+                :options="['SCG', 'Sky Walk']"
+            />
             <FormTextarea
                 class="mt-2"
                 label="ส่งตรวจอื่นๆ"
@@ -788,7 +795,7 @@ export default {
         };
 
         const isEmployee = computed(() => {
-            return form.visit.patient_type === 'เจ้าหน้าที่ศิริราช';
+            return form.visit.patient_type ? (form.visit.patient_type === 'เจ้าหน้าที่ศิริราช') : false;
         });
         watch (
             () => form.visit.patient_type,
@@ -816,7 +823,7 @@ export default {
         );
 
         const isAppointment = computed(() => {
-            return form.visit.screen_type !== 'เริ่มตรวจใหม่';
+            return form.visit.screen_type ? (form.visit.screen_type !== 'เริ่มตรวจใหม่') : false;
         });
         const showExposureForm = computed(() => {
             return form.exposure.evaluation && form.exposure.evaluation.indexOf('มี') === 0;
@@ -879,6 +886,18 @@ export default {
                 if (usePage().props.value.user.roles.includes('md')) {
                     toggleSaveToSwab(val);
                     toggleSaveToDischarge(!val);
+                }
+
+                if (val) {
+                    if (usePage().props.value.user.roles.includes('md')) {
+                        form.management.swab_at = 'SCG';
+                    } else if (isAppointment.value && isEmployee.value) {
+                        form.management.swab_at = 'Sky Walk';
+                    } else {
+                        form.management.swab_at = 'SCG';
+                    }
+                } else {
+                    form.management.swab_at = null;
                 }
             },
             { immediate: true }

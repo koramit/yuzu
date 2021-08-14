@@ -79,51 +79,59 @@
                 <!-- right menu -->
                 <div class="w-1/4 text-sm p-1 grid justify-items-start">
                     <!-- authorize -->
-                    <template v-if="visit.queued">
-                        <div v-if="!visit.authorized">
+                    <button
+                        class="inline-flex  justify-start disabled:cursor-not-allowed"
+                        disabled
+                    >
+                        <Icon
+                            class="w-4 h-4 mr-1"
+                            :class="{
+                                'text-bitter-theme-light': visit.authorized,
+                                'text-red-400': !visit.authorized,
+                            }"
+                            :name="visit.authorized ? 'check-circle':'times-circle'"
+                        />
+                        <span class="block font-normal text-thick-theme-light">เปิด Visit แล้ว</span>
+                    </button>
+                    <!-- OPD card attached -->
+                    <button
+                        class="inline-flex  justify-start disabled:cursor-not-allowed"
+                        disabled
+                    >
+                        <Icon
+                            class="w-4 h-4 mr-1"
+                            :class="{
+                                'text-bitter-theme-light': visit.attached,
+                                'text-red-400': !visit.attached,
+                            }"
+                            :name="visit.attached ? 'check-circle':'times-circle'"
+                        />
+                        <span class="block font-normal text-thick-theme-light">พิมพ์แล้ว</span>
+                    </button>
+                    <template v-if="visit.ready_to_print">
+                        <div v-if="visit.can.print_opd_card">
                             <Link
-                                class="inline-flex text-alt-theme-light justify-start disabled:cursor-not-allowed"
-                                :href="route('visits.authorize.store', visit)"
-                                as="button"
-                                method="post"
-                                preserve-state
-                                preserve-scroll
-                                :disabled="!visit.can.authorize_visit"
+                                class="inline-flex text-alt-theme-light justify-start"
+                                :href="route('visits.show', visit)"
                             >
                                 <Icon
                                     class="w-4 h-4 mr-1"
-                                    name="sync-alt"
+                                    name="readme"
                                 />
-                                <span class="block font-normal text-thick-theme-light">เปิด Visit</span>
+                                <span class="block font-normal text-thick-theme-light">อ่าน</span>
                             </Link>
                         </div>
-                    </template>
-                    <div v-else>
-                        <button
-                            disabled
-                            class="inline-flex text-thick-theme-light justify-start disabled:cursor-not-allowed"
-                        >
-                            <Icon
-                                class="w-4 h-4 mr-1"
-                                name="hourglass-half"
-                            />
-                            <span class="block font-normal text-thick-theme-light">ยังไม่มีคิว</span>
-                        </button>
-                    </div>
-                    <!-- OPD card attached -->
-                    <template v-if="visit.ready_to_print">
-                        <div v-if="!visit.attached">
-                            <a
+                        <div v-if="visit.can.replace">
+                            <Link
                                 class="inline-flex text-alt-theme-light justify-start"
-                                :href="route('print-opd-card', visit)"
-                                target="_blank"
+                                :href="route('visits.replace', visit)"
                             >
                                 <Icon
                                     class="w-4 h-4 mr-1"
-                                    name="print"
+                                    name="eraser"
                                 />
-                                <span class="block font-normal text-thick-theme-light">พิมพ์</span>
-                            </a>
+                                <span class="block font-normal text-thick-theme-light">แก้ไข</span>
+                            </Link>
                         </div>
                     </template>
                 </div>
