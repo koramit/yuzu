@@ -50,6 +50,7 @@ class VisitEnqueueSwabListController extends Controller
         return Inertia::render('Visits/List', [
             'visits' => $visits,
             'card' => 'enqueue-swab',
+            'eventSource' => 'mr',
         ]);
     }
 
