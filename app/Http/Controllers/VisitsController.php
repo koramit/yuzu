@@ -8,6 +8,7 @@ use App\Managers\VisitManager;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
@@ -68,7 +69,9 @@ class VisitsController extends Controller
             $patient = (new PatientManager())->manage($data['hn']);
             /* SHOULD BE FOUND */
             if (! $patient['found']) {
-                return '🥺';
+                Log::error('visit@store validate '.$data['hn'].' not found. last search '.Session::get('last-search-hn'));
+
+                return 'เกิดข้อผิดพลาด กรุณาลองใหม่ ขออภัยในความไม่สะดวก 🥺';
             }
             $visit = Visit::whereDateVisit($todayStr)
                           ->wherePatientId($patient['patient']->id)
