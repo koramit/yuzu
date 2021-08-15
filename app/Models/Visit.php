@@ -288,21 +288,21 @@ class Visit extends Model
 
     public function getSwabAtAttribute()
     {
-        return $this->form['management']['swab_at'] ?? '';
+        return $this->form['management']['swab_at'] ?? null;
     }
 
     public function getSpecimenNoAttribute()
     {
-        return $this->form['management']['specimen_no'] ?? '';
+        return $this->form['management']['specimen_no'] ?? null;
     }
 
     public function getContainerSwabAtAttribute()
     {
-        return $this->form['management']['container_swab_at'] ?? '';
+        return $this->form['management']['container_swab_at'] ?? null;
     }
 
     public function getContainerNoAttribute()
     {
-        return $this->form['management']['container_no'] ?? '';
+        return $this->form['management']['container_no'] ?? null;
     }
 }
