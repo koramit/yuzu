@@ -583,6 +583,9 @@ class VisitManager
         $text = null;
         if ($management['np_swab']) {
             $text .= 'NP swab for PCR test of SARS-CoV-2';
+            if (! $visit->swabbed && $visit->discharged_at) {
+                $text .= ' ** ไม่ได้ทำ swab เนื่องจากผู้ป่วยไม่แสดงตัวจนหมดเวลาทำการ';
+            }
         }
         if ($management['other_tests']) {
             $text .= (', '.$management['other_tests']);
