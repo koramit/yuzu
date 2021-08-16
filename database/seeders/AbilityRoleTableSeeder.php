@@ -57,7 +57,7 @@ class AbilityRoleTableSeeder extends Seeder
         $assignment = [
             'root' => ['view_any_visits', 'cancel_visit'],
             'admin' => ['view_screen_list', 'view_exam_list', 'view_swab_list', 'view_mr_list', 'view_queue_list', 'view_today_list', 'view_any_visits', 'cancel_visit'],
-            'md' => ['create_visit', 'view_any_visits', 'view_screen_list', 'view_exam_list', 'view_mr_list', 'view_today_list', 'view_any_visits', 'update_visit', 'sign_opd_card', 'print_opd_card', 'replace_visit', 'cancel_visit'],
+            'md' => ['create_visit', 'view_any_visits', 'view_screen_list', 'view_exam_list', 'view_today_list', 'view_any_visits', 'update_visit', 'sign_opd_card', 'print_opd_card', 'replace_visit', 'cancel_visit'],
             'nurse' => ['create_visit', 'view_screen_list', 'view_exam_list', 'view_swab_list', 'view_mr_list', 'view_queue_list', 'view_enqueue_swab_list', 'view_today_list', 'view_any_visits', 'update_visit', 'sign_on_behalf', 'enlist_exam', 'enqueue_swab', 'print_opd_card', 'replace_visit', 'cancel_visit', 'export_visits'],
             'staff' => ['view_mr_list', 'view_queue_list', 'view_today_list', 'authorize_visit', 'attach_opd_card', 'print_opd_card'],
             'id_md' => ['export_opd_cards', 'evaluate'],

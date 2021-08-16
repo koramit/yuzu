@@ -168,8 +168,8 @@ class Visit extends Model
             'visits.screen-list',
             'visits.exam-list',
             'visits.swab-list',
-            'visits', // 'discharged',
-            'visits', //'canceled',
+            'visits.today-list', // 'discharged',
+            'visits.today-list', //'canceled',
             'visits.screen-list', // 'appointment
             'visits.swab-list', // swab_manage
         ];

@@ -132,7 +132,7 @@ class VisitsController extends Controller
             $can[] = 'save';
         }
         // update appointment to screen
-        if ($visit->date_visit->format('Ymd') === today('asia/bangkok')->format('Ymd')) {
+        if ($visit->status === 'appointment' && $visit->date_visit->format('Ymd') === now('asia/bangkok')->format('Ymd')) {
             $visit->status = 'screen';
             $visit->enlisted_screen_at = now();
             $visit->save();
@@ -148,11 +148,11 @@ class VisitsController extends Controller
                 $can[] = 'save-discharge';
             }
             if ($user->role_names->contains('nurse')) { // NURSE save to swab
-                if ($visit->screen_type && $visit->screen_type !== 'เริ่มตรวจใหม่') {
+                if ($visit->screen_type && $visit->screen_type !== 'เริ่มตรวจใหม่' && ! $visit->swabbed) {
                     $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่ง swab', 'action' => 'save-swab', 'can' => true];
                 }
             } elseif ($user->role_names->contains('md')) { // MD save to swab
-                if ($visit->form['management']['np_swab']) {
+                if ($visit->form['management']['np_swab'] && ! $visit->swabbed) {
                     $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่ง swab', 'action' => 'save-swab', 'can' => true];
                 }
             }
@@ -180,6 +180,15 @@ class VisitsController extends Controller
     public function update(Visit $visit)
     {
         (new VisitManager())->saveVisit($visit, Request::all(), Auth::user());
+
+        if ($visit->swabbed) {
+            $visit->discharged_at = now();
+            $form = $visit->form;
+            $visit->enlisted_swab_at = $form['management']['original_enlisted_swab_at'];
+            unset($form['management']['original_enlisted_swab_at']);
+            $visit->status = 'discharged';
+            $visit->save();
+        }
 
         return Redirect::route($visit->status_index_route)->with('messages', [
             'status' => 'success',
@@ -218,6 +227,11 @@ class VisitsController extends Controller
         // it actually is unlocking visit to updatable
 
         // reset discharged_at & enlisted_swab_at (ready_to_print = false)
+        if ($visit->swabbed) {
+            $visit->forceFill([
+                'form->management->original_enlisted_swab_at' => $visit->enlisted_swab_at->format('Y-m-d H:i:s'),
+            ]);
+        }
         $visit->discharged_at = null;
         $visit->enlisted_swab_at = null;
         // reset attached_opd_card_at

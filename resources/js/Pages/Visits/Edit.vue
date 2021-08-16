@@ -524,12 +524,18 @@
             <h2 class="font-semibold text-thick-theme-light">
                 การจัดการ
             </h2>
-            <FormCheckbox
-                class="mt-2"
-                v-model="form.management.np_swab"
-                label="NP swab for PCR test of SARS-CoV-2"
-            />
-            <Error :error="form.errors.np_swab" />
+            <template v-if="!visit.swabbed">
+                <FormCheckbox
+                    class="mt-2"
+                    v-model="form.management.np_swab"
+                    label="NP swab for PCR test of SARS-CoV-2"
+                />
+                <Error :error="form.errors.np_swab" />
+            </template>
+            <label
+                v-else
+                class="form-label"
+            >ได้ทำ swab แล้ว</label>
             <FormRadio
                 v-if="form.management.np_swab && $page.props.user.roles.includes('nurse')"
                 label="ส่ง swab ที่"
@@ -671,29 +677,31 @@
                 บันทึก
             </SpinnerButton>
 
-            <SpinnerButton
-                v-if="configs.can.includes('save-exam')"
-                class="block w-full mt-4 btn btn-dark"
-                @click="saveToExam"
-            >
-                ส่งตรวจ
-            </SpinnerButton>
+            <template v-if="!visit.swabbed">
+                <SpinnerButton
+                    v-if="configs.can.includes('save-exam')"
+                    class="block w-full mt-4 btn btn-dark"
+                    @click="saveToExam"
+                >
+                    ส่งตรวจ
+                </SpinnerButton>
 
-            <SpinnerButton
-                v-if="configs.can.includes('save-discharge') && ! form.management.np_swab"
-                class="block w-full mt-4 btn btn-dark"
-                @click="saveToDischarge"
-            >
-                จำหน่าย
-            </SpinnerButton>
+                <SpinnerButton
+                    v-if="configs.can.includes('save-discharge') && ! form.management.np_swab"
+                    class="block w-full mt-4 btn btn-dark"
+                    @click="saveToDischarge"
+                >
+                    จำหน่าย
+                </SpinnerButton>
 
-            <SpinnerButton
-                v-if="canSaveToSwab"
-                class="block w-full mt-4 btn btn-dark"
-                @click="saveToSwab"
-            >
-                ส่ง swab
-            </SpinnerButton>
+                <SpinnerButton
+                    v-if="canSaveToSwab"
+                    class="block w-full mt-4 btn btn-dark"
+                    @click="saveToSwab"
+                >
+                    ส่ง swab
+                </SpinnerButton>
+            </template>
         </div>
 
         <FormSelectOther
@@ -830,6 +838,9 @@ export default {
         });
         const toggleSaveToSwab = (show) => {
             if (show) {
+                if (props.visit.swabbed) {
+                    return;
+                }
                 if (usePage().props.value.flash.actionMenu.findIndex(action => action.action === 'save-swab') === -1) {
                     usePage().props.value.flash.actionMenu.push({icon: 'share-square', label: 'ส่ง swab', action: 'save-swab', can: true});
                 }
