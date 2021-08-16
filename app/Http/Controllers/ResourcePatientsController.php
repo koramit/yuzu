@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Managers\PatientManager;
+use Illuminate\Support\Facades\Session;
 
 class ResourcePatientsController extends Controller
 {
@@ -12,6 +13,7 @@ class ResourcePatientsController extends Controller
         if (! $patient['found']) {
             return $patient;
         }
+        Session::put('last-search-hn', $hn);
 
         return [
             'found' => true,

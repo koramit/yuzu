@@ -81,18 +81,27 @@
                             <button
                                 v-for="no in containers.filter(c => c.swab_at === patient.swab_at).map(n => n.no)"
                                 :key="no"
-                                class="block w-full hover:bg-dark-theme-light text-white py-1 px-4"
+                                class="block w-full text-left hover:bg-dark-theme-light text-white py-1 px-4"
                                 @click="putIn(patient, no)"
                             >
                                 # {{ no }}
                             </button>
-                            <button
-                                v-if="!containers.filter(c => c.swab_at === patient.swab_at).map(n => n.no).length"
-                                class="block w-full hover:bg-dark-theme-light text-white py-1 px-4"
-                                @click="putIn(patient, 'new')"
-                            >
-                                กระติกใหม่
-                            </button>
+                            <template v-if="!containers.filter(c => c.swab_at === patient.swab_at).map(n => n.no).length">
+                                <button
+                                    class="block w-full text-left hover:bg-dark-theme-light text-white py-1 px-4"
+                                    @click="putIn(patient, 'new')"
+                                >
+                                    กระติกใหม่
+                                </button>
+                                <button
+                                    v-for="unit in ['SCG', 'Sky Walk'].filter(u => u !== patient.swab_at)"
+                                    :key="unit"
+                                    class="block w-full text-left hover:bg-dark-theme-light text-white py-1 px-4"
+                                    @click="putIn(patient, unit)"
+                                >
+                                    ส่ง {{ unit }}
+                                </button>
+                            </template>
                         </div>
                     </template>
                 </Dropdown>
@@ -261,6 +270,11 @@ export default {
             window.axios
                 .patch(window.route('visits.enqueue-swab-list.update', visit), { on_hold: false, container_no: no })
                 .then((response) => {
+                    console.log(response.data);
+                    if (response.data.move_to !== undefined) {
+                        visit.swab_at = response.data.move_to;
+                        return;
+                    }
                     visit.on_hold = false;
                     visit.container_no = response.data.container_no;
                 })
@@ -268,7 +282,7 @@ export default {
         };
 
         const containers = computed(() => {
-            let containerNo = [...new Set(props.visits.map(v => v.container_no))];
+            let containerNo = [...new Set(props.visits.map(v => v.container_no))].sort((a, b) => a > b);
             let transformContainers = [];
             containerNo.forEach(no => {
                 let patients = props.visits.filter(v => v.container_no === no && !v.on_hold);

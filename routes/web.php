@@ -115,12 +115,12 @@ Route::post('visits/attach-opd-card/{visit:slug}', [VisitAttachOPDCardController
 
 // today list
 Route::get('visits/today-list', [VisitTodayListController::class, 'index'])
-     ->middleware('auth', 'can:view_mr_list')
+     ->middleware('auth', 'can:view_today_list')
      ->name('visits.today-list');
 
 // lab list
 Route::get('visits/lab-list', [VisitLabListController::class, 'index'])
-     ->middleware('auth', 'can:view_mr_list')
+     ->middleware('auth', 'can:view_any_visits')
      ->name('visits.lab-list');
 
 // queue

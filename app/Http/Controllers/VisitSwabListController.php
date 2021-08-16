@@ -114,6 +114,11 @@ class VisitSwabListController extends Controller
             ]);
         }
 
+        // check if edit after enqueued swab
+        if ($visit->container_no) {
+            $visit->status = 'enqueue_swab';
+        }
+
         $visit->save();
 
         $visit->actions()->createMany([

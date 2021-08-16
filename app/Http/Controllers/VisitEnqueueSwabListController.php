@@ -30,7 +30,7 @@ class VisitEnqueueSwabListController extends Controller
 
         $visits = Visit::with('patient')
                        ->whereDateVisit($today->format('Y-m-d'))
-                       ->whereStatus(3)
+                       ->whereStatus(3) // swab
                        ->orderBy('enlisted_swab_at')
                        ->get()
                        ->transform(function ($visit) use ($user) {
@@ -50,6 +50,7 @@ class VisitEnqueueSwabListController extends Controller
         return Inertia::render('Visits/List', [
             'visits' => $visits,
             'card' => 'enqueue-swab',
+            'eventSource' => 'mr',
         ]);
     }
 
@@ -75,11 +76,20 @@ class VisitEnqueueSwabListController extends Controller
     {
         $containerNo = null;
         if (Request::has('container_no')) {
-            if (Request::input('container_no') === 'new') {
+            $no = Request::input('container_no');
+            if ($no === 'new') {
                 $cacheName = now('asia/bangkok')->format('Y-m-d').'-container-running-no';
                 $containerNo = Cache::increment($cacheName);
+            } elseif (is_numeric($no)) {
+                $containerNo = $no;
             } else {
-                $containerNo = Request::input('container_no');
+                $visit->forceFill(['form->management->container_swab_at' => $no])->save();
+                VisitUpdated::dispatch($visit);
+
+                return [
+                    'ok' => true,
+                    'move_to' => $no,
+                ];
             }
             $visit->forceFill([
                 'form->management->on_hold' => false,

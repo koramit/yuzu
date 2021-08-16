@@ -60,6 +60,11 @@ class VisitDischargeListController extends Controller
     {
         $visit->status = 'discharged';
         $visit->discharged_at = now();
+        if ($visit->form['management']['np_swab']
+            && $visit->form['management']['container_no']
+        ) {
+            $visit->swabbed = ! $visit->form['management']['on_hold'];
+        }
         $visit->save();
         $visit->actions()->create(['action' => 'discharge', 'user_id' => Auth::id()]);
         VisitUpdated::dispatch($visit);

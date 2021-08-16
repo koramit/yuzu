@@ -168,8 +168,8 @@ class Visit extends Model
             'visits.screen-list',
             'visits.exam-list',
             'visits.swab-list',
-            'visits', // 'discharged',
-            'visits', //'canceled',
+            'visits.today-list', // 'discharged',
+            'visits.today-list', //'canceled',
             'visits.screen-list', // 'appointment
             'visits.swab-list', // swab_manage
         ];
@@ -288,21 +288,21 @@ class Visit extends Model
 
     public function getSwabAtAttribute()
     {
-        return $this->form['management']['swab_at'] ?? '';
+        return $this->form['management']['swab_at'] ?? null;
     }
 
     public function getSpecimenNoAttribute()
     {
-        return $this->form['management']['specimen_no'] ?? '';
+        return $this->form['management']['specimen_no'] ?? null;
     }
 
     public function getContainerSwabAtAttribute()
     {
-        return $this->form['management']['container_swab_at'] ?? '';
+        return $this->form['management']['container_swab_at'] ?? null;
     }
 
     public function getContainerNoAttribute()
     {
-        return $this->form['management']['container_no'] ?? '';
+        return $this->form['management']['container_no'] ?? null;
     }
 }

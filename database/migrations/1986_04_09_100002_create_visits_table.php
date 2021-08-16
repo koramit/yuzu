@@ -22,6 +22,7 @@ class CreateVisitsTable extends Migration
             $table->unsignedTinyInteger('status')->default(1)->index();
             $table->json('form');
             $table->foreignId('patient_id')->nullable()->constrained('patients')->onDelete('cascade');
+            $table->boolean('swabbed')->default(false)->index();
             $table->timestamp('enlisted_screen_at')->nullable()->index();
             $table->timestamp('enqueued_at')->nullable()->index();
             $table->timestamp('enlisted_exam_at')->nullable()->index();
