@@ -282,7 +282,7 @@ export default {
         };
 
         const containers = computed(() => {
-            let containerNo = [...new Set(props.visits.map(v => v.container_no))];
+            let containerNo = [...new Set(props.visits.map(v => v.container_no))].sort((a, b) => a > b);
             let transformContainers = [];
             containerNo.forEach(no => {
                 let patients = props.visits.filter(v => v.container_no === no && !v.on_hold);

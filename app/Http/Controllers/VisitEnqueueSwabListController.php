@@ -77,13 +77,15 @@ class VisitEnqueueSwabListController extends Controller
         $containerNo = null;
         if (Request::has('container_no')) {
             $no = Request::input('container_no');
-            if ( $no === 'new') {
+            if ($no === 'new') {
                 $cacheName = now('asia/bangkok')->format('Y-m-d').'-container-running-no';
                 $containerNo = Cache::increment($cacheName);
             } elseif (is_numeric($no)) {
                 $containerNo = $no;
             } else {
                 $visit->forceFill(['form->management->container_swab_at' => $no])->save();
+                VisitUpdated::dispatch($visit);
+
                 return [
                     'ok' => true,
                     'move_to' => $no,
