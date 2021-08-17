@@ -30,7 +30,7 @@ class ImportAppointmentsController extends Controller
         });
 
         $user = Auth::user();
-        $tomorrowStr = today('asia/bangkok')->addDay()->format('Y-m-d');
+        $tomorrowStr = now('asia/bangkok')->addDay()->format('Y-m-d');
         $hnNotFoundCount = 0;
         $noHnCount = 0;
         $appointedCount = 0;
