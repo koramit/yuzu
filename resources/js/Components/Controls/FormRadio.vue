@@ -76,14 +76,11 @@ export default {
             } else {
                 options.push({ label: 'ยกเลิก', value: null });
                 return options;
-                // return [...options, { label: 'ยกเลิก', value: null }];
             }
         });
 
         const setOther = (val) => {
             selected.value = val;
-            // context.emit('update:modelValue', val);
-            // context.emit('autosave');
         };
 
         return {
