@@ -10,7 +10,7 @@ class VisitExportController extends Controller
     public function __invoke()
     {
         $visits = Visit::with('patient')
-                       ->whereDateVisit(today('asia/bangkok'))
+                       ->whereDateVisit(now('asia/bangkok')->format('Y-m-d'))
                        ->whereIn('status', [3, 4])
                        ->orderBy('enlisted_screen_at')
                        ->get()
@@ -27,7 +27,7 @@ class VisitExportController extends Controller
                                 'แผนก' => $visit->patient_department,
                                 'ทำ swab' => $visit->form['management']['np_swab'] ? 'ทำ' : '',
                                 'หมายเลขกระติก' => $visit->form['management']['specimen_no'] ?? null,
-                                'กลุ่ม' => ($visit->patient_type === 'บุคคลทั่วไป' && $visit->screen_type === 'เริ่มตรวจใหม่') ? 'walk-in' : 'นัด-staff',
+                                'กลุ่ม' => $visit->track,
                                 'เริ่มคัดกรอง' => $visit->enlisted_screen_at ? $visit->enlisted_screen_at->tz('asia/bangkok')->format('H:i') : null,
                                 'จำหน่าย' => $visit->discharged_at ? $visit->discharged_at->tz('asia/bangkok')->format('H:i') : null,
                                 'ใช้เวลา' => ($visit->enlisted_screen_at && $visit->discharged_at) ? $visit->discharged_at->diffInMinutes($visit->enlisted_screen_at) : null,

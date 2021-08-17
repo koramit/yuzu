@@ -19,7 +19,7 @@ class VisitScreenListController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $today = now($user->time_zone);
+        $today = now('asia/bangkok');
         $flash = $this->manager->getFlash($user);
         $flash['page-title'] = 'ห้องคัดกรอง @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);

@@ -305,4 +305,9 @@ class Visit extends Model
     {
         return $this->form['management']['container_no'] ?? null;
     }
+
+    public function getTrackAttribute()
+    {
+        return $this->form['patient']['track'] ?? null;
+    }
 }

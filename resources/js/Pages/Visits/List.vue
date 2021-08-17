@@ -238,8 +238,8 @@ export default {
                     .filter(v => filters.swab ? v.swab : true)
                     .filter(v => filters.staff ? v.patient_type === 'เจ้าหน้าที่ศิริราช' : true)
                     .filter(v => filters.public ? v.patient_type === 'บุคคลทั่วไป' : true)
-                    .filter(v => filters.walk_in ? v.group === 'walk-in' : true)
-                    .filter(v => filters.appointment ? v.group === 'นัด-staff' : true)
+                    .filter(v => filters.walk_in ? v.track === 'Walk-in' : true)
+                    .filter(v => filters.appointment ? v.track === 'นัด-staff' : true)
                     .filter(v => filters.swab_at_scg ? v.swab_at === 'SCG' : true)
                     .filter(v => filters.swab_at_sky_walk ? v.swab_at === 'Sky Walk' : true);
             }

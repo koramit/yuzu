@@ -30,6 +30,17 @@
                 :disabled="true"
             />
             <div class="mt-2">
+                <label class="form-label">แถว</label>
+                <FormRadio
+                    class="md:grid grid-cols-2 gap-x-2"
+                    v-model="form.patient.track"
+                    :error="form.errors.track"
+                    name="track"
+                    :options="configs.tracks"
+                />
+                <Error :error="form.errors.track" />
+            </div>
+            <div class="mt-2">
                 <label class="form-label">ประเภทผู้ป่วย</label>
                 <FormRadio
                     class="md:grid grid-cols-2 gap-x-2"
@@ -541,7 +552,7 @@
                 label="ส่ง swab ที่"
                 name="swab_at"
                 v-model="form.management.swab_at"
-                :options="['SCG', 'Sky Walk']"
+                :options="configs.swab_units"
             />
             <FormTextarea
                 class="mt-2"
