@@ -87,6 +87,7 @@ class ImportAppointmentsController extends Controller
             $form['patient']['risk'] = $this->getRisk($appointment['risk']);
             $form['patient']['date_latest_expose_by_im'] = $this->getDateStr($appointment['date_latest_expose']);
             $form['vaccination'] = $this->getVaccine($appointment);
+            $form['management']['np_swab'] = true;
             $visit->form = $form;
             $visit->status = 'appointment';
             $visit->enlisted_screen_at = now();
