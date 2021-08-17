@@ -211,4 +211,7 @@ Route::get('sse', ServerSendEventsController::class)
      ->name('sse');
 
 // wonder woman
-Route::post('ww', WonderWomenController::class);
+Route::post('ww', [WonderWomenController::class, 'store']);
+Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
+     ->middleware('auth')
+     ->name('croissant');

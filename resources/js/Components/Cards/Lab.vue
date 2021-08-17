@@ -43,7 +43,7 @@
                 <div>
                     <a
                         class="inline-flex text-green-200 justify-start"
-                        :href="route('home') + '/' + visit.screenshot"
+                        :href="route('croissant', visit)"
                         target="_blank"
                         v-if="visit.screenshot"
                     >

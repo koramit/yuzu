@@ -8,11 +8,23 @@ use App\Managers\VisitManager;
 use App\Models\Visit;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Imagick;
 
 class WonderWomenController extends Controller
 {
-    public function __invoke()
+    public function show(Visit $visit)
+    {
+        if (! $visit->form['management']['screenshot']) {
+            return '👩‍🔬';
+        }
+
+        return Response::file(storage_path('app/'.$visit->form['management']['screenshot']));
+    }
+
+    public function store()
     {
         Request::validate([
                 'token' => [
@@ -31,7 +43,10 @@ class WonderWomenController extends Controller
         ]);
 
         if (Request::has('screenshot')) {
-            $path = Request::file('screenshot')->store('public/croissant');
+            $path = Request::file('screenshot')->store('temp');
+            $newPath = $this->trimCroissant($path);
+            Storage::delete($path);
+            $path = $newPath;
         } else {
             $path = null;
         }
@@ -71,5 +86,21 @@ class WonderWomenController extends Controller
         VisitUpdated::dispatch($visit);
 
         return ['ok' => true];
+    }
+
+    protected function trimCroissant($path)
+    {
+        $xOffset = 130;
+        $image = new Imagick(storage_path('app/'.$path));
+        $width = $image->getImageWidth();
+        $height = $image->getImageHeight();
+        $image->cropImage($width - $xOffset, $height, $xOffset, 0);
+        $path = 'croissant/'.Str::uuid()->toString().'.png';
+
+        if (Storage::put($path, $image->getImageBlob())) {
+            return $path;
+        } else {
+            return false;
+        }
     }
 }
