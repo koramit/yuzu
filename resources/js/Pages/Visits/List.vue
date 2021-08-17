@@ -4,13 +4,13 @@
         <a
             class="flex items-center text-green-600"
             :href="route('export.visits')"
-            v-if="card === 'mr' && ($page.props.user.roles.includes('nurse') || $page.props.user.roles.includes('admin') || $page.props.user.roles.includes('root'))"
+            v-if="card === 'visit' && ($page.props.user.roles.includes('nurse') || $page.props.user.roles.includes('admin') || $page.props.user.roles.includes('root'))"
         >
             <Icon
                 class="w-4 h-4 mr-1"
                 name="file-excel"
             />
-            <span class="block font-normal text-thick-theme-light">รายงาน</span>
+            <span class="block font-normal text-thick-theme-light">รายงานเคสวันนี้</span>
         </a>
 
         <!-- search -->
