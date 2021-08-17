@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LoadDataRecord;
 use App\Models\Visit;
+use Illuminate\Support\Facades\Auth;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
 class VisitExportController extends Controller
 {
     public function __invoke()
     {
+        $dateStr = now('asia/bangkok')->format('Y-m-d');
         $visits = Visit::with('patient')
-                       ->whereDateVisit(now('asia/bangkok')->format('Y-m-d'))
+                       ->whereDateVisit($dateStr)
                        ->whereIn('status', [3, 4])
                        ->orderBy('enlisted_screen_at')
                        ->get()
@@ -36,6 +39,15 @@ class VisitExportController extends Controller
                        });
 
         $filename = 'รายงานผู้ป่วย ARI Clinic.xlsx';
+
+        LoadDataRecord::create([
+            'export' => true,
+            'configs' => [
+                'date_visit' => $dateStr,
+                'data' => 'daily_stats',
+            ],
+            'user_id' => Auth::id(),
+        ]);
 
         return FastExcel::data($visits)->download($filename);
     }
