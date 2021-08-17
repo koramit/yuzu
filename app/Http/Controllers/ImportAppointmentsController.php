@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Managers\PatientManager;
 use App\Managers\VisitManager;
+use App\Models\LoadDataRecord;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
@@ -15,7 +17,7 @@ class ImportAppointmentsController extends Controller
 {
     public function __invoke()
     {
-        $path = Request::file('file')->store('uploads');
+        $path = Request::file('file')->store('temp');
 
         $appointments = FastExcel::import(storage_path('app/'.$path))->transform(function ($case) {
             return [
@@ -87,6 +89,7 @@ class ImportAppointmentsController extends Controller
             $form['patient']['risk'] = $this->getRisk($appointment['risk']);
             $form['patient']['date_latest_expose_by_im'] = $this->getDateStr($appointment['date_latest_expose']);
             $form['vaccination'] = $this->getVaccine($appointment);
+            $form['management']['np_swab'] = true;
             $visit->form = $form;
             $visit->status = 'appointment';
             $visit->enlisted_screen_at = now();
@@ -94,6 +97,14 @@ class ImportAppointmentsController extends Controller
             $visit->actions()->create(['action' => 'create', 'user_id' => $user->id]);
             $createdCount++;
         }
+
+        LoadDataRecord::create([
+            'export' => false,
+            'configs' => ['data' => 'appointments'],
+            'user_id' => $user->id,
+        ]);
+
+        Storage::delete($path);
 
         return Redirect::route('visits.screen-list')->with('messages', [
             'status' => 'success',
