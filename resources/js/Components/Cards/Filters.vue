@@ -36,7 +36,13 @@ export default {
             let index = cardFilters.findIndex(filter => filter.name === name);
             cardFilters[index].on = !cardFilters[index].on;
             context.emit('toggle', name);
-            if (name === 'staff' && cardFilters[cardFilters.findIndex(filter => filter.name === name)].on) {
+            if (name === 'exam' && cardFilters[cardFilters.findIndex(filter => filter.name === name)].on) {
+                cardFilters[cardFilters.findIndex(filter => filter.name === 'swab')].on = false;
+                context.emit('filtered', 'swab', false);
+            } else if (name === 'swab' && cardFilters[cardFilters.findIndex(filter => filter.name === name)].on) {
+                cardFilters[cardFilters.findIndex(filter => filter.name === 'exam')].on = false;
+                context.emit('filtered', 'exam', false);
+            } else if (name === 'staff' && cardFilters[cardFilters.findIndex(filter => filter.name === name)].on) {
                 cardFilters[cardFilters.findIndex(filter => filter.name === 'public')].on = false;
                 context.emit('filtered', 'public', false);
             } else if (name === 'public' && cardFilters[cardFilters.findIndex(filter => filter.name === name)].on) {
