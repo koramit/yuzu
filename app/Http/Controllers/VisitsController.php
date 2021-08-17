@@ -8,6 +8,7 @@ use App\Managers\VisitManager;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -139,7 +140,7 @@ class VisitsController extends Controller
             $visit->actions()->create(['action' => 'enlist_screen', 'user_id' => $user->id]);
         }
         if ($visit->status !== 'appointment') {
-            if ($user->can('enlist_exam')) { // save to exam -- NURSE only
+            if ($user->can('enlist_exam') && ! $visit->swabbed) { // save to exam -- NURSE only
                 $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่งตรวจ', 'action' => 'save-exam', 'can' => true];
                 $can[] = 'save-exam';
             }
@@ -247,6 +248,7 @@ class VisitsController extends Controller
         } elseif ($user->hasRole('nurse')) {
             $visit->status = 'screen';
         }
+        Cache::put('mr-list-new', time()); // fire event to mr event source
         $visit->save();
         // backup version
         $visit->versions()->create(['form' => $visit->form, 'user_id' => $user->id]);

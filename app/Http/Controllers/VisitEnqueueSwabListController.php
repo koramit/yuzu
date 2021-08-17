@@ -31,7 +31,7 @@ class VisitEnqueueSwabListController extends Controller
         $visits = Visit::with('patient')
                        ->whereDateVisit($today->format('Y-m-d'))
                        ->whereStatus(3) // swab
-                       ->orderBy('enlisted_swab_at')
+                    //    ->orderBy('enlisted_swab_at')
                        ->get()
                        ->transform(function ($visit) use ($user) {
                            return [

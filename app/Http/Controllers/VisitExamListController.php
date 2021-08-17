@@ -22,7 +22,7 @@ class VisitExamListController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $today = now()->today('asia/bangkok');
+        $today = now('asia/bangkok');
         $flash = $this->manager->getFlash($user);
         $flash['page-title'] = 'ห้องตรวจ @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
@@ -30,7 +30,7 @@ class VisitExamListController extends Controller
         $visits = Visit::with('patient')
                        ->whereNotNull('patient_id')
                        ->whereNotNull('authorized_at')
-                       ->whereDateVisit($today)
+                       ->whereDateVisit($today->format('Y-m-d'))
                        ->whereStatus(2)
                        ->orderBy('enlisted_exam_at')
                        ->get()

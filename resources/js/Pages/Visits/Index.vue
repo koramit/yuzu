@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="grid grid-cols-3 gap-x-2 mb-4 text-center">
+        <!-- <div class="grid grid-cols-3 gap-x-2 mb-4 text-center">
             <a
                 :href="route('export.opd_cards')"
                 class="btn btn-bitter"
@@ -20,7 +20,7 @@
             >
                 Import Visits
             </button>
-        </div>
+        </div> -->
         <!-- search -->
         <input
             autocomplete="off"

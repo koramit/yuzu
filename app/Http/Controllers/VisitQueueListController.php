@@ -20,7 +20,7 @@ class VisitQueueListController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $today = now($user->time_zone);
+        $today = now('asia/bangkok');
         $flash = $this->manager->getFlash($user);
         $flash['page-title'] = 'ธุรการ @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
@@ -48,7 +48,7 @@ class VisitQueueListController extends Controller
                                'ready_to_print' => $visit->ready_to_print,
                                'swab' => $visit->form['management']['np_swab'],
                                'swab_at' => $visit->container_swab_at ?? $visit->swab_at ?? '',
-                               'group' => ($visit->patient_type === 'บุคคลทั่วไป' && $visit->screen_type === 'เริ่มตรวจใหม่') ? 'walk-in' : 'นัด-staff',
+                               'track' => $visit->track ?? '',
                                'can' => [
                                     'queue' => $user->can('queue', $visit),
                                     'fill_hn' => $user->can('fillHn', $visit),

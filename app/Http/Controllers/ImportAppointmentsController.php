@@ -30,7 +30,7 @@ class ImportAppointmentsController extends Controller
         });
 
         $user = Auth::user();
-        $tomorrowStr = today('asia/bangkok')->addDay()->format('Y-m-d');
+        $tomorrowStr = now('asia/bangkok')->addDay()->format('Y-m-d');
         $hnNotFoundCount = 0;
         $noHnCount = 0;
         $appointedCount = 0;
@@ -64,6 +64,7 @@ class ImportAppointmentsController extends Controller
                 }
                 $visit = new Visit();
                 $visit->patient_id = $patient['patient']->id;
+                $form['patient']['track'] = 'นัด-staff';
                 $form['patient']['hn'] = $patient['patient']->hn;
                 $form['patient']['name'] = $patient['patient']->full_name;
                 $form['patient']['tel_no'] = $appointment['tel_no'];

@@ -63,7 +63,7 @@
     >
         <div
             class="rounded bg-white shadow-sm my-1 p-1 flex"
-            v-for="(visit, key) in visits"
+            v-for="(visit, key) in [...visits].sort((a, b) => a.specimen_no > b.specimen_no )"
             :key="key"
         >
             <!-- left detail -->
@@ -103,11 +103,11 @@ import Dropdown from '@/Components/Helpers/Dropdown';
 import Icon from '@/Components/Helpers/Icon';
 import FormCheckbox from '@/Components/Controls/FormCheckbox';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
-import { Link, useForm } from '@inertiajs/inertia-vue3';
+import { useForm } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
 import { computed } from '@vue/reactivity';
 export default {
-    components: { Icon, Dropdown, Link, FormCheckbox, SpinnerButton },
+    components: { Icon, Dropdown, FormCheckbox, SpinnerButton },
     props: {
         visits: { type: Array, required: true }
     },
@@ -120,7 +120,7 @@ export default {
         };
 
         const selectedVisits = computed(() => {
-            return props.visits.filter(v => v.selected);
+            return props.visits.filter(v => v.selected).sort((a, b) => a.specimen_no > b.specimen_no);
         });
 
         const form = useForm({

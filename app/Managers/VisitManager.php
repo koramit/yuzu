@@ -33,6 +33,7 @@ class VisitManager
                 'height' => null,
                 'date_swabbed' => null,
                 'date_reswabbed' => null,
+                'track' => null,
             ],
             'symptoms' => [
                 'asymptomatic_symptom' => false,
@@ -91,6 +92,9 @@ class VisitManager
                 'container_swab_at' => null,
                 'swab_at' => null,
                 'on_hold' => false,
+                'np_swab_result' => null,
+                'np_swab_result_note' => null,
+                'screenshot' => null,
                 'other_tests' => null,
                 'home_medication' => null,
             ],
@@ -115,6 +119,7 @@ class VisitManager
     public function getConfigs(Visit $visit)
     {
         return [
+            'tracks' => ['Walk-in', 'นัด-staff'],
             'patient_types' => ['บุคคลทั่วไป', 'เจ้าหน้าที่ศิริราช'],
             'screen_types' => ['เริ่มตรวจใหม่', 'นัดมา swab ครั้งแรก', 'นัดมา swab ซ้ำ'],
             'insurances' => ['กรมบัญชีกลาง', 'ประกันสังคมศิริราช', 'ประกันสังคมที่อื่น', '30 บาท ศิริาช', '30 บาท ที่อื่น', 'ชำระเงินเอง'],
@@ -198,6 +203,7 @@ class VisitManager
                 'อ. สุสัณห์',
                 'อ. อนุภพ',
             ],
+            'swab_units' => ['SCG', 'Sky Walk'],
         ];
     }
 
@@ -228,6 +234,7 @@ class VisitManager
         // 'hn' => 'required|digits:8',
         $rules = [
             'name' => 'required|string',
+            'track' => 'required',
             'patient_type' => 'required',
             'screen_type' => 'required',
             'insurance' => 'required',

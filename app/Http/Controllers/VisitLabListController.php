@@ -20,7 +20,7 @@ class VisitLabListController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $today = today('asia/bangkok');
+        $today = now('asia/bangkok');
         $flash = $this->manager->getFlash($user);
         $flash['page-title'] = 'ถ่ายถอดสด @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);

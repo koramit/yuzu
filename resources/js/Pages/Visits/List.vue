@@ -4,13 +4,13 @@
         <a
             class="flex items-center text-green-600"
             :href="route('export.visits')"
-            v-if="card === 'mr' && ($page.props.user.roles.includes('nurse') || $page.props.user.roles.includes('admin') || $page.props.user.roles.includes('root'))"
+            v-if="card === 'visit' && ($page.props.user.roles.includes('nurse') || $page.props.user.roles.includes('admin') || $page.props.user.roles.includes('root'))"
         >
             <Icon
                 class="w-4 h-4 mr-1"
                 name="file-excel"
             />
-            <span class="block font-normal text-thick-theme-light">รายงาน</span>
+            <span class="block font-normal text-thick-theme-light">รายงานเคสวันนี้</span>
         </a>
 
         <!-- search -->
@@ -238,8 +238,8 @@ export default {
                     .filter(v => filters.swab ? v.swab : true)
                     .filter(v => filters.staff ? v.patient_type === 'เจ้าหน้าที่ศิริราช' : true)
                     .filter(v => filters.public ? v.patient_type === 'บุคคลทั่วไป' : true)
-                    .filter(v => filters.walk_in ? v.group === 'walk-in' : true)
-                    .filter(v => filters.appointment ? v.group === 'นัด-staff' : true)
+                    .filter(v => filters.walk_in ? v.track === 'Walk-in' : true)
+                    .filter(v => filters.appointment ? v.track === 'นัด-staff' : true)
                     .filter(v => filters.swab_at_scg ? v.swab_at === 'SCG' : true)
                     .filter(v => filters.swab_at_sky_walk ? v.swab_at === 'Sky Walk' : true);
             }
