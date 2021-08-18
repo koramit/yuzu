@@ -60,7 +60,7 @@ class InitRole
             ]);
             $event->user->save();
         } elseif (str_contains($event->user->profile['remark'], 'งานเวชระเบียน')
-            || (($event->user->profile['position'] === 'เจ้าหน้าที่ธุรการ') && str_contains($event->user->profile['remark'], 'ฝ่ายการพยาบาล'))
+            || ($event->user->profile['position'] === 'เจ้าหน้าที่ธุรการ' && str_contains($event->user->profile['remark'], 'ฝ่ายการพยาบาล'))
         ) {
             $event->user->assignRole('staff');
             $event->user->forceFill([
