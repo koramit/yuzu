@@ -2,9 +2,15 @@
     <Paper>
         <template #default>
             <div class="px-12 py-6 print-p-0">
-                <h2 class="font-semibold pb-2 border-b-2 border-dashed text-xl text-center">
-                    แบบเวชระเบียนผู้ป่วยนอก (ARI Clinic)
-                </h2>
+                <div class="font-semibold pb-2 border-b-2 border-dashed text-xl text-center">
+                    <h2>แบบเวชระเบียนผู้ป่วยนอก (ARI Clinic)</h2>
+                    <h3
+                        v-if="content.specimen_no"
+                        class="text-lg"
+                    >
+                        Swab {{ content.specimen_no }}
+                    </h3>
+                </div>
                 <h3 class="font-normal underline mt-4">
                     ข้อมูลผู้ป่วย
                 </h3>

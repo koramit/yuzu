@@ -34,6 +34,7 @@ class VisitManager
                 'date_swabbed' => null,
                 'date_reswabbed' => null,
                 'track' => null,
+                'passport_no' => null,
             ],
             'symptoms' => [
                 'asymptomatic_symptom' => false,
@@ -587,6 +588,10 @@ class VisitManager
 
         // management
         $management = $visit->form['management'];
+        $specimenNo = null;
+        if ($management['np_swab'] && $management['specimen_no']) {
+            $specimenNo = $management['specimen_no'];
+        }
         $text = null;
         if ($management['np_swab']) {
             $text .= 'NP swab for PCR test of SARS-CoV-2';
@@ -652,14 +657,18 @@ class VisitManager
             'คำแนะนำสำหรับผู้ป่วย' => $recommendation,
             'note' => $note,
             'evaluation' => $visit->form['evaluation'] ?? [],
+            'specimen_no' => $specimenNo,
         ];
     }
 
     public function getPrintConent(Visit $visit)
     {
         $content = $this->getReportContent($visit);
-        $content['visit']['เลขประจำตัวประชาชน'] = $visit->patient->profile['document_id'];
-        unset($content['visit']['sap id']);
+        if ($visit->patient->profile['document_id']) {
+            $content['visit']['เลขประจำตัวประชาชน'] = $visit->patient->profile['document_id'];
+        } else {
+            $content['visit']['เลขหนังสือเดินทาง'] = $visit->form['patient']['passport_no'] ?? null;
+        }
         $content['อาการแสดง'] = '';
         foreach ($content['symptom_headers'] as $key => $value) {
             if ($key !== 'วันแรกที่มีอาการ') {
