@@ -108,6 +108,8 @@ class WonderWomenController extends Controller
             'form->management->screenshot' => $path,
         ])->save();
 
+        VisitUpdated::dispatch($visit);
+
         return ['ok' => true];
 
         $visit = new Visit();
