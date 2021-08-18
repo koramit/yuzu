@@ -73,9 +73,6 @@ class VisitExamListController extends Controller
         $route = $visit->status_index_route;
         $visit->status = 'exam';
         $visit->enlisted_exam_at = now();
-        if ($visit->patient_type === 'เจ้าหน้าที่ศิริราช' && $visit->patient_id) {
-            $visit->enqueued_at = now();
-        }
         $visit->save();
 
         $visit->actions()->create(['action' => 'enlist_exam', 'user_id' => $user->id]);
