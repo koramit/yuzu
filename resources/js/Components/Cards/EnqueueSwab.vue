@@ -84,7 +84,10 @@
             <!-- right menu -->
             <div class="w-1/4 text-sm p-1 grid justify-items-start">
                 <div class="flex items-center">
-                    <FormCheckbox v-model="visit.selected" />
+                    <FormCheckbox
+                        v-model="visit.selected"
+                        @autosave="saveSelected"
+                    />
                     <Icon
                         class="w-4 h-4 text-bitter-theme-light"
                         name="vial"
@@ -105,13 +108,20 @@ import FormCheckbox from '@/Components/Controls/FormCheckbox';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import { useForm } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
-import { computed } from '@vue/reactivity';
+import { computed, ref } from '@vue/reactivity';
 export default {
     components: { Icon, Dropdown, FormCheckbox, SpinnerButton },
     props: {
         visits: { type: Array, required: true }
     },
     setup(props) {
+        const localVisits = computed(() => {
+            return props.visits.map(v => {
+                v.selected = storedSelected.value.includes(v.id);
+                return v;
+            });
+        });
+
         const discharge = (visit) => {
             Inertia.patch(window.route('visits.discharge-list.update', visit), {
                 preserveState: true,
@@ -132,15 +142,26 @@ export default {
             form.swab_at = swabAt;
             form.ids = selectedVisits.value.map(v => v.id);
             form.post(window.route('visits.enqueue-swab-list.store'), {
-                onFinish: form.processing = false,
+                onFinish: () => {
+                    form.processing = false;
+                    storedSelected.value = [];
+                }
             });
+        };
+
+        const storedSelected = ref([]);
+        const saveSelected = () => {
+            storedSelected.value = [...props.visits.filter(v => v.selected).map(v => v.id)];
         };
 
         return {
             discharge,
             selectedVisits,
             form,
-            enqueue
+            enqueue,
+            saveSelected,
+            storedSelected,
+            localVisits
         };
     },
 };
