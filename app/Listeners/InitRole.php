@@ -59,7 +59,9 @@ class InitRole
                 'profile->home_page' => 'visits.screen-list',
             ]);
             $event->user->save();
-        } elseif (str_contains($event->user->profile['remark'], 'งานเวชระเบียน')) {
+        } elseif (str_contains($event->user->profile['remark'], 'งานเวชระเบียน')
+            || ($event->user->profile['position'] === 'เจ้าหน้าที่ธุรการ' && str_contains($event->user->profile['remark'], 'ฝ่ายการพยาบาล'))
+        ) {
             $event->user->assignRole('staff');
             $event->user->forceFill([
                 'profile->home_page' => 'visits.mr-list',
