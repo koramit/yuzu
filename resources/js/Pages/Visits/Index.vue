@@ -1,13 +1,14 @@
 <template>
     <div>
-        <!-- <div class="grid grid-cols-3 gap-x-2 mb-4 text-center">
+        <div class="grid grid-cols-3 gap-x-2 mb-4 text-center">
             <a
                 :href="route('export.opd_cards')"
                 class="btn btn-bitter"
+                v-if="$page.props.user.roles.includes('root') || $page.props.user.roles.includes('id_md') || $page.props.user.roles.includes('pm_md')"
             >
                 Export OPD cards
             </a>
-            <SpinnerButton
+            <!-- <SpinnerButton
                 @click="importColab.click()"
                 class="btn btn-dark"
                 :spin="colabUploader.processing"
@@ -19,8 +20,8 @@
                 disabled
             >
                 Import Visits
-            </button>
-        </div> -->
+            </button> -->
+        </div>
         <!-- search -->
         <input
             autocomplete="off"
