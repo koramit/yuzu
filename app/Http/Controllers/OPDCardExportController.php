@@ -50,7 +50,8 @@ class OPDCardExportController extends Controller
             'screen_type' => $visit->screen_type,
 
             'insurance' => $form['patient']['insurance'],
-            'tel_no' => $form['patient']['tel_no'].($form['patient']['tel_no_alt'] ?? ''),
+            'tel_no' => $form['patient']['tel_no'],
+            'tel_no_alt' => $form['patient']['tel_no_alt'],
 
             'sap_id' => $form['patient']['sap_id'],
             'position' => $form['patient']['position'],
@@ -60,8 +61,6 @@ class OPDCardExportController extends Controller
 
             'temperature_celsius' => $form['patient']['temperature_celsius'],
             'o2_sat' => $form['patient']['o2_sat'],
-            'weight' => $form['patient']['weight'],
-            'height' => $form['patient']['height'],
             'date_swabbed' => $this->castDate($form['patient']['date_swabbed']),
             'date_reswabbed' => $this->castDate($form['patient']['date_reswabbed']),
             'passport_no' => $form['patient']['passport_no'] ?? null,
