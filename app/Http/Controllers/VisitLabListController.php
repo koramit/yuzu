@@ -48,7 +48,7 @@ class VisitLabListController extends Controller
         return Inertia::render('Visits/List', [
             'visits' => $visits,
             'card' => 'lab',
-            'eventSource' => 'screen',
+            'eventSource' => 'mr',
         ]);
     }
 }
