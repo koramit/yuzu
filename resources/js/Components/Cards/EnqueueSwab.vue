@@ -63,7 +63,7 @@
     >
         <div
             class="rounded bg-white shadow-sm my-1 p-1 flex"
-            v-for="(visit, key) in [...visits].sort((a, b) => a.specimen_no > b.specimen_no )"
+            v-for="(visit, key) in [...localVisits].sort((a, b) => a.specimen_no > b.specimen_no )"
             :key="key"
         >
             <!-- left detail -->
@@ -130,7 +130,8 @@ export default {
         };
 
         const selectedVisits = computed(() => {
-            return props.visits.filter(v => v.selected).sort((a, b) => a.specimen_no > b.specimen_no);
+            return localVisits.value.filter(v => v.selected).sort((a, b) => a.specimen_no > b.specimen_no);
+            // return props.visits.filter(v => v.selected).sort((a, b) => a.specimen_no > b.specimen_no);
         });
 
         const form = useForm({
