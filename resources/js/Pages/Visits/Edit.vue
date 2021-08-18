@@ -98,11 +98,19 @@
                 </button>
             </template>
             <FormReveal
-                v-if="visit.has_patient"
+                v-if="visit.has_patient && visit.patient_document_id"
                 class="mt-2"
                 name="patient_document_id"
                 label="เลขประจำตัวประชาชน (จิ้มตาเพื่อแสดง)"
                 :secret="visit.patient_document_id"
+            />
+            <FormInput
+                v-if="!visit.patient_document_id"
+                class="mt-2"
+                name="passport_no"
+                label="เลขหนังสือเดินทาง"
+                v-model="form.patient.passport_no"
+                :error="form.errors.passport_no"
             />
             <div class="mt-2">
                 <label class="form-label">สิทธิ์การรักษา</label>
