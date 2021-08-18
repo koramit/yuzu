@@ -673,7 +673,7 @@ class VisitManager
         $content['อาการแสดง'] = trim($content['อาการแสดง'].'<br>'.$content['symptoms']);
         $content['md'] = $visit->form['md'];
         $content['md']['signed_at'] = Carbon::create($visit->form['md']['signed_at'])->tz('asia/bangkok')->format('d M Y H:i');
-        $content['t_barcode'] = 'T'.$content['visit']['hn'].'$'.($visit->date_visit->year + 543).$visit->date_visit->format('md').'$1402$';
+        $content['t_barcode'] = 'T'.$content['visit']['hn'].'$'.($visit->date_visit->year + 543).$visit->date_visit->format('md').'$1403$';
 
         return $content;
     }
