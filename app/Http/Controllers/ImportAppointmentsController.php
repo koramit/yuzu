@@ -123,7 +123,7 @@ class ImportAppointmentsController extends Controller
         if (! $value) {
             return null;
         } elseif ($value === 'ตรวจสอบ') {
-            return null;
+            return 'ไม่ทราบ';
         } elseif ($value === 'ไม่เสี่ยง') {
             return 'ไม่มีความเสี่ยง';
         } else {
