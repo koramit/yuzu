@@ -239,7 +239,7 @@ export default {
                     .filter(v => filters.staff ? v.patient_type === 'เจ้าหน้าที่ศิริราช' : true)
                     .filter(v => filters.public ? v.patient_type === 'บุคคลทั่วไป' : true)
                     .filter(v => filters.walk_in ? v.track === 'Walk-in' : true)
-                    .filter(v => filters.appointment ? v.track === 'นัด-staff' : true)
+                    .filter(v => filters.appointment ? v.track === 'นัด หรือ staff' : true)
                     .filter(v => filters.swab_at_scg ? v.swab_at === 'SCG' : true)
                     .filter(v => filters.swab_at_sky_walk ? v.swab_at === 'Sky Walk' : true);
             }
@@ -254,7 +254,7 @@ export default {
                     { name: 'swab', label: 'Swab', on: false },
                     { name: 'staff', label: 'เจ้าหน้าที่ศิริราช', on: false },
                     { name: 'public', label: 'บุคคลทั่วไป', on: false },
-                    { name: 'appointment', label: 'นัด-staff', on: false },
+                    { name: 'appointment', label: 'นัด หรือ staff', on: false },
                     { name: 'walk_in', label: 'Walk-in', on: false },
                     { name: 'swab_at_scg', label: 'SCG', on: false },
                     { name: 'swab_at_sky_walk', label: 'Sky Walk', on: false },

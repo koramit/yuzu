@@ -66,7 +66,7 @@ class ImportAppointmentsController extends Controller
                 }
                 $visit = new Visit();
                 $visit->patient_id = $patient['patient']->id;
-                $form['patient']['track'] = 'นัด-staff';
+                $form['patient']['track'] = 'นัด หรือ staff';
                 $form['patient']['hn'] = $patient['patient']->hn;
                 $form['patient']['name'] = $patient['patient']->full_name;
                 $form['patient']['tel_no'] = $appointment['tel_no'];
