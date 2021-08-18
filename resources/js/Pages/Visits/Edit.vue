@@ -578,7 +578,7 @@
 
         <div
             class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
-            v-if="form.visit.patient_type"
+            v-if="form.visit.patient_type && !(form.visit.patient_type === 'บุคคลทั่วไป' && form.management.np_swab)"
         >
             <h2 class="font-semibold text-thick-theme-light">
                 คำแนะนำสำหรับ{{ isEmployee ? 'เจ้าหน้าที่ศิริราช' : 'ผู้ป่วย' }}
