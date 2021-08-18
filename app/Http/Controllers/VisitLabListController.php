@@ -27,7 +27,7 @@ class VisitLabListController extends Controller
 
         $visits = Visit::with('patient')
                        ->whereDateVisit($today->format('Y-m-d'))
-                       ->where('swabbed, true')
+                       ->where('swabbed', true)
                        ->orderByDesc('id')
                        ->get()
                        ->transform(function ($visit) use ($user) {
