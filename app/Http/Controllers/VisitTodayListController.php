@@ -52,7 +52,7 @@ class VisitTodayListController extends Controller
                                ],
                            ];
                        });
-        Session::put('back-from-show', 'visits.mr-list');
+        Session::put('back-from-show', 'visits.today-list');
 
         return Inertia::render('Visits/List', [
             'visits' => $visits,
