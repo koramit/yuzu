@@ -123,6 +123,7 @@
         <CardVisit
             v-else-if="card === 'visit'"
             :visits="filteredVisits"
+            @edit="edit"
         />
         <CardLab
             v-else-if="card === 'lab'"
@@ -176,10 +177,23 @@ export default {
                 needReason: true,
             });
         };
+        const edit = (visit) => {
+            currentConfirm.action = 'edit',
+            currentConfirm.resource_id = visit.slug,
+            emitter.emit('need-confirm', {
+                confirmText: 'แก้ไข ' + visit.title + ' เคสจะถูกดึงออกจากทุกห้องในระหว่างการแก้ไขและโปรดทำการ ส่งตรวจ/ส่ง swab ให้สอดคล้องกับเนื้อหาหลังการแก้ไขด้วย',
+                needReason: false,
+            });
+        };
         emitter.on('confirmed', (text) => {
             if (currentConfirm.action === 'cancel') {
                 Inertia.delete(window.route('visits.cancel', currentConfirm.resource_id), {
                     data: {reason: text},
+                    preserveState: true,
+                    preserveScroll: true,
+                });
+            } else if (currentConfirm.action === 'edit') {
+                Inertia.get(window.route('visits.replace', currentConfirm.resource_id), {
                     preserveState: true,
                     preserveScroll: true,
                 });
@@ -303,6 +317,7 @@ export default {
             createVisitForm,
             appointmentForm,
             cancel,
+            edit,
             search,
             filteredVisits,
             reload,

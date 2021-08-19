@@ -129,7 +129,7 @@
                             </Link>
                         </div>
                         <div v-if="visit.can.replace">
-                            <Link
+                            <!-- <Link
                                 class="inline-flex text-alt-theme-light justify-start"
                                 :href="route('visits.replace', visit)"
                             >
@@ -138,7 +138,17 @@
                                     name="eraser"
                                 />
                                 <span class="block font-normal text-thick-theme-light">แก้ไข</span>
-                            </Link>
+                            </Link> -->
+                            <button
+                                class="inline-flex text-alt-theme-light justify-start"
+                                @click="$emit('edit', visit)"
+                            >
+                                <Icon
+                                    class="w-4 h-4 mr-1"
+                                    name="eraser"
+                                />
+                                <span class="block font-normal text-thick-theme-light">แก้ไข</span>
+                            </button>
                         </div>
                     </template>
                 </div>
@@ -151,6 +161,7 @@
 import Icon from '@/Components/Helpers/Icon';
 import { Link } from '@inertiajs/inertia-vue3';
 export default {
+    emits: ['edit'],
     components: { Icon, Link },
     props: {
         visits: { type: Array, required: true }

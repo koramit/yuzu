@@ -56,6 +56,7 @@ import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import { useForm } from '@inertiajs/inertia-vue3';
 import { ref } from '@vue/reactivity';
 import { computed, watch } from '@vue/runtime-core';
+import { Inertia } from '@inertiajs/inertia';
 export default {
     emits: ['closed'],
     components: { Modal, FormInput, SpinnerButton },
@@ -115,8 +116,12 @@ export default {
                         } else {
                             form.errors.hn = response.data.message;
                         }
-                    }).catch(errors => console.log(errors))
-                    .finally(() => form.busy = false);
+                    }).catch(error => {
+                        if ( error.response.status == 401 ) {
+                            Inertia.reload();
+                        }
+                        console.log(error);
+                    }).finally(() => form.busy = false);
             } else {
                 form.post(window.route('visits.store'), {
                     onError: () => modal.value.close(),
