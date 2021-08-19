@@ -48,19 +48,6 @@
             </div>
             <!-- right menu -->
             <div class="w-1/4 text-sm p-1 grid justify-items-start">
-                <!-- <div>
-                    <button
-                        class="inline-flex justify-start items-center"
-                        v-if="patient.can.discharge && !patient.busy"
-                        @click="discharge(patient)"
-                    >
-                        <Icon
-                            class="w-4 h-4 mr-1 text-bitter-theme-light"
-                            name="share-square"
-                        />
-                        <span class="block font-normal text-thick-theme-light">จำหน่าย</span>
-                    </button>
-                </div> -->
                 <Dropdown
                     class="w-full"
                     :dropleft="true"
@@ -136,7 +123,7 @@
                                     กระติกใหม่
                                 </button>
                                 <button
-                                    v-for="unit in ['SCG', 'Sky Walk'].filter(u => u !== patient.swab_at)"
+                                    v-for="unit in swabUnits.filter(u => u !== patient.swab_at)"
                                     :key="unit"
                                     class="block w-full text-left hover:bg-dark-theme-light text-white py-1 px-4"
                                     @click="putIn(patient, unit)"
@@ -167,6 +154,33 @@
                     # {{ container.no }}
                 </span>
             </div>
+            <Dropdown
+                class="w-1/3 text-right"
+            >
+                <template #default>
+                    <div class="flex items-center cursor-pointer select-none group text-white">
+                        <Icon
+                            class="w-4 h-4 mr-1 group-hover:text-bitter-theme-light focus:text-bitter-theme-light"
+                            name="share-square"
+                        />
+                        <div class="group-hover:text-bitter-theme-light focus:text-bitter-theme-light mr-1 whitespace-no-wrap">
+                            ย้ายห้อง
+                        </div>
+                    </div>
+                </template>
+                <template #dropdown>
+                    <div class="grid bg-bitter-theme-light rounded-lg py-2">
+                        <button
+                            v-for="unit in swabUnits.filter(u => u !== container.patients[0].swab_at)"
+                            :key="unit"
+                            class="block w-full text-left text-white hover:bg-white hover:text-thick-theme-light py-1 px-4"
+                            @click="moveTo(unit, container.patients.map(p => p.id))"
+                        >
+                            ส่ง {{ unit }}
+                        </button>
+                    </div>
+                </template>
+            </Dropdown>
         </div>
 
         <!-- card -->
@@ -283,9 +297,9 @@
 <script>
 import Icon from '@/Components/Helpers/Icon';
 import Dropdown from '@/Components/Helpers/Dropdown';
-import { Link } from '@inertiajs/inertia-vue3';
+import { Link, useForm } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
-import { computed } from '@vue/reactivity';
+import { computed, ref } from '@vue/reactivity';
 export default {
     components: { Icon, Link, Dropdown },
     props: {
@@ -342,12 +356,25 @@ export default {
             return props.visits.filter(v => v.on_hold);
         });
 
+        const swabUnits = ref(['SCG', 'Sky Walk']);
+
+        const moveTo = (swabAt, ids) => {
+            let form = useForm({
+                swab_at: swabAt,
+                ids: ids,
+                move: true,
+            });
+            form.post(window.route('visits.enqueue-swab-list.store'));
+        };
+
         return {
             discharge,
             hold,
             putIn,
             containers,
             onHoldVisits,
+            swabUnits,
+            moveTo
         };
     },
 };

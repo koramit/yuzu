@@ -36,6 +36,7 @@ class VisitSwabListController extends Controller
                        ->get()
                        ->transform(function ($visit) use ($user) {
                            return [
+                               'id' => $visit->id,
                                'slug' => $visit->slug,
                                'hn' => $visit->hn,
                                'patient_name' => $visit->patient_name,
