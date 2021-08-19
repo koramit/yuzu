@@ -45,7 +45,6 @@
             <div>
                 <button
                     class="inline-flex text-red-200 justify-start"
-                    :href="route('visits.edit', visit)"
                     @click="$emit('cancel', visit)"
                     v-if="visit.can.cancel"
                 >

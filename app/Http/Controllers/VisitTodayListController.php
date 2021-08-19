@@ -33,6 +33,7 @@ class VisitTodayListController extends Controller
                            return [
                                'slug' => $visit->slug,
                                'hn' => $visit->hn ?? '',
+                               'title' => $visit->title ?? '',
                                'status' => $visit->status,
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
