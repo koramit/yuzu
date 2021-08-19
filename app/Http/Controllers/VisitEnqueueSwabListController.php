@@ -57,14 +57,21 @@ class VisitEnqueueSwabListController extends Controller
     public function store()
     {
         $cacheName = now('asia/bangkok')->format('Y-m-d').'-container-running-no';
-        Visit::unguard();
-        Visit::whereIn('id', Request::input('ids'))
-            ->update([
+        if (Request::input('move')) {
+            $data = [
+                'form->management->container_swab_at' => Request::input('swab_at'),
+            ];
+        } else {
+            $data = [
                 'enqueued_swab_at' => now(),
                 'status' => 7, // enqueue_swab,
                 'form->management->container_no' => Cache::increment($cacheName),
                 'form->management->container_swab_at' => Request::input('swab_at'),
-            ]);
+            ];
+        }
+        Visit::unguard();
+        Visit::whereIn('id', Request::input('ids'))
+             ->update($data);
         Visit::reguard();
         $visit = Visit::find(Request::input('ids')[0]);
         VisitUpdated::dispatch($visit);

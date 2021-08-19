@@ -169,12 +169,12 @@
                     </div>
                 </template>
                 <template #dropdown>
-                    <div class="grid bg-dark-theme-light rounded-lg py-2">
+                    <div class="grid bg-bitter-theme-light rounded-lg py-2">
                         <button
                             v-for="unit in swabUnits.filter(u => u !== container.patients[0].swab_at)"
                             :key="unit"
-                            class="block w-full text-left hover:bg-thick-theme-light text-white py-1 px-4"
-                            @click="move(unit, container.patients.map(p => p.id))"
+                            class="block w-full text-left text-white hover:bg-white hover:text-thick-theme-light py-1 px-4"
+                            @click="moveTo(unit, container.patients.map(p => p.id))"
                         >
                             ส่ง {{ unit }}
                         </button>
@@ -297,7 +297,7 @@
 <script>
 import Icon from '@/Components/Helpers/Icon';
 import Dropdown from '@/Components/Helpers/Dropdown';
-import { Link } from '@inertiajs/inertia-vue3';
+import { Link, useForm } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
 import { computed, ref } from '@vue/reactivity';
 export default {
@@ -358,17 +358,13 @@ export default {
 
         const swabUnits = ref(['SCG', 'Sky Walk']);
 
-        const enqueue = (swabAt, ids) => {
-            console.log(swabAt);
-            console.log(ids);
-            // form.swab_at = swabAt;
-            // form.ids = selectedVisits.value.map(v => v.id);
-            // form.post(window.route('visits.enqueue-swab-list.store'), {
-            //     onFinish: () => {
-            //         form.processing = false;
-            //         storedSelected.value = [];
-            //     }
-            // });
+        const moveTo = (swabAt, ids) => {
+            let form = useForm({
+                swab_at: swabAt,
+                ids: ids,
+                move: true,
+            });
+            form.post(window.route('visits.enqueue-swab-list.store'));
         };
 
         return {
@@ -378,7 +374,7 @@ export default {
             containers,
             onHoldVisits,
             swabUnits,
-            enqueue
+            moveTo
         };
     },
 };
