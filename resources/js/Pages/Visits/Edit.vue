@@ -498,10 +498,8 @@
             <Error :error="form.errors.unvaccinated" />
         </div>
 
-        <div
-            class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
-            v-if="$page.props.user.roles.includes('md')"
-        >
+        <!-- v-if="$page.props.user.roles.includes('md')" -->
+        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
                 วินิจฉัย
             </h2>
@@ -916,6 +914,17 @@ export default {
                 if (usePage().props.value.user.roles.includes('md')) {
                     toggleSaveToSwab(val);
                     toggleSaveToDischarge(!val);
+                } else if (usePage().props.value.user.roles.includes('nurse')) {
+                    if (
+                        val
+                        && !form.diagnosis.no_symptom
+                        && !form.diagnosis.suspected_covid_19
+                        && !form.diagnosis.uri
+                        && !form.diagnosis.suspected_pneumonia
+                        && !form.diagnosis.other_diagnosis
+                    ) {
+                        form.diagnosis.suspected_covid_19 = true;
+                    }
                 }
 
                 if (val) {

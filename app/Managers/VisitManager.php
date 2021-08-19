@@ -342,11 +342,14 @@ class VisitManager
     public function validateSwabByNurse(array $data)
     {
         $errors = $this->validateScreening($data);
+        if ($diagErrors = $this->validateDiagnosis($data['diagnosis'])) {
+            $errors += $diagErrors;
+        }
         if (! $data['md_name']) {
             $errors['md_name'] = 'จำเป็นต้องลง อาจารย์โรคติดเชื้อเวร';
         }
         if (! $data['management']['np_swab']) {
-            $errors['np_swab'] = 'ไม่ติ๊ก NP swab สักหน่อยหร๊าาาา';
+            $errors['np_swab'] = 'จำเป็นต้องเลือก NP swab';
         }
 
         return $errors;
@@ -359,7 +362,7 @@ class VisitManager
             $errors += $diagErrors;
         }
         if (! $data['management']['np_swab']) {
-            $errors['np_swab'] = 'ไม่ติ๊ก NP swab สักหน่อยหร๊าาาา';
+            $errors['np_swab'] = 'จำเป็นต้องเลือก NP swab';
         }
 
         return $errors;
