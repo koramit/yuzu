@@ -27,6 +27,7 @@ class VisitMedicalRecordListController extends Controller
 
         $visits = Visit::with('patient')
                        ->whereDateVisit($today->format('Y-m-d'))
+                       ->where('status', '<>', 5) // canceled
                        ->where(function ($query) {
                            $query->whereNull('attached_opd_card_at')
                                ->orWhereNull('authorized_at');
