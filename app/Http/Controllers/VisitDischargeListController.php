@@ -63,7 +63,15 @@ class VisitDischargeListController extends Controller
         if ($visit->form['management']['np_swab']
             && $visit->form['management']['container_no']
         ) {
-            $visit->swabbed = ! $visit->form['management']['on_hold'];
+            if (Request::input('swabbed') === true) {
+                $visit->swabbed = true;
+                $visit->forceFill([
+                    'form->management->on_hold' => false,
+                    'form->management->container_no' => 0,
+                ]);
+            } else {
+                $visit->swabbed = ! $visit->form['management']['on_hold'];
+            }
         }
         $visit->save();
         $visit->actions()->create(['action' => 'discharge', 'user_id' => Auth::id()]);
