@@ -44,6 +44,7 @@ class VisitTodayListController extends Controller
                                'ready_to_print' => $visit->ready_to_print,
                                'swab_at' => $visit->swab_at ?? $visit->container_swab_at ?? '',
                                'track' => $visit->track ?? '',
+                               'specimen_no' => $visit->specimen_no ?? '',
                                'can' => [
                                     'authorize_visit' => $user->can('authorize', $visit),
                                     'attach_opd_card' => $user->can('attachOPDCard', $visit),
