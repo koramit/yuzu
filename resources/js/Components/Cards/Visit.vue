@@ -39,21 +39,28 @@
                         >
                             {{ visit.patient_type ?? 'ยังไม่ระบุประเภท' }}
                         </span>
-                        <span
-                            class="underline mr-1"
-                        >
+                        <span class="underline">
                             {{ visit.group }}
                         </span>
-                        <span
-                            class="text-sm italic px-2 mr-1 text-bitter-theme-light"
-                            v-if="visit.swab"
-                        >
-                            <Icon
-                                class="inline w-4 h-4"
-                                name="virus"
-                            />
-                            Swab
-                        </span>
+                        <template v-if="visit.swab">
+                            <span class="text-sm italic px-2 text-bitter-theme-light">
+                                <Icon
+                                    class="inline w-4 h-4"
+                                    name="virus"
+                                />
+                                Swab
+                            </span>
+                            <span
+                                v-if="visit.specimen_no"
+                                class="text-sm italic px-2 text-bitter-theme-light"
+                            >
+                                <Icon
+                                    class="inline w-4 h-4"
+                                    name="vial"
+                                />
+                                # {{ visit.specimen_no }}
+                            </span>
+                        </template>
                         <span
                             class="text-sm italic px-2 mr-1 text-alt-theme-light"
                             v-else

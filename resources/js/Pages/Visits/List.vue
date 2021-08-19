@@ -19,7 +19,7 @@
                 autocomplete="off"
                 type="text"
                 name="search"
-                placeholder="🔍 ด้วย HN หรือ ชื่อ"
+                :placeholder="card === 'visit' ? '🔍 ด้วย HN หรือ ชื่อ หรือ หมายเลขหลอด' : '🔍 ด้วย HN หรือ ชื่อ'"
                 v-model="search"
                 class="form-input"
             >
@@ -244,7 +244,15 @@ export default {
                     .filter(v => filters.swab_at_sky_walk ? v.swab_at === 'Sky Walk' : true);
             }
 
-            return props.visits.filter(v => v.hn.indexOf(search.value) !== -1 || v.patient_name.indexOf(search.value) !== -1);
+            if (props.card === 'visit') {
+                return props.visits.filter(v =>
+                    v.hn.indexOf(search.value) !== -1
+                    || v.patient_name.indexOf(search.value) !== -1
+                    || (v.specimen_no + '').indexOf(search.value) !== -1
+                );
+            }
+
+            return props.visits.filter(v => v.hn.indexOf(search.value) !== -1|| v.patient_name.indexOf(search.value) !== -1);
         });
 
         const cardfilters = computed(() => {
