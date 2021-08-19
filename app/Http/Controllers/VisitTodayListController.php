@@ -22,7 +22,7 @@ class VisitTodayListController extends Controller
         $user = Auth::user();
         $today = today('asia/bangkok');
         $flash = $this->manager->getFlash($user);
-        $flash['page-title'] = 'เวชระเบียน @ '.$today->format('d M Y');
+        $flash['page-title'] = 'รายการเคสวันนี้ @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
