@@ -139,7 +139,7 @@ Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class)
      ->middleware('auth', 'can:evaluate')
      ->name('visits.evaluate');
 Route::get('export/opd_cards', OPDCardExportController::class)
-     ->middleware('auth', 'can:evaluate')
+     ->middleware('auth', 'can:export_opd_cards')
      ->name('export.opd_cards');
 Route::get('export/visits', VisitExportController::class)
      ->middleware('auth', 'can:export_visits')

@@ -4,7 +4,7 @@
             <a
                 :href="route('export.opd_cards')"
                 class="btn btn-bitter"
-                v-if="$page.props.user.roles.includes('root') || $page.props.user.roles.includes('id_md') || $page.props.user.roles.includes('pm_md')"
+                v-if="can.export_opd_cards"
             >
                 Export OPD cards
             </a>
@@ -124,6 +124,7 @@ export default {
     props: {
         visits: { type: Object, required: true },
         filters: { type: Object, required: true },
+        can: { type: Object, required: true },
     },
     setup (props) {
         const createVisitForm = ref(null);

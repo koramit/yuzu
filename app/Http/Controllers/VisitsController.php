@@ -56,6 +56,9 @@ class VisitsController extends Controller
         return Inertia::render('Visits/Index', [
             'visits' => $visits,
             'filters' => Request::all('search'),
+            'can' => [
+                'export_opd_cards' => $user->can('export_opd_cards')
+            ],
         ]);
     }
 
