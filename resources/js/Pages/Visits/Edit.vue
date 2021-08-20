@@ -282,6 +282,18 @@
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
+                ATK
+            </h2>
+            <FormCheckbox
+                class="mt-2"
+                name="atk_positive"
+                label="ตรวจ Antigen test kit (ATK) ได้ผลบวก"
+                v-model="form.exposure.atk_positive"
+            />
+        </div>
+
+        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+            <h2 class="font-semibold text-thick-theme-light">
                 ประวัติเสี่ยง
             </h2>
             <div class="mt-2">

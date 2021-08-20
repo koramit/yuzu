@@ -52,6 +52,8 @@ class VisitManager
                 'other_symptoms' => null,
             ],
             'exposure' => [
+                'atk_positive
+                ' => false,
                 'evaluation' => null,
                 'date_latest_expose' => null,
                 'contact' => false,
@@ -488,6 +490,9 @@ class VisitManager
             $symptoms = $text;
         }
 
+        // atk_positive
+        $atkPositive = ($visit->form['exposure']['atk_positive'] ?? false) ? 'ตรวจ Antigen test kit (ATK) ได้ผลบวก' : null;
+
         // exposure
         $exposure = $visit->form['exposure'];
         if ($exposure['evaluation'] === 'ไม่มีความเสี่ยง' || $exposure['evaluation'] === 'ความเสี่ยงเดิม') {
@@ -652,6 +657,7 @@ class VisitManager
             'visit' => $contentVisit,
             'symptom_headers' => $symptomHeaders,
             'symptoms' => $symptoms,
+            'ATK' => $atkPositive,
             'ประวัติเสี่ยง' => $exposure,
             'โรคประจำตัว' => $comorbids,
             'ประวัติการฉีดวัคซีน COVID-19' => $vaccination,
