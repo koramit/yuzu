@@ -151,6 +151,7 @@ import Visit from '@/Components/Forms/Visit';
 import Appointment from '@/Components/Forms/Appointment';
 import { computed, inject, nextTick, onUnmounted, reactive, ref } from '@vue/runtime-core';
 import { Inertia } from '@inertiajs/inertia';
+import { usePage } from '@inertiajs/inertia-vue3';
 
 export default {
     layout: Layout,
@@ -170,18 +171,30 @@ export default {
             resource_id: null,
         });
         const cancel = (visit) => {
-            currentConfirm.action = 'cancel',
-            currentConfirm.resource_id = visit.slug,
+            currentConfirm.action = 'cancel';
+            currentConfirm.resource_id = visit.slug;
             emitter.emit('need-confirm', {
                 confirmText: 'ยกเลิกการตรวจ ' + visit.title,
                 needReason: true,
             });
         };
         const edit = (visit) => {
-            currentConfirm.action = 'edit',
-            currentConfirm.resource_id = visit.slug,
+            currentConfirm.action = 'edit';
+            currentConfirm.resource_id = visit.slug;
+            let confirmText = null;
+            if (usePage().props.value.user.roles.includes('md')) {
+                confirmText  = '<p>แก้ไข ' + visit.title + '</p>';
+                confirmText += '<p class="mt-2">๏ หลังแก้ไขเสร็จ ผู้ป่วยจะเปลี่ยนสถานะเป็น swab/จำหน่าย และถูกปรับห้องตามที่ถูกแก้ไข</p>';
+                confirmText += '<p class="mt-2">*** แจ้งคุณพยาบาล incharge เพื่อติดต่อเวชระเบียนพิมพ์ OPD card ใหม่แทนใบเดิมด้วย</p>';
+                confirmText += '<p class="mt-2">๏ หากแก้ไม่เสร็จสามารถบันทึกไว้ก่อน โดยผู้ป่วยจะย้ายสถานะไปอยู่ห้องตรวจ</p>';
+            } else { // nurse
+                confirmText  = '<p class="mt-2">แก้ไข ' + visit.title + '</p>';
+                confirmText += '<p class="mt-2">๏ หลังแก้ไขเสร็จ ผู้ป่วยจะเปลี่ยนสถานะเป็น ตรวจ/swab/จำหน่าย และถูกปรับห้องตามที่ถูกแก้ไข</p>';
+                confirmText += '<p class="mt-2">*** แจ้งคุณพยาบาล incharge เพื่อติดต่อเวชระเบียนพิมพ์ OPD card ใหม่แทนใบเดิมด้วย</p>';
+                confirmText += '<p class="mt-2">๏ หากแก้ไม่เสร็จสามารถบันทึกไว้ก่อน โดยผู้ป่วยจะย้ายสถานะไปอยู่ห้องคัดกรอง</p>';
+            }
             emitter.emit('need-confirm', {
-                confirmText: 'แก้ไข ' + visit.title + ' เคสจะถูกดึงออกจากทุกห้องในระหว่างการแก้ไขและโปรดทำการ ส่งตรวจ/ส่ง swab ให้สอดคล้องกับเนื้อหาหลังการแก้ไขด้วย',
+                confirmText: confirmText,
                 needReason: false,
             });
         };
