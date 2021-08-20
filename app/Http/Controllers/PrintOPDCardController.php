@@ -14,7 +14,7 @@ class PrintOPDCardController extends Controller
     public function __invoke(Visit $visit)
     {
         Request::session()->flash('page-title', $visit->title);
-        $visit->actions()->create(['action' => 'view', 'user_id' => Auth::id()]);
+        $visit->actions()->create(['action' => 'print', 'user_id' => Auth::id()]);
 
         if (! $visit->attached_opd_card_at) {
             $visit->attached_opd_card_at = now();
