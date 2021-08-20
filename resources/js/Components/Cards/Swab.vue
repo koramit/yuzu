@@ -115,22 +115,21 @@
                             >
                                 # {{ no }}
                             </button>
-                            <template v-if="!containers.filter(c => c.swab_at === patient.swab_at).map(n => n.no).length">
-                                <button
-                                    class="block w-full text-left hover:bg-dark-theme-light text-white py-1 px-4"
-                                    @click="putIn(patient, 'new')"
-                                >
-                                    กระติกใหม่
-                                </button>
-                                <button
-                                    v-for="unit in swabUnits.filter(u => u !== patient.swab_at)"
-                                    :key="unit"
-                                    class="block w-full text-left hover:bg-dark-theme-light text-white py-1 px-4"
-                                    @click="putIn(patient, unit)"
-                                >
-                                    ส่ง {{ unit }}
-                                </button>
-                            </template>
+                            <button
+                                v-for="unit in swabUnits.filter(u => u !== patient.swab_at)"
+                                :key="unit"
+                                class="block w-full text-left hover:bg-dark-theme-light text-white py-1 px-4"
+                                @click="putIn(patient, unit)"
+                            >
+                                ส่ง {{ unit }}
+                            </button>
+                            <button
+                                v-if="!containers.filter(c => c.swab_at === patient.swab_at).map(n => n.no).length"
+                                class="block w-full text-left hover:bg-dark-theme-light text-white py-1 px-4"
+                                @click="putIn(patient, 'new')"
+                            >
+                                กระติกใหม่
+                            </button>
                         </div>
                     </template>
                 </Dropdown>
