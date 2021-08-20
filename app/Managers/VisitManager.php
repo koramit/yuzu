@@ -52,8 +52,7 @@ class VisitManager
                 'other_symptoms' => null,
             ],
             'exposure' => [
-                'atk_positive
-                ' => false,
+                'atk_positive' => false,
                 'evaluation' => null,
                 'date_latest_expose' => null,
                 'contact' => false,
