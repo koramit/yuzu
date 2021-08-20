@@ -27,6 +27,7 @@ class VisitTodayListController extends Controller
 
         $visits = Visit::with('patient')
                        ->whereDateVisit($today->format('Y-m-d'))
+                       ->where('status', '<>', 6) // exclude appointment
                        ->orderBy('enlisted_screen_at')
                        ->get()
                        ->transform(function ($visit) use ($user) {

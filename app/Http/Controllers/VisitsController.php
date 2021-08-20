@@ -57,7 +57,7 @@ class VisitsController extends Controller
             'visits' => $visits,
             'filters' => Request::all('search'),
             'can' => [
-                'export_opd_cards' => $user->can('export_opd_cards')
+                'export_opd_cards' => $user->can('export_opd_cards'),
             ],
         ]);
     }
@@ -147,7 +147,7 @@ class VisitsController extends Controller
                 $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่งตรวจ', 'action' => 'save-exam', 'can' => true];
                 $can[] = 'save-exam';
             }
-            if ($user->can('sign_opd_card')) { // save to discharge -- MD only
+            if ($user->can('discharge', $visit)) { // save to discharge -- MD only
                 $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'จำหน่าย', 'action' => 'save-discharge', 'can' => true];
                 $can[] = 'save-discharge';
             }
@@ -217,7 +217,7 @@ class VisitsController extends Controller
         return Inertia::render('Visits/Show', [
             'content' => $this->manager->getReportContent($visit),
             'configs' => [
-                'topics' => ['ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย', 'note'],
+                'topics' => ['ATK', 'ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย', 'note'],
             ],
             'can' => [
                 'evaluate' => $user->can('evaluate'),

@@ -45,7 +45,7 @@ class VisitPolicy
             } elseif ($user->hasRole('nurse')) { // nurse discharge from swab
                 return $visit->status === 'enqueue_swab';
             }
-        } elseif ($user->hasRole('md')) {
+        } elseif ($user->hasRole('md') && ! $visit->swabbed) {
             return true;
         }
 
@@ -74,7 +74,7 @@ class VisitPolicy
     public function cancel(User $user, Visit $visit)
     {
         return $user->hasRole('admin') ||
-            ($user->can('cancel_visit') && collect(['screen', 'exam'])->contains($visit->status));
+            ($user->can('cancel_visit') && collect(['screen', 'exam'])->contains($visit->status) && ! $visit->swabbed);
     }
 
     public function authorize(User $user, Visit $visit)
