@@ -26,7 +26,8 @@ class ImportAppointmentsController extends Controller
                 'tel_no' => str_replace('-', '', $case['เบอร์มือถือ']),
                 'date_latest_expose' => $case["วันที่สัมผัสใกล้ชิด\nกับผู้ติดเชื้อ"],
                 'risk' => $case['ระดับความเสี่ยงที่ประเมินได้'],
-                'date_latest_vacciniated' => $case["วันที่ฉีดวัคซีน\nเข็มล่าสุด"],
+                // 'date_latest_vacciniated' => $case["วันที่ฉีดวัคซีน\nเข็มล่าสุด"],
+                'date_latest_vacciniated' => $case['โดย ID/วป'],
                 'vaccine' => $case["ประวัติการรับวัคซีน COVID-19\n(AZ = AstraZeneca, SV = Sinovac)"],
             ];
         });
@@ -90,6 +91,7 @@ class ImportAppointmentsController extends Controller
             $form['patient']['date_latest_expose_by_im'] = $this->getDateStr($appointment['date_latest_expose']);
             $form['vaccination'] = $this->getVaccine($appointment);
             $form['management']['np_swab'] = true;
+            $form['management']['swab_at'] = 'Sky Walk';
             $visit->form = $form;
             $visit->status = 'appointment';
             $visit->enlisted_screen_at = now();

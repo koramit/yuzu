@@ -939,7 +939,6 @@ export default {
                     form.management.swab_at = null;
                 }
             },
-            { immediate: true }
         );
 
         watch (
