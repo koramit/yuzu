@@ -30,8 +30,8 @@ class UsersTableSeeder extends Seeder
             'position' => 'พยาบาล',
             'pln' => null,
             'remark' => 'พยาบาล พยาบาล ฝ่ายการพยาบาล',
-            'home_page' => 'visits.screen-list',
         ];
+        $u->home_page = 'visits.screen-list';
         $u->save();
         $u->assignRole('nurse');
         $u->assignRole('staff');
@@ -49,8 +49,8 @@ class UsersTableSeeder extends Seeder
             'position' => 'แพทย์',
             'pln' => 55555,
             'remark' => 'แพทย์ แพทย์ คณะแพทย์',
-            'home_page' => 'visits.exam-list',
         ];
+        $u->home_page = 'visits.exam-list';
         $u->save();
         $u->assignRole('md');
 
@@ -67,8 +67,8 @@ class UsersTableSeeder extends Seeder
             'position' => 'เจ้าหน้าที่เวชระเบียน',
             'pln' => null,
             'remark' => 'เจ้าหน้าที่เวชระเบียน เจ้าหน้าที่เวชระเบียน งานเวชระเบียน',
-            'home_page' => 'visits.mr-list',
         ];
+        $u->home_page = 'visits.mr-list';
         $u->save();
         $u->assignRole('staff');
 
@@ -85,8 +85,8 @@ class UsersTableSeeder extends Seeder
             'position' => 'ธุรการ',
             'pln' => null,
             'remark' => 'ธุรการ ธุรการ ฝ่ายการธุรการ',
-            'home_page' => 'visits',
         ];
+        $u->home_page = 'visits';
         $u->save();
         $u->assignRole('admin');
 
@@ -103,8 +103,8 @@ class UsersTableSeeder extends Seeder
             'position' => 'แพทย์',
             'pln' => 54321,
             'remark' => 'แพทย์ แพทย์ คณะแพทย์',
-            'home_page' => 'visits.exam-list',
         ];
+        $u->home_page = 'visits.exam-list';
         $u->save();
         $u->assignRole('md');
         $u->assignRole('id_md');

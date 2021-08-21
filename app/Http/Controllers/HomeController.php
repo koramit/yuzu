@@ -9,6 +9,10 @@ class HomeController extends Controller
 {
     public function __invoke()
     {
-        return Redirect::route(Auth::user()->home_page);
+        $page = Auth::user()->home_page;
+        if ($page === 'home') {
+            return 'โปรดติดต่อผู้ดูแลระบบเพื่อเปิดสิทธิ์การใช้งาน';
+        }
+        return Redirect::route($page);
     }
 }

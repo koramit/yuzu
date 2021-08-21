@@ -115,11 +115,6 @@ class User extends Authenticatable
         return $this->profile['tel_no'];
     }
 
-    public function getHomePageAttribute()
-    {
-        return $this->profile['home_page'] ?? 'visits';
-    }
-
     public function hasRole($name)
     {
         return $this->role_names->contains($name);
