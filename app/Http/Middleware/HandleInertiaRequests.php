@@ -39,8 +39,9 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'app' => [
                 'baseUrl' => url(''),
-                'tomorrow_label' => fn () => today('asia/bangkok')->addDays(1)->format('d M Y'),
-                'tomorrow' => fn () => today('asia/bangkok')->addDays(1)->format('Y-m-d'),
+                'today' => fn () => now('asia/bangkok')->format('Y-m-d'),
+                'tomorrow_label' => fn () => now('asia/bangkok')->addDays(1)->format('d M Y'),
+                'tomorrow' => fn () => now('asia/bangkok')->addDays(1)->format('Y-m-d'),
             ],
             'flash' => [
                 'title' => fn () => $request->session()->pull('page-title', 'MISSING'),

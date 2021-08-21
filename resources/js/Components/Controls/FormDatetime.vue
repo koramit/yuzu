@@ -3,6 +3,7 @@
         <label
             class="form-label"
             :for="name"
+            v-if="label"
         >{{ label }} :</label>
         <input
             :id="name"
