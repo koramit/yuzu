@@ -121,7 +121,7 @@ class VisitManager
     public function getConfigs(Visit $visit)
     {
         return [
-            'tracks' => ['Walk-in', 'นัด หรือ staff'],
+            'tracks' => ['Walk-in', 'นัด หรือ staff หรือ ญาติเจ้าหน้าที่'],
             'patient_types' => ['บุคคลทั่วไป', 'เจ้าหน้าที่ศิริราช'],
             'screen_types' => ['เริ่มตรวจใหม่', 'นัดมา swab ครั้งแรก', 'นัดมา swab ซ้ำ'],
             'insurances' => ['กรมบัญชีกลาง', 'ประกันสังคมศิริราช', 'ประกันสังคมที่อื่น', '30 บาท ศิริาช', '30 บาท ที่อื่น', 'ชำระเงินเอง'],
