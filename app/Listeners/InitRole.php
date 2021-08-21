@@ -41,40 +41,30 @@ class InitRole
 
         if ($profile['is_md']) {
             $event->user->assignRole('md');
-            $event->user->forceFill([
-                'profile->home_page' => 'visits.exam-list',
-            ]);
+            $event->user->home_page = 'visits.exam-list';
             $event->user->save();
         } elseif ($event->user->profile['position'] === 'พยาบาล') {
             $event->user->assignRole('nurse');
             $event->user->assignRole('staff');
-            $event->user->forceFill([
-                'profile->home_page' => 'visits.screen-list',
-            ]);
+            $event->user->home_page = 'visits.screen-list';
             $event->user->save();
         } elseif ($event->user->profile['position'] === 'ผู้ช่วยพยาบาล') {
             $event->user->assignRole('nurse');
             $event->user->assignRole('staff');
-            $event->user->forceFill([
-                'profile->home_page' => 'visits.screen-list',
-            ]);
+            $event->user->home_page = 'visits.screen-list';
             $event->user->save();
         } elseif (str_contains($event->user->profile['remark'], 'งานเวชระเบียน')
             || ($event->user->profile['position'] === 'เจ้าหน้าที่ธุรการ' && str_contains($event->user->profile['remark'], 'ฝ่ายการพยาบาล'))
         ) {
             $event->user->assignRole('staff');
-            $event->user->forceFill([
-                'profile->home_page' => 'visits.mr-list',
-            ]);
+            $event->user->home_page = 'visits.mr-list';
             $event->user->save();
         }
 
         foreach ($this->roles as $role => $ids) {
             if (collect($ids)->contains($profile['org_id'])) {
                 $event->user->assignRole($role);
-                $event->user->forceFill([
-                    'profile->home_page' => $role === 'nurse' ? 'visits.screen-list' : 'visits',
-                ]);
+                $event->user->home_page = $role === 'nurse' ? 'visits.screen-list' : 'visits';
                 $event->user->save();
             }
         }
