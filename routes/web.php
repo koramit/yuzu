@@ -5,7 +5,6 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportAppointmentsController;
-use App\Http\Controllers\ImportColabController;
 use App\Http\Controllers\OPDCardExportController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PrintOPDCardController;
@@ -144,9 +143,6 @@ Route::get('export/opd_cards', OPDCardExportController::class)
 Route::get('export/visits', VisitExportController::class)
      ->middleware('auth', 'can:export_visits')
      ->name('export.visits');
-Route::post('import/colab', ImportColabController::class)
-     ->middleware('auth', 'can:evaluate')
-     ->name('import.colab');
 
 // visit
 Route::get('visits', [VisitsController::class, 'index'])
