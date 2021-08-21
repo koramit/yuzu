@@ -1,4 +1,51 @@
 <template>
+    <!-- lab summary -->
+    <div class="my-2">
+        <div class="p-2 rounded-md bg-white my-2">
+            <p class="text-md font-semibold text-thick-theme-light underline">
+                รวม {{ visits.filter(v => v.result).length }}/{{ visits.length }}
+            </p>
+            <div class="flex flex-wrap ">
+                <span
+                    v-for="(result, key) in ['Not detected', 'Inconclusive', 'Detected', 'Not found']"
+                    :key="key"
+                    class="inline-block my-1 whitespace-nowrap text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 text-white"
+                    :class="{
+                        'bg-green-400': result === 'Not detected',
+                        'bg-yellow-400': result === 'Inconclusive',
+                        'bg-red-400': result === 'Detected',
+                        'bg-gray-600': result === 'Not found',
+                    }"
+                >
+                    {{ result }} {{ visits.filter(v => v.result.toLowerCase() === result.toLowerCase() ).length }}
+                </span>
+            </div>
+        </div>
+        <div
+            class="p-2 rounded-md bg-white my-2"
+            v-for="type in ['บุคคลทั่วไป', 'เจ้าหน้าที่ศิริราช']"
+            :key="type"
+        >
+            <p class="text-md font-semibold text-thick-theme-light underline">
+                {{ type }} {{ visits.filter(v => v.result && v.patient_type === type).length }}/{{ visits.filter(v => v.patient_type === type).length }}
+            </p>
+            <div class="flex flex-wrap ">
+                <span
+                    v-for="(result, key) in ['Not detected', 'Inconclusive', 'Detected', 'Not found']"
+                    :key="key"
+                    class="inline-block my-1 whitespace-nowrap text-sm shadow-sm italic px-2 py-1 rounded-xl mr-2 text-white"
+                    :class="{
+                        'bg-green-400': result === 'Not detected',
+                        'bg-yellow-400': result === 'Inconclusive',
+                        'bg-red-400': result === 'Detected',
+                        'bg-gray-600': result === 'Not found',
+                    }"
+                >
+                    {{ result }} {{ visits.filter(v => v.patient_type === type && v.result.toLowerCase() === result.toLowerCase() ).length }}
+                </span>
+            </div>
+        </div>
+    </div>
     <!-- card -->
     <transition-group
         name="flip-list"
