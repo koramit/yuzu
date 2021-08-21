@@ -61,6 +61,8 @@ export default {
             show.value = !show.value;
         };
 
+        const close = () => show.value = false;
+
         return {
             show,
             animate,
@@ -68,6 +70,7 @@ export default {
             dropupThreshold,
             dropdown,
             toggle,
+            close
         };
     }
 };

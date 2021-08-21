@@ -6,13 +6,14 @@ use App\Models\LoadDataRecord;
 use App\Models\Visit;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
 class OPDCardExportController extends Controller
 {
     public function __invoke()
     {
-        $dateStr = now('asia/bangkok')->format('Y-m-d');
+        $dateStr = Request::input('date_visit', now('asia/bangkok')->format('Y-m-d'));
 
         $visits = Visit::with('patient')
                        ->whereDateVisit($dateStr)
@@ -23,7 +24,7 @@ class OPDCardExportController extends Controller
                            return $this->allData($visit);
                        });
 
-        $filename = 'OPD card ARI Clinic.xlsx';
+        $filename = 'ARI Clinic OPD cards@'.$dateStr.'.xlsx';
 
         LoadDataRecord::create([
             'export' => true,
