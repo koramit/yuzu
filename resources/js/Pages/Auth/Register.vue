@@ -9,7 +9,7 @@
     >
         <div class="w-40 h-40 z-10 rounded-full transform translate-y-12 -translate-x-3">
             <img
-                :src="route('home') + '/image/logo.png'"
+                :src="route('preferences') + '/image/logo.png'"
                 alt="🍊"
             >
         </div>
@@ -94,19 +94,13 @@ export default {
     },
     setup (props) {
         useCheckSessionTimeout();
-
-        const pageLoadingIndicator = document.getElementById('page-loading-indicator');
-        if (pageLoadingIndicator) {
-            useRemoveLoader();
-        }
+        useRemoveLoader();
 
         const busy = ref(true);
         const name_input = ref();
         onMounted(() => {
-            setTimeout(() => {
-                busy.value = false;
-                nextTick(() => name_input.value.focus());
-            }, pageLoadingIndicator ? 1600:0);
+            busy.value = false;
+            nextTick(() => name_input.value.focus());
         });
 
         const form = useForm({
@@ -139,7 +133,7 @@ export default {
             form.transform(data => ({
                 ...data,
                 remember: data.remember ? 'on' : '',
-            })).post(route('register.store'), {
+            })).post(window.route('register.store'), {
                 onFinish: () => form.processing = false,
             });
         }

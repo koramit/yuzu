@@ -60,10 +60,10 @@
                                 <template v-if="$page.props.user.roles.length">
                                     <Link
                                         class="block px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
-                                        :href="route('home')"
-                                        v-if="! isUrl(route('home'))"
+                                        :href="route('preferences')"
+                                        v-if="! isUrl(route('preferences'))"
                                     >
-                                        หน้าหลัก
+                                        ตั้งค่า
                                     </Link>
                                 </template>
                                 <Link
@@ -106,10 +106,10 @@
                             <template v-if="$page.props.user.roles.length">
                                 <Link
                                     class="block py-1"
-                                    :href="route('home')"
-                                    v-if="! isUrl(route('home'))"
+                                    :href="route('preferences')"
+                                    v-if="! isUrl(route('preferences'))"
                                 >
-                                    หน้าหลัก
+                                    ตั้งค่า
                                 </Link>
                             </template>
                             <Link
@@ -166,11 +166,7 @@ export default {
     components: { Dropdown, Icon, MainMenu, ActionMenu, FlashMessages, ConfirmForm, Head, Link },
     setup () {
         useCheckSessionTimeout();
-
-        const pageLoadingIndicator = document.getElementById('page-loading-indicator');
-        if (pageLoadingIndicator) {
-            useRemoveLoader();
-        }
+        useRemoveLoader();
 
         const confirmForm = ref(null);
         const mobileMenuVisible = ref(false);
