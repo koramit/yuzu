@@ -17,7 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('login')->unique();
-            $table->string('home_page')->default('home');
+            $table->string('home_page')->default('preferences');
             $table->string('password');
             $table->json('profile');
             $table->unsignedSmallInteger('division_id')->default(2)->constrained('divisions')->onDelete('cascade');

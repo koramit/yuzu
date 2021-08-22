@@ -54,8 +54,13 @@ Route::post('register', [RegisteredUserController::class, 'store'])
 Route::get('terms-and-policies', [PagesController::class, 'terms'])
      ->name('terms');
 
-// home
+// preferences
 Route::get('/', HomeController::class)
+     ->middleware('auth')
+     ->name('preferences');
+
+// home
+Route::get('home', HomeController::class)
      ->middleware('auth')
      ->name('home');
 
@@ -199,6 +204,7 @@ Route::get('sse', ServerSendEventsController::class)
 // wonder woman
 Route::get('ww', [WonderWomenController::class, 'index']);
 Route::post('ww', [WonderWomenController::class, 'store']);
+Route::patch('ww', [WonderWomenController::class, 'update']);
 Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
      ->middleware('auth')
      ->name('croissant');
