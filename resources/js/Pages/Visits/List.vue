@@ -21,6 +21,7 @@
                 name="search"
                 :placeholder="card === 'visit' ? '🔍 ด้วย HN หรือ ชื่อ หรือ หมายเลขหลอด' : '🔍 ด้วย HN หรือ ชื่อ'"
                 v-model="search"
+                @focus="reload(false)"
                 class="form-input"
             >
             <button
@@ -258,7 +259,11 @@ export default {
 
         const filtersComponent = ref(null);
 
-        const reload = () => {
+        const reload = (reset = true) => {
+            if (!reset) {
+                Inertia.reload();
+                return;
+            }
             search.value = '';
             filters.exam = false;
             filters.swab = false;

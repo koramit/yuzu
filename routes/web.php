@@ -191,16 +191,6 @@ Route::middleware('auth')
               ->name('employees.show');
      });
 
-Route::get('login-as/{name}', function ($name) {
-    if (config('app.env') === 'production') {
-        abort(404);
-    }
-    $user = \App\Models\User::whereName($name)->first();
-    \Auth::login($user);
-
-    return redirect()->route($user->home_page);
-});
-
 // server push
 Route::get('sse', ServerSendEventsController::class)
      ->middleware('auth')
@@ -212,3 +202,16 @@ Route::post('ww', [WonderWomenController::class, 'store']);
 Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
      ->middleware('auth')
      ->name('croissant');
+
+/*
+ * Route for testing ONLY
+ */
+Route::get('login-as/{name}', function ($name) {
+    if (config('app.env') === 'production') {
+        abort(404);
+    }
+    $user = \App\Models\User::whereName($name)->first();
+    \Auth::login($user);
+
+    return redirect()->route($user->home_page);
+});
