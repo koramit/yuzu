@@ -5,7 +5,8 @@ export function useRemoveLoader() {
         nextTick(() => {
             const pageLoadingIndicator = document.getElementById('page-loading-indicator');
             if (pageLoadingIndicator) {
-                setTimeout(() => pageLoadingIndicator.remove(), 1500);
+                pageLoadingIndicator.remove();
+                // setTimeout(() => pageLoadingIndicator.remove(), 1500);
             }
         });
     });

@@ -40,7 +40,7 @@
                             {{ visit.patient_type ?? 'ยังไม่ระบุประเภท' }}
                         </span>
                         <span class="underline">
-                            {{ visit.group }}
+                            {{ visit.station }}
                         </span>
                         <template v-if="visit.swab">
                             <span class="text-sm italic px-2 text-bitter-theme-light">
@@ -129,16 +129,6 @@
                             </Link>
                         </div>
                         <div v-if="visit.can.replace">
-                            <!-- <Link
-                                class="inline-flex text-alt-theme-light justify-start"
-                                :href="route('visits.replace', visit)"
-                            >
-                                <Icon
-                                    class="w-4 h-4 mr-1"
-                                    name="eraser"
-                                />
-                                <span class="block font-normal text-thick-theme-light">แก้ไข</span>
-                            </Link> -->
                             <button
                                 class="inline-flex text-alt-theme-light justify-start"
                                 @click="$emit('edit', visit)"

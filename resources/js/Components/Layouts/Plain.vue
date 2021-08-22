@@ -16,15 +16,8 @@ export default {
     components: { Head },
     setup() {
         useCheckSessionTimeout();
-
-        const pageLoadingIndicator = document.getElementById('page-loading-indicator');
-        if (pageLoadingIndicator) {
-            useRemoveLoader();
-        }
-
+        useRemoveLoader();
         nextTick(() => document.querySelector('body').classList.toggle('bg-soft-theme-light'));
-
-        // setTimeout(() => window.print(), 500);
     },
 };
 </script>

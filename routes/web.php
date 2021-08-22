@@ -54,8 +54,13 @@ Route::post('register', [RegisteredUserController::class, 'store'])
 Route::get('terms-and-policies', [PagesController::class, 'terms'])
      ->name('terms');
 
-// home
+// preferences
 Route::get('/', HomeController::class)
+     ->middleware('auth')
+     ->name('preferences');
+
+// home
+Route::get('home', HomeController::class)
      ->middleware('auth')
      ->name('home');
 
@@ -191,6 +196,22 @@ Route::middleware('auth')
               ->name('employees.show');
      });
 
+// server push
+Route::get('sse', ServerSendEventsController::class)
+     ->middleware('auth')
+     ->name('sse');
+
+// wonder woman
+Route::get('ww', [WonderWomenController::class, 'index']);
+Route::post('ww', [WonderWomenController::class, 'store']);
+Route::patch('ww', [WonderWomenController::class, 'update']);
+Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
+     ->middleware('auth')
+     ->name('croissant');
+
+/*
+ * Route for testing ONLY
+ */
 Route::get('login-as/{name}', function ($name) {
     if (config('app.env') === 'production') {
         abort(404);
@@ -200,15 +221,3 @@ Route::get('login-as/{name}', function ($name) {
 
     return redirect()->route($user->home_page);
 });
-
-// server push
-Route::get('sse', ServerSendEventsController::class)
-     ->middleware('auth')
-     ->name('sse');
-
-// wonder woman
-Route::get('ww', [WonderWomenController::class, 'index']);
-Route::post('ww', [WonderWomenController::class, 'store']);
-Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
-     ->middleware('auth')
-     ->name('croissant');

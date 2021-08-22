@@ -61,6 +61,7 @@ class RegisteredUserController extends Controller
 
         $user->login = $data['login'];
         $user->name = $data['name'];
+        $user->home_page = 'preferences';
         $user->password = Hash::make(Str::random(64));
         $user->profile = $profile;
         $user->save();

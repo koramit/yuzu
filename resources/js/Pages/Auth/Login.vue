@@ -8,7 +8,7 @@
     >
         <div class="w-40 h-40 z-10 rounded-full transform translate-y-12 -translate-x-3">
             <img
-                :src="route('home') + '/image/logo.png'"
+                :src="route('preferences') + '/image/logo.png'"
                 alt="🍊"
             >
         </div>
@@ -71,20 +71,14 @@ export default {
     components: { FormInput, SpinnerButton, Head },
     setup () {
         useCheckSessionTimeout();
-
-        const pageLoadingIndicator = document.getElementById('page-loading-indicator');
-        if (pageLoadingIndicator) {
-            useRemoveLoader();
-        }
+        useRemoveLoader();
 
         const busy = ref(true);
         const login_input = ref(null);
 
         onMounted(() => {
-            setTimeout(() => {
-                busy.value = false;
-                nextTick(() => login_input.value.focus());
-            }, pageLoadingIndicator ? 1600:0);
+            busy.value = false;
+            nextTick(() => login_input.value.focus());
         });
 
         const form = useForm({
@@ -98,7 +92,7 @@ export default {
                 login: data.login.toLowerCase(),
                 password: data.password,
                 remember: data.remember ? 'on' : '',
-            })).post(route('login.store'), {
+            })).post(window.route('login.store'), {
                 replace: true,
                 onFinish: () => form.processing = false,
             });
