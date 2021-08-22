@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\VisitUpdated;
 use App\Models\Visit;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
@@ -72,10 +73,7 @@ class WonderWomenController extends Controller
                         }
                     },
                 ],
-                'hn' => 'required',
                 'slug' => 'required',
-                'type' => 'required',
-                'date' => 'required',
                 'result' => 'required',
                 'screenshot' => 'file',
         ]);
@@ -104,7 +102,37 @@ class WonderWomenController extends Controller
 
         VisitUpdated::dispatch($visit);
 
+        Cache::put('croissant-message', 'reported');
+        Cache::put('croissant-lastcontact', now());
+
         return ['ok' => true];
+    }
+
+    public function update()
+    {
+        Request::validate([
+            'token' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if ($value !== config('app.ww_token')) {
+                        $fail('The '.$attribute.' is invalid.');
+                    }
+                },
+            ],
+            'slug' => 'required',
+            'message' => 'required',
+        ]);
+
+        $visit = Visit::whereSlug(Request::input('slug'))
+                      ->first();
+
+        if (! $visit) {
+            abort(422);
+        }
+
+        $message = Request::input('message');
+        Cache::put('croissant-message', $message);
+        Cache::put('croissant-lastcontact', now());
     }
 
     protected function trimCroissant($path)
