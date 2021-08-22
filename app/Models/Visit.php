@@ -310,4 +310,25 @@ class Visit extends Model
     {
         return $this->form['patient']['track'] ?? null;
     }
+
+    public function getStationAttribute()
+    {
+        if ($this->status === 'screen' || $this->status === 'appointment') {
+            return 'ห้องคัดกรอง';
+        } elseif ($this->status === 'swab') {
+            return 'จัดกระติก';
+        } elseif ($this->status === 'enqueue_swab') {
+            return 'ห้อง swab';
+        } elseif ($this->status === 'discharged') {
+            return 'จำหน่าย';
+        } elseif ($this->status === 'canceled') {
+            return 'ยกเลิก';
+        } elseif ($this->authorized_at) {
+            return 'ห้องตรวจ';
+        } elseif ($this->enqueued_at) {
+            return 'เวชระเบียน';
+        } else {
+            return 'ธุรการ';
+        }
+    }
 }
