@@ -35,9 +35,9 @@ class WonderWomenController extends Controller
             ],
         ]);
 
-        $today = now('asia/bangkok');
+        $today = now();
         $todayStr = $today->format('d-m-y');
-        $dateAfterStr = now('asia/bangkok')->addDays(-1)->format('d/m/Y');
+        $dateAfterStr = now()->addDays(-1)->format('d/m/Y');
 
         $visits = Visit::with('patient')
                        ->whereDateVisit($today->format('Y-m-d'))
@@ -103,7 +103,7 @@ class WonderWomenController extends Controller
         VisitUpdated::dispatch($visit);
 
         Cache::put('croissant-message', 'reported');
-        Cache::put('croissant-lastcontact', now());
+        Cache::put('croissant-latest', now());
 
         return ['ok' => true];
     }
@@ -132,7 +132,7 @@ class WonderWomenController extends Controller
 
         $message = Request::input('message');
         Cache::put('croissant-message', $message);
-        Cache::put('croissant-lastcontact', now());
+        Cache::put('croissant-latest', now());
     }
 
     protected function trimCroissant($path)
