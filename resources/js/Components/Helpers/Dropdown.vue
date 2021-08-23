@@ -56,9 +56,9 @@ export default {
         const dropdown = ref(null);
 
         const toggle = () => {
-            if (!show.value) {
-                dropup.value = (dropdown.value.offsetTop / (window.innerHeight + window.scrollY)) > dropupThreshold.value;
-            }
+            // if (!show.value) {
+            //     dropup.value = (dropdown.value.offsetTop / (window.innerHeight + window.scrollY)) > dropupThreshold.value;
+            // }
             show.value = !show.value;
             if (show.value) {
                 context.emit('open');
