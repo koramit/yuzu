@@ -33,6 +33,10 @@
             <template v-else>
                 <!-- left detail -->
                 <div class="w-3/4">
+                    <VisitActions
+                        v-if="visit.can.view_visit_actions"
+                        :slug="visit.slug"
+                    />
                     <p class="p-1 pb-0 text-thick-theme-light">
                         <span
                             class="font-semibold mr-1"
@@ -149,10 +153,11 @@
 
 <script>
 import Icon from '@/Components/Helpers/Icon';
+import VisitActions from '@/Components/Helpers/VisitActions';
 import { Link } from '@inertiajs/inertia-vue3';
 export default {
     emits: ['edit'],
-    components: { Icon, Link },
+    components: { Icon, Link, VisitActions },
     props: {
         visits: { type: Array, required: true }
     },

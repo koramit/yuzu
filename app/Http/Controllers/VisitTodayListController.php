@@ -53,6 +53,7 @@ class VisitTodayListController extends Controller
                                     'attach_opd_card' => $user->can('attachOPDCard', $visit),
                                     'print_opd_card' => $user->can('printOPDCard', $visit),
                                     'replace' => $user->can('replace', $visit),
+                                    'view_visit_actions' => $user->can('view_visit_actions'),
                                ],
                            ];
                        });
