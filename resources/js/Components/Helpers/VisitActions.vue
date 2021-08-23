@@ -17,16 +17,16 @@
             </button>
         </template>
         <template #dropdown>
-            <div class="bg-gray-100 text-thick-theme-light rounded-lg shadow-md p-2 text-sm md:text-base md:p-4 max-h-96 overflow-y-scroll">
+            <div class="bg-gray-100 rounded-lg shadow-md p-2 text-sm md:text-base md:p-4 max-h-96 overflow-y-scroll">
                 <div
                     class="md:grid md:grid-cols-3 md:gap-2 flex flex-wrap space-x-2 md:flex-none"
                     v-for="(action, key) in actions"
                     :key="key"
                 >
-                    <p class="text-bitter-theme-light">
+                    <p class="text-bitter-theme-light font-semibold">
                         {{ action.time }}
                     </p>
-                    <p class="font-semibold">
+                    <p class="text-thick-theme-light font-semibold">
                         {{ action.action }}
                     </p>
                     <p class="italic text-dark-theme-light">
