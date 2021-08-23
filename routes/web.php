@@ -12,6 +12,7 @@ use App\Http\Controllers\PrintOPDCardController;
 use App\Http\Controllers\ResourceEmployeesController;
 use App\Http\Controllers\ResourcePatientsController;
 use App\Http\Controllers\ServerSendEventsController;
+use App\Http\Controllers\VisitActionsController;
 use App\Http\Controllers\VisitAttachOPDCardController;
 use App\Http\Controllers\VisitAuthorizationController;
 use App\Http\Controllers\VisitDischargeListController;
@@ -175,6 +176,9 @@ Route::delete('visits/{visit:slug}', [VisitsController::class, 'destroy'])
 Route::get('visits/{visit:slug}/replace', [VisitsController::class, 'replace'])
      ->middleware('auth', 'can:replace,visit')
      ->name('visits.replace');
+Route::get('visits/{visit:slug}/transactions', [VisitActionsController::class, 'transactions'])
+     ->middleware('auth', 'can:view_visit_actions') // can view transactions
+     ->name('visits.transactions');
 
 // appointments
 Route::post('import/appointments', ImportAppointmentsController::class)

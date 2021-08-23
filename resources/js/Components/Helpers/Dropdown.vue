@@ -35,11 +35,12 @@
 <script>
 import { onUnmounted, ref } from 'vue';
 export default {
+    emits: ['open'],
     props: {
         autoClose: { type: Boolean, default: true },
         dropleft: { type: Boolean },
     },
-    setup () {
+    setup (props, context) {
         const escapePressed = (e) => {
             if (e.keyCode === 27) {
                 show.value = false;
@@ -59,6 +60,9 @@ export default {
                 dropup.value = (dropdown.value.offsetTop / (window.innerHeight + window.scrollY)) > dropupThreshold.value;
             }
             show.value = !show.value;
+            if (show.value) {
+                context.emit('open');
+            }
         };
 
         const close = () => show.value = false;
