@@ -947,6 +947,8 @@ export default {
                     } else {
                         form.management.swab_at = 'SCG';
                     }
+
+                    form.recommendation.choice = null;
                 } else {
                     form.management.swab_at = null;
                 }
