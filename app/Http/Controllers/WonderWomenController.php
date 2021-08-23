@@ -133,6 +133,23 @@ class WonderWomenController extends Controller
         $message = Request::input('message');
         Cache::put('croissant-message', $message);
         Cache::put('croissant-latest', now());
+
+        if ($message === 'not found') {
+            $notFound = Cache::get('croissant-not-found', []);
+            $notFound[] = $visit->slug;
+            Cache::push('croissant-not-found', collect($notFound)->unique()->values()->all());
+        }
+
+        return ['ok' => true];
+    }
+
+    public function feedback()
+    {
+        return [
+            'message' => Cache::get('croissant-message'),
+            'updated_at' => Cache::get('croissant-latest'),
+            'not_found' => Cache::get('croissant-not_found'),
+        ];
     }
 
     protected function trimCroissant($path)

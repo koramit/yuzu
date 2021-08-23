@@ -209,6 +209,7 @@ Route::get('sse', ServerSendEventsController::class)
 Route::get('ww', [WonderWomenController::class, 'index']);
 Route::post('ww', [WonderWomenController::class, 'store']);
 Route::patch('ww', [WonderWomenController::class, 'update']);
+Route::get('croissant/feedback', [WonderWomenController::class, 'feedback']);
 Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
      ->middleware('auth')
      ->name('croissant');
