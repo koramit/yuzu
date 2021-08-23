@@ -147,7 +147,7 @@ class WonderWomenController extends Controller
     {
         return [
             'message' => Cache::get('croissant-message'),
-            'updated_at' => Cache::get('croissant-latest'),
+            'updated_at' => Cache::get('croissant-latest')->diffForHumans(now()),
             'not_found' => Cache::get('croissant-not_found'),
         ];
     }
