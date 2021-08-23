@@ -720,7 +720,7 @@
                     class="block w-full mt-4 btn btn-dark"
                     @click="saveToDischarge"
                 >
-                    จำหน่าย
+                    จำหน่ายไม่ต้อง swab
                 </SpinnerButton>
 
                 <SpinnerButton
@@ -883,7 +883,7 @@ export default {
         const toggleSaveToDischarge = (show) => {
             if (show) {
                 if (usePage().props.value.flash.actionMenu.findIndex(action => action.action === 'save-discharge') === -1) {
-                    usePage().props.value.flash.actionMenu.push({icon: 'share-square', label: 'จำหน่าย', action: 'save-discharge', can: true});
+                    usePage().props.value.flash.actionMenu.push({icon: 'share-square', label: 'จำหน่ายไม่ต้อง swab', action: 'save-discharge', can: true});
                 }
             } else {
                 let pos = usePage().props.value.flash.actionMenu.findIndex(action => action.action === 'save-discharge');

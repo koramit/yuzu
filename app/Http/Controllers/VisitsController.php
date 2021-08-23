@@ -148,7 +148,7 @@ class VisitsController extends Controller
                 $can[] = 'save-exam';
             }
             if ($user->can('discharge', $visit)) { // save to discharge -- MD only
-                $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'จำหน่าย', 'action' => 'save-discharge', 'can' => true];
+                $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'จำหน่ายไม่ต้อง swab', 'action' => 'save-discharge', 'can' => true];
                 $can[] = 'save-discharge';
             }
             if ($user->role_names->contains('nurse')) { // NURSE save to swab
