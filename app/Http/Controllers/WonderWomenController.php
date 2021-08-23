@@ -104,6 +104,7 @@ class WonderWomenController extends Controller
 
         Cache::put('croissant-message', 'reported');
         Cache::put('croissant-latest', now());
+        Cache::put('croissant-pending-hits', 0);
 
         return ['ok' => true];
     }
@@ -138,6 +139,8 @@ class WonderWomenController extends Controller
             $notFound = Cache::get('croissant-not-found', []);
             $notFound[] = $visit->slug;
             Cache::push('croissant-not-found', collect($notFound)->unique()->values()->all());
+        } else { // result to follow
+            Cache::increment('croissant-pending-hits');
         }
 
         return ['ok' => true];
@@ -149,6 +152,7 @@ class WonderWomenController extends Controller
             'message' => Cache::get('croissant-message'),
             'updated_at' => Cache::get('croissant-latest')->diffForHumans(now()),
             'not_found' => Cache::get('croissant-not_found'),
+            'pending_hits' => Cache::get('croissant-pending-hits'),
         ];
     }
 
