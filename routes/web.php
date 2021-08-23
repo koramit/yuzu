@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportAppointmentsController;
 use App\Http\Controllers\OPDCardExportController;
 use App\Http\Controllers\PagesController;
+use App\Http\Controllers\PreferencesController;
 use App\Http\Controllers\PrintOPDCardController;
 use App\Http\Controllers\ResourceEmployeesController;
 use App\Http\Controllers\ResourcePatientsController;
@@ -55,9 +56,12 @@ Route::get('terms-and-policies', [PagesController::class, 'terms'])
      ->name('terms');
 
 // preferences
-Route::get('/', HomeController::class)
+Route::get('/', [PreferencesController::class, 'show'])
      ->middleware('auth')
      ->name('preferences');
+Route::patch('/', [PreferencesController::class, 'update'])
+     ->middleware('auth')
+     ->name('preferences.update');
 
 // home
 Route::get('home', HomeController::class)
@@ -205,6 +209,7 @@ Route::get('sse', ServerSendEventsController::class)
 Route::get('ww', [WonderWomenController::class, 'index']);
 Route::post('ww', [WonderWomenController::class, 'store']);
 Route::patch('ww', [WonderWomenController::class, 'update']);
+Route::get('croissant/feedback', [WonderWomenController::class, 'feedback']);
 Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
      ->middleware('auth')
      ->name('croissant');

@@ -625,7 +625,7 @@ class VisitManager
 
         // recommendation
         $recommendation = $visit->form['recommendation'];
-        if ($recommendation['choice']) {
+        if ($recommendation['choice'] && ! $visit->form['management']['np_swab']) {
             $choices = collect($this->getConfigs($visit)['public_recommendations']);
             $text = $choices->firstWhere('value', $recommendation['choice'])['label'];
             if ($recommendation['date_isolation_end']) {
