@@ -138,7 +138,7 @@ class WonderWomenController extends Controller
         if ($message === 'not found') {
             $notFound = Cache::get('croissant-not-found', []);
             $notFound[] = $visit->slug;
-            Cache::push('croissant-not-found', collect($notFound)->unique()->values()->all());
+            Cache::put('croissant-not-found', collect($notFound)->unique()->values()->all());
         } else { // result to follow
             Cache::increment('croissant-pending-hits');
         }
