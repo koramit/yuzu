@@ -49,6 +49,7 @@ class OPDCardExportController extends Controller
             'name' => $visit->patient_name,
             'patient_type' => $visit->patient_type,
             'screen_type' => $visit->screen_type,
+            'gender' => $visit->patient->gender,
             'age' => $visit->age_at_visit,
             'age_unit' => $visit->age_at_visit_unit,
             'department' => $visit->patient_department,

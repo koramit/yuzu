@@ -85,6 +85,6 @@ class Patient extends Model
 
     public function getGenderAttribute()
     {
-        return $this->profile['gender'] === 'male' ? 'ชาย' : 'หญิง';
+        return ($this->profile['gender'] ?? '') === 'male' ? 'ชาย' : 'หญิง';
     }
 }
