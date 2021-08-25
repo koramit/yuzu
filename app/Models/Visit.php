@@ -179,12 +179,12 @@ class Visit extends Model
 
     public function getHnAttribute()
     {
-        return $this->patient ? $this->patient->hn : $this->form['patient']['hn'];
+        return $this->form['patient']['hn'] ?? null;
     }
 
     public function getPatientNameAttribute()
     {
-        return $this->patient ? $this->patient->full_name : $this->form['patient']['name'];
+        return $this->form['patient']['name'] ?? null;
     }
 
     public function getUpdatedAtForHumansAttribute()
