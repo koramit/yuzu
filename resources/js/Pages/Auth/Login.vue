@@ -8,7 +8,7 @@
     >
         <div class="w-40 h-40 z-10 rounded-full transform translate-y-12 -translate-x-3">
             <img
-                :src="route('preferences') + '/image/logo.png'"
+                :src="route('home') + '/image/logo.png'"
                 alt="🍊"
             >
         </div>

@@ -41,7 +41,6 @@ Route::post('login', [AuthenticatedSessionController::class, 'store'])
 Route::post('check-timeout', [AuthenticatedSessionController::class, 'update'])
      ->name('check-timeout');
 Route::delete('logout', [AuthenticatedSessionController::class, 'destroy'])
-     ->middleware('auth')
      ->name('logout');
 
 // Register
@@ -57,15 +56,15 @@ Route::get('terms-and-policies', [PagesController::class, 'terms'])
      ->name('terms');
 
 // preferences
-Route::get('/', [PreferencesController::class, 'show'])
+Route::get('preferences', [PreferencesController::class, 'show'])
      ->middleware('auth')
      ->name('preferences');
-Route::patch('/', [PreferencesController::class, 'update'])
+Route::patch('preferences', [PreferencesController::class, 'update'])
      ->middleware('auth')
      ->name('preferences.update');
 
 // home
-Route::get('home', HomeController::class)
+Route::get('/', HomeController::class)
      ->middleware('auth')
      ->name('home');
 
