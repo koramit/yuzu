@@ -20,13 +20,12 @@ class VisitTodayListController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $today = today('asia/bangkok');
+        $today = now('asia/bangkok');
         $flash = $this->manager->getFlash($user);
         $flash['page-title'] = 'รายการเคสวันนี้ @ '.$today->format('d M Y');
         $this->manager->setFlash($flash);
 
-        $visits = Visit::with('patient')
-                       ->whereDateVisit($today->format('Y-m-d'))
+        $visits = Visit::whereDateVisit($today->format('Y-m-d'))
                        ->where('status', '<>', 6) // exclude appointment
                        ->orderBy('enlisted_screen_at')
                        ->get()
