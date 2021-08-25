@@ -30,7 +30,31 @@
             <!-- left detail -->
             <div class="w-3/4">
                 <p class="p-1 pb-0 text-thick-theme-light">
-                    {{ visit.patient_type ?? 'ยังไม่ระบุประเภท' }}
+                    <span
+                        class="font-semibold mr-1"
+                    >
+                        {{ visit.patient_type ?? 'ยังไม่ระบุประเภท' }}
+                    </span>
+                    <span
+                        class="text-sm italic px-2 mr-1 text-bitter-theme-light"
+                        v-if="visit.swab"
+                    >
+                        <Icon
+                            class="inline w-4 h-4"
+                            name="virus"
+                        />
+                        Swab
+                    </span>
+                    <span
+                        class="text-sm italic px-2 mr-1 text-alt-theme-light"
+                        v-else
+                    >
+                        <Icon
+                            class="inline w-4 h-4"
+                            name="stethoscope"
+                        />
+                        ตรวจ
+                    </span>
                 </p>
                 <div class="flex items-baseline">
                     <p
