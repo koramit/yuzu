@@ -18,6 +18,7 @@ class PreferencesController extends Controller
         'visits.today-list' => 'รายการเคสวันนี้',
         'visits.lab-list' => 'ผลแลปวันนี้',
         'visits' => 'รายการเคสทั้งหมด',
+        'preferences' => 'ตั้งค่า',
     ];
 
     public function show()
