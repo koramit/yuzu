@@ -214,6 +214,11 @@ class VisitManager
         $visit->screen_type = $data['visit']['screen_type'];
         $visit->patient_type = $data['visit']['patient_type'];
         unset($data['visit']);
+        foreach (array_keys($data) as $key) {
+            if (str_contains($key, $visit->slug)) {
+                unset($data[$key]);
+            }
+        }
         // check if input hn at edit form
         if (! $visit->patient_id && $data['patient']['hn']) {
             $patient = (new PatientManager)->manage($data['patient']['hn']);
