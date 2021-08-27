@@ -13,6 +13,48 @@
             <span class="block font-normal text-thick-theme-light">รายงานเคสวันนี้</span>
         </a>
 
+        <!-- compare JK -->
+        <div
+            v-if="card === 'lab' && $page.props.user.roles.includes('admin') && $page.props.user.roles.includes('root')"
+            class="mb-2"
+        >
+            <div class="grid grid-cols-3">
+                <FormTextarea
+                    name="jk_hn"
+                    v-model="jk_hn"
+                    placeholder="Copy HN จาก excel มา paste ที่นี่"
+                />
+                <FormTextarea
+                    name="jk_hn"
+                    v-model="yuzuNotInJk"
+                    placeholder="HN Yuzu ที่ไม่มีใน JK"
+                    :readonly="true"
+                    v-if="yuzuNotInJk.length"
+                />
+                <FormTextarea
+                    name="jk_hn"
+                    v-model="yuzuNotInJk"
+                    placeholder="HN Yuzu ที่ไม่มีใน JK"
+                    :readonly="true"
+                    v-else
+                />
+                <FormTextarea
+                    name="jk_hn"
+                    v-model="jkNotInYuzu"
+                    placeholder="HN JK ที่ไม่มีใน Yuzu"
+                    :readonly="true"
+                    v-if="jkNotInYuzu.length"
+                />
+                <FormTextarea
+                    name="jk_hn"
+                    v-model="jkNotInYuzu"
+                    placeholder="HN JK ที่ไม่มีใน Yuzu"
+                    :readonly="true"
+                    v-else
+                />
+            </div>
+        </div>
+
         <!-- search -->
         <div class="mb-2 relative">
             <input
@@ -99,13 +141,14 @@ import CardQueue from '@/Components/Cards/Queue';
 import Filters from '@/Components/Cards/Filters';
 import Visit from '@/Components/Forms/Visit';
 import Appointment from '@/Components/Forms/Appointment';
-import { computed, inject, nextTick, onUnmounted, reactive, ref } from '@vue/runtime-core';
+import FormTextarea from '@/Components/Controls/FormTextarea';
+import { computed, inject, nextTick, onUnmounted, reactive, ref, watch } from '@vue/runtime-core';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/inertia-vue3';
 
 export default {
     layout: Layout,
-    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, CardEnqueueSwab, CardQueue, CardLab, CardVisit, Filters, Appointment },
+    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, CardEnqueueSwab, CardQueue, CardLab, CardVisit, Filters, Appointment, FormTextarea },
     props: {
         visits: { type: Object, required: true },
         card: { type: String, required: true },
@@ -280,6 +323,20 @@ export default {
             Inertia.reload();
         };
 
+        const jk_hn = ref('');
+        const jk = computed(() => {
+            return jk_hn.value.split('\n').map(h => h.replace('-', '')).filter(h => h && h.length === 8);
+        });
+        const yuzu = computed(() => {
+            return props.visits.map(v => v.hn);
+        });
+        const yuzuNotInJk = computed(() => {
+            return yuzu.value.filter(y => !jk.value.includes(y)).join('\n');
+        });
+        const jkNotInYuzu = computed(() => {
+            return jk.value.filter(y => !yuzu.value.includes(y)).join('\n');
+        });
+
         return {
             createVisitForm,
             appointmentForm,
@@ -291,7 +348,10 @@ export default {
             filters,
             cardfilters,
             filtered,
-            filtersComponent
+            filtersComponent,
+            jk_hn,
+            yuzuNotInJk,
+            jkNotInYuzu,
         };
     },
 };
