@@ -21,7 +21,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         if (! $data || ! $data['ok']) { // error: $data = null
             return [
                 'found' => false,
-                'message' => __('service.failed'),
+                'message' => ($data['status'] ?? 500) === 400 ? __('auth.failed') : __('service.failed'),
             ];
         }
 
