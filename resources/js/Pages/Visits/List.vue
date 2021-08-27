@@ -15,7 +15,7 @@
 
         <!-- compare JK -->
         <div
-            v-if="card === 'lab' && $page.props.user.roles.includes('admin') && $page.props.user.roles.includes('root')"
+            v-if="card === 'lab' && ($page.props.user.roles.includes('admin') || $page.props.user.roles.includes('root'))"
             class="mb-2"
         >
             <div class="grid grid-cols-3">
