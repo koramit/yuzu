@@ -69,4 +69,8 @@ return [
     'SUBHANNAH_API_TOKEN' => env('SUBHANNAH_API_TOKEN'),
     'SUBHANNAH_API_URL' => env('SUBHANNAH_API_URL'),
 
+    'mocktail' => [
+        'link_user_endpoint' => env('MOCKTAIL_LINK_USER_ENDPOINT'),
+        'create_case_endpoint' => env('MOCKTAIL_CREATE_CASE_ENDPOINT'),
+    ],
 ];

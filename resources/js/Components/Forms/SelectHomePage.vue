@@ -22,10 +22,10 @@ import FormSelect from '@/Components/Controls/FormSelect';
 import { computed, ref } from '@vue/reactivity';
 
 const props = defineProps({
-    data: { type: Object, required: true }
+    configs: { type: Object, required: true }
 });
-const availablePages = computed(() => props.data.pages.filter(p => p.can).map(p => p.label));
-const homepage = ref(props.data.currentHomePage);
+const availablePages = computed(() => props.configs.pages.filter(p => p.can).map(p => p.label));
+const homepage = ref(props.configs.currentHomePage);
 
 const autosave = () => {
     if (availablePages.value.indexOf(homepage.value) === -1) {

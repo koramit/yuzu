@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 
 class User extends Authenticatable
 {
@@ -118,5 +119,14 @@ class User extends Authenticatable
     public function hasRole($name)
     {
         return $this->role_names->contains($name);
+    }
+
+    public function getMocktailTokenAttribute()
+    {
+        if (! ($this->profile['mocktail_token'] ?? false)) {
+            return null;
+        }
+
+        return Crypt::decryptString($this->profile['mocktail_token']);
     }
 }
