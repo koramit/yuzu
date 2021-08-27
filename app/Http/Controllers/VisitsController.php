@@ -87,7 +87,16 @@ class VisitsController extends Controller
             $visit->patient_id = $patient['patient']->id;
             $form['patient']['hn'] = $patient['patient']->hn;
             $form['patient']['name'] = $patient['patient']->full_name;
-            $form['patient']['tel_no'] = $patient['patient']->profile['tel_no'];
+            try {
+                $tel = str_replace('-', '', $patient['patient']->profile['tel_no']);
+                $tel = str_replace(',', ' ', $tel);
+                $telNos = explode(' ', $tel);
+                $telNos[0] = trim($telNos[0]);
+                $form['patient']['tel_no'] = str_starts_with($telNos[0], '02') ? null : $telNos[0];
+            } catch (\Exception $e) {
+                Log::error($patient['patient']->profile['tel_no'].' '.$e->getMessage());
+                $form['patient']['tel_no'] = $patient['patient']->profile['tel_no'];
+            }
         } else {
             $visit = Visit::whereDateVisit($todayStr)
                           ->where('form->patient->name', $data['patient_name'])

@@ -36,7 +36,7 @@
                         {{ visit.patient_type ?? 'ยังไม่ระบุประเภท' }}
                     </span>
                     <span
-                        class="text-sm italic px-2 mr-1 text-bitter-theme-light"
+                        class="text-sm italic px-2 text-bitter-theme-light"
                         v-if="visit.swab"
                     >
                         <Icon
@@ -46,7 +46,7 @@
                         Swab
                     </span>
                     <span
-                        class="text-sm italic px-2 mr-1 text-alt-theme-light"
+                        class="text-sm italic px-2 text-alt-theme-light"
                         v-else
                     >
                         <Icon
@@ -54,6 +54,14 @@
                             name="stethoscope"
                         />
                         ตรวจ
+                    </span>
+                    <span
+                        class="text-sm underline px-2"
+                        :class="{
+                            'text-red-400': ['รถนั่ง', 'เปลนอน'].includes(visit.mobility),
+                        }"
+                    >
+                        {{ visit.mobility }}
                     </span>
                 </p>
                 <div class="flex items-baseline">

@@ -311,6 +311,11 @@ class Visit extends Model
         return $this->form['patient']['track'] ?? null;
     }
 
+    public function getMobilityAttribute()
+    {
+        return $this->form['patient']['mobility'] ?? null;
+    }
+
     public function getStationAttribute()
     {
         if ($this->status === 'screen' || $this->status === 'appointment') {

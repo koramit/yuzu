@@ -35,6 +35,7 @@ class VisitManager
                 'date_reswabbed' => null,
                 'track' => null,
                 'passport_no' => null,
+                'mobility' => null,
             ],
             'symptoms' => [
                 'asymptomatic_symptom' => false,
@@ -206,6 +207,7 @@ class VisitManager
                 'อ. อนุภพ',
             ],
             'swab_units' => ['SCG', 'Sky Walk'],
+            'mobilities' => ['เดินได้','รถนั่ง','เปลนอน'],
         ];
     }
 
@@ -242,6 +244,7 @@ class VisitManager
         $rules = [
             'name' => 'required|string',
             'track' => 'required',
+            'mobility' => 'required',
             'patient_type' => 'required',
             'screen_type' => 'required',
             'insurance' => 'required',
