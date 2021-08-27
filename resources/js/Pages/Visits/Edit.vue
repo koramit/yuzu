@@ -41,6 +41,17 @@
                 <Error :error="form.errors.track" />
             </div>
             <div class="mt-2">
+                <label class="form-label">ลักษณะผู้ป่วย</label>
+                <FormRadio
+                    class="md:grid grid-cols-2 gap-x-2"
+                    v-model="form.patient.mobility"
+                    :error="form.errors.mobility"
+                    name="mobility"
+                    :options="configs.mobilities"
+                />
+                <Error :error="form.errors.mobility" />
+            </div>
+            <div class="mt-2">
                 <label class="form-label">ประเภทผู้ป่วย</label>
                 <FormRadio
                     class="md:grid grid-cols-2 gap-x-2"

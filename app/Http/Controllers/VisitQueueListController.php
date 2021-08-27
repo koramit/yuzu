@@ -49,6 +49,7 @@ class VisitQueueListController extends Controller
                                'swab' => $visit->form['management']['np_swab'],
                                'swab_at' => $visit->container_swab_at ?? $visit->swab_at ?? '',
                                'track' => $visit->track ?? '',
+                               'mobility' => $visit->mobility ?? '',
                                'can' => [
                                     'queue' => $user->can('queue', $visit),
                                     'fill_hn' => $user->can('fillHn', $visit),
