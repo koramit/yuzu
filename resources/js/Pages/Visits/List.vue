@@ -14,10 +14,9 @@
         </a>
 
         <!-- compare JK -->
-        <!-- v-if="card === 'lab' && ($page.props.user.roles.includes('admin') || $page.props.user.roles.includes('root'))" -->
         <div
             class="mb-2"
-            v-if="false"
+            v-if="card === 'lab' && ($page.props.user.roles.includes('admin') || $page.props.user.roles.includes('root'))"
         >
             <div class="grid grid-cols-3">
                 <FormTextarea
@@ -143,7 +142,7 @@ import Filters from '@/Components/Cards/Filters';
 import Visit from '@/Components/Forms/Visit';
 import Appointment from '@/Components/Forms/Appointment';
 import FormTextarea from '@/Components/Controls/FormTextarea';
-import { computed, inject, nextTick, onUnmounted, reactive, ref, watch } from '@vue/runtime-core';
+import { computed, inject, nextTick, onUnmounted, reactive, ref } from '@vue/runtime-core';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/inertia-vue3';
 
@@ -332,6 +331,9 @@ export default {
             return props.visits.map(v => v.hn);
         });
         const yuzuNotInJk = computed(() => {
+            if (! jk_hn.value) {
+                return '';
+            }
             return yuzu.value.filter(y => !jk.value.includes(y)).join('\n');
         });
         const jkNotInYuzu = computed(() => {
