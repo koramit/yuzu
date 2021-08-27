@@ -24,6 +24,9 @@ class PreferencesController extends Controller
     public function show()
     {
         Request::session()->flash('page-title', 'ตั้งค่า');
+        Request::session()->flash('main-menu-links', [
+            ['icon' => 'home', 'label' => 'หน้าหลัก', 'route' => 'home', 'can' => true],
+        ]);
 
         $user = Auth::user();
 
@@ -41,6 +44,9 @@ class PreferencesController extends Controller
                     ['label' => 'ผลแลปวันนี้', 'can' => $user->can('view_any_visits')],
                     ['label' => 'รายการเคสทั้งหมด', 'can' => $user->can('view_any_visits')],
                 ],
+            ],
+            'linkMocktail' => [
+                'linked' =>$user->mocktail_token !== null,
             ],
         ]);
     }

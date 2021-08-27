@@ -1,17 +1,22 @@
 <template>
-    <SelectHomePage :data="selectHomePage" />
+    <SelectHomePage :configs="selectHomePage" />
+    <LinkMocktail :configs="linkMocktail" />
 </template>
 
 
 <script setup>
 import SelectHomePage from '@/Components/Forms/SelectHomePage';
+import LinkMocktail from '@/Components/Forms/LinkMocktail';
 
 const props = defineProps({
-    selectHomePage: { type: Object, required: true}
+    selectHomePage: { type: Object, required: true},
+    linkMocktail: { type: Object, required: true}
 });
 </script>
 
 <script>
 import Layout from '@/Components/Layouts/Layout';
+import { reactive } from '@vue/reactivity';
+import { onMounted } from '@vue/runtime-core';
 export default { layout: Layout };
 </script>

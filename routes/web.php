@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportAppointmentsController;
+use App\Http\Controllers\MocktailController;
 use App\Http\Controllers\OPDCardExportController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PreferencesController;
@@ -216,6 +217,11 @@ Route::get('croissant/feedback', [WonderWomenController::class, 'feedback']);
 Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
      ->middleware('auth')
      ->name('croissant');
+
+// link mocktail
+Route::post('mocktail', MocktailController::class)
+     ->middleware('auth', 'can:link_mocktail')
+     ->name('mocktail.link');
 
 /*
  * Route for testing ONLY
