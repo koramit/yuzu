@@ -16,7 +16,7 @@
         <!-- compare JK -->
         <div
             class="mb-2"
-            v-if="card === 'lab' && ($page.props.user.roles.includes('admin') || $page.props.user.roles.includes('root'))"
+            v-if="($page.props.user.roles.includes('admin') || $page.props.user.roles.includes('root')) && card === 'lab'"
         >
             <div class="grid grid-cols-3">
                 <FormTextarea
