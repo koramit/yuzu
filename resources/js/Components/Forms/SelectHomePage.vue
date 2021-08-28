@@ -19,6 +19,7 @@
 
 <script  setup>
 import FormSelect from '@/Components/Controls/FormSelect';
+import { Inertia } from '@inertiajs/inertia';
 import { computed, ref } from '@vue/reactivity';
 
 const props = defineProps({
@@ -33,7 +34,10 @@ const autosave = () => {
     }
     window.axios
         .patch(window.route('preferences.update'), { home_page: homepage.value })
-        .then((response) => console.log(response.data))
-        .catch(error => console.log(error));
+        .catch(error => {
+            if (error.response.status == 401) {
+                Inertia.reload();
+            }
+        });
 };
 </script>

@@ -18,6 +18,7 @@ class PreferencesController extends Controller
         'visits.today-list' => 'รายการเคสวันนี้',
         'visits.lab-list' => 'ผลแลปวันนี้',
         'visits' => 'รายการเคสทั้งหมด',
+        'dicisions' => 'Dicision',
         'preferences' => 'ตั้งค่า',
     ];
 
@@ -43,6 +44,7 @@ class PreferencesController extends Controller
                     ['label' => 'รายการเคสวันนี้', 'can' => $user->can('view_today_list')],
                     ['label' => 'ผลแลปวันนี้', 'can' => $user->can('view_any_visits')],
                     ['label' => 'รายการเคสทั้งหมด', 'can' => $user->can('view_any_visits')],
+                    ['label' => 'Dicision', 'can' => $user->can('view_dicision_list')],
                 ],
             ],
             'linkMocktail' => [
