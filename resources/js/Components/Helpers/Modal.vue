@@ -1,39 +1,41 @@
 <template>
-    <!-- backdrop -->
-    <div
-        v-show="show"
-        class="inset-0 z-30 fixed flex items-center justify-center backdrop"
-        :class="{ 'open': animate }"
-    >
-        <!-- modal -->
+    <Teleport to="body">
+        <!-- backdrop -->
         <div
-            v-if="show"
-            class="bg-white rounded shadow p-4 md:p-8 xl:p-10 modal-appear-from-top"
-            :class="{
-                'open': animate,
-                'w-11/12 md:10/12': widthMode == 'document',
-                'w-11/12 sm:10/12 md:w-2/5': widthMode == 'form-cols-1',
-            }"
+            v-show="show"
+            class="inset-0 z-30 fixed flex items-center justify-center backdrop"
+            :class="{ 'open': animate }"
         >
-            <!-- header -->
-            <div class="flex justify-between items-center">
-                <div><slot name="header" /></div>
-                <button
-                    @click="close()"
-                    class="block p-2 rounded-full bg-gray-100 hover:bg-soft-theme-light transition-colors ease-in-out duration-200"
-                >
-                    <icon
-                        name="times"
-                        class="w-4 h-4"
-                    />
-                </button>
+            <!-- modal -->
+            <div
+                v-if="show"
+                class="bg-white rounded shadow p-4 md:p-8 xl:p-10 modal-appear-from-top"
+                :class="{
+                    'open': animate,
+                    'w-11/12 md:10/12': widthMode == 'document',
+                    'w-11/12 sm:10/12 md:w-2/5': widthMode == 'form-cols-1',
+                }"
+            >
+                <!-- header -->
+                <div class="flex justify-between items-center">
+                    <div><slot name="header" /></div>
+                    <button
+                        @click="close()"
+                        class="block p-2 rounded-full bg-gray-100 hover:bg-soft-theme-light transition-colors ease-in-out duration-200"
+                    >
+                        <icon
+                            name="times"
+                            class="w-4 h-4"
+                        />
+                    </button>
+                </div>
+                <!-- body -->
+                <div><slot name="body" /></div>
+                <!-- footer -->
+                <div><slot name="footer" /></div>
             </div>
-            <!-- body -->
-            <div><slot name="body" /></div>
-            <!-- footer -->
-            <div><slot name="footer" /></div>
         </div>
-    </div>
+    </Teleport>
 </template>
 
 <script>

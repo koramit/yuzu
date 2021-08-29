@@ -16,6 +16,7 @@ use App\Http\Controllers\ServerSendEventsController;
 use App\Http\Controllers\VisitActionsController;
 use App\Http\Controllers\VisitAttachOPDCardController;
 use App\Http\Controllers\VisitAuthorizationController;
+use App\Http\Controllers\VisitDicisionController;
 use App\Http\Controllers\VisitDischargeListController;
 use App\Http\Controllers\VisitEnqueueSwabListController;
 use App\Http\Controllers\VisitEvaluateController;
@@ -143,10 +144,17 @@ Route::post('visits/fill-hn/{visit:slug}', VisitFillHnController::class)
      ->middleware('auth', 'can:fillHn,visit')
      ->name('visits.fill-hn.store');
 
-//evaluation
-Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class)
+// evaluation
+Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class) // save consultation note
      ->middleware('auth', 'can:evaluate')
      ->name('visits.evaluate');
+
+// Dicision
+Route::get('dicisions', [VisitDicisionController::class, 'index'])
+     ->middleware('auth', 'remember', 'can:view_dicision_list')
+     ->name('dicisions');
+
+// Export data
 Route::get('export/opd_cards', OPDCardExportController::class)
      ->middleware('auth', 'can:export_opd_cards')
      ->name('export.opd_cards');
@@ -231,6 +239,9 @@ Route::get('login-as/{name}', function ($name) {
         abort(404);
     }
     $user = \App\Models\User::whereName($name)->first();
+    if (! $user) {
+        abort(404);
+    }
     \Auth::login($user);
 
     return redirect()->route($user->home_page);
