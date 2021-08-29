@@ -16,7 +16,7 @@
     </div>
 
     <!-- table  -->
-    <div class="hidden md:block rounded-md shadow overflow-x-auto overflow-y-scroll max-h-80">
+    <div class="hidden md:block rounded-md shadow overflow-x-auto overflow-y-scroll max-h-90">
         <table class="w-full whitespace-nowrap relative bg-white">
             <tr class="text-left font-semibold">
                 <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
@@ -324,68 +324,70 @@
             </div>
         </template>
         <template #body>
-            <!-- type and insurance  -->
-            <div class="mt-2 flex space-x-2">
-                <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
+            <div class="overflow-y-scroll max-h-96 md:max-h-full">
+                <!-- type and insurance  -->
+                <div class="mt-2 flex space-x-2">
+                    <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
+                        <p>
+                            <span class="italic">Type: </span>
+                            {{ selectedPositive.patient_type }}
+                        </p>
+                    </div>
+                    <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
+                        <p>
+                            <span class="italic">Insurance: </span>
+                            {{ selectedPositive.insuranceShow }}
+                        </p>
+                    </div>
+                </div>
+                <!-- ud and symptom -->
+                <div class="mt-2 flex space-x-2">
+                    <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
+                        <p>
+                            <span class="italic">UD: </span>
+                            <span :class="{'text-bitter-theme-light font-medium': selectedPositive.comorbids === 'ไม่มี'}">{{ ud(selectedPositive) }}</span>
+                        </p>
+                        <p v-if="selectedPositive.weight">
+                            <span class="italic">Weight: </span>
+                            <span :class="{'text-red-400 font-semibold': selectedPositive.weight > 90}">{{ selectedPositive.weight }}</span>
+                        </p>
+                    </div>
+                    <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
+                        <p v-if="selectedPositive.onset">
+                            <span class="italic">Onset: </span>
+                            {{ selectedPositive.onset }}
+                        </p>
+                        <p>
+                            <span class="italic">Symptom: </span>
+                            <span :class="{'text-bitter-theme-light font-medium': !selectedPositive.onset}">{{ symptom(selectedPositive) }}</span>
+                        </p>
+                    </div>
+                </div>
+                <!-- note -->
+                <div
+                    class="mt-2 rounded-md shadow-sm bg-gray-100 p-2"
+                    v-if="selectedPositive.note"
+                >
                     <p>
-                        <span class="italic">Type: </span>
-                        {{ selectedPositive.patient_type }}
+                        <span class="italic">Note: </span>
+                        {{ selectedPositive.note }}
                     </p>
                 </div>
-                <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
-                    <p>
-                        <span class="italic">Insurance: </span>
-                        {{ selectedPositive.insuranceShow }}
-                    </p>
-                </div>
-            </div>
-            <!-- ud and symptom -->
-            <div class="mt-2 flex space-x-2">
-                <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
-                    <p>
-                        <span class="italic">UD: </span>
-                        <span :class="{'text-bitter-theme-light font-medium': selectedPositive.comorbids === 'ไม่มี'}">{{ ud(selectedPositive) }}</span>
-                    </p>
-                    <p v-if="selectedPositive.weight">
-                        <span class="italic">Weight: </span>
-                        <span :class="{'text-red-400 font-semibold': selectedPositive.weight > 90}">{{ selectedPositive.weight }}</span>
-                    </p>
-                </div>
-                <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
-                    <p v-if="selectedPositive.onset">
-                        <span class="italic">Onset: </span>
-                        {{ selectedPositive.onset }}
-                    </p>
-                    <p>
-                        <span class="italic">Symptom: </span>
-                        <span :class="{'text-bitter-theme-light font-medium': !selectedPositive.onset}">{{ symptom(selectedPositive) }}</span>
-                    </p>
-                </div>
-            </div>
-            <!-- note -->
-            <div
-                class="mt-2 rounded-md shadow-sm bg-gray-100 p-2"
-                v-if="selectedPositive.note"
-            >
-                <p>
-                    <span class="italic">Note: </span>
-                    {{ selectedPositive.note }}
-                </p>
-            </div>
-            <FormTextarea
-                class="mt-4"
-                label="remark"
-                v-model="remark"
-                name="remark"
-            />
-            <div class="mt-2">
-                <label class="form-label">dicision</label>
-                <FormRadio
-                    class="md:grid grid-cols-2 gap-x-2"
-                    v-model="dicision"
-                    name="dicision"
-                    :options="['Ward', 'Biyok', 'Riverside', 'HI', 'Colink']"
+                <FormTextarea
+                    class="mt-4"
+                    label="remark"
+                    v-model="remark"
+                    name="remark"
                 />
+                <div class="mt-2">
+                    <label class="form-label">dicision</label>
+                    <FormRadio
+                        class="md:grid grid-cols-2 gap-x-2"
+                        v-model="dicision"
+                        name="dicision"
+                        :options="['Ward', 'Biyok', 'Riverside', 'HI', 'Colink']"
+                    />
+                </div>
             </div>
         </template>
         <template #footer>
@@ -487,7 +489,7 @@ export default { layout: Layout };
 </script>
 
 <style scoped>
-.max-h-80 {
+.max-h-90 {
     max-height: 90%;
 }
 </style>
