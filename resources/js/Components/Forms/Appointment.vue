@@ -1,64 +1,62 @@
 <template>
-    <Teleport to="body">
-        <Modal
-            ref="modal"
-            width-mode="form-cols-1"
-            @closed="$emit('closed')"
-            @opened="$refs.hnInput.focus()"
-        >
-            <template #header>
-                <div class="font-semibold text-dark-theme-light">
-                    เพิ่มเคสของพรุ่งนี้ {{ $page.props.app.tomorrow_label }}
-                </div>
-            </template>
-            <template #body>
-                <div class="py-4 my-2 md:py-6 md:my-4 border-t border-b border-bitter-theme-light">
-                    <FormInput
-                        class="mt-2"
-                        v-model="form.hn"
-                        name="hn"
-                        type="tel"
-                        label="hn"
-                        ref="hnInput"
-                        :error="form.errors.hn"
-                    />
-                    <FormInput
-                        v-if="form.patient_name"
-                        class="mt-2"
-                        v-model="form.patient_name"
-                        name="patient_name"
-                        label="ชื่อผู้ป่วย"
-                        :readonly="true"
-                    />
-                </div>
-            </template>
-            <template #footer>
-                <!-- <div class="flex items-center"> -->
-                <SpinnerButton
-                    :spin="form.busy"
-                    class="btn-dark w-full mt-6"
-                    @click="store"
-                    :disabled="!form.hn"
-                >
-                    {{ form.confirmed ? 'ยืนยัน':'ตรวจสอบ' }}
-                </SpinnerButton>
-                <SpinnerButton
-                    :spin="fileUploader.processing"
-                    class="btn-bitter w-full mt-6"
-                    @click="importAppointments.click()"
-                >
-                    นำเข้า Excel
-                </SpinnerButton>
-                <input
-                    class="hidden"
-                    type="file"
-                    ref="importAppointments"
-                    @input="fileSelected"
-                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                >
-            </template>
-        </Modal>
-    </Teleport>
+    <Modal
+        ref="modal"
+        width-mode="form-cols-1"
+        @closed="$emit('closed')"
+        @opened="$refs.hnInput.focus()"
+    >
+        <template #header>
+            <div class="font-semibold text-dark-theme-light">
+                เพิ่มเคสของพรุ่งนี้ {{ $page.props.app.tomorrow_label }}
+            </div>
+        </template>
+        <template #body>
+            <div class="py-4 my-2 md:py-6 md:my-4 border-t border-b border-bitter-theme-light">
+                <FormInput
+                    class="mt-2"
+                    v-model="form.hn"
+                    name="hn"
+                    type="tel"
+                    label="hn"
+                    ref="hnInput"
+                    :error="form.errors.hn"
+                />
+                <FormInput
+                    v-if="form.patient_name"
+                    class="mt-2"
+                    v-model="form.patient_name"
+                    name="patient_name"
+                    label="ชื่อผู้ป่วย"
+                    :readonly="true"
+                />
+            </div>
+        </template>
+        <template #footer>
+            <!-- <div class="flex items-center"> -->
+            <SpinnerButton
+                :spin="form.busy"
+                class="btn-dark w-full mt-6"
+                @click="store"
+                :disabled="!form.hn"
+            >
+                {{ form.confirmed ? 'ยืนยัน':'ตรวจสอบ' }}
+            </SpinnerButton>
+            <SpinnerButton
+                :spin="fileUploader.processing"
+                class="btn-bitter w-full mt-6"
+                @click="importAppointments.click()"
+            >
+                นำเข้า Excel
+            </SpinnerButton>
+            <input
+                class="hidden"
+                type="file"
+                ref="importAppointments"
+                @input="fileSelected"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            >
+        </template>
+    </Modal>
 </template>
 
 <script>

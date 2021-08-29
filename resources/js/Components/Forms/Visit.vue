@@ -1,52 +1,52 @@
 <template>
-    <Teleport to="body">
-        <Modal
-            ref="modal"
-            width-mode="form-cols-1"
-            @closed="$emit('closed')"
-            @opened="$refs.hnInput.focus()"
-        >
-            <template #header>
-                <div class="font-semibold text-dark-theme-light">
-                    เพิ่มเคสใหม่
-                </div>
-            </template>
-            <template #body>
-                <div class="py-4 my-2 md:py-6 md:my-4 border-t border-b border-bitter-theme-light">
-                    <FormInput
-                        class="mt-2"
-                        v-model="form.hn"
-                        name="hn"
-                        type="tel"
-                        label="hn"
-                        ref="hnInput"
-                        :error="form.errors.hn"
-                    />
-                    <FormInput
-                        class="mt-2"
-                        v-model="form.patient_name"
-                        name="patient_name"
-                        label="ชื่อผู้ป่วย (กรณียังไม่มี HN)"
-                        placeholder="ชื่อ นามสกุล ไม่ต้องมีคำนำหน้า"
-                        :error="form.errors.patient_name"
-                        :readonly="hnProvided"
-                    />
-                </div>
-            </template>
-            <template #footer>
-                <div class="flex justify-end items-center">
-                    <SpinnerButton
-                        :spin="form.busy"
-                        class="btn-dark w-full mt-6"
-                        @click="store"
-                        :disabled="!formCompleted"
-                    >
-                        {{ form.confirmed ? 'ยืนยัน':'ตรวจสอบ' }}
-                    </SpinnerButton>
-                </div>
-            </template>
-        </Modal>
-    </Teleport>
+    <!-- <Teleport to="body"> -->
+    <Modal
+        ref="modal"
+        width-mode="form-cols-1"
+        @closed="$emit('closed')"
+        @opened="$refs.hnInput.focus()"
+    >
+        <template #header>
+            <div class="font-semibold text-dark-theme-light">
+                เพิ่มเคสใหม่
+            </div>
+        </template>
+        <template #body>
+            <div class="py-4 my-2 md:py-6 md:my-4 border-t border-b border-bitter-theme-light">
+                <FormInput
+                    class="mt-2"
+                    v-model="form.hn"
+                    name="hn"
+                    type="tel"
+                    label="hn"
+                    ref="hnInput"
+                    :error="form.errors.hn"
+                />
+                <FormInput
+                    class="mt-2"
+                    v-model="form.patient_name"
+                    name="patient_name"
+                    label="ชื่อผู้ป่วย (กรณียังไม่มี HN)"
+                    placeholder="ชื่อ นามสกุล ไม่ต้องมีคำนำหน้า"
+                    :error="form.errors.patient_name"
+                    :readonly="hnProvided"
+                />
+            </div>
+        </template>
+        <template #footer>
+            <div class="flex justify-end items-center">
+                <SpinnerButton
+                    :spin="form.busy"
+                    class="btn-dark w-full mt-6"
+                    @click="store"
+                    :disabled="!formCompleted"
+                >
+                    {{ form.confirmed ? 'ยืนยัน':'ตรวจสอบ' }}
+                </SpinnerButton>
+            </div>
+        </template>
+    </Modal>
+    <!-- </Teleport> -->
 </template>
 
 <script>

@@ -151,7 +151,7 @@ Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class) // 
 
 // Dicision
 Route::get('dicisions', [VisitDicisionController::class, 'index'])
-     ->middleware('auth', 'can:view_dicision_list')
+     ->middleware('auth', 'remember', 'can:view_dicision_list')
      ->name('dicisions');
 
 // Export data
@@ -239,6 +239,9 @@ Route::get('login-as/{name}', function ($name) {
         abort(404);
     }
     $user = \App\Models\User::whereName($name)->first();
+    if (! $user) {
+        abort(404);
+    }
     \Auth::login($user);
 
     return redirect()->route($user->home_page);

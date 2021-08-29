@@ -16,7 +16,5 @@ const props = defineProps({
 
 <script>
 import Layout from '@/Components/Layouts/Layout';
-import { reactive } from '@vue/reactivity';
-import { onMounted } from '@vue/runtime-core';
 export default { layout: Layout };
 </script>
