@@ -218,6 +218,12 @@
                     :readonly="true"
                 />
             </template>
+            <FormInput
+                class="mt-2"
+                name="service_location"
+                label="หน่วยงาน / หอผู้ป่วย / แผนก ที่ขึ้นปฏิบัติงาน"
+                v-model="form.patient.service_location"
+            />
             <div class="mt-2">
                 <label class="form-label">ความเสี่ยง</label>
                 <FormRadio

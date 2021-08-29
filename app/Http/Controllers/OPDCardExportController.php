@@ -61,6 +61,7 @@ class OPDCardExportController extends Controller
             'sap_id' => $form['patient']['sap_id'],
             'position' => $form['patient']['position'],
             'division' => $form['patient']['division'],
+            'service_location' => $form['patient']['service_location'] ?? null,
             'risk' => $form['patient']['risk'],
             'date_latest_expose_by_im' => $this->castDate($form['patient']['date_latest_expose_by_im']),
 
