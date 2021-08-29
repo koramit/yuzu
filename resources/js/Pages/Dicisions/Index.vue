@@ -202,15 +202,17 @@
         >
             <div class="flex justify-between items-center text-sm">
                 <p class="flex items-center">
-                    <span class="italic mr-2">{{ positive.patient_type }}</span>
-                    <button class="inline-flex items-center text-blue-300 mr-2">
+                    <button
+                        class="inline-flex items-center text-blue-300 mr-2"
+                        @click="callPositive(positive)"
+                    >
                         <Icon
                             name="phone-square"
                             class="w-4 h-4"
                         />
                         {{ positive.tel_no }}
                     </button>
-                    {{ positive.insuranceShow }}
+                    <span class="italic mr-2">{{ positive.patient_type }}</span>
                 </p>
                 <Dropdown>
                     <template #default>
@@ -262,24 +264,29 @@
                     </template>
                 </Dropdown>
             </div>
-            <p class="mt-2 inline-flex items-center text-lg text-thick-theme-light font-medium">
-                <span class="inline-flex items-center mr-1">
-                    <Icon
-                        :name="positive.refer_to ? 'check-circle' : 'hourglass-half'"
-                        class="w-4 h-4 mr-1"
-                        :class="{
-                            'text-bitter-theme-light': positive.refer_to,
-                            'text-thick-theme-light': !positive.refer_to,
-                        }"
-                    />
-                    {{ positive.hn }}
-                </span>
-                <span class="mr-1">{{ positive.patient_name }}</span>
-                <span
-                    class="mr-1"
-                    :class="{'text-red-400 font-semibold': positive.age > 80}"
-                >{{ positive.age }}</span> ปี
-            </p>
+            <div class="mt-2 text-lg text-thick-theme-light font-medium">
+                <p>
+                    <span class="inline-flex items-center mr-1">
+                        <Icon
+                            :name="positive.refer_to ? 'check-circle' : 'hourglass-half'"
+                            class="w-4 h-4 mr-1"
+                            :class="{
+                                'text-bitter-theme-light': positive.refer_to,
+                                'text-thick-theme-light': !positive.refer_to,
+                            }"
+                        />
+                        {{ positive.hn }}
+                        {{ positive.insuranceShow }}
+                    </span>
+                </p>
+                <p>
+                    <span class="mr-1">{{ positive.patient_name }}</span>
+                    <span
+                        class="mr-1"
+                        :class="{'text-red-400 font-semibold': positive.age > 80}"
+                    >{{ positive.age }}</span> ปี
+                </p>
+            </div>
             <div class="mt-2 flex space-x-2 text-sm">
                 <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
                     <p>
