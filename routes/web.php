@@ -16,7 +16,7 @@ use App\Http\Controllers\ServerSendEventsController;
 use App\Http\Controllers\VisitActionsController;
 use App\Http\Controllers\VisitAttachOPDCardController;
 use App\Http\Controllers\VisitAuthorizationController;
-use App\Http\Controllers\VisitDicisionController;
+use App\Http\Controllers\VisitDecisionController;
 use App\Http\Controllers\VisitDischargeListController;
 use App\Http\Controllers\VisitEnqueueSwabListController;
 use App\Http\Controllers\VisitEvaluateController;
@@ -150,9 +150,9 @@ Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class) // 
      ->name('visits.evaluate');
 
 // Dicision
-Route::get('dicisions', [VisitDicisionController::class, 'index'])
-     ->middleware('auth', 'remember', 'can:view_dicision_list')
-     ->name('dicisions');
+Route::get('dicisions', [VisitDecisionController::class, 'index'])
+     ->middleware('auth', 'remember', 'can:view_decision_list')
+     ->name('decisions');
 
 // Export data
 Route::get('export/opd_cards', OPDCardExportController::class)
