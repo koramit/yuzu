@@ -80,7 +80,7 @@ class MocktailManager
             'other_diagnosis' => $visit->form['diagnosis']['other_diagnosis'],
             'note' => $visit->form['note'],
             'refer_to' => null,
-            'dicision_remark' => null,
+            'decision_remark' => null,
         ];
     }
 }

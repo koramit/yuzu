@@ -207,7 +207,7 @@ class VisitManager
                 'อ. อนุภพ',
             ],
             'swab_units' => ['SCG', 'Sky Walk'],
-            'mobilities' => ['เดินได้','รถนั่ง','เปลนอน'],
+            'mobilities' => ['เดินได้', 'รถนั่ง', 'เปลนอน'],
         ];
     }
 
@@ -427,7 +427,7 @@ class VisitManager
                 ['icon' => 'inbox', 'label' => 'รายการเคสวันนี้', 'route' => 'visits.today-list', 'can' => $user->can('view_today_list')],
                 ['icon' => 'satellite-dish', 'label' => 'ผลแลปวันนี้', 'route' => 'visits.lab-list', 'can' => $user->can('view_any_visits')],
                 ['icon' => 'archive', 'label' => 'รายการเคสทั้งหมด', 'route' => 'visits', 'can' => $user->can('view_any_visits')],
-                ['icon' => 'procedure', 'label' => 'Dicision', 'route' => 'dicisions', 'can' => $user->can('view_dicision_list')],
+                ['icon' => 'procedure', 'label' => 'Decision', 'route' => 'decisions', 'can' => $user->can('view_decision_list')],
             ],
             'action-menu' => [
                 ['icon' => 'notes-medical', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-visit', 'can' => $user->can('create_visit')],

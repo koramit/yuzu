@@ -5,7 +5,7 @@
             name="date_visit"
             label="วันที่ตรวจพบเชื้อ"
             v-model="formDateVisit"
-            @autosave="$inertia.visit(route('dicisions') + '?date_visit=' + formDateVisit)"
+            @autosave="$inertia.visit(route('decisions') + '?date_visit=' + formDateVisit)"
         />
         <FormInput
             class="mb-2 md:w-3/5 xl:w-3/4"
@@ -56,7 +56,7 @@
                     class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light z-20"
                     colspan="2"
                 >
-                    Dicision
+                    Decision
                 </th>
             </tr>
             <tr
@@ -126,7 +126,7 @@
                     {{ positive.weight }}
                 </td>
                 <td class="border-t px-3 py-2">
-                    {{ positive.dicision_remark }}
+                    {{ positive.decision_remark }}
                 </td>
                 <td
                     class="border-t px-3 py-2"
@@ -154,10 +154,10 @@
                                     Ward
                                 </button>
                                 <button
-                                    @click="positive.refer_to = 'Biyok'"
+                                    @click="positive.refer_to = 'Biyoke'"
                                     class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
                                 >
-                                    Biyok
+                                    Biyoke
                                 </button>
                                 <button
                                     @click="positive.refer_to = 'Riverside'"
@@ -237,10 +237,10 @@
                                 Ward
                             </button>
                             <button
-                                @click="positive.refer_to = 'Biyok'"
+                                @click="positive.refer_to = 'Biyoke'"
                                 class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
                             >
-                                Biyok
+                                Biyoke
                             </button>
                             <button
                                 @click="positive.refer_to = 'Riverside'"
@@ -312,9 +312,9 @@
         </div>
     </div>
 
-    <!-- dicision -->
+    <!-- decision -->
     <Modal
-        ref="dicisionModal"
+        ref="decisionModal"
         width-mode="form-cols-1"
     >
         <template #header>
@@ -380,12 +380,12 @@
                     name="remark"
                 />
                 <div class="mt-2">
-                    <label class="form-label">dicision</label>
+                    <label class="form-label">decision</label>
                     <FormRadio
                         class="md:grid grid-cols-2 gap-x-2"
-                        v-model="dicision"
-                        name="dicision"
-                        :options="['Ward', 'Biyok', 'Riverside', 'HI', 'Colink']"
+                        v-model="decision"
+                        name="decision"
+                        :options="['Ward', 'Biyoke', 'Riverside', 'HI', 'Colink']"
                     />
                 </div>
             </div>
@@ -393,7 +393,7 @@
         <template #footer>
             <button
                 class="mt-2 w-full btn btn-bitter"
-                @click="makeDicision"
+                @click="makeDecision"
             >
                 บันทึก
             </button>
@@ -464,20 +464,20 @@ const ud = (visit) => {
     return text.trim();
 };
 
-const dicisionModal = ref(null);
+const decisionModal = ref(null);
 const selectedPositive = ref(null);
 const remark = ref(null);
-const dicision = ref(null);
+const decision = ref(null);
 const callPositive = (positive) => {
     selectedPositive.value = positive;
-    remark.value = positive.dicision_remark;
-    dicision.value = positive.refer_to;
-    nextTick(() => dicisionModal.value.open());
+    remark.value = positive.decision_remark;
+    decision.value = positive.refer_to;
+    nextTick(() => decisionModal.value.open());
 };
-const makeDicision = () => {
-    selectedPositive.value.refer_to = dicision.value;
-    selectedPositive.value.dicision_remark = remark.value;
-    nextTick(() => dicisionModal.value.close());
+const makeDecision = () => {
+    selectedPositive.value.refer_to = decision.value;
+    selectedPositive.value.decision_remark = remark.value;
+    nextTick(() => decisionModal.value.close());
 };
 </script>
 
