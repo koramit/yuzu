@@ -25,6 +25,7 @@ class VisitManager
                 'sap_id' => null,
                 'position' => null,
                 'division' => null,
+                'service_location' =>null,
                 'risk' => null,
                 'date_latest_expose_by_im' => null,
                 'temperature_celsius' => null,
@@ -470,6 +471,7 @@ class VisitManager
         if ($visit->patient_type === 'เจ้าหน้าที่ศิริราช') {
             $contentVisit['sap id'] = $visit->form['patient']['sap_id'];
             $contentVisit['ปฏิบัติงาน'] = $visit->form['patient']['position'];
+            $contentVisit['พื้นที่ปฏิบัติงาน'] = $visit->form['patient']['service_location'] ?? null;
             $contentVisit['ความเสี่ยง'] = $visit->form['patient']['risk'];
         }
         $contentVisit['หมายเลขโทรศัพท์'] = $visit->tel_no;
