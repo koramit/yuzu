@@ -21,14 +21,14 @@ class ImportAppointmentsController extends Controller
 
         $appointments = FastExcel::import(storage_path('app/'.$path))->transform(function ($case) {
             return [
-                'patient_name' => trim($case['ชื่อ'].' '.$case['นามสกุล']),
-                'hn' => str_replace('-', '', $case['HN']),
-                'tel_no' => str_replace('-', '', $case['เบอร์มือถือ']),
-                'date_latest_expose' => $case["วันที่สัมผัสใกล้ชิด\nกับผู้ติดเชื้อ"],
-                'risk' => $case['ระดับความเสี่ยงที่ประเมินได้'],
+                'patient_name' => trim($case['ชื่อ'] ?? ''.' '.$case['นามสกุล'] ?? ''),
+                'hn' => str_replace('-', '', $case['HN'] ?? ''),
+                'tel_no' => str_replace('-', '', $case['เบอร์มือถือ'] ?? ''),
+                'date_latest_expose' => $case["วันที่สัมผัสใกล้ชิด\nกับผู้ติดเชื้อ"] ?? '',
+                'risk' => $case['ระดับความเสี่ยงที่ประเมินได้'] ?? '',
                 // 'date_latest_vacciniated' => $case["วันที่ฉีดวัคซีน\nเข็มล่าสุด"],
-                'date_latest_vacciniated' => $case['โดย ID/วป'],
-                'vaccine' => $case["ประวัติการรับวัคซีน COVID-19\n(AZ = AstraZeneca, SV = Sinovac)"],
+                'date_latest_vacciniated' => $case['โดย ID/วป'] ?? '',
+                'vaccine' => $case["ประวัติการรับวัคซีน COVID-19\n(AZ = AstraZeneca, SV = Sinovac)"] ?? '',
             ];
         });
 
