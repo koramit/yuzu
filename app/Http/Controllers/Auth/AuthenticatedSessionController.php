@@ -31,6 +31,19 @@ class AuthenticatedSessionController extends Controller
             'password' => 'required|string',
         ]);
 
+        if (filter_var(Request::input('login'), FILTER_VALIDATE_EMAIL)) {
+            $credentials = Request::only('login', 'password');
+            if (Auth::attempt($credentials)) {
+                Request::session()->regenerate();
+
+                return Redirect::intended(route(Auth::user()->home_page));
+            }
+
+            return back()->withErrors([
+                'login' => __('auth.failed'),
+            ]);
+        }
+
         $data = $api->authenticate(Request::input('login'), Request::input('password'));
 
         if (! $data['found']) {

@@ -49,6 +49,7 @@ class PreferencesController extends Controller
             ],
             'linkMocktail' => [
                 'linked' =>$user->mocktail_token !== null,
+                'can' => $user->can('link_mocktail'),
             ],
         ]);
     }
