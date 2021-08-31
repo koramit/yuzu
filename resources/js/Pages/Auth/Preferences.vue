@@ -1,6 +1,9 @@
 <template>
     <SelectHomePage :configs="selectHomePage" />
-    <LinkMocktail :configs="linkMocktail" />
+    <LinkMocktail
+        v-if="false"
+        :configs="linkMocktail"
+    />
 </template>
 
 
