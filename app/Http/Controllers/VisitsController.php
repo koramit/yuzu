@@ -48,6 +48,7 @@ class VisitsController extends Controller
                                'updated_at_for_humans' => $visit->updated_at_for_humans,
                                'can' => [
                                    'view' => $user->can('view', $visit),
+                                   'view_visit_actions' => $user->can('view_visit_actions'),
                                ],
                            ];
                        });
