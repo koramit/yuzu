@@ -42,7 +42,7 @@ class WonderWomenController extends Controller
         $visits = Visit::with('patient')
                        ->whereDateVisit($today->format('Y-m-d'))
                        ->whereStatus(4) // discharged
-                       ->where('form->management->np_swab', true)
+                       ->where('swabbed', true)
                        ->whereNull('form->management->np_swab_result')
                        ->orderBy('discharged_at')
                        ->get()
@@ -56,12 +56,15 @@ class WonderWomenController extends Controller
                                 'note' => null,
                                 'retry' => 0,
                                 'type' => $visit->patient_type,
+                                'specimen_no' => $visit->specimen_no,
                             ];
                        });
 
+        Cache::put('croissant-message', 'fetch');
         Cache::put('croissant-not-found', []);
         Cache::put('croissant-pending-hits', 0);
         Cache::put('croissant-report-hits', 0);
+        Cache::put('croissant-not-found-hits', 0);
 
         return $visits;
     }
@@ -110,6 +113,7 @@ class WonderWomenController extends Controller
         Cache::put('croissant-message', 'reported');
         Cache::put('croissant-latest', now());
         Cache::put('croissant-pending-hits', 0);
+        Cache::put('croissant-not-found-hits', 0);
         $this->resolveNotFound($visit->slug);
 
         return ['ok' => true];
@@ -145,8 +149,11 @@ class WonderWomenController extends Controller
             $notFound = Cache::get('croissant-not-found', []);
             $notFound[] = $visit->slug;
             Cache::put('croissant-not-found', collect($notFound)->unique()->values()->all());
+            Cache::increment('croissant-not-found-hits');
+            Cache::put('croissant-pending-hits', 0);
         } else { // result to follow
             Cache::increment('croissant-pending-hits');
+            Cache::put('croissant-not-found-hits', 0);
             $this->resolveNotFound($visit->slug);
         }
 
@@ -161,6 +168,7 @@ class WonderWomenController extends Controller
             'message' => Cache::get('croissant-message'),
             'updated_at' => Cache::get('croissant-latest')->diffForHumans(now()),
             'pending_hits' => Cache::get('croissant-pending-hits'),
+            'not_found_hits' => Cache::get('croissant-not-found-hits'),
             'report_hits' => Cache::get('croissant-report-hits'),
             'not_found' => Cache::get('croissant-not-found'),
         ];
