@@ -70,7 +70,7 @@ class WonderWomenController extends Controller
             return $visits;
         }
 
-        return collect($visits)->filter(fn ($visit) => $visit['specimen_no'] % 2 === Request::input('mode'))->all();
+        return collect($visits)->filter(fn ($visit) => $visit['specimen_no'] % 2 === Request::input('mode'))->values()->all();
     }
 
     public function store()
