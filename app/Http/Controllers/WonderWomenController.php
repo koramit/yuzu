@@ -66,7 +66,11 @@ class WonderWomenController extends Controller
         Cache::put('croissant-report-hits', 0);
         Cache::put('croissant-not-found-hits', 0);
 
-        return $visits;
+        if (Request::input('mode', 2) === 2) {
+            return $visits;
+        }
+
+        return collect($visits)->filter(fn ($visit) => $visit->specimen_no % 2 === Request::input('mode'));
     }
 
     public function store()
