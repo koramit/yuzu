@@ -149,8 +149,8 @@ Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class) // 
      ->middleware('auth', 'can:evaluate')
      ->name('visits.evaluate');
 
-// Dicision
-Route::get('dicisions', [VisitDecisionController::class, 'index'])
+// Decision
+Route::get('decisions', [VisitDecisionController::class, 'index'])
      ->middleware('auth', 'remember', 'can:view_decision_list')
      ->name('decisions');
 

@@ -38,7 +38,8 @@ class VisitExportController extends Controller
                             ];
                        });
 
-        $filename = 'รายงานผู้ป่วย ARI Clinic.xlsx';
+        $reportDateStr = now('asia/bangkok')->format('d-M-Y');
+        $filename = "รายงานผู้ป่วย ARI Clinic@{$reportDateStr}.xlsx";
 
         LoadDataRecord::create([
             'export' => true,
