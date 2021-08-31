@@ -19,45 +19,13 @@
     <div class="hidden md:block rounded-md shadow overflow-x-auto overflow-y-scroll max-h-90">
         <table class="w-full whitespace-nowrap relative bg-white">
             <tr class="text-left font-semibold">
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Name
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Age
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    HN
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Tel
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Type
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Insurance
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    U/D
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Symptom
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Onset
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Weight
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Remark
-                </th>
                 <th
-                    class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light z-20"
-                    colspan="2"
-                >
-                    Decision
-                </th>
+                    class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light"
+                    v-for="column in headrows"
+                    :key="column"
+                    :colspan="column === 'Decision' ? 2:1"
+                    v-text="column"
+                />
             </tr>
             <tr
                 v-for="(positive, key) in positives"
@@ -148,35 +116,12 @@
                         <template #dropdown>
                             <div class="rounded shadow bg-bitter-theme-light text-white py-2">
                                 <button
-                                    @click="positive.refer_to = 'Ward'"
+                                    v-for="referTo in referToOptions"
+                                    :key="referTo"
+                                    @click="positive.refer_to = referTo"
                                     class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                                >
-                                    Ward
-                                </button>
-                                <button
-                                    @click="positive.refer_to = 'Biyoke'"
-                                    class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                                >
-                                    Biyoke
-                                </button>
-                                <button
-                                    @click="positive.refer_to = 'Riverside'"
-                                    class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                                >
-                                    Riverside
-                                </button>
-                                <button
-                                    @click="positive.refer_to = 'HI'"
-                                    class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                                >
-                                    HI
-                                </button>
-                                <button
-                                    @click="positive.refer_to = 'Colink'"
-                                    class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                                >
-                                    Colink
-                                </button>
+                                    v-text="referTo"
+                                />
                             </div>
                         </template>
                     </Dropdown>
@@ -231,35 +176,12 @@
                     <template #dropdown>
                         <div class="rounded shadow bg-bitter-theme-light text-white py-2">
                             <button
-                                @click="positive.refer_to = 'Ward'"
+                                v-for="referTo in referToOptions"
+                                :key="referTo"
+                                @click="positive.refer_to = referTo"
                                 class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                            >
-                                Ward
-                            </button>
-                            <button
-                                @click="positive.refer_to = 'Biyoke'"
-                                class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                            >
-                                Biyoke
-                            </button>
-                            <button
-                                @click="positive.refer_to = 'Riverside'"
-                                class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                            >
-                                Riverside
-                            </button>
-                            <button
-                                @click="positive.refer_to = 'HI'"
-                                class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                            >
-                                HI
-                            </button>
-                            <button
-                                @click="positive.refer_to = 'Colink'"
-                                class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                            >
-                                Colink
-                            </button>
+                                v-text="referTo"
+                            />
                         </div>
                     </template>
                 </Dropdown>
@@ -385,7 +307,7 @@
                         class="md:grid grid-cols-2 gap-x-2"
                         v-model="decision"
                         name="decision"
-                        :options="['Ward', 'Biyoke', 'Riverside', 'HI', 'Colink']"
+                        :options="referToOptions"
                     />
                 </div>
             </div>
@@ -413,7 +335,10 @@ import Dropdown from '@/Components/Helpers/Dropdown';
 const props = defineProps({
     positiveCases: { type: Array, required: true },
     dateVisit: { type: String, required: true },
+    referToOptions: { type: Array, required: true }
 });
+
+const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom','Onset','Weight','Remark','Decision']);
 
 const formDateVisit = ref(props.dateVisit);
 

@@ -1,9 +1,6 @@
 <template>
     <SelectHomePage :configs="selectHomePage" />
-    <LinkMocktail
-        v-if="false"
-        :configs="linkMocktail"
-    />
+    <LinkMocktail :configs="linkMocktail" />
 </template>
 
 
@@ -11,7 +8,7 @@
 import SelectHomePage from '@/Components/Forms/SelectHomePage';
 import LinkMocktail from '@/Components/Forms/LinkMocktail';
 
-const props = defineProps({
+defineProps({
     selectHomePage: { type: Object, required: true},
     linkMocktail: { type: Object, required: true}
 });
