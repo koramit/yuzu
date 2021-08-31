@@ -20,6 +20,10 @@
         >
             <!-- left detail -->
             <div class="w-3/4">
+                <VisitActions
+                    v-if="visit.can.view_visit_actions"
+                    :slug="visit.slug"
+                />
                 <p class="p-1 pb-0 text-thick-theme-light">
                     {{ visit.patient_type }}
                 </p>
@@ -84,6 +88,7 @@
 import Layout from '@/Components/Layouts/Layout';
 import Visit from '@/Components/Forms/Visit';
 import ExportOPDCards from '@/Components/Forms/ExportOPDCards';
+import VisitActions from '@/Components/Helpers/VisitActions';
 import Icon from '@/Components/Helpers/Icon';
 import { inject, nextTick, ref, watch } from '@vue/runtime-core';
 import { Link } from '@inertiajs/inertia-vue3';
@@ -93,7 +98,7 @@ import { Inertia } from '@inertiajs/inertia';
 
 export default {
     layout: Layout,
-    components: { Visit, Icon, Link, ExportOPDCards, Appointment },
+    components: { Visit, Icon, Link, ExportOPDCards, Appointment, VisitActions },
     props: {
         visits: { type: Object, required: true },
         filters: { type: Object, required: true },
