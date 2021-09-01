@@ -16,11 +16,15 @@
     </div>
 
     <!-- table  -->
-    <div class="hidden md:block rounded-md shadow overflow-x-auto overflow-y-scroll max-h-90">
+    <div
+        class="hidden md:block rounded-md shadow overflow-x-auto overflow-y-scroll"
+        style="max-height: 90%;"
+    >
         <table class="w-full whitespace-nowrap relative bg-white">
             <tr class="text-left font-semibold">
                 <th
                     class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light"
+                    :class="{'z-20': column === 'Decision'}"
                     v-for="column in headrows"
                     :key="column"
                     :colspan="column === 'Decision' ? 2:1"
@@ -118,8 +122,8 @@
                                 <button
                                     v-for="referTo in referToOptions"
                                     :key="referTo"
-                                    @click="positive.refer_to = referTo"
-                                    class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
+                                    @click="makeDecisionFromDropdown(positive, referTo)"
+                                    class="block w-full px-4 py-1 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
                                     v-text="referTo"
                                 />
                             </div>
@@ -178,8 +182,8 @@
                             <button
                                 v-for="referTo in referToOptions"
                                 :key="referTo"
-                                @click="positive.refer_to = referTo"
-                                class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
+                                @click="makeDecisionFromDropdown(positive, referTo)"
+                                class="block w-full px-4 py-1 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
                                 v-text="referTo"
                             />
                         </div>
@@ -246,7 +250,7 @@
             </div>
         </template>
         <template #body>
-            <div class="overflow-y-scroll max-h-96 md:max-h-full">
+            <div style="max-height: 70vh; overflow-y: scroll;">
                 <!-- type and insurance  -->
                 <div class="mt-2 flex space-x-2">
                     <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
@@ -295,19 +299,32 @@
                         {{ selectedPositive.note }}
                     </p>
                 </div>
-                <FormTextarea
+                <FormDatetime
                     class="mt-4"
+                    label="วันที่ตรวจพบเชื้อ"
+                    name="date_covid_infected"
+                    :disabled="true"
+                    v-model="form.date_covid_infected"
+                />
+                <FormDatetime
+                    class="mt-2"
+                    label="วันที่ส่งตัว"
+                    name="date_refer"
+                    v-model="form.date_refer"
+                />
+                <FormTextarea
+                    class="mt-2"
                     label="remark"
-                    v-model="remark"
                     name="remark"
+                    v-model="form.remark"
                 />
                 <div class="mt-2">
                     <label class="form-label">decision</label>
                     <FormRadio
                         class="md:grid grid-cols-2 gap-x-2"
-                        v-model="decision"
                         name="decision"
                         :options="referToOptions"
+                        v-model="form.decision"
                     />
                 </div>
             </div>
@@ -339,11 +356,8 @@ const props = defineProps({
 });
 
 const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom','Onset','Weight','Remark','Decision']);
-
 const formDateVisit = ref(props.dateVisit);
-
 const search = ref('');
-
 const positives = computed(() => {
     return props.positiveCases.filter(p => p.hn.indexOf(search.value) !== -1 || p.patient_name.indexOf(search.value) !== -1);
 });
@@ -375,13 +389,11 @@ const symptom = (visit) => {
 };
 
 const ud = (visit) => {
-    let text = '';
     if (visit.no_comorbids) {
         return 'no';
     }
 
-    text = ['dm', 'ht', 'dlp', 'obesity'].filter(d => visit[d]).join(' ');
-
+    let text = ['dm', 'ht', 'dlp', 'obesity'].filter(d => visit[d]).join(' ');
     if (visit.other_comorbids) {
         text += (' ' + visit.other_comorbids);
     }
@@ -391,30 +403,33 @@ const ud = (visit) => {
 
 const decisionModal = ref(null);
 const selectedPositive = ref(null);
-const remark = ref(null);
-const decision = ref(null);
+const form = reactive({});
 const callPositive = (positive) => {
     selectedPositive.value = positive;
-    remark.value = positive.decision_remark;
-    decision.value = positive.refer_to;
+    form.remark = positive.decision_remark;
+    form.decision = positive.refer_to;
+    form.date_covid_infected = positive.date_covid_infected;
+    form.date_refer = positive.date_refer;
     nextTick(() => decisionModal.value.open());
 };
 const makeDecision = () => {
-    selectedPositive.value.refer_to = decision.value;
-    selectedPositive.value.decision_remark = remark.value;
+    selectedPositive.value.refer_to = form.decision;
+    selectedPositive.value.decision_remark = form.remark;
+    selectedPositive.value.date_refer = form.date_refer;
     nextTick(() => decisionModal.value.close());
+    postDecision(selectedPositive);
+};
+const makeDecisionFromDropdown = (positive, decision) => {
+    positive.refer_to = decision;
+};
+const postDecision = (decision) => {
+    console.log(decision);
 };
 </script>
 
 <script>
 import Layout from '@/Components/Layouts/Layout';
-import { computed, ref } from '@vue/reactivity';
+import { computed, reactive, ref } from '@vue/reactivity';
 import { nextTick } from '@vue/runtime-core';
 export default { layout: Layout };
 </script>
-
-<style scoped>
-.max-h-90 {
-    max-height: 90%;
-}
-</style>
