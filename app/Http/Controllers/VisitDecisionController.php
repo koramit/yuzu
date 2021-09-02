@@ -25,8 +25,13 @@ class VisitDecisionController extends Controller
                               ->whereDateVisit($dateVisit)
                               ->where('form->management->np_swab_result', 'Detected')
                               ->get()
-                              ->transform(function ($visit) use ($manager) {
-                                  return $manager->getReferCase($visit);
+                              ->transform(function ($visit) use ($manager, $user) {
+                                  $positive = $manager->getReferCase($visit);
+                                  $positive['can'] = [
+                                      'evaluate' => $user->can('evaluate'),
+                                  ];
+
+                                  return $positive;
                               });
 
         return Inertia::render('Decisions/Index', [
