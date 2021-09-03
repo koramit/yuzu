@@ -42,6 +42,13 @@ class OPDCardExportController extends Controller
     {
         $form = $visit->form;
 
+name="exposure_contact_detail"
+name="exposure_hot_spot_detail"
+name="exposure_other_detail"
+name="management_other_tests"
+name="home_medication"
+name="note"
+
         return [
             'id' => $visit->id,
             'date_visit' => $visit->date_visit->format('d-M-Y'),
@@ -90,10 +97,10 @@ class OPDCardExportController extends Controller
             'date_latest_expose' => $this->castDate($form['exposure']['date_latest_expose']),
             'contact' =>  $form['exposure']['contact'] ? 'YES' : 'NO',
             'contact_type' =>  $form['exposure']['contact_type'],
-            'contact_detail' =>  $form['exposure']['contact_detail'],
+            'contact_detail' =>  $form['exposure']['contact_detail'] ? str_replace("\n", ' ', $form['exposure']['contact_detail']) : null,
             'hot_spot' =>  $form['exposure']['hot_spot'] ? 'YES' : 'NO',
-            'hot_spot_detail' =>  $form['exposure']['hot_spot_detail'],
-            'other_detail' =>  $form['exposure']['other_detail'],
+            'hot_spot_detail' =>  $form['exposure']['hot_spot_detail'] ? str_replace("\n", ' ', $form['exposure']['hot_spot_detail']) : null,
+            'other_detail' =>  $form['exposure']['other_detail'] ? str_replace("\n", ' ', $form['exposure']['other_detail']) : null,
 
             'no_comorbids' => $form['comorbids']['no_comorbids'] ? 'YES' : 'NO',
             'dm' => $form['comorbids']['dm'] ? 'YES' : 'NO',
@@ -126,15 +133,15 @@ class OPDCardExportController extends Controller
             'tube_no' => $form['management']['specimen_no'],
             'np_swab_result' => $form['management']['np_swab_result'],
             'np_swab_result_note' => $form['management']['np_swab_result_note'],
-            'other_tests' => $form['management']['other_tests'],
-            'home_medication' => $form['management']['home_medication'],
+            'other_tests' => $form['management']['other_tests'] ? str_replace("\n", ' ', $form['management']['other_tests']) : null,
+            'home_medication' => $form['management']['home_medication'] ? str_replace("\n", ' ', $form['management']['home_medication']) : null,
 
             'recommendation' => $this->recommendation($form['recommendation']['choice']),
             'date_isolation_end' => $this->castDate($form['recommendation']['date_isolation_end']),
             'date_reswab' => $this->castDate($form['recommendation']['date_reswab']),
             'date_reswab_next' => $this->castDate($form['recommendation']['date_reswab_next']),
 
-            'note' => $form['note'],
+            'note' => $form['note'] ? str_replace("\n", ' ', $form['note']) : null,
         ];
     }
 
