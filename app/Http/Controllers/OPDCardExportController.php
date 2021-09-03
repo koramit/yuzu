@@ -42,13 +42,6 @@ class OPDCardExportController extends Controller
     {
         $form = $visit->form;
 
-name="exposure_contact_detail"
-name="exposure_hot_spot_detail"
-name="exposure_other_detail"
-name="management_other_tests"
-name="home_medication"
-name="note"
-
         return [
             'id' => $visit->id,
             'date_visit' => $visit->date_visit->format('d-M-Y'),
