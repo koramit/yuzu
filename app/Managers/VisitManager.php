@@ -504,9 +504,7 @@ class VisitManager
 
         // exposure
         $exposure = $visit->form['exposure'];
-        if ($exposure['evaluation'] === 'ไม่มีความเสี่ยง' || $exposure['evaluation'] === 'ความเสี่ยงเดิม') {
-            $exposure = $exposure['evaluation'];
-        } elseif ($exposure['evaluation'] === 'อื่นๆ') {
+        if ($exposure['evaluation'] === 'อื่นๆ') {
             $exposure = $exposure['other_detail'];
             $lines = explode("\n", $exposure);
             if (count($lines) > 1) {
@@ -514,7 +512,7 @@ class VisitManager
                     return "<p>{$line}</p>";
                 })->join('');
             }
-        } else {
+        } elseif (str_contains($exposure['evaluation'], 'มีความเสี่ยง')) {
             $text = $exposure['evaluation'].'<br>';
             $text .= ('วันสุดท้ายที่สัมผัส - '.Carbon::create($exposure['date_latest_expose'])->format('d M Y').'<br>');
             if ($exposure['contact']) {
@@ -524,6 +522,8 @@ class VisitManager
                 $text .= ('ไปพื้นที่เสี่ยง - '.$exposure['hot_spot_detail'].'<br>');
             }
             $exposure = $text;
+        } else {
+            $exposure = $exposure['evaluation'];
         }
 
         // comordibs
