@@ -153,6 +153,9 @@ Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class) // 
 Route::get('decisions', [VisitDecisionController::class, 'index'])
      ->middleware('auth', 'remember', 'can:view_decision_list')
      ->name('decisions');
+Route::patch('decisions/{visit:slug}', [VisitDecisionController::class, 'update'])
+     ->middleware('auth', 'remember', 'can:refer, visit')
+     ->name('decisions.update');
 
 // Export data
 Route::get('export/opd_cards', OPDCardExportController::class)

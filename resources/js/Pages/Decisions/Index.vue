@@ -39,12 +39,19 @@
                 <td class="border-t">
                     <p class="inline-flex px-3 py-2 items-center">
                         <Icon
-                            :name="positive.refer_to ? 'check-circle' : 'hourglass-half'"
-                            class="w-4 h-4 mr-1"
-                            :class="{
-                                'text-bitter-theme-light': positive.refer_to,
-                                'text-thick-theme-light': !positive.refer_to,
-                            }"
+                            v-if="!positive.refer_to && !positive.linked"
+                            name="hourglass-half"
+                            class="w-4 h-4 mr-1 text-thick-theme-light"
+                        />
+                        <Icon
+                            v-else-if="positive.refer_to && !positive.linked"
+                            name="sync-alt"
+                            class="w-4 h-4 mr-1 text-dark-theme-light"
+                        />
+                        <Icon
+                            v-else-if="positive.refer_to && positive.linked"
+                            name="check-circle"
+                            class="w-4 h-4 mr-1 text-bitter-theme-light"
                         />
                         {{ positive.patient_name }}
                     </p>
@@ -61,7 +68,8 @@
                 <td class="border-t">
                     <button
                         @click="callPositive(positive)"
-                        class="inline-flex items-center text-blue-300 px-3 py-2"
+                        :disabled="!positive.can.evaluate"
+                        class="inline-flex items-center text-blue-300 px-3 py-2 disabled:cursor-not-allowed"
                     >
                         <Icon
                             name="phone-square"
@@ -98,7 +106,7 @@
                     {{ positive.weight }}
                 </td>
                 <td class="border-t px-3 py-2">
-                    {{ positive.decision_remark }}
+                    {{ positive.remark }}
                 </td>
                 <td
                     class="border-t px-3 py-2"
@@ -107,7 +115,7 @@
                     {{ positive.refer_to ?? 'ยังไม่ตัดสินใจ' }}
                 </td>
                 <td class="border-t px-3 py-2">
-                    <Dropdown>
+                    <Dropdown v-if="positive.can.evaluate">
                         <template #default>
                             <button class="inline-flex items-center text-dark-theme-light">
                                 <Icon
@@ -152,8 +160,9 @@
             <div class="flex justify-between items-center text-sm">
                 <p class="flex items-center">
                     <button
-                        class="inline-flex items-center text-blue-300 mr-2"
+                        class="inline-flex items-center text-blue-300 mr-2 disabled:cursor-not-allowed"
                         @click="callPositive(positive)"
+                        :disabled="!positive.can.evaluate"
                     >
                         <Icon
                             name="phone-square"
@@ -163,7 +172,7 @@
                     </button>
                     <span class="italic mr-2">{{ positive.patient_type }}</span>
                 </p>
-                <Dropdown>
+                <Dropdown v-if="positive.can.evaluate">
                     <template #default>
                         <button class="inline-flex items-center">
                             <span
@@ -322,9 +331,9 @@
                     <label class="form-label">decision</label>
                     <FormRadio
                         class="md:grid grid-cols-2 gap-x-2"
-                        name="decision"
+                        name="refer_to"
                         :options="referToOptions"
-                        v-model="form.decision"
+                        v-model="form.refer_to"
                     />
                 </div>
             </div>
@@ -333,6 +342,7 @@
             <button
                 class="mt-2 w-full btn btn-bitter"
                 @click="makeDecision"
+                :disabled="!form.refer_to || !form.date_refer"
             >
                 บันทึก
             </button>
@@ -406,24 +416,33 @@ const selectedPositive = ref(null);
 const form = reactive({});
 const callPositive = (positive) => {
     selectedPositive.value = positive;
-    form.remark = positive.decision_remark;
-    form.decision = positive.refer_to;
+    form.remark = positive.remark;
+    form.refer_to = positive.refer_to;
     form.date_covid_infected = positive.date_covid_infected;
     form.date_refer = positive.date_refer;
     nextTick(() => decisionModal.value.open());
 };
 const makeDecision = () => {
-    selectedPositive.value.refer_to = form.decision;
-    selectedPositive.value.decision_remark = form.remark;
-    selectedPositive.value.date_refer = form.date_refer;
     nextTick(() => decisionModal.value.close());
-    postDecision(selectedPositive);
+    postDecision(form);
 };
 const makeDecisionFromDropdown = (positive, decision) => {
-    positive.refer_to = decision;
+    selectedPositive.value = positive;
+    postDecision({ refer_to: decision });
 };
 const postDecision = (decision) => {
-    console.log(decision);
+    let formData = {...selectedPositive.value};
+    formData.refer_to = decision.refer_to;
+    formData.remark = decision.remark ?? null;
+    formData.date_refer = decision.date_refer ?? formData.date_refer;
+    window.axios
+        .patch(window.route('decisions.update', selectedPositive.value.slug), formData)
+        .then(response => {
+            selectedPositive.value.refer_to = decision.refer_to;
+            selectedPositive.value.date_refer = decision.date_refer;
+            selectedPositive.value.remarl = decision.remarl;
+            selectedPositive.value.linked = response.data.linked;
+        });
 };
 </script>
 

@@ -109,4 +109,9 @@ class VisitPolicy
     {
         return $user->can('authorize_visit') && ! $visit->patient_id && $visit->status !== 'canceled';
     }
+
+    public function refer(User $user, Visit $visit)
+    {
+        return $user->can('evaluate') && $user->mocktail_token;
+    }
 }

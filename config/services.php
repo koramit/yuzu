@@ -71,6 +71,6 @@ return [
 
     'mocktail' => [
         'link_user_endpoint' => env('MOCKTAIL_LINK_USER_ENDPOINT'),
-        'create_case_endpoint' => env('MOCKTAIL_CREATE_CASE_ENDPOINT'),
+        'refer_case_endpoint' => env('MOCKTAIL_REFER_CASE_ENDPOINT'),
     ],
 ];

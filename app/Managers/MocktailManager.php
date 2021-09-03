@@ -33,6 +33,7 @@ class MocktailManager
         $content = (new VisitManager)->getReportContent($visit);
 
         return [
+            'slug' => $visit->slug,
             'hn' => $visit->hn,
             'patient_name' => $visit->patient_name,
             'patient_type' => $visit->patient_type === 'บุคคลทั่วไป' ? 'public' : 'staff',
@@ -45,8 +46,8 @@ class MocktailManager
             'weight' => $visit->form['patient']['weight'],
             'date_symptom_start' => $visit->form['symptoms']['date_symptom_start'] ?? $visit->date_visit->format('Y-m-d'),
             'date_covid_infected' => $visit->date_visit->format('Y-m-d'),
-            'date_admit_origin' => $visit->date_visit->addDay()->format('Y-m-d'),
-            'date_refer' => $visit->date_visit->addDay()->format('Y-m-d'),
+            'date_admit_origin' => $visit->form['decision']['date_refer'] ?? $visit->date_visit->addDay()->format('Y-m-d'),
+            'date_refer' => $visit->form['decision']['date_refer'] ?? $visit->date_visit->addDay()->format('Y-m-d'),
             'temperature_celsius' =>  $visit->form['patient']['temperature_celsius'],
             'o2_sat' =>  $visit->form['patient']['o2_sat'],
             'symptoms' => $content['symptoms'],
@@ -79,8 +80,9 @@ class MocktailManager
             'gastroenteritis' => $visit->form['symptoms']['diarrhea'],
             'other_diagnosis' => $visit->form['diagnosis']['other_diagnosis'],
             'note' => $visit->form['note'],
-            'refer_to' => null,
-            'decision_remark' => null,
+            'refer_to' => $visit->form['decision']['refer_to'] ?? null,
+            'remark' => $visit->form['decision']['remark'] ?? null,
+            'linked' => $visit->form['decision']['linked'] ?? false,
         ];
     }
 }
