@@ -324,7 +324,9 @@
                     :error="form.errors.evaluation"
                     name="evaluation"
                     :options="configs.appointment_evaluations"
+                    :allow-other="true"
                     v-if="isAppointment"
+                    ref="evaluation"
                 />
                 <FormRadio
                     v-else
@@ -1041,6 +1043,24 @@ export default {
             configs.positions.push(form.patient.position);
         }
 
+        const evaluation = ref(null);
+        watch (
+            () => form.exposure.evaluation,
+            (val) => {
+                if (val !== 'other') {
+                    return;
+                }
+
+                selectOther.placeholder = 'ระบุอื่นๆ';
+                selectOther.configs = 'appointment_evaluations';
+                selectOther.input = evaluation.value;
+                selectOtherInput.value.open();
+            }
+        );
+        if (form.exposure.evaluation && !configs.appointment_evaluations.includes(form.exposure.evaluation)) {
+            configs.appointment_evaluations.push(form.exposure.evaluation);
+        }
+
         const BMI = computed(() => {
             if (form.patient.weight && form.patient.height) {
                 return (form.patient.weight / form.patient.height / form.patient.height * 10000).toFixed(2);
@@ -1179,6 +1199,7 @@ export default {
             selectOtherClosed,
             insurance,
             position,
+            evaluation,
             sapIdUpdated,
             isAppointment,
             showExposureForm,
