@@ -512,7 +512,7 @@ class VisitManager
                     return "<p>{$line}</p>";
                 })->join('');
             }
-        } elseif (str_contains($exposure['evaluation'], 'มีความเสี่ยง')) {
+        } elseif (str_starts_with($exposure['evaluation'], 'มีความเสี่ยง')) {
             $text = $exposure['evaluation'].'<br>';
             $text .= ('วันสุดท้ายที่สัมผัส - '.Carbon::create($exposure['date_latest_expose'])->format('d M Y').'<br>');
             if ($exposure['contact']) {
