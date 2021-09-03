@@ -269,7 +269,7 @@ class Visit extends Model
 
     public function getReadyToPrintAttribute()
     {
-        return $this->status !== 'canceled' && ($this->discharged_at || $this->enlisted_swab_at);
+        return $this->status !== 'canceled' && ($this->discharged_at || $this->enlisted_swab_at) && $this->patient_id;
     }
 
     public function getTelNoAttribute()

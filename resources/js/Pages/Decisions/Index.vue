@@ -16,48 +16,20 @@
     </div>
 
     <!-- table  -->
-    <div class="hidden md:block rounded-md shadow overflow-x-auto overflow-y-scroll max-h-90">
+    <div
+        class="hidden md:block rounded-md shadow overflow-x-auto overflow-y-scroll"
+        style="max-height: 90%;"
+    >
         <table class="w-full whitespace-nowrap relative bg-white">
             <tr class="text-left font-semibold">
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Name
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Age
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    HN
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Tel
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Type
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Insurance
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    U/D
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Symptom
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Onset
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Weight
-                </th>
-                <th class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light">
-                    Remark
-                </th>
                 <th
-                    class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light z-20"
-                    colspan="2"
-                >
-                    Decision
-                </th>
+                    class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light"
+                    :class="{'z-20': column === 'Decision'}"
+                    v-for="column in headrows"
+                    :key="column"
+                    :colspan="column === 'Decision' ? 2:1"
+                    v-text="column"
+                />
             </tr>
             <tr
                 v-for="(positive, key) in positives"
@@ -67,12 +39,19 @@
                 <td class="border-t">
                     <p class="inline-flex px-3 py-2 items-center">
                         <Icon
-                            :name="positive.refer_to ? 'check-circle' : 'hourglass-half'"
-                            class="w-4 h-4 mr-1"
-                            :class="{
-                                'text-bitter-theme-light': positive.refer_to,
-                                'text-thick-theme-light': !positive.refer_to,
-                            }"
+                            v-if="!positive.refer_to && !positive.linked"
+                            name="hourglass-half"
+                            class="w-4 h-4 mr-1 text-thick-theme-light"
+                        />
+                        <Icon
+                            v-else-if="positive.refer_to && !positive.linked"
+                            name="sync-alt"
+                            class="w-4 h-4 mr-1 text-dark-theme-light"
+                        />
+                        <Icon
+                            v-else-if="positive.refer_to && positive.linked"
+                            name="check-circle"
+                            class="w-4 h-4 mr-1 text-bitter-theme-light"
                         />
                         {{ positive.patient_name }}
                     </p>
@@ -89,7 +68,8 @@
                 <td class="border-t">
                     <button
                         @click="callPositive(positive)"
-                        class="inline-flex items-center text-blue-300 px-3 py-2"
+                        :disabled="!positive.can.evaluate"
+                        class="inline-flex items-center text-blue-300 px-3 py-2 disabled:cursor-not-allowed"
                     >
                         <Icon
                             name="phone-square"
@@ -126,7 +106,7 @@
                     {{ positive.weight }}
                 </td>
                 <td class="border-t px-3 py-2">
-                    {{ positive.decision_remark }}
+                    {{ positive.remark }}
                 </td>
                 <td
                     class="border-t px-3 py-2"
@@ -135,7 +115,7 @@
                     {{ positive.refer_to ?? 'ยังไม่ตัดสินใจ' }}
                 </td>
                 <td class="border-t px-3 py-2">
-                    <Dropdown>
+                    <Dropdown v-if="positive.can.evaluate">
                         <template #default>
                             <button class="inline-flex items-center text-dark-theme-light">
                                 <Icon
@@ -148,35 +128,12 @@
                         <template #dropdown>
                             <div class="rounded shadow bg-bitter-theme-light text-white py-2">
                                 <button
-                                    @click="positive.refer_to = 'Ward'"
-                                    class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                                >
-                                    Ward
-                                </button>
-                                <button
-                                    @click="positive.refer_to = 'Biyoke'"
-                                    class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                                >
-                                    Biyoke
-                                </button>
-                                <button
-                                    @click="positive.refer_to = 'Riverside'"
-                                    class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                                >
-                                    Riverside
-                                </button>
-                                <button
-                                    @click="positive.refer_to = 'HI'"
-                                    class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                                >
-                                    HI
-                                </button>
-                                <button
-                                    @click="positive.refer_to = 'Colink'"
-                                    class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                                >
-                                    Colink
-                                </button>
+                                    v-for="referTo in referToOptions"
+                                    :key="referTo"
+                                    @click="makeDecisionFromDropdown(positive, referTo)"
+                                    class="block w-full px-4 py-1 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
+                                    v-text="referTo"
+                                />
                             </div>
                         </template>
                     </Dropdown>
@@ -203,8 +160,9 @@
             <div class="flex justify-between items-center text-sm">
                 <p class="flex items-center">
                     <button
-                        class="inline-flex items-center text-blue-300 mr-2"
+                        class="inline-flex items-center text-blue-300 mr-2 disabled:cursor-not-allowed"
                         @click="callPositive(positive)"
+                        :disabled="!positive.can.evaluate"
                     >
                         <Icon
                             name="phone-square"
@@ -214,7 +172,7 @@
                     </button>
                     <span class="italic mr-2">{{ positive.patient_type }}</span>
                 </p>
-                <Dropdown>
+                <Dropdown v-if="positive.can.evaluate">
                     <template #default>
                         <button class="inline-flex items-center">
                             <span
@@ -231,35 +189,12 @@
                     <template #dropdown>
                         <div class="rounded shadow bg-bitter-theme-light text-white py-2">
                             <button
-                                @click="positive.refer_to = 'Ward'"
-                                class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                            >
-                                Ward
-                            </button>
-                            <button
-                                @click="positive.refer_to = 'Biyoke'"
-                                class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                            >
-                                Biyoke
-                            </button>
-                            <button
-                                @click="positive.refer_to = 'Riverside'"
-                                class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                            >
-                                Riverside
-                            </button>
-                            <button
-                                @click="positive.refer_to = 'HI'"
-                                class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                            >
-                                HI
-                            </button>
-                            <button
-                                @click="positive.refer_to = 'Colink'"
-                                class="block w-full px-4 py-2 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
-                            >
-                                Colink
-                            </button>
+                                v-for="referTo in referToOptions"
+                                :key="referTo"
+                                @click="makeDecisionFromDropdown(positive, referTo)"
+                                class="block w-full px-4 py-1 text-left hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
+                                v-text="referTo"
+                            />
                         </div>
                     </template>
                 </Dropdown>
@@ -324,7 +259,7 @@
             </div>
         </template>
         <template #body>
-            <div class="overflow-y-scroll max-h-96 md:max-h-full">
+            <div style="max-height: 70vh; overflow-y: scroll;">
                 <!-- type and insurance  -->
                 <div class="mt-2 flex space-x-2">
                     <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
@@ -373,19 +308,32 @@
                         {{ selectedPositive.note }}
                     </p>
                 </div>
-                <FormTextarea
+                <FormDatetime
                     class="mt-4"
+                    label="วันที่ตรวจพบเชื้อ"
+                    name="date_covid_infected"
+                    :disabled="true"
+                    v-model="form.date_covid_infected"
+                />
+                <FormDatetime
+                    class="mt-2"
+                    label="วันที่ส่งตัว"
+                    name="date_refer"
+                    v-model="form.date_refer"
+                />
+                <FormTextarea
+                    class="mt-2"
                     label="remark"
-                    v-model="remark"
                     name="remark"
+                    v-model="form.remark"
                 />
                 <div class="mt-2">
                     <label class="form-label">decision</label>
                     <FormRadio
                         class="md:grid grid-cols-2 gap-x-2"
-                        v-model="decision"
-                        name="decision"
-                        :options="['Ward', 'Biyoke', 'Riverside', 'HI', 'Colink']"
+                        name="refer_to"
+                        :options="referToOptions"
+                        v-model="form.refer_to"
                     />
                 </div>
             </div>
@@ -394,6 +342,7 @@
             <button
                 class="mt-2 w-full btn btn-bitter"
                 @click="makeDecision"
+                :disabled="!form.refer_to || !form.date_refer"
             >
                 บันทึก
             </button>
@@ -413,12 +362,12 @@ import Dropdown from '@/Components/Helpers/Dropdown';
 const props = defineProps({
     positiveCases: { type: Array, required: true },
     dateVisit: { type: String, required: true },
+    referToOptions: { type: Array, required: true }
 });
 
+const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom','Onset','Weight','Remark','Decision']);
 const formDateVisit = ref(props.dateVisit);
-
 const search = ref('');
-
 const positives = computed(() => {
     return props.positiveCases.filter(p => p.hn.indexOf(search.value) !== -1 || p.patient_name.indexOf(search.value) !== -1);
 });
@@ -450,13 +399,11 @@ const symptom = (visit) => {
 };
 
 const ud = (visit) => {
-    let text = '';
     if (visit.no_comorbids) {
         return 'no';
     }
 
-    text = ['dm', 'ht', 'dlp', 'obesity'].filter(d => visit[d]).join(' ');
-
+    let text = ['dm', 'ht', 'dlp', 'obesity'].filter(d => visit[d]).join(' ');
     if (visit.other_comorbids) {
         text += (' ' + visit.other_comorbids);
     }
@@ -466,30 +413,42 @@ const ud = (visit) => {
 
 const decisionModal = ref(null);
 const selectedPositive = ref(null);
-const remark = ref(null);
-const decision = ref(null);
+const form = reactive({});
 const callPositive = (positive) => {
     selectedPositive.value = positive;
-    remark.value = positive.decision_remark;
-    decision.value = positive.refer_to;
+    form.remark = positive.remark;
+    form.refer_to = positive.refer_to;
+    form.date_covid_infected = positive.date_covid_infected;
+    form.date_refer = positive.date_refer;
     nextTick(() => decisionModal.value.open());
 };
 const makeDecision = () => {
-    selectedPositive.value.refer_to = decision.value;
-    selectedPositive.value.decision_remark = remark.value;
     nextTick(() => decisionModal.value.close());
+    postDecision(form);
+};
+const makeDecisionFromDropdown = (positive, decision) => {
+    selectedPositive.value = positive;
+    postDecision({ refer_to: decision });
+};
+const postDecision = (decision) => {
+    let formData = {...selectedPositive.value};
+    formData.refer_to = decision.refer_to;
+    formData.remark = decision.remark ?? null;
+    formData.date_refer = decision.date_refer ?? formData.date_refer;
+    window.axios
+        .patch(window.route('decisions.update', selectedPositive.value.slug), formData)
+        .then(response => {
+            selectedPositive.value.refer_to = decision.refer_to;
+            selectedPositive.value.date_refer = decision.date_refer;
+            selectedPositive.value.remarl = decision.remarl;
+            selectedPositive.value.linked = response.data.linked;
+        });
 };
 </script>
 
 <script>
 import Layout from '@/Components/Layouts/Layout';
-import { computed, ref } from '@vue/reactivity';
+import { computed, reactive, ref } from '@vue/reactivity';
 import { nextTick } from '@vue/runtime-core';
 export default { layout: Layout };
 </script>
-
-<style scoped>
-.max-h-90 {
-    max-height: 90%;
-}
-</style>
