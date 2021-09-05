@@ -43,11 +43,15 @@
                             name="hourglass-half"
                             class="w-4 h-4 mr-1 text-thick-theme-light"
                         />
-                        <Icon
+                        <button
                             v-else-if="positive.refer_to && !positive.linked"
-                            name="sync-alt"
-                            class="w-4 h-4 mr-1 text-dark-theme-light"
-                        />
+                            @click="makeDecisionFromDropdown(positive, positive.refer_to)"
+                        >
+                            <Icon
+                                name="sync-alt"
+                                class="w-4 h-4 mr-1 text-dark-theme-light"
+                            />
+                        </button>
                         <Icon
                             v-else-if="positive.refer_to && positive.linked"
                             name="check-circle"
@@ -68,7 +72,7 @@
                 <td class="border-t">
                     <button
                         @click="callPositive(positive)"
-                        :disabled="!positive.can.evaluate"
+                        :disabled="!positive.can.refer"
                         class="inline-flex items-center text-blue-300 px-3 py-2 disabled:cursor-not-allowed"
                     >
                         <Icon
@@ -86,15 +90,15 @@
                 </td>
                 <td
                     class="border-t px-3 py-2 whitespace-normal"
-                    :class="{'text-bitter-theme-light': ud(positive) === 'no'}"
+                    :class="{'text-bitter-theme-light': positive.ud === 'no'}"
                 >
-                    {{ ud(positive) }}
+                    {{ positive.ud }}
                 </td>
                 <td
                     class="border-t px-3 py-2 whitespace-normal"
-                    :class="{'text-bitter-theme-light': symptom(positive) === 'asymptomatic'}"
+                    :class="{'text-bitter-theme-light': positive.symptom === 'asymptomatic'}"
                 >
-                    {{ symptom(positive) }}
+                    {{ positive.symptom }}
                 </td>
                 <td class="border-t px-3 py-2">
                     {{ positive.onset }}
@@ -115,7 +119,7 @@
                     {{ positive.refer_to ?? 'ยังไม่ตัดสินใจ' }}
                 </td>
                 <td class="border-t px-3 py-2">
-                    <Dropdown v-if="positive.can.evaluate">
+                    <Dropdown v-if="positive.can.refer">
                         <template #default>
                             <button class="inline-flex items-center text-dark-theme-light">
                                 <Icon
@@ -162,7 +166,7 @@
                     <button
                         class="inline-flex items-center text-blue-300 mr-2 disabled:cursor-not-allowed"
                         @click="callPositive(positive)"
-                        :disabled="!positive.can.evaluate"
+                        :disabled="!positive.can.refer"
                     >
                         <Icon
                             name="phone-square"
@@ -172,7 +176,7 @@
                     </button>
                     <span class="italic mr-2">{{ positive.patient_type }}</span>
                 </p>
-                <Dropdown v-if="positive.can.evaluate">
+                <Dropdown v-if="positive.can.refer">
                     <template #default>
                         <button class="inline-flex items-center">
                             <span
@@ -203,12 +207,23 @@
                 <p>
                     <span class="inline-flex items-center mr-1">
                         <Icon
-                            :name="positive.refer_to ? 'check-circle' : 'hourglass-half'"
-                            class="w-4 h-4 mr-1"
-                            :class="{
-                                'text-bitter-theme-light': positive.refer_to,
-                                'text-thick-theme-light': !positive.refer_to,
-                            }"
+                            v-if="!positive.refer_to && !positive.linked"
+                            name="hourglass-half"
+                            class="w-4 h-4 mr-1 text-thick-theme-light"
+                        />
+                        <button
+                            v-else-if="positive.refer_to && !positive.linked"
+                            @click="makeDecisionFromDropdown(positive, positive.refer_to)"
+                        >
+                            <Icon
+                                name="sync-alt"
+                                class="w-4 h-4 mr-1 text-dark-theme-light"
+                            />
+                        </button>
+                        <Icon
+                            v-else-if="positive.refer_to && positive.linked"
+                            name="check-circle"
+                            class="w-4 h-4 mr-1 text-bitter-theme-light"
                         />
                         {{ positive.hn }}
                         {{ positive.insuranceShow }}
@@ -226,7 +241,7 @@
                 <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
                     <p>
                         <span class="italic">UD: </span>
-                        <span :class="{'text-bitter-theme-light font-medium': positive.comorbids === 'ไม่มี'}">{{ ud(positive) }}</span>
+                        <span :class="{'text-bitter-theme-light font-medium': positive.comorbids === 'ไม่มี'}">{{ positive.ud }}</span>
                     </p>
                     <p v-if="positive.weight">
                         <span class="italic">Weight: </span>
@@ -240,7 +255,7 @@
                     </p>
                     <p>
                         <span class="italic">Symptom: </span>
-                        <span :class="{'text-bitter-theme-light font-medium': !positive.onset}">{{ symptom(positive) }}</span>
+                        <span :class="{'text-bitter-theme-light font-medium': !positive.onset}">{{ positive.symptom }}</span>
                     </p>
                 </div>
             </div>
@@ -280,7 +295,7 @@
                     <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
                         <p>
                             <span class="italic">UD: </span>
-                            <span :class="{'text-bitter-theme-light font-medium': selectedPositive.comorbids === 'ไม่มี'}">{{ ud(selectedPositive) }}</span>
+                            <span :class="{'text-bitter-theme-light font-medium': selectedPositive.comorbids === 'ไม่มี'}">{{ selectedPositive.ud }}</span>
                         </p>
                         <p v-if="selectedPositive.weight">
                             <span class="italic">Weight: </span>
@@ -294,9 +309,19 @@
                         </p>
                         <p>
                             <span class="italic">Symptom: </span>
-                            <span :class="{'text-bitter-theme-light font-medium': !selectedPositive.onset}">{{ symptom(selectedPositive) }}</span>
+                            <span :class="{'text-bitter-theme-light font-medium': !selectedPositive.onset}">{{ selectedPositive.symptom }}</span>
                         </p>
                     </div>
+                </div>
+                <!-- CT -->
+                <div
+                    class="mt-2 rounded-md shadow-sm bg-gray-100 p-2"
+                    v-if="selectedPositive.lab_remark"
+                >
+                    <p
+                        class="italic text-red-400"
+                        v-html="selectedPositive.lab_remark.replaceAll(' | ', '<br>')"
+                    />
                 </div>
                 <!-- note -->
                 <div
@@ -348,6 +373,8 @@
             </button>
         </template>
     </Modal>
+    <Visit ref="createVisitForm" />
+    <Appointment ref="appointmentForm" />
 </template>
 
 <script setup>
@@ -358,11 +385,28 @@ import FormRadio from '@/Components/Controls/FormRadio';
 import Icon from '@/Components/Helpers/Icon';
 import Modal from '@/Components/Helpers/Modal';
 import Dropdown from '@/Components/Helpers/Dropdown';
+import Visit from '@/Components/Forms/Visit';
+import Appointment from '@/Components/Forms/Appointment';
 
 const props = defineProps({
     positiveCases: { type: Array, required: true },
     dateVisit: { type: String, required: true },
     referToOptions: { type: Array, required: true }
+});
+
+const createVisitForm = ref(null);
+const appointmentForm = ref(null);
+const emitter = inject('emitter');
+
+emitter.on('action-clicked', (action) => {
+    // please expect console log error in case of revisit this page
+    // maybe new vue fragment lazy loading template so it not
+    // ready to use and need some kind of "activate"
+    if (action === 'create-visit') {
+        nextTick(() => createVisitForm.value.open());
+    } else if (action === 'create-appointment') {
+        nextTick(() => appointmentForm.value.open());
+    }
 });
 
 const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom','Onset','Weight','Remark','Decision']);
@@ -371,45 +415,6 @@ const search = ref('');
 const positives = computed(() => {
     return props.positiveCases.filter(p => p.hn.indexOf(search.value) !== -1 || p.patient_name.indexOf(search.value) !== -1);
 });
-
-const symptom = (visit) => {
-    if (visit.asymptomatic_symptom) {
-        return 'asymptomatic';
-    }
-    let text = '';
-    if (visit.fever
-        || visit.cough
-        || visit.sore_throat
-        || visit.rhinorrhoea
-        || visit.sputum
-        || visit.fatigue
-        || visit.anosmia
-        || visit.loss_of_taste
-        || visit.myalgia) {
-        text = 'URI ';
-    }
-    if (visit.diarrhea) {
-        text += 'Gastroenteritis ';
-    }
-    if (visit.other_symptoms) {
-        text += visit.other_symptoms;
-    }
-
-    return text;
-};
-
-const ud = (visit) => {
-    if (visit.no_comorbids) {
-        return 'no';
-    }
-
-    let text = ['dm', 'ht', 'dlp', 'obesity'].filter(d => visit[d]).join(' ');
-    if (visit.other_comorbids) {
-        text += (' ' + visit.other_comorbids);
-    }
-
-    return text.trim();
-};
 
 const decisionModal = ref(null);
 const selectedPositive = ref(null);
@@ -428,7 +433,7 @@ const makeDecision = () => {
 };
 const makeDecisionFromDropdown = (positive, decision) => {
     selectedPositive.value = positive;
-    postDecision({ refer_to: decision });
+    postDecision({ refer_to: decision, date_refer: positive.date_refer, remark: positive.remark });
 };
 const postDecision = (decision) => {
     let formData = {...selectedPositive.value};
@@ -440,7 +445,7 @@ const postDecision = (decision) => {
         .then(response => {
             selectedPositive.value.refer_to = decision.refer_to;
             selectedPositive.value.date_refer = decision.date_refer;
-            selectedPositive.value.remarl = decision.remarl;
+            selectedPositive.value.remark = decision.remark;
             selectedPositive.value.linked = response.data.linked;
         });
 };
@@ -449,6 +454,6 @@ const postDecision = (decision) => {
 <script>
 import Layout from '@/Components/Layouts/Layout';
 import { computed, reactive, ref } from '@vue/reactivity';
-import { nextTick } from '@vue/runtime-core';
+import { inject, nextTick } from '@vue/runtime-core';
 export default { layout: Layout };
 </script>

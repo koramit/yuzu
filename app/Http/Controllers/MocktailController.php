@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 
 class MocktailController extends Controller
@@ -19,6 +20,15 @@ class MocktailController extends Controller
         ];
 
         $response = Http::post(config('services.mocktail.link_user_endpoint'), $data);
+
+        if (! $response->successful()) {
+            Log::notice($user->name.' link mocktail error');
+
+            return [
+                'ok' => false,
+                'login' => 'เกิดข้อผิดพลาดกรุณาลองใหม่หรือติดต่อผู้ดูแลระบบ',
+            ];
+        }
 
         if ($response->json()['found'] ?? false) {
             $user->forceFill([

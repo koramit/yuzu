@@ -55,13 +55,14 @@ const form = reactive({
 });
 
 const login = () => {
-    console.log('yes');
     form.processing = true;
     window.axios
         .post(window.route('mocktail.link'), form)
         .then((response) => {
             if (response.data.ok) {
                 linked.value = true;
+            } else {
+                form.errors.login = response.data.login;
             }
         }).finally(() => form.processing = false);
 };

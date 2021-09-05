@@ -87,12 +87,12 @@
 <script>
 import Layout from '@/Components/Layouts/Layout';
 import Visit from '@/Components/Forms/Visit';
+import Appointment from '@/Components/Forms/Appointment';
 import ExportOPDCards from '@/Components/Forms/ExportOPDCards';
 import VisitActions from '@/Components/Helpers/VisitActions';
 import Icon from '@/Components/Helpers/Icon';
 import { inject, nextTick, ref, watch } from '@vue/runtime-core';
 import { Link } from '@inertiajs/inertia-vue3';
-import Appointment from '@/Components/Forms/Appointment';
 import throttle from 'lodash/throttle';
 import { Inertia } from '@inertiajs/inertia';
 
