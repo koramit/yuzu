@@ -50,10 +50,10 @@ class MocktailManager
             'date_refer' => $visit->form['decision']['date_refer'] ?? $visit->date_visit->addDay()->format('Y-m-d'),
             'temperature_celsius' =>  $visit->form['patient']['temperature_celsius'],
             'o2_sat' =>  $visit->form['patient']['o2_sat'],
+            'symptom' => $this->symptom($visit->form['symptoms']),
             'symptoms' => $content['symptoms'],
             'asymptomatic_symptom' => $visit->form['symptoms']['asymptomatic_symptom'],
             'onset' => $visit->form['symptoms']['date_symptom_start'] ? Carbon::create($visit->form['symptoms']['date_symptom_start'])->format('M d') : null,
-            'date_symptom_start' => $visit->form['symptoms']['date_symptom_start'],
             'fever' => $visit->form['symptoms']['fever'],
             'cough' => $visit->form['symptoms']['cough'],
             'sore_throat' => $visit->form['symptoms']['sore_throat'],
@@ -65,6 +65,7 @@ class MocktailManager
             'myalgia' => $visit->form['symptoms']['myalgia'],
             'diarrhea' => $visit->form['symptoms']['diarrhea'],
             'other_symptoms' => $visit->form['symptoms']['other_symptoms'],
+            'ud' => $this->ud($visit->form['comorbids']),
             'comorbids' => $content['โรคประจำตัว'],
             'no_comorbids' => $visit->form['comorbids']['no_comorbids'],
             'dm' => $visit->form['comorbids']['dm'],
@@ -80,9 +81,51 @@ class MocktailManager
             'gastroenteritis' => $visit->form['symptoms']['diarrhea'],
             'other_diagnosis' => $visit->form['diagnosis']['other_diagnosis'],
             'note' => $visit->form['note'],
+            'lab_remark' => $visit->form['management']['np_swab_result_note'] ?? null,
             'refer_to' => $visit->form['decision']['refer_to'] ?? null,
             'remark' => $visit->form['decision']['remark'] ?? null,
             'linked' => $visit->form['decision']['linked'] ?? false,
         ];
+    }
+
+    protected function ud($comorbids)
+    {
+        if ($comorbids['no_comorbids']) {
+            return 'no';
+        }
+
+        $text = collect(['dm', 'ht', 'dlp', 'obesity'])->filter(fn ($d) => $comorbids[$d])->join(' ');
+        if ($comorbids['other_comorbids']) {
+            $text += (' ' + $comorbids['other_comorbids']);
+        }
+
+        return trim($text);
+    }
+
+    protected function symptom($symptoms)
+    {
+        if ($symptoms['asymptomatic_symptom']) {
+            return 'asymptomatic';
+        }
+        $text = '';
+        if ($symptoms['fever']
+            || $symptoms['cough']
+            || $symptoms['sore_throat']
+            || $symptoms['rhinorrhoea']
+            || $symptoms['sputum']
+            || $symptoms['fatigue']
+            || $symptoms['anosmia']
+            || $symptoms['loss_of_taste']
+            || $symptoms['myalgia']) {
+            $text = 'URI ';
+        }
+        if ($symptoms['diarrhea']) {
+            $text .= 'Gastroenteritis ';
+        }
+        if ($symptoms['other_symptoms']) {
+            $text .= $symptoms['other_symptoms'];
+        }
+
+        return trim($text);
     }
 }

@@ -45,6 +45,7 @@ class VisitAction extends Model
         'unlock' => 'แก้ไข',
         'update' => 'บันทึก',
         'view' => 'อ่าน',
+        'link_mocktail' => 'link mocktail',
     ];
 
     public function visit()
