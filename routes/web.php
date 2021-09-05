@@ -8,7 +8,7 @@ use App\Http\Controllers\ImportAppointmentsController;
 use App\Http\Controllers\MocktailController;
 use App\Http\Controllers\OPDCardExportController;
 use App\Http\Controllers\PagesController;
-use App\Http\Controllers\PositiveCaseDecisionController;
+use App\Http\Controllers\PositiveCaseDecisionExportController;
 use App\Http\Controllers\PreferencesController;
 use App\Http\Controllers\PrintOPDCardController;
 use App\Http\Controllers\ResourceEmployeesController;
@@ -165,7 +165,7 @@ Route::get('export/opd_cards', OPDCardExportController::class)
 Route::get('export/visits', VisitExportController::class)
      ->middleware('auth', 'can:export_visits')
      ->name('export.visits');
-Route::get('export/decisions', PositiveCaseDecisionController::class)
+Route::get('export/decisions', PositiveCaseDecisionExportController::class)
      ->middleware('auth', 'can:view_decision_list')
      ->name('export.decisions');
 

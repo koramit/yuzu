@@ -61,6 +61,8 @@ const login = () => {
         .then((response) => {
             if (response.data.ok) {
                 linked.value = true;
+            } else {
+                form.errors.login = response.data.login;
             }
         }).finally(() => form.processing = false);
 };

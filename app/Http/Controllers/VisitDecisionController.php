@@ -58,7 +58,7 @@ class VisitDecisionController extends Controller
 
         if (! $mocktailOptions->contains(Request::input('refer_to'))) {
             $decision['linked'] = true;
-            if ($mocktailOptions->contains($visit->form['decision']['refer_to'])) { // cancel mocktail
+            if (($visit->form['decision'] ?? null) && $mocktailOptions->contains($visit->form['decision']['refer_to'])) { // cancel mocktail
                 $response = Http::acceptJson()
                             ->timeout(5)
                             ->withToken($user->mocktail_token)

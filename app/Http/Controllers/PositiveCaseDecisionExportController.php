@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
-class PositiveCaseDecisionController extends Controller
+class PositiveCaseDecisionExportController extends Controller
 {
     public function __invoke()
     {

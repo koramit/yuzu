@@ -433,7 +433,7 @@ const makeDecision = () => {
 };
 const makeDecisionFromDropdown = (positive, decision) => {
     selectedPositive.value = positive;
-    postDecision({ refer_to: decision });
+    postDecision({ refer_to: decision, date_refer: positive.date_refer, remark: positive.remark });
 };
 const postDecision = (decision) => {
     let formData = {...selectedPositive.value};
@@ -445,7 +445,7 @@ const postDecision = (decision) => {
         .then(response => {
             selectedPositive.value.refer_to = decision.refer_to;
             selectedPositive.value.date_refer = decision.date_refer;
-            selectedPositive.value.remarl = decision.remarl;
+            selectedPositive.value.remark = decision.remark;
             selectedPositive.value.linked = response.data.linked;
         });
 };
