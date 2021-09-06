@@ -89,7 +89,7 @@ class ImportAppointmentsController extends Controller
             $visit->screen_type = 'นัดมา swab ครั้งแรก';
             $form['patient']['risk'] = $this->getRisk($appointment['risk']);
             $form['patient']['date_latest_expose_by_im'] = $this->getDateStr($appointment['date_latest_expose']);
-            $form['vaccination'] = $this->getVaccine($appointment);
+            // $form['vaccination'] = $this->getVaccine($appointment);
             $form['management']['np_swab'] = true;
             $form['management']['swab_at'] = 'Sky Walk';
             $visit->form = $form;
