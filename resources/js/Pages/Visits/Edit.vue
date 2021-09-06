@@ -323,7 +323,7 @@
                     v-model="form.exposure.evaluation"
                     :error="form.errors.evaluation"
                     name="evaluation"
-                    :options="configs.appointment_evaluations"
+                    :options="isEmployee ? configs.appointment_evaluations : configs.appointment_evaluations_public"
                     :allow-other="true"
                     v-if="isAppointment"
                     ref="evaluation"
