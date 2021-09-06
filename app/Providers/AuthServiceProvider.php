@@ -30,5 +30,7 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }
         });
+
+        Gate::define('refer', fn ($user) => $user->can('evaluate') && $user->mocktail_token);
     }
 }
