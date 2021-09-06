@@ -96,7 +96,7 @@ class MocktailManager
 
         $text = collect(['dm', 'ht', 'dlp', 'obesity'])->filter(fn ($d) => $comorbids[$d])->join(' ');
         if ($comorbids['other_comorbids']) {
-            $text += (' ' + $comorbids['other_comorbids']);
+            $text .= (' '.$comorbids['other_comorbids']);
         }
 
         return trim($text);
