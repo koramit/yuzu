@@ -246,7 +246,7 @@ class VisitsController extends Controller
         // it actually is unlocking visit to updatable
 
         // reset discharged_at & enlisted_swab_at (ready_to_print = false)
-        if ($visit->swabbed) {
+        if ($visit->swabbed && $visit->enlisted_swab_at) {
             $visit->forceFill([
                 'form->management->original_enlisted_swab_at' => $visit->enlisted_swab_at->format('Y-m-d H:i:s'),
             ]);

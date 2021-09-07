@@ -174,6 +174,7 @@ export default {
         const edit = (visit) => {
             currentConfirm.action = 'edit';
             currentConfirm.resource_id = visit.slug;
+            // console.log('edit fired ' + (new Date).toString());
             let confirmText = null;
             if (usePage().props.value.user.roles.includes('md')) {
                 confirmText  = '<p>แก้ไข ' + visit.title + '</p>';
@@ -199,6 +200,7 @@ export default {
                     preserveScroll: true,
                 });
             } else if (currentConfirm.action === 'edit') {
+                // console.log(currentConfirm.resource_id + ' ' + (new Date).toString());
                 Inertia.get(window.route('visits.replace', currentConfirm.resource_id), {
                     preserveState: true,
                     preserveScroll: true,
