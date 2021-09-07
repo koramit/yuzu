@@ -18,6 +18,9 @@ class VisitDischargeListController extends Controller
         $manager = new VisitManager();
         $errors = $manager->validateDischarge($data);
 
+        $swabbed = $data['swabbed'] ?? false;
+        unset($data['swabbed']);
+
         $manager->saveVisit($visit, $data, $user);
 
         if (count($errors)) {
@@ -39,6 +42,7 @@ class VisitDischargeListController extends Controller
             'form->md->signed_on_behalf' => false,
             'form->md->signed_at' => now(),
         ]);
+        $visit->swabbed = $swabbed;
         $visit->save();
 
         $visit->actions()->createMany([

@@ -749,6 +749,14 @@
                 >
                     ส่ง swab
                 </SpinnerButton>
+
+                <SpinnerButton
+                    v-if="canSaveToSwab && form.management.container_no"
+                    class="block w-full mt-4 btn btn-dark"
+                    @click="saveToDischargeSwabbed"
+                >
+                    จำหน่ายได้ swab แล้ว
+                </SpinnerButton>
             </template>
         </div>
 
@@ -806,6 +814,10 @@ export default {
         const saveToDischarge = () => {
             form.post(window.route('visits.discharge-list.store', props.visit.slug));
         };
+        const saveToDischargeSwabbed = () => {
+            form.transform(data => ({...data, swabbed: true, remember: 'on'}))
+                .post(window.route('visits.discharge-list.store', props.visit.slug));
+        };
         const emitter = inject('emitter');
         emitter.on('action-clicked', (action) => {
             if (action === 'save') {
@@ -816,6 +828,8 @@ export default {
                 nextTick(saveToSwab);
             } else if (action === 'save-discharge') {
                 nextTick(saveToDischarge);
+            } else if (action === 'save-discharge-swabbed') {
+                nextTick(saveToDischargeSwabbed);
             }
         });
         const configs = reactive({
@@ -892,10 +906,21 @@ export default {
                 if (usePage().props.value.flash.actionMenu.findIndex(action => action.action === 'save-swab') === -1) {
                     usePage().props.value.flash.actionMenu.push({icon: 'share-square', label: 'ส่ง swab', action: 'save-swab', can: true});
                 }
+                if (form.management.container_no) {
+                    if (usePage().props.value.flash.actionMenu.findIndex(action => action.action === 'save-discharge-swabbed') === -1) {
+                        usePage().props.value.flash.actionMenu.push({icon: 'share-square', label: 'จำหน่ายได้ swab แล้ว', action: 'save-discharge-swabbed', can: true});
+                    }
+                }
             } else {
                 let pos = usePage().props.value.flash.actionMenu.findIndex(action => action.action === 'save-swab');
                 if (pos !== -1) {
                     usePage().props.value.flash.actionMenu.splice(pos, 1);
+                }
+                if (form.management.container_no) {
+                    pos = usePage().props.value.flash.actionMenu.findIndex(action => action.action === 'save-discharge-swabbed');
+                    if (pos !== -1) {
+                        usePage().props.value.flash.actionMenu.splice(pos, 1);
+                    }
                 }
             }
         };
@@ -1217,6 +1242,7 @@ export default {
             saveToExam,
             saveToSwab,
             saveToDischarge,
+            saveToDischargeSwabbed,
             canSaveToSwab,
         };
     },

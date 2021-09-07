@@ -145,6 +145,7 @@ import FormTextarea from '@/Components/Controls/FormTextarea';
 import { computed, inject, nextTick, onUnmounted, reactive, ref } from '@vue/runtime-core';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/inertia-vue3';
+import throttle from 'lodash/throttle';
 
 export default {
     layout: Layout,
@@ -174,6 +175,7 @@ export default {
         const edit = (visit) => {
             currentConfirm.action = 'edit';
             currentConfirm.resource_id = visit.slug;
+            // console.log('edit fired ' + (new Date).toString());
             let confirmText = null;
             if (usePage().props.value.user.roles.includes('md')) {
                 confirmText  = '<p>แก้ไข ' + visit.title + '</p>';
@@ -199,12 +201,15 @@ export default {
                     preserveScroll: true,
                 });
             } else if (currentConfirm.action === 'edit') {
-                Inertia.get(window.route('visits.replace', currentConfirm.resource_id), {
-                    preserveState: true,
-                    preserveScroll: true,
-                });
+                editConfirmed();
             }
         });
+        const editConfirmed = throttle(function () {
+            Inertia.get(window.route('visits.replace', currentConfirm.resource_id), {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }, 300);
 
         emitter.on('action-clicked', (action) => {
             // please expect console log error in case of revisit this page

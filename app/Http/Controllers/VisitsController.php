@@ -158,8 +158,10 @@ class VisitsController extends Controller
                 $can[] = 'save-exam';
             }
             if ($user->can('discharge', $visit)) { // save to discharge -- MD only
-                $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'จำหน่ายไม่ต้อง swab', 'action' => 'save-discharge', 'can' => true];
                 $can[] = 'save-discharge';
+                if (! $visit->form['management']['np_swab']) {
+                    $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'จำหน่ายไม่ต้อง swab', 'action' => 'save-discharge', 'can' => true];
+                }
             }
             if ($user->role_names->contains('nurse')) { // NURSE save to swab
                 if ($visit->screen_type && $visit->screen_type !== 'เริ่มตรวจใหม่' && ! $visit->swabbed) {
@@ -168,6 +170,9 @@ class VisitsController extends Controller
             } elseif ($user->role_names->contains('md')) { // MD save to swab
                 if ($visit->form['management']['np_swab'] && ! $visit->swabbed) {
                     $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่ง swab', 'action' => 'save-swab', 'can' => true];
+                    if ($visit->form['management']['container_no'] ?? false) {
+                        $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'จำหน่ายได้ swab แล้ว', 'action' => 'save-discharge-swabbed', 'can' => true];
+                    }
                 }
             }
         }
@@ -241,7 +246,7 @@ class VisitsController extends Controller
         // it actually is unlocking visit to updatable
 
         // reset discharged_at & enlisted_swab_at (ready_to_print = false)
-        if ($visit->swabbed) {
+        if ($visit->swabbed && $visit->enlisted_swab_at) {
             $visit->forceFill([
                 'form->management->original_enlisted_swab_at' => $visit->enlisted_swab_at->format('Y-m-d H:i:s'),
             ]);
