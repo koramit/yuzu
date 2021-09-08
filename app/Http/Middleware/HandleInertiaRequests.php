@@ -56,9 +56,10 @@ class HandleInertiaRequests extends Middleware
                     'roles' => $request->user()->role_names->toArray(),
                     'abilities' => $request->user()->abilities->toArray(),
                 ] : null,
-            'events' => [
-                'confirmed_at' => null,
-                'confirmed_reason' => null,
+            'event' => [
+                'fire' => null,
+                'name' => '',
+                'payload' => null,
             ],
         ]);
     }

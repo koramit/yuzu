@@ -142,7 +142,7 @@ import Filters from '@/Components/Cards/Filters';
 import Visit from '@/Components/Forms/Visit';
 import Appointment from '@/Components/Forms/Appointment';
 import FormTextarea from '@/Components/Controls/FormTextarea';
-import { computed, inject, nextTick, onUnmounted, reactive, ref, watch } from '@vue/runtime-core';
+import { computed, nextTick, onUnmounted, reactive, ref, watch } from '@vue/runtime-core';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/inertia-vue3';
 
@@ -157,8 +157,6 @@ export default {
     setup (props) {
         const createVisitForm = ref(null);
         const appointmentForm = ref(null);
-        const emitter = inject('emitter');
-
         const currentConfirm = reactive({
             action: null,
             resource_id: null,
@@ -166,10 +164,10 @@ export default {
         const cancel = (visit) => {
             currentConfirm.action = 'cancel';
             currentConfirm.resource_id = visit.slug;
-            emitter.emit('need-confirm', {
-                confirmText: 'ยกเลิกการตรวจ ' + visit.title,
-                needReason: true,
-            });
+
+            usePage().props.value.event.payload = { confirmText: 'ยกเลิกการตรวจ ' + visit.title, needReason: true };
+            usePage().props.value.event.name = 'need-confirm';
+            usePage().props.value.event.fire = + new Date();
         };
         const edit = (visit) => {
             currentConfirm.action = 'edit';
@@ -186,44 +184,41 @@ export default {
                 confirmText += '<p class="mt-2">*** แจ้งคุณพยาบาล incharge เพื่อติดต่อเวชระเบียนพิมพ์ OPD card ใหม่แทนใบเดิมด้วย</p>';
                 confirmText += '<p class="mt-2">๏ หากแก้ไม่เสร็จสามารถบันทึกไว้ก่อน โดยผู้ป่วยจะย้ายสถานะไปอยู่ห้องคัดกรอง</p>';
             }
-            emitter.emit('need-confirm', {
-                confirmText: confirmText,
-                needReason: false,
-            });
+
+            usePage().props.value.event.payload = { confirmText: confirmText, needReason: false };
+            usePage().props.value.event.name = 'need-confirm';
+            usePage().props.value.event.fire = + new Date();
         };
 
         watch (
-            () => usePage().props.value.events.confirmed_at,
-            (val) => {
-                if (! val) {
+            () => usePage().props.value.event.fire,
+            (event) => {
+                if (! event) {
                     return;
                 }
-                if (currentConfirm.action === 'cancel') {
-                    Inertia.delete(window.route('visits.cancel', currentConfirm.resource_id), {
-                        data: {reason: usePage().props.value.events.confirmed_reason},
-                        preserveState: true,
-                        preserveScroll: true,
-                    });
-                } else if (currentConfirm.action === 'edit') {
-                    Inertia.get(window.route('visits.replace', currentConfirm.resource_id), {
-                        preserveState: true,
-                        preserveScroll: true,
-                    });
+
+                if (usePage().props.value.event.name === 'confirmed') {
+                    if (currentConfirm.action === 'cancel') {
+                        Inertia.delete(window.route('visits.cancel', currentConfirm.resource_id), {
+                            data: {reason: usePage().props.value.event.payload},
+                            preserveState: true,
+                            preserveScroll: true,
+                        });
+                    } else if (currentConfirm.action === 'edit') {
+                        Inertia.get(window.route('visits.replace', currentConfirm.resource_id), {
+                            preserveState: true,
+                            preserveScroll: true,
+                        });
+                    }
+                } else if (usePage().props.value.event.name === 'action-clicked') {
+                    if (usePage().props.value.event.payload === 'create-visit') {
+                        nextTick(() => createVisitForm.value.open());
+                    } else if (usePage().props.value.event.payload === 'create-appointment') {
+                        nextTick(() => appointmentForm.value.open());
+                    }
                 }
             }
         );
-
-        emitter.on('action-clicked', (action) => {
-            /** emitter repeatly fire event is the root cause */
-            // please expect console log error in case of revisit this page
-            // maybe new vue fragment lazy loading template so it not
-            // ready to use and need some kind of "activate"
-            if (action === 'create-visit') {
-                nextTick(() => createVisitForm.value.open());
-            } else if (action === 'create-appointment') {
-                nextTick(() => appointmentForm.value.open());
-            }
-        });
 
         if (props.eventSource) {
             const eventSource = new EventSource(window.route('sse') + '?channel=' + props.eventSource, { withCredentials: true });

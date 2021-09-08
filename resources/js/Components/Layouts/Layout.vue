@@ -151,52 +151,47 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import Dropdown from '@/Components/Helpers/Dropdown';
 import Icon from '@/Components/Helpers/Icon';
 import MainMenu from '@/Components/Helpers/MainMenu';
 import ActionMenu from '@/Components/Helpers/ActionMenu';
 import FlashMessages from '@/Components/Helpers/FlashMessages';
 import ConfirmForm from '@/Components/Forms/ConfirmForm';
-import { inject, nextTick, ref } from '@vue/runtime-core';
+import { nextTick, ref, watch } from '@vue/runtime-core';
 import { useCheckSessionTimeout } from '@/Functions/useCheckSessionTimeout';
 import { useRemoveLoader } from '@/Functions/useRemoveLoader';
-import { Head, Link } from '@inertiajs/inertia-vue3';
-export default {
-    components: { Dropdown, Icon, MainMenu, ActionMenu, FlashMessages, ConfirmForm, Head, Link },
-    setup () {
-        useCheckSessionTimeout();
-        useRemoveLoader();
+import { Head, Link, usePage } from '@inertiajs/inertia-vue3';
+useCheckSessionTimeout();
+useRemoveLoader();
+const confirmForm = ref(null);
+const mobileMenuVisible = ref(false);
+const avatarSrcError = ref(false);
 
-        const confirmForm = ref(null);
-        const mobileMenuVisible = ref(false);
-        const avatarSrcError = ref(false);
-        const emitter = inject('emitter');
-
-        emitter.on('need-confirm', (cinfigs) => {
-            setTimeout(() => nextTick(() => confirmForm.value.open(cinfigs)), 300);
-        });
-
-        const actionClicked = (action) => {
-            mobileMenuVisible.value = false;
-            nextTick(() => {
-                setTimeout(() => {
-                    emitter.emit('action-clicked', action);
-                }, 300); // equal to animate duration
-            });
-        };
-
-        const isUrl = (url) => {
-            return (location.origin + location.pathname) === url;
-        };
-
-        return {
-            confirmForm,
-            mobileMenuVisible,
-            avatarSrcError,
-            actionClicked,
-            isUrl
-        };
-    },
+const actionClicked = (action) => {
+    mobileMenuVisible.value = false;
+    nextTick(() => {
+        setTimeout(() => {
+            usePage().props.value.event.payload = action;
+            usePage().props.value.event.name = 'action-clicked';
+            usePage().props.value.event.fire = + new Date();
+        }, 300); // equal to animate duration
+    });
 };
+
+const isUrl = (url) => {
+    return (location.origin + location.pathname) === url;
+};
+
+watch (
+    () => usePage().props.value.event.fire,
+    (event) => {
+        if (! event) {
+            return;
+        }
+        if (usePage().props.value.event.name === 'need-confirm') {
+            setTimeout(() => confirmForm.value.open(usePage().props.value.event.payload), 300);
+        }
+    }
+);
 </script>

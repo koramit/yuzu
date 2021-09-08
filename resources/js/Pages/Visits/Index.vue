@@ -84,55 +84,53 @@
     </div>
 </template>
 
-<script>
-import Layout from '@/Components/Layouts/Layout';
+<script setup>
+
 import Visit from '@/Components/Forms/Visit';
 import Appointment from '@/Components/Forms/Appointment';
 import ExportOPDCards from '@/Components/Forms/ExportOPDCards';
 import VisitActions from '@/Components/Helpers/VisitActions';
 import Icon from '@/Components/Helpers/Icon';
-import { inject, nextTick, ref, watch } from '@vue/runtime-core';
-import { Link } from '@inertiajs/inertia-vue3';
+import { nextTick, ref, watch } from '@vue/runtime-core';
+import { Link, usePage } from '@inertiajs/inertia-vue3';
 import throttle from 'lodash/throttle';
 import { Inertia } from '@inertiajs/inertia';
 
-export default {
-    layout: Layout,
-    components: { Visit, Icon, Link, ExportOPDCards, Appointment, VisitActions },
-    props: {
-        visits: { type: Object, required: true },
-        filters: { type: Object, required: true },
-        can: { type: Object, required: true },
-    },
-    setup (props) {
-        const createVisitForm = ref(null);
-        const appointmentForm = ref(null);
-        const emitter = inject('emitter');
+const props = defineProps({
+    visits: { type: Object, required: true },
+    filters: { type: Object, required: true },
+    can: { type: Object, required: true },
+});
 
-        emitter.on('action-clicked', (action) => {
-            // please expect console log error in case of revisit this page
-            // maybe new vue fragment lazy loading template so it not
-            // ready to use and need some kind of "activate"
-            if (action === 'create-visit') {
+const createVisitForm = ref(null);
+const appointmentForm = ref(null);
+watch (
+    () => usePage().props.value.event.fire,
+    (event) => {
+        if (! event) {
+            return;
+        }
+
+        if (usePage().props.value.event.name === 'action-clicked') {
+            if (usePage().props.value.event.payload === 'create-visit') {
                 nextTick(() => createVisitForm.value.open());
-            } else if (action === 'create-appointment') {
+            } else if (usePage().props.value.event.payload === 'create-appointment') {
                 nextTick(() => appointmentForm.value.open());
             }
-        });
+        }
+    }
+);
 
-        const search = ref(props.filters.search);
-        watch (
-            () => search.value,
-            throttle(function(val) {
-                Inertia.visit(window.route('visits') + '?search=' + val, { preserveState: true });
-            }, 450),
-        );
+const search = ref(props.filters.search);
+watch (
+    () => search.value,
+    throttle(function(val) {
+        Inertia.visit(window.route('visits') + '?search=' + val, { preserveState: true });
+    }, 450),
+);
+</script>
 
-        return {
-            createVisitForm,
-            appointmentForm,
-            search,
-        };
-    },
-};
+<script>
+import Layout from '@/Components/Layouts/Layout';
+export default { layout: Layout };
 </script>

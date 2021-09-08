@@ -47,8 +47,9 @@ const confirmText = ref(null);
 const needReason = ref(false);
 const modal = ref(null);
 const confirmed = () => {
-    usePage().props.value.events.confirmed_reason = reason.value;
-    usePage().props.value.events.confirmed_at = (+ new Date());
+    usePage().props.value.event.payload = reason.value;
+    usePage().props.value.event.name = 'confirmed';
+    usePage().props.value.event.fire = + new Date();
     modal.value.close();
 };
 const open = (configs) => {
