@@ -1,5 +1,4 @@
 <template>
-    <!-- <teleport to="body"> -->
     <Modal
         ref="modal"
         width-mode="form-cols-1"
@@ -36,41 +35,26 @@
         </template>
     </Modal>
 </template>
-<script>
+<script setup>
 import FormInput from '@/Components/Controls/FormInput';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import Modal from '@/Components/Helpers/Modal';
 import { ref } from '@vue/reactivity';
-import { inject } from '@vue/runtime-core';
-export default {
-    emits: ['closed'],
-    components: { FormInput, Modal, SpinnerButton },
-    setup () {
-        const emitter = inject('emitter');
-        const reason = ref(null);
-        const confirmText = ref(null);
-        const needReason = ref(false);
-        const modal = ref(null);
-
-        const open = (configs) => {
-            needReason.value = configs.needReason;
-            confirmText.value = configs.confirmText;
-            modal.value.open();
-        };
-
-        const confirmed = () => {
-            emitter.emit('confirmed', reason.value);
-            modal.value.close();
-        };
-
-        return {
-            needReason,
-            reason,
-            confirmText,
-            modal,
-            open,
-            confirmed
-        };
-    }
+import { usePage } from '@inertiajs/inertia-vue3';
+defineEmits(['closed']);
+const reason = ref(null);
+const confirmText = ref(null);
+const needReason = ref(false);
+const modal = ref(null);
+const confirmed = () => {
+    usePage().props.value.events.confirmed_reason = reason.value;
+    usePage().props.value.events.confirmed_at = (+ new Date());
+    modal.value.close();
 };
+const open = (configs) => {
+    needReason.value = configs.needReason;
+    confirmText.value = configs.confirmText;
+    modal.value.open();
+};
+defineExpose({open});
 </script>
