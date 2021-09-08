@@ -142,10 +142,9 @@ import Filters from '@/Components/Cards/Filters';
 import Visit from '@/Components/Forms/Visit';
 import Appointment from '@/Components/Forms/Appointment';
 import FormTextarea from '@/Components/Controls/FormTextarea';
-import { computed, inject, nextTick, onUnmounted, reactive, ref } from '@vue/runtime-core';
+import { computed, inject, nextTick, onUnmounted, reactive, ref, watch } from '@vue/runtime-core';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/inertia-vue3';
-import throttle from 'lodash/throttle';
 
 export default {
     layout: Layout,
@@ -175,7 +174,6 @@ export default {
         const edit = (visit) => {
             currentConfirm.action = 'edit';
             currentConfirm.resource_id = visit.slug;
-            // console.log('edit fired ' + (new Date).toString());
             let confirmText = null;
             if (usePage().props.value.user.roles.includes('md')) {
                 confirmText  = '<p>แก้ไข ' + visit.title + '</p>';
@@ -193,25 +191,30 @@ export default {
                 needReason: false,
             });
         };
-        emitter.on('confirmed', (text) => {
-            if (currentConfirm.action === 'cancel') {
-                Inertia.delete(window.route('visits.cancel', currentConfirm.resource_id), {
-                    data: {reason: text},
-                    preserveState: true,
-                    preserveScroll: true,
-                });
-            } else if (currentConfirm.action === 'edit') {
-                editConfirmed();
+
+        watch (
+            () => usePage().props.value.events.confirmed_at,
+            (val) => {
+                if (! val) {
+                    return;
+                }
+                if (currentConfirm.action === 'cancel') {
+                    Inertia.delete(window.route('visits.cancel', currentConfirm.resource_id), {
+                        data: {reason: usePage().props.value.events.confirmed_reason},
+                        preserveState: true,
+                        preserveScroll: true,
+                    });
+                } else if (currentConfirm.action === 'edit') {
+                    Inertia.get(window.route('visits.replace', currentConfirm.resource_id), {
+                        preserveState: true,
+                        preserveScroll: true,
+                    });
+                }
             }
-        });
-        const editConfirmed = throttle(function () {
-            Inertia.get(window.route('visits.replace', currentConfirm.resource_id), {
-                preserveState: true,
-                preserveScroll: true,
-            });
-        }, 300);
+        );
 
         emitter.on('action-clicked', (action) => {
+            /** emitter repeatly fire event is the root cause */
             // please expect console log error in case of revisit this page
             // maybe new vue fragment lazy loading template so it not
             // ready to use and need some kind of "activate"
