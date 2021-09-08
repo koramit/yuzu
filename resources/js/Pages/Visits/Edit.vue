@@ -782,7 +782,7 @@ import Error from '@/Components/Controls/Error';
 import { useForm, usePage } from '@inertiajs/inertia-vue3';
 import Layout from '@/Components/Layouts/Layout';
 import { reactive, ref } from '@vue/reactivity';
-import { computed, inject, nextTick, watch } from '@vue/runtime-core';
+import { computed, nextTick, watch } from '@vue/runtime-core';
 export default {
     layout: Layout,
     components: {
@@ -818,20 +818,27 @@ export default {
             form.transform(data => ({...data, swabbed: true, remember: 'on'}))
                 .post(window.route('visits.discharge-list.store', props.visit.slug));
         };
-        const emitter = inject('emitter');
-        emitter.on('action-clicked', (action) => {
-            if (action === 'save') {
-                nextTick(saveForm);
-            } else if (action === 'save-exam') {
-                nextTick(saveToExam);
-            } else if (action === 'save-swab') {
-                nextTick(saveToSwab);
-            } else if (action === 'save-discharge') {
-                nextTick(saveToDischarge);
-            } else if (action === 'save-discharge-swabbed') {
-                nextTick(saveToDischargeSwabbed);
+        watch (
+            () => usePage().props.value.event.fire,
+            (event) => {
+                if (! event) {
+                    return;
+                }
+
+                let action = usePage().props.value.event.name;
+                if (action === 'save') {
+                    nextTick(saveForm);
+                } else if (action === 'save-exam') {
+                    nextTick(saveToExam);
+                } else if (action === 'save-swab') {
+                    nextTick(saveToSwab);
+                } else if (action === 'save-discharge') {
+                    nextTick(saveToDischarge);
+                } else if (action === 'save-discharge-swabbed') {
+                    nextTick(saveToDischargeSwabbed);
+                }
             }
-        });
+        );
         const configs = reactive({
             ...props.formConfigs,
         });
