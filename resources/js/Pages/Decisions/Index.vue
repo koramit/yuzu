@@ -396,18 +396,23 @@ const props = defineProps({
 
 const createVisitForm = ref(null);
 const appointmentForm = ref(null);
-const emitter = inject('emitter');
 
-emitter.on('action-clicked', (action) => {
-    // please expect console log error in case of revisit this page
-    // maybe new vue fragment lazy loading template so it not
-    // ready to use and need some kind of "activate"
-    if (action === 'create-visit') {
-        nextTick(() => createVisitForm.value.open());
-    } else if (action === 'create-appointment') {
-        nextTick(() => appointmentForm.value.open());
+watch (
+    () => usePage().props.value.event.fire,
+    (event) => {
+        if (! event) {
+            return;
+        }
+
+        if (usePage().props.value.event.name === 'action-clicked') {
+            if (usePage().props.value.event.payload === 'create-visit') {
+                nextTick(() => createVisitForm.value.open());
+            } else if (usePage().props.value.event.payload === 'create-appointment') {
+                nextTick(() => appointmentForm.value.open());
+            }
+        }
     }
-});
+);
 
 const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom','Onset','Weight','Remark','Decision']);
 const formDateVisit = ref(props.dateVisit);
@@ -454,6 +459,7 @@ const postDecision = (decision) => {
 <script>
 import Layout from '@/Components/Layouts/Layout';
 import { computed, reactive, ref } from '@vue/reactivity';
-import { inject, nextTick } from '@vue/runtime-core';
+import { nextTick, watch } from '@vue/runtime-core';
+import { usePage } from '@inertiajs/inertia-vue3';
 export default { layout: Layout };
 </script>

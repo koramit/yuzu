@@ -7,9 +7,6 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
-import mitt from 'mitt';
-
-const emitter = mitt();
 
 InertiaProgress.init({
     delay: 200,
@@ -23,7 +20,6 @@ createInertiaApp({
         createApp({ render: () => h(app, props) })
             .use(plugin)
             .mixin({ methods: { route: window.route } }) // enable route() on template
-            .provide('emitter', emitter)
             .mount(el);
     },
 });
