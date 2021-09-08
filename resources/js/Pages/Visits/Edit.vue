@@ -825,17 +825,19 @@ export default {
                     return;
                 }
 
-                let action = usePage().props.value.event.name;
-                if (action === 'save') {
-                    nextTick(saveForm);
-                } else if (action === 'save-exam') {
-                    nextTick(saveToExam);
-                } else if (action === 'save-swab') {
-                    nextTick(saveToSwab);
-                } else if (action === 'save-discharge') {
-                    nextTick(saveToDischarge);
-                } else if (action === 'save-discharge-swabbed') {
-                    nextTick(saveToDischargeSwabbed);
+                if (usePage().props.value.event.name === 'action-clicked') {
+                    let action = usePage().props.value.event.payload;
+                    if (action === 'save') {
+                        nextTick(saveForm);
+                    } else if (action === 'save-exam') {
+                        nextTick(saveToExam);
+                    } else if (action === 'save-swab') {
+                        nextTick(saveToSwab);
+                    } else if (action === 'save-discharge') {
+                        nextTick(saveToDischarge);
+                    } else if (action === 'save-discharge-swabbed') {
+                        nextTick(saveToDischargeSwabbed);
+                    }
                 }
             }
         );
