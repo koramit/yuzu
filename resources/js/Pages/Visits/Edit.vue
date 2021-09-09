@@ -307,6 +307,13 @@
                 label="ตรวจ Antigen test kit (ATK) ได้ผลบวก"
                 v-model="form.exposure.atk_positive"
             />
+            <FormDatetime
+                class="mt-2"
+                label="เมื่อวันที่"
+                v-model="form.exposure.date_atk_positive"
+                :error="form.errors.date_atk_positive"
+                name="date_atk_positive"
+            />
         </div>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
