@@ -529,160 +529,162 @@
             <Error :error="form.errors.unvaccinated" />
         </div>
 
-        <!-- v-if="$page.props.user.roles.includes('md')" -->
-        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
-            <h2 class="font-semibold text-thick-theme-light">
-                วินิจฉัย
-            </h2>
-            <div :class="{'mt-2 rounded border-2 border-red-400 p-2': form.errors.diagnosis}">
-                <FormCheckbox
-                    class="mt-2"
-                    v-model="form.diagnosis.no_symptom"
-                    label="ไม่มีอาการ"
-                    :toggler="true"
-                />
-                <div v-if="!form.diagnosis.no_symptom">
+        <template v-if="!(form.patient.track && form.patient.track === 'Walk-in' && $page.props.user.roles.includes('nurse'))">
+            <!-- diagnosis -->
+            <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+                <h2 class="font-semibold text-thick-theme-light">
+                    วินิจฉัย
+                </h2>
+                <div :class="{'mt-2 rounded border-2 border-red-400 p-2': form.errors.diagnosis}">
                     <FormCheckbox
                         class="mt-2"
-                        v-model="form.diagnosis.suspected_covid_19"
-                        label="Suspected COVID-19 infection"
+                        v-model="form.diagnosis.no_symptom"
+                        label="ไม่มีอาการ"
+                        :toggler="true"
                     />
-                    <FormCheckbox
-                        class="mt-2"
-                        v-model="form.diagnosis.uri"
-                        label="Upper respiratory tract infection (URI)"
-                    />
-                    <FormCheckbox
-                        class="mt-2"
-                        v-model="form.diagnosis.suspected_pneumonia"
-                        label="Suspected pneumonia"
-                    />
-                    <FormInput
-                        class="mt-2"
-                        name="other_diagnosis"
-                        placeholder="วินิจฉัยอื่นๆ"
-                        v-model="form.diagnosis.other_diagnosis"
-                    />
+                    <div v-if="!form.diagnosis.no_symptom">
+                        <FormCheckbox
+                            class="mt-2"
+                            v-model="form.diagnosis.suspected_covid_19"
+                            label="Suspected COVID-19 infection"
+                        />
+                        <FormCheckbox
+                            class="mt-2"
+                            v-model="form.diagnosis.uri"
+                            label="Upper respiratory tract infection (URI)"
+                        />
+                        <FormCheckbox
+                            class="mt-2"
+                            v-model="form.diagnosis.suspected_pneumonia"
+                            label="Suspected pneumonia"
+                        />
+                        <FormInput
+                            class="mt-2"
+                            name="other_diagnosis"
+                            placeholder="วินิจฉัยอื่นๆ"
+                            v-model="form.diagnosis.other_diagnosis"
+                        />
+                    </div>
                 </div>
+                <Error :error="form.errors.diagnosis" />
             </div>
-            <Error :error="form.errors.diagnosis" />
-        </div>
-
-        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
-            <h2 class="font-semibold text-thick-theme-light">
-                การจัดการ
-            </h2>
-            <template v-if="!visit.swabbed">
-                <FormCheckbox
-                    class="mt-2"
-                    v-model="form.management.np_swab"
-                    label="NP swab for PCR test of SARS-CoV-2"
+            <!-- management -->
+            <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+                <h2 class="font-semibold text-thick-theme-light">
+                    การจัดการ
+                </h2>
+                <template v-if="!visit.swabbed">
+                    <FormCheckbox
+                        class="mt-2"
+                        v-model="form.management.np_swab"
+                        label="NP swab for PCR test of SARS-CoV-2"
+                    />
+                    <Error :error="form.errors.np_swab" />
+                </template>
+                <label
+                    v-else
+                    class="form-label"
+                >ได้ทำ swab แล้ว</label>
+                <FormRadio
+                    v-if="form.management.np_swab && $page.props.user.roles.includes('nurse')"
+                    label="ส่ง swab ที่"
+                    name="swab_at"
+                    v-model="form.management.swab_at"
+                    :options="configs.swab_units"
                 />
-                <Error :error="form.errors.np_swab" />
-            </template>
-            <label
-                v-else
-                class="form-label"
-            >ได้ทำ swab แล้ว</label>
-            <FormRadio
-                v-if="form.management.np_swab && $page.props.user.roles.includes('nurse')"
-                label="ส่ง swab ที่"
-                name="swab_at"
-                v-model="form.management.swab_at"
-                :options="configs.swab_units"
-            />
-            <FormTextarea
-                class="mt-2"
-                label="ส่งตรวจอื่นๆ"
-                name="management_other_tests"
-                v-model="form.management.other_tests"
-            />
-            <FormTextarea
-                class="mt-2"
-                label="Home medication"
-                name="home_medication"
-                v-model="form.management.home_medication"
-            />
-        </div>
-
-        <div
-            class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
-            v-if="form.visit.patient_type && !(form.visit.patient_type === 'บุคคลทั่วไป' && form.management.np_swab)"
-        >
-            <h2 class="font-semibold text-thick-theme-light">
-                คำแนะนำสำหรับ{{ isEmployee ? 'เจ้าหน้าที่ศิริราช' : 'ผู้ป่วย' }}
-            </h2>
-            <small
-                v-if="isEmployee"
-                class="text-bitter-theme-light italic"
+                <FormTextarea
+                    class="mt-2"
+                    label="ส่งตรวจอื่นๆ"
+                    name="management_other_tests"
+                    v-model="form.management.other_tests"
+                />
+                <FormTextarea
+                    class="mt-2"
+                    label="Home medication"
+                    name="home_medication"
+                    v-model="form.management.home_medication"
+                />
+            </div>
+            <!-- recommendation -->
+            <div
+                class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
+                v-if="form.visit.patient_type && !(form.visit.patient_type === 'บุคคลทั่วไป' && form.management.np_swab)"
             >
-                ๏ อ้างอิงจากคำแนะนำของ staff center หรือจากการประเมินผ่าน incident manager
-            </small>
-            <FormRadio
-                v-if="!isEmployee"
-                class="mt-2"
-                v-model="form.recommendation.choice"
-                :error="form.errors.recommendation_choice"
-                name="recommendation_choice"
-                :options="configs.public_recommendations"
-                :allow-reset="true"
-            />
+                <h2 class="font-semibold text-thick-theme-light">
+                    คำแนะนำสำหรับ{{ isEmployee ? 'เจ้าหน้าที่ศิริราช' : 'ผู้ป่วย' }}
+                </h2>
+                <small
+                    v-if="isEmployee"
+                    class="text-bitter-theme-light italic"
+                >
+                    ๏ อ้างอิงจากคำแนะนำของ staff center หรือจากการประเมินผ่าน incident manager
+                </small>
+                <FormRadio
+                    v-if="!isEmployee"
+                    class="mt-2"
+                    v-model="form.recommendation.choice"
+                    :error="form.errors.recommendation_choice"
+                    name="recommendation_choice"
+                    :options="configs.public_recommendations"
+                    :allow-reset="true"
+                />
 
-            <template v-if="form.recommendation.choice == 13">
-                <FormDatetime
-                    label="กักตัวถึงวันที่"
-                    v-model="form.recommendation.date_isolation_end"
-                    :error="form.errors.date_isolation_end"
-                    name="date_isolation_end"
-                    ref="dateIsolationEndInput"
-                />
-                <button
-                    @click="addDays(form.exposure.date_latest_expose, dateIsolationEndInput, 14)"
-                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
-                    :disabled="!(form.exposure.date_latest_expose && true)"
-                >
-                    14 วัน
-                </button>
-                <FormDatetime
-                    class="mt-2"
-                    label="นัดทำ swab"
-                    v-model="form.recommendation.date_reswab"
-                    :error="form.errors.date_reswab"
-                    name="date_reswab"
-                    ref="dateReswabInput"
-                />
-                <button
-                    @click="addDays(form.exposure.date_latest_expose, dateReswabInput, 7)"
-                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
-                    :disabled="!(form.exposure.date_latest_expose && true)"
-                >
-                    7 วัน
-                </button>
-                <button
-                    @click="addDays(form.exposure.date_latest_expose, dateReswabInput, 14)"
-                    class="ml-2 text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
-                    :disabled="!(form.exposure.date_latest_expose && true)"
-                >
-                    14 วัน
-                </button>
-                <FormDatetime
-                    class="mt-2"
-                    label="นัดทำ Reswab ครั้งที่ 2 (ถ้ามี)"
-                    v-model="form.recommendation.date_reswab_next"
-                    :error="form.errors.date_reswab_next"
-                    name="date_reswab_next"
-                    ref="dateReswabNextInput"
-                    :disabled="!(form.recommendation.date_reswab && true)"
-                />
-                <button
-                    @click="addDays(form.recommendation.date_reswab, dateReswabNextInput, 7)"
-                    class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
-                    :disabled="!(form.recommendation.date_reswab && true)"
-                >
-                    +7
-                </button>
-            </template>
-        </div>
+                <template v-if="form.recommendation.choice == 13">
+                    <FormDatetime
+                        label="กักตัวถึงวันที่"
+                        v-model="form.recommendation.date_isolation_end"
+                        :error="form.errors.date_isolation_end"
+                        name="date_isolation_end"
+                        ref="dateIsolationEndInput"
+                    />
+                    <button
+                        @click="addDays(form.exposure.date_latest_expose, dateIsolationEndInput, 14)"
+                        class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        :disabled="!(form.exposure.date_latest_expose && true)"
+                    >
+                        14 วัน
+                    </button>
+                    <FormDatetime
+                        class="mt-2"
+                        label="นัดทำ swab"
+                        v-model="form.recommendation.date_reswab"
+                        :error="form.errors.date_reswab"
+                        name="date_reswab"
+                        ref="dateReswabInput"
+                    />
+                    <button
+                        @click="addDays(form.exposure.date_latest_expose, dateReswabInput, 7)"
+                        class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        :disabled="!(form.exposure.date_latest_expose && true)"
+                    >
+                        7 วัน
+                    </button>
+                    <button
+                        @click="addDays(form.exposure.date_latest_expose, dateReswabInput, 14)"
+                        class="ml-2 text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        :disabled="!(form.exposure.date_latest_expose && true)"
+                    >
+                        14 วัน
+                    </button>
+                    <FormDatetime
+                        class="mt-2"
+                        label="นัดทำ Reswab ครั้งที่ 2 (ถ้ามี)"
+                        v-model="form.recommendation.date_reswab_next"
+                        :error="form.errors.date_reswab_next"
+                        name="date_reswab_next"
+                        ref="dateReswabNextInput"
+                        :disabled="!(form.recommendation.date_reswab && true)"
+                    />
+                    <button
+                        @click="addDays(form.recommendation.date_reswab, dateReswabNextInput, 7)"
+                        class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        :disabled="!(form.recommendation.date_reswab && true)"
+                    >
+                        +7
+                    </button>
+                </template>
+            </div>
+        </template>
 
         <div
             class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
