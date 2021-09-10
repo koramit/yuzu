@@ -248,7 +248,7 @@ class VisitsController extends Controller
         // reset discharged_at & enlisted_swab_at (ready_to_print = false)
         if ($visit->swabbed) {
             $visit->forceFill([
-                'form->management->original_enlisted_swab_at' => $visit->enlisted_swab_at->format('Y-m-d H:i:s'),
+                'form->management->original_enlisted_swab_at' => $visit->enlisted_swab_at ? $visit->enlisted_swab_at->format('Y-m-d H:i:s') : now()->format('Y-m-d H:i:s'),
             ]);
         }
         $visit->discharged_at = null;
