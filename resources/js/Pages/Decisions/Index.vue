@@ -266,6 +266,8 @@
     <Modal
         ref="decisionModal"
         width-mode="form-cols-1"
+        @opened="showRemark = true"
+        @closed="showRemark = false"
     >
         <template #header>
             <div class="font-semibold text-dark-theme-light">
@@ -347,6 +349,7 @@
                     v-model="form.date_refer"
                 />
                 <FormTextarea
+                    v-if="showRemark"
                     class="mt-2"
                     label="remark"
                     name="remark"
@@ -420,6 +423,7 @@ const search = ref('');
 const positives = computed(() => {
     return props.positiveCases.filter(p => p.hn.indexOf(search.value) !== -1 || p.patient_name.indexOf(search.value) !== -1);
 });
+const showRemark = ref(false);
 
 const decisionModal = ref(null);
 const selectedPositive = ref(null);
