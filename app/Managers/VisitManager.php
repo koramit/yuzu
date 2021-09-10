@@ -504,7 +504,7 @@ class VisitManager
         // atk_positive
         if ($visit->form['exposure']['atk_positive'] ?? false) {
             $atkPositive = 'ตรวจ Antigen test kit (ATK) ได้ผลบวก';
-            if ($visit->form['exposure']['date_atk_positive']) {
+            if ($visit->form['exposure']['date_atk_positive'] ?? null) {
                 $atkPositive .= (' เมื่อ '.Carbon::create($visit->form['exposure']['date_atk_positive'])->format('d M Y'));
             }
         } else {
