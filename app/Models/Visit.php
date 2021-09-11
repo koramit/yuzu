@@ -69,7 +69,7 @@ class Visit extends Model
     public function setPatientTypeAttribute($value)
     {
         if (! $value) {
-            $this->attributes['screen_type'] = null;
+            $this->attributes['patient_type'] = null;
         } else {
             $items = [
                 'บุคคลทั่วไป' => 1,
