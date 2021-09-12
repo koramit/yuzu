@@ -112,7 +112,6 @@ class VisitManager
             'evaluation' => [
                 'consultation' => null,
                 'outcome' => null,
-                'outcome' => null,
                 'recommendation' => null,
                 'note' => null,
             ],
@@ -431,6 +430,7 @@ class VisitManager
                 ['icon' => 'satellite-dish', 'label' => 'ผลแลปวันนี้', 'route' => 'visits.lab-list', 'can' => $user->can('view_any_visits')],
                 ['icon' => 'archive', 'label' => 'รายการเคสทั้งหมด', 'route' => 'visits', 'can' => $user->can('view_any_visits')],
                 ['icon' => 'procedure', 'label' => 'Decision', 'route' => 'decisions', 'can' => $user->can('view_decision_list')],
+                // ['icon' => 'certificate', 'label' => 'Certification', 'route' => 'certifications', 'can' => $user->can('view_certification_list')],
             ],
             'action-menu' => [
                 ['icon' => 'notes-medical', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-visit', 'can' => $user->can('create_visit')],
