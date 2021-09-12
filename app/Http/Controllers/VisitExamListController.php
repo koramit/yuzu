@@ -82,7 +82,7 @@ class VisitExamListController extends Controller
         return Redirect::route($route)->with('messages', [
             'status' => 'success',
             'messages' => [
-                $visit->title.' ส่งตรวจสำเร็จ',
+                $visit->title.' ส่งพบแพทย์ตรวจสำเร็จ',
             ],
         ]);
     }

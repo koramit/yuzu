@@ -16,7 +16,7 @@
                 </p>
             </div>
             <p class="px-1 text-xs text-dark-theme-light italic">
-                ส่งตรวจเมื่อ {{ visit.enlisted_exam_at_for_humans }}
+                ส่งพบแพทย์ตรวจเมื่อ {{ visit.enlisted_exam_at_for_humans }}
             </p>
         </div>
         <!-- right menu -->

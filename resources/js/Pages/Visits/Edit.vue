@@ -740,7 +740,7 @@
                     class="block w-full mt-4 btn btn-dark"
                     @click="saveToExam"
                 >
-                    ส่งตรวจ
+                    ส่งพบแพทย์ตรวจ
                 </SpinnerButton>
 
                 <SpinnerButton
@@ -1005,7 +1005,9 @@ export default {
                     if (usePage().props.value.user.roles.includes('md')) {
                         form.management.swab_at = 'SCG';
                     } else if (isAppointment.value && isEmployee.value) {
-                        form.management.swab_at = 'Sky Walk';
+                        /** CR 2021-09-12 default to SCG */
+                        // form.management.swab_at = 'Sky Walk';
+                        form.management.swab_at = 'SCG'; /** CR 2021-09-12 default to SCG */
                     } else {
                         form.management.swab_at = 'SCG';
                     }
