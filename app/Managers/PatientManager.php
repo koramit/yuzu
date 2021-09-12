@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class PatientManager
 {
-    public function manage($hn)
+    public function manage($hn, $forceUpdate = false)
     {
         $api = app()->make('App\Contracts\PatientAPI');
 
@@ -30,7 +30,7 @@ class PatientManager
         }
 
         // determine if update needed
-        if ($patient->updated_at->diffInDays(now()) <= 5) {
+        if ($forceUpdate || $patient->updated_at->diffInDays(now()) <= 5) {
             return [
                 'found' => true,
                 'patient' => $patient,
