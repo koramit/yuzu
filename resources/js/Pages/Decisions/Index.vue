@@ -20,7 +20,7 @@
         class="hidden md:block rounded-md shadow overflow-x-auto overflow-y-scroll"
         style="max-height: 90%;"
     >
-        <table class="w-full whitespace-nowrap relative bg-white">
+        <table class="w-full relative bg-white table-auto">
             <tr class="text-left font-semibold">
                 <th
                     class="px-3 pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light"
@@ -36,7 +36,7 @@
                 :key="key"
                 class="hover:bg-gray-100 focus-within:bg-gray-100"
             >
-                <td class="border-t">
+                <td class="border-t whitespace-nowrap">
                     <p class="inline-flex px-3 py-2 items-center">
                         <Icon
                             v-if="!positive.refer_to && !positive.linked"
@@ -100,7 +100,7 @@
                 >
                     {{ positive.symptom }}
                 </td>
-                <td class="border-t px-3 py-2">
+                <td class="border-t px-3 py-2 whitespace-nowrap">
                     {{ positive.onset }}
                 </td>
                 <td
@@ -113,7 +113,7 @@
                     {{ positive.remark }}
                 </td>
                 <td
-                    class="border-t px-3 py-2"
+                    class="border-t pl-3 py-2 whitespace-nowrap"
                     :class="{'text-bitter-theme-light': positive.refer_to}"
                 >
                     {{ positive.refer_to ?? 'ยังไม่ตัดสินใจ' }}
