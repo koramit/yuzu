@@ -154,7 +154,7 @@ class VisitsController extends Controller
         }
         if ($visit->status !== 'appointment') {
             if ($user->can('enlist_exam') && ! $visit->swabbed) { // save to exam -- NURSE only
-                $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่งตรวจ', 'action' => 'save-exam', 'can' => true];
+                $flash['action-menu'][] = ['icon' => 'share-square', 'label' => 'ส่งพบแพทย์ตรวจ', 'action' => 'save-exam', 'can' => true];
                 $can[] = 'save-exam';
             }
             if ($user->can('discharge', $visit)) { // save to discharge -- MD only
