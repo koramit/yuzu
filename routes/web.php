@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CertificationsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportAppointmentsController;
 use App\Http\Controllers\MocktailController;
@@ -157,6 +158,11 @@ Route::get('decisions', [VisitDecisionController::class, 'index'])
 Route::patch('decisions/{visit:slug}', [VisitDecisionController::class, 'update'])
      ->middleware('auth', 'remember', 'can:refer, visit')
      ->name('decisions.update');
+
+// Certifications
+Route::get('certifications', [CertificationsController::class, 'index'])
+     ->middleware('auth', 'can:view_certification_list', 'remember')
+     ->name('certifications');
 
 // Export data
 Route::get('export/opd_cards', OPDCardExportController::class)

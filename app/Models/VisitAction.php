@@ -34,7 +34,7 @@ class VisitAction extends Model
         'cancel' => 'ยกเลิก',
         'create' => 'สร้าง',
         'discharge' => 'จำหน่าย',
-        'enlist_exam' => 'ส่งตรวจ',
+        'enlist_exam' => 'ส่งพบแพทย์ตรวจ',
         'enlist_screen' => 'คัดกรอง',
         'enlist_swab' => 'ส่ง swab',
         'enqueue' => 'ทำ SI Flow',
