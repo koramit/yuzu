@@ -58,15 +58,15 @@
                                 class="w-4 h-4 mr-1 group-hover:text-dark-theme-light focus:text-dark-theme-light"
                                 name="share-square"
                             />
-                            <div class="group-hover:text-dark-theme-light focus:text-dark-theme-light mr-1 whitespace-no-wrap">
+                            <div class="group-hover:text-dark-theme-light focus:text-dark-theme-light mr-1 whitespace-nowrap">
                                 จำหน่าย
                             </div>
                         </div>
                     </template>
                     <template #dropdown>
-                        <div class="bg-thick-theme-light rounded-lg space-y-2 py-2">
+                        <div class="bg-thick-theme-light rounded-lg space-y-4 py-2">
                             <button
-                                class="flex w-full justify-start items-center hover:bg-dark-theme-light py-1 px-2"
+                                class="flex w-full justify-start items-center hover:bg-dark-theme-light py-1 px-2 whitespace-nowrap"
                                 v-if="patient.can.discharge && !patient.busy"
                                 @click="discharge(patient, true)"
                             >
@@ -77,7 +77,7 @@
                                 <span class="block font-normal text-white">ได้ทำ Swab</span>
                             </button>
                             <button
-                                class="flex w-full justify-start items-center hover:bg-dark-theme-light py-1 px-2"
+                                class="flex w-full justify-start items-center hover:bg-dark-theme-light py-1 px-2 whitespace-nowrap"
                                 v-if="patient.can.discharge && !patient.busy"
                                 @click="discharge(patient)"
                             >
@@ -100,7 +100,7 @@
                                 class="w-4 h-4 mr-1 group-hover:text-bitter-theme-light focus:text-bitter-theme-light"
                                 name="box"
                             />
-                            <div class="group-hover:text-bitter-theme-light focus:text-bitter-theme-light mr-1 whitespace-no-wrap">
+                            <div class="group-hover:text-bitter-theme-light focus:text-bitter-theme-light mr-1 whitespace-nowrap">
                                 ใส่กระติก
                             </div>
                         </div>
@@ -162,7 +162,7 @@
                             class="w-4 h-4 mr-1 group-hover:text-bitter-theme-light focus:text-bitter-theme-light"
                             name="share-square"
                         />
-                        <div class="group-hover:text-bitter-theme-light focus:text-bitter-theme-light mr-1 whitespace-no-wrap">
+                        <div class="group-hover:text-bitter-theme-light focus:text-bitter-theme-light mr-1 whitespace-nowrap">
                             ย้ายห้อง
                         </div>
                     </div>
@@ -262,7 +262,7 @@
                         </a>
                     </div>
                 </template>
-                <div>
+                <!-- <div>
                     <button
                         class="inline-flex justify-start items-center"
                         v-if="patient.can.discharge && !patient.busy"
@@ -274,7 +274,48 @@
                         />
                         <span class="block font-normal text-thick-theme-light">จำหน่าย</span>
                     </button>
-                </div>
+                </div> -->
+                <Dropdown
+                    class="w-full"
+                    :dropleft="true"
+                    v-if="patient.can.discharge && !patient.busy"
+                >
+                    <template #default>
+                        <div class="flex items-center cursor-pointer select-none group text-bitter-theme-light">
+                            <Icon
+                                class="w-4 h-4 mr-1 group-hover:text-dark-theme-light focus:text-dark-theme-light"
+                                name="share-square"
+                            />
+                            <div class="group-hover:text-dark-theme-light focus:text-dark-theme-light mr-1 whitespace-nowrap">
+                                จำหน่าย
+                            </div>
+                        </div>
+                    </template>
+                    <template #dropdown>
+                        <div class="bg-thick-theme-light rounded-lg space-y-4 py-2">
+                            <button
+                                class="flex w-full justify-start items-center hover:bg-dark-theme-light py-1 px-2 whitespace-nowrap"
+                                @click="discharge(patient, true)"
+                            >
+                                <Icon
+                                    class="w-4 h-4 mr-1 text-bitter-theme-light"
+                                    name="check-circle"
+                                />
+                                <span class="block font-normal text-white">ได้ทำ Swab</span>
+                            </button>
+                            <button
+                                class="flex w-full justify-start items-center hover:bg-dark-theme-light py-1 px-2 whitespace-nowrap"
+                                @click="discharge(patient)"
+                            >
+                                <Icon
+                                    class="w-4 h-4 mr-1 text-red-400"
+                                    name="times-circle"
+                                />
+                                <span class="block font-normal text-white">ไม่ทำ Swab</span>
+                            </button>
+                        </div>
+                    </template>
+                </Dropdown>
                 <div>
                     <button
                         v-if="patient.can.hold"
