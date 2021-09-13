@@ -57,8 +57,8 @@
                     <!-- username and menu -->
                     <Dropdown>
                         <template #default>
-                            <div class="flex items-center cursor-pointer select-none group">
-                                <div class="group-hover:text-bitter-theme-light focus:text-bitter-theme-light mr-1 whitespace-no-wrap">
+                            <div class="w-full flex items-center cursor-pointer select-none group">
+                                <div class="group-hover:text-bitter-theme-light focus:text-bitter-theme-light mr-1 whitespace-nowrap">
                                     <span>{{ $page.props.user.name }}</span>
                                 </div>
                                 <Icon
