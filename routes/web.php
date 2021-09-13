@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CertificateListExportController;
 use App\Http\Controllers\CertificationsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportAppointmentsController;
@@ -156,13 +157,16 @@ Route::get('decisions', [VisitDecisionController::class, 'index'])
      ->middleware('auth', 'remember', 'can:view_decision_list')
      ->name('decisions');
 Route::patch('decisions/{visit:slug}', [VisitDecisionController::class, 'update'])
-     ->middleware('auth', 'remember', 'can:refer, visit')
+     ->middleware('auth', 'can:refer, visit')
      ->name('decisions.update');
 
 // Certifications
 Route::get('certifications', [CertificationsController::class, 'index'])
      ->middleware('auth', 'can:view_certification_list', 'remember')
      ->name('certifications');
+Route::patch('certifications', [CertificationsController::class, 'update'])
+     ->middleware('auth', 'can:certify')
+     ->name('certifications.update');
 
 // Export data
 Route::get('export/opd_cards', OPDCardExportController::class)
@@ -174,6 +178,9 @@ Route::get('export/visits', VisitExportController::class)
 Route::get('export/decisions', PositiveCaseDecisionExportController::class)
      ->middleware('auth', 'can:view_decision_list')
      ->name('export.decisions');
+Route::get('export/certificates', CertificateListExportController::class)
+     ->middleware('auth', 'can:view_certification_list')
+     ->name('export.certificates');
 
 // visit
 Route::get('visits', [VisitsController::class, 'index'])

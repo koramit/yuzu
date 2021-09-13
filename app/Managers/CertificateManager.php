@@ -26,7 +26,9 @@ class CertificateManager
             'last_exposure_label' => $this->lastExposure ? Carbon::create($this->lastExposure)->format('M d') : null,
             'recommendation' => $visit->form['evaluation']['recommendation'],
             'date_quarantine_end' => $visit->form['evaluation']['date_quarantine_end'] ?? null,
+            'date_quarantine_end_label' => ($visit->form['evaluation']['date_quarantine_end'] ?? null) ? Carbon::create($visit->form['evaluation']['date_quarantine_end'])->format('M d') : null,
             'date_reswab' => $visit->form['evaluation']['date_reswab'] ?? null,
+            'date_reswab_label' => ($visit->form['evaluation']['date_reswab'] ?? null) ? Carbon::create($visit->form['evaluation']['date_reswab'])->format('M d') : null,
             'note' => $visit->form['note'],
             'checked' => false,
             'config' => $this->getConfig($visit->date_visit->format('Y-m-d')),
@@ -92,11 +94,30 @@ class CertificateManager
                                 'scrren_type' => $record->screen_type,
                                 'risk' => $record->form['exposure']['evaluation'],
                                 'last_exposure' => $record->form['exposure']['date_latest_expose'],
+                                'last_exposure_label' => ($record->form['exposure']['date_latest_expose'] ?? null) ? Carbon::create($record->form['exposure']['date_latest_expose'])->format('M d') : null,
                                 'detail' => trim(implode(' ', [$record->form['exposure']['contact_type'], $record->form['exposure']['contact_detail'], $record->form['exposure']['hot_spot_detail'], $record->form['exposure']['other_detail']])),
                                 'note' => $record->form['note'],
                             ];
                         });
 
         return $records;
+    }
+
+    public function update(Visit $visit, array $certificate)
+    {
+        $evaluation = $visit->form['evaluation'];
+        if (
+            ($evaluation['recommendation'] ?? null) === $certificate['recommendation']
+            && ($evaluation['date_quarantine_end'] ?? null) === $certificate['date_quarantine_end']
+            && ($evaluation['date_reswab'] ?? null) === $certificate['date_reswab']
+        ) {
+            return false;
+        }
+
+        $evaluation['recommendation'] = $certificate['recommendation'];
+        $evaluation['date_quarantine_end'] = $certificate['date_quarantine_end'];
+        $evaluation['date_reswab'] = $certificate['date_reswab'];
+
+        return $visit->forceFill(['form->evaluation' => $evaluation])->save();
     }
 }

@@ -20,7 +20,7 @@
                     <div class="text-soft-theme-light text-sm truncate mx-1 md:hidden">
                         {{ $page.props.flash.title }}
                     </div>
-                    <!-- hotel menu on mobile -->
+                    <!-- lemon menu on mobile -->
                     <button
                         class="md:hidden text-soft-theme-light transition-colors duration-300 ease-in-out"
                         :class="{'text-bitter-theme-light': mobileMenuVisible}"
@@ -39,8 +39,20 @@
                 <!-- right navbar on desktop -->
                 <div class="hidden md:flex w-full font-semibold text-dark-theme-light bg-alt-theme-light border-b sticky top-0 z-30 p-4 md:py-0 md:px-12 justify-between items-center">
                     <!-- title display on desktop -->
-                    <div class="mt-1 mr-4">
-                        {{ $page.props.flash.title }}
+                    <div class="mr-4 w-full flex justify-between items-center">
+                        <div>{{ $page.props.flash.title }}</div>
+                        <div class="text-white">
+                            <button
+                                class="w-6 h-6 rounded-full transition-colors duration-200 ease-in hover:bg-white hover:text-dark-theme-light mr-2"
+                                v-text="'a'"
+                                @click="scaleFont('down')"
+                            />
+                            <button
+                                class="w-6 h-6 rounded-full transition-colors duration-200 ease-in hover:bg-white hover:text-dark-theme-light font-semibold mr-2"
+                                v-text="'A'"
+                                @click="scaleFont('up')"
+                            />
+                        </div>
                     </div>
                     <!-- username and menu -->
                     <Dropdown>
@@ -194,4 +206,17 @@ watch (
         }
     }
 );
+
+let fontScaleIndex = 3;
+let fontScales = [67, 80, 90, 100];
+const scaleFont = (mode) => {
+    fontScaleIndex = mode === 'up' ? (fontScaleIndex+1) : (fontScaleIndex-1);
+    if (fontScaleIndex > (fontScales.length - 1)) {
+        fontScaleIndex = fontScales.length - 1;
+    } else if (fontScaleIndex < 0) {
+        fontScaleIndex = 0;
+    }
+
+    document.querySelector('body').style.fontSize = fontScales[fontScaleIndex] + '%';
+};
 </script>

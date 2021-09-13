@@ -56,7 +56,6 @@
                         v-else-if="column === 'Select all'"
                         class="pt-4 pb-2 sticky top-0 text-white bg-thick-theme-light"
                     >
-                        <!-- @click="certificate.checked = !certificate.checked" -->
                         <button @click="filteredCertificates.forEach(c => c.checked = ! c.checked)">
                             <Icon
                                 name="check-circle"
@@ -173,6 +172,120 @@
         </table>
     </div>
 
+    <!-- card  -->
+    <div class="md:hidden">
+        <div
+            class="rounded shadow bg-white mb-2 p-4"
+            v-for="(certificate, key) in filteredCertificates"
+            :key="key"
+        >
+            <div class="flex justify-between items-center text-sm">
+                <p class="flex items-center">
+                    <button
+                        class="inline-flex items-center text-blue-300 mr-2 disabled:cursor-not-allowed"
+                        @click="certify(certificate)"
+                        :disabled="!can.certify"
+                        :class="{
+                            'text-alt-theme-light': certificate.result === 'Inconclusive',
+                            'text-thick-theme-light': certificate.result === 'Not detected',
+                        }"
+                    >
+                        <Icon
+                            name="certificate"
+                            class="w-4 h-4 mr-1"
+                        />
+                        {{ certificate.result }}
+                    </button>
+                </p>
+                <Dropdown v-if="can.certify">
+                    <template #default>
+                        <button class="inline-flex items-center">
+                            <span
+                                class="block mr-1 font-light whitespace-nowrap"
+                                :class="{'text-bitter-theme-light': certificate.recommendation}"
+                            >{{ certificate.recommendation ?? 'ยังไม่มี' }}</span>
+                            <Icon
+                                class="w-4 h-4 mr-1 text-dark-theme-light"
+                                name="share-square"
+                            />
+                            <span class="block text-dark-theme-light">เลือก</span>
+                        </button>
+                    </template>
+                    <template #dropdown>
+                        <div class="rounded shadow bg-bitter-theme-light text-white py-2">
+                            <button
+                                v-for="recommendation in recommendations"
+                                :key="recommendation"
+                                @click="recommendFromDropdown(certificate, recommendation)"
+                                class="block w-full px-4 py-1 text-left whitespace-nowrap hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
+                                v-text="recommendation"
+                            />
+                        </div>
+                    </template>
+                </Dropdown>
+            </div>
+            <div class="mt-2 text-lg text-thick-theme-light font-medium">
+                <button
+                    class="inline-flex items-center py-2"
+                    @click="certificate.checked = !certificate.checked"
+                >
+                    <Icon
+                        :name="certificate.checked ? 'check-circle' : 'circle'"
+                        class="w-4 h-4 mr-2"
+                        :class="{'text-dark-theme-light': certificate.checked}"
+                    />
+                    {{ certificate.patient_name }}
+                </button>
+            </div>
+            <div class="mt-2 flex space-x-2 text-sm">
+                <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
+                    <p
+                        class="italic"
+                        v-text="'Risk: '"
+                    />
+                    <button
+                        class="flex items-center"
+                        @click="riskType = (riskType === certificate.risk) ? null : certificate.risk"
+                    >
+                        <span class="underline text-blue-400">{{ certificate.risk }}</span>
+                        <Icon
+                            v-if="riskType === certificate.risk"
+                            class="w-3 h-3 text-dark-theme-light"
+                            name="filter"
+                        />
+                    </button>
+                </div>
+                <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
+                    <p
+                        class="italic"
+                        v-text="'Last exposure: '"
+                    />
+                    <span>{{ certificate.last_exposure_label }}</span>
+                </div>
+            </div>
+            <!-- detail -->
+            <div
+                class="mt-2 rounded-md shadow-sm bg-gray-100 p-2"
+                v-if="certificate.detail"
+            >
+                <div>
+                    <span class="italic">Detail: </span>
+                    <span v-html="highlightDetail(certificate.detail)" />
+                </div>
+            </div>
+            <!-- note -->
+            <div
+                class="mt-2 rounded-md shadow-sm bg-gray-100 p-2"
+                v-if="certificate.note"
+            >
+                <p>
+                    <span class="italic">Note: </span>
+                    {{ certificate.note }}
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- certify -->
     <Modal
         ref="certificateModal"
@@ -196,7 +309,7 @@
                     <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
                         <p>
                             <span class="italic">Last exposure: </span>
-                            {{ selectedCertificate.last_exposure }}
+                            {{ selectedCertificate.last_exposure_label }}
                         </p>
                     </div>
                 </div>
@@ -276,7 +389,7 @@
                                 <div class="w-1/2 rounded-md shadow-sm bg-gray-100 p-2">
                                     <p>
                                         <span class="italic">Last exposure: </span>
-                                        {{ record.last_exposure }}
+                                        {{ record.last_exposure_label }}
                                     </p>
                                 </div>
                             </div>
@@ -390,6 +503,8 @@ const highlightDetail = (detail) => {
 };
 
 const recommendFromDropdown = (certificate, recommendation) => {
+    let data = [];
+    let certificateForm = {};
     props.certificates.forEach(c => {
         if (!(c.checked || c.slug === certificate.slug)) {
             return;
@@ -412,7 +527,15 @@ const recommendFromDropdown = (certificate, recommendation) => {
             c.date_reswab = null;
             c.date_reswab_label = null;
         }
+        certificateForm.slug = c.slug;
+        certificateForm.recommendation = c.recommendation;
+        certificateForm.date_quarantine_end = c.date_quarantine_end;
+        certificateForm.date_reswab = c.date_reswab;
+        data.push({...certificateForm});
     });
+
+    window.axios
+        .patch(window.route('certifications.update'), { certificates: data});
 };
 
 const recommendations = ref(['ไปทำงานได้','กักตัว','กักตัวนัดสวอบซ้ำ']);
@@ -427,20 +550,33 @@ const certify = (certificate) => {
     certificateModal.value.open();
 };
 const recommended = () => {
-    let mos = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    selectedCertificate.value.recommendation = form.recommendation;
-    selectedCertificate.value.date_quarantine_end = form.date_quarantine_end;
     let ymd = null;
-    if (form.date_quarantine_end) {
-        ymd = form.date_quarantine_end.split('-');
+    let mos = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    selectedCertificate.value.recommendation = form.recommendation;
+
+    if (form.recommendation.startsWith('กักตัว')) {
+        selectedCertificate.value.date_quarantine_end = form.date_quarantine_end ?? selectedCertificate.value.config.date_quarantine_end;
+        ymd = selectedCertificate.value.date_quarantine_end.split('-');
         selectedCertificate.value.date_quarantine_end_label = `${mos[parseInt(ymd[1])]} ${ymd[2]}`;
-    }
-    selectedCertificate.value.date_reswab = form.date_reswab;
-    if (form.date_reswab) {
-        ymd = form.date_reswab.split('-');
-        selectedCertificate.value.date_reswab_label = `${mos[parseInt(ymd[1])]} ${ymd[2]}`;
+        if (form.recommendation === 'กักตัวนัดสวอบซ้ำ') {
+            selectedCertificate.value.date_reswab = form.date_reswab ?? selectedCertificate.value.config.date_reswab;
+            ymd = selectedCertificate.value.date_reswab.split('-');
+            selectedCertificate.value.date_reswab_label = `${mos[parseInt(ymd[1])]} ${ymd[2]}`;
+        } else {
+            selectedCertificate.value.date_reswab = null;
+            selectedCertificate.value.date_reswab_label = null;
+        }
+    } else if (form.recommendation === 'ไปทำงานได้') {
+        selectedCertificate.value.date_quarantine_end = null;
+        selectedCertificate.value.date_quarantine_end_label = null;
+        selectedCertificate.value.date_reswab = null;
+        selectedCertificate.value.date_reswab_label = null;
     }
     certificateModal.value.close();
+
+    window.axios
+        .patch(window.route('certifications.update'), { certificates: [{...selectedCertificate.value}] });
 };
 </script>
 
