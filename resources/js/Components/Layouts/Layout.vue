@@ -207,8 +207,6 @@ watch (
     }
 );
 
-// const fontScaleIndex = ref(3);
-// const fontScales = ref
 let fontScaleIndex = 3;
 let fontScales = [67, 80, 90, 100];
 const scaleFont = (mode) => {
