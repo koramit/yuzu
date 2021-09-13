@@ -74,7 +74,8 @@ class VisitDischargeListController extends Controller
                     'form->management->container_no' => 0,
                 ]);
             } else {
-                $visit->swabbed = ! $visit->form['management']['on_hold'];
+                // $visit->swabbed = ! $visit->form['management']['on_hold']; CR 2021-09-13 now we can d/c without swab inside container
+                $visit->swabbed = false;
             }
         }
         $visit->save();
