@@ -20,6 +20,9 @@ class RememberQueryStrings
             return $next($request);
         }
 
+        logger('hanndle');
+        logger(http_build_query($request->all()));
+
         if (empty($request->all())) {
             return $this->remembered($next, $request);
         }
