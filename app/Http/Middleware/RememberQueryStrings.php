@@ -20,9 +20,6 @@ class RememberQueryStrings
             return $next($request);
         }
 
-        logger('hanndle');
-        logger(json_encode($request->all()));
-
         $queryFiltered = array_filter($request->all(), function ($key) {
             return ! str_starts_with($key, '/');
         }, ARRAY_FILTER_USE_KEY);
@@ -46,14 +43,8 @@ class RememberQueryStrings
     {
         $remembered = array_filter($request->session()->get('remember_query_strings.'.$request->route()->getName()) ?? []);
 
-        logger('recall');
-        logger('remember_query_strings.'.$request->route()->getName().' => '.http_build_query($remembered));
-
         if ($remembered) {
             $request->session()->reflash();
-
-            logger('remembered.redirect');
-            logger(url($request->path()).'?'.http_build_query($remembered));
 
             return redirect(url($request->path()).'?'.http_build_query($remembered));
         }
@@ -64,9 +55,6 @@ class RememberQueryStrings
     protected function remember($next, $request)
     {
         $request->session()->put('remember_query_strings.'.$request->route()->getName(), array_filter($request->all()));
-
-        logger('remember');
-        logger('remember_query_strings.'.$request->route()->getName().' => '.http_build_query(array_filter($request->all())));
 
         return $next($request);
     }
