@@ -104,6 +104,7 @@ class WonderWomenController extends Controller
         $visit->forceFill([
             'form->management->np_swab_result' => Request::input('result') !== 'timeout' ? Request::input('result') : null,
             'form->management->np_swab_result_note' => Request::input('note'),
+            'form->management->np_swab_result_transaction' => Request::input('transaction'),
             'form->management->screenshot' => $path,
         ])->save();
 
