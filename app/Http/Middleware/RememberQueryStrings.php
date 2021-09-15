@@ -45,6 +45,9 @@ class RememberQueryStrings
         if ($remembered) {
             $request->session()->reflash();
 
+            logger('remembered.redirect');
+            logger(url($request->path()).'?'.http_build_query($remembered));
+
             return redirect(url($request->path()).'?'.http_build_query($remembered));
         }
 
