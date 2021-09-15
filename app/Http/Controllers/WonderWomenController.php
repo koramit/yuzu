@@ -65,6 +65,7 @@ class WonderWomenController extends Controller
         Cache::put('croissant-pending-hits', 0);
         Cache::put('croissant-report-hits', 0);
         Cache::put('croissant-not-found-hits', 0);
+        Cache::put('croissant-latest', now());
 
         return $visits;
     }
