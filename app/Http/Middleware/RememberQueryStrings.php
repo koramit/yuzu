@@ -21,7 +21,7 @@ class RememberQueryStrings
         }
 
         logger('hanndle');
-        logger(http_build_query($request->all()));
+        logger(json_encode($request->all()));
 
         if (empty($request->all())) {
             return $this->remembered($next, $request);
