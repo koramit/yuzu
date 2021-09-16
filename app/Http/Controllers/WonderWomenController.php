@@ -60,7 +60,7 @@ class WonderWomenController extends Controller
                             ];
                        });
 
-        Cache::put('croissant-message', 'fetch');
+        Cache::put('croissant-message', 'fetch '.$visits->count());
         Cache::put('croissant-not-found', []);
         Cache::put('croissant-pending-hits', 0);
         Cache::put('croissant-report-hits', 0);
