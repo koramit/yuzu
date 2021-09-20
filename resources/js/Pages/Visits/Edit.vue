@@ -815,6 +815,13 @@ export default {
             form.patch(window.route('visits.update', props.visit.slug));
         };
         const saveToExam = () => {
+            form.management.np_swab = false;
+            form.management.swab_at = null;
+            form.diagnosis.no_symptom = false;
+            form.diagnosis.suspected_covid_19 = false;
+            form.diagnosis.uri = false;
+            form.diagnosis.suspected_pneumonia = false;
+            form.diagnosis.other_diagnosis = null;
             form.patch(window.route('visits.exam-list.store', props.visit.slug));
         };
         const saveToSwab = () => {
