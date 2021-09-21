@@ -93,6 +93,10 @@ class WonderWomenController extends Controller
             abort(422);
         }
 
+        if ($visit->form['management']['screenshot']) {
+            return ['ok' => true];
+        }
+
         if (Request::has('screenshot')) {
             $path = Request::file('screenshot')->store('temp');
             $newPath = $this->trimCroissant($path);
