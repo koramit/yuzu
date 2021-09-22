@@ -121,7 +121,7 @@ class OPDCardExportController extends Controller
             'suspected_pneumonia' => $form['diagnosis']['suspected_pneumonia'] ? 'YES' : 'NO',
             'other_diagnosis' => $form['diagnosis']['other_diagnosis'] ? 'YES' : 'NO',
 
-            'np_swab' => $form['management']['np_swab'] ? 'YES' : 'NO',
+            'np_swab' => ($form['management']['np_swab'] && ($visit->swabbed ?? false)) ? 'YES' : 'NO',
             'tube_no' => $form['management']['specimen_no'],
             'np_swab_result' => $form['management']['np_swab_result'],
             'np_swab_result_note' => $form['management']['np_swab_result_note'],
