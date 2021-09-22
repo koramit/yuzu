@@ -3,7 +3,7 @@
     <div class="my-2">
         <div class="p-2 rounded-md bg-white my-2">
             <p class="text-md font-semibold text-thick-theme-light underline">
-                รวม {{ visits.filter(v => v.result).length }}/{{ visits.length }}
+                รวม {{ visits.filter(v => v.result !== 'Pending').length }}/{{ visits.length }}
             </p>
             <div class="flex flex-wrap ">
                 <span
@@ -27,7 +27,7 @@
             :key="type"
         >
             <p class="text-md font-semibold text-thick-theme-light underline">
-                {{ type }} {{ visits.filter(v => v.result && v.patient_type === type).length }}/{{ visits.filter(v => v.patient_type === type).length }}
+                {{ type }} {{ visits.filter(v => v.result !== 'Pending' && v.patient_type === type).length }}/{{ visits.filter(v => v.patient_type === type).length }}
             </p>
             <div class="flex flex-wrap ">
                 <span
