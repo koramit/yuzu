@@ -65,13 +65,13 @@ class CertificateManager
     protected function getConfig($dateVisit)
     {
         $dateQuarantineEnd = Carbon::create($this->lastExposure ?? $dateVisit)->addDays(14);
-        $dateReswab = Carbon::create($dateVisit)->addDays(3);
+        // $dateReswab = Carbon::create($dateVisit)->addDays(3);  CR 20210923
 
         return [
             'date_quarantine_end' => $dateQuarantineEnd->format('Y-m-d'),
             'date_quarantine_end_label' => $dateQuarantineEnd->format('M d'),
-            'date_reswab' => $dateReswab->format('Y-m-d'),
-            'date_reswab_label' => $dateReswab->format('M d'),
+            'date_reswab' => $dateQuarantineEnd->format('Y-m-d'), // $dateReswab->format('Y-m-d'), CR 20210923
+            'date_reswab_label' => $dateQuarantineEnd->format('M d'), // $dateReswab->format('M d'), CR 20210923
         ];
     }
 
