@@ -70,7 +70,8 @@ class VisitDecisionController extends Controller
             $data['refer_type'] = $data['refer_to'] === 'HI' ? 'Home Isolation' : 'Hospitel';
             $data['refer_to'] = $data['refer_to'] === 'HI' ? 'Home Isolation' : $data['refer_to'];
             $response = Http::acceptJson()
-                            ->timeout(5)
+                            ->timeout(2)
+                            ->retry(3, 100)
                             ->withToken($user->mocktail_token)
                             ->post(config('services.mocktail.refer_case_endpoint'), $data);
             $decision['linked'] = $response->successful();
