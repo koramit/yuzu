@@ -30,7 +30,7 @@ class PatientManager
         }
 
         // determine if update needed
-        if ($forceUpdate || $patient->updated_at->diffInDays(now()) <= 5) {
+        if (! $forceUpdate && $patient->updated_at->diffInDays(now()) <= 5) {
             return [
                 'found' => true,
                 'patient' => $patient,
