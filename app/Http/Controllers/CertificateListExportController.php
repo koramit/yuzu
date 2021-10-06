@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Managers\PatientManager;
 use App\Models\LoadDataRecord;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
@@ -14,16 +15,17 @@ class CertificateListExportController extends Controller
     {
         $dateVisit = Session::get('certificate-list-export-date', now('asia/bangkok')->format('Y-m-d'));
         $user = Auth::user();
+        $manager = new PatientManager();
         $certificates = Visit::with('patient')
                              ->where('swabbed', true)
                              ->wherePatientType(1)
                              ->whereDateVisit($dateVisit)
                              ->where('form->management->np_swab_result', '<>', 'Detected')
                              ->get()
-                             ->transform(function ($visit) {
+                             ->transform(function ($visit) use ($manager) {
                                  return [
                                       'HN' => $visit->hn,
-                                      'name' => $visit->patient_name,
+                                      'name' => $this->getPatientName($visit, $manager),
                                       'patient_type' => $visit->patient_type,
                                       'age' => $visit->age_at_visit,
                                       'tel_no' => $visit->form['patient']['tel_no'],
@@ -77,5 +79,16 @@ class CertificateListExportController extends Controller
         } else {
             return '!!!';
         }
+    }
+
+    protected function getPatientName(Visit $visit, $manager)
+    {
+        $patient = $manager->manage($visit->hn, true);
+        if ($patient['found'] && $visit->patient_name !== $patient['patient']->full_name) {
+            $visit->patient_name = $patient['patient']->full_name;
+            $visit->save();
+        }
+
+        return $visit->patient_name;
     }
 }
