@@ -187,6 +187,11 @@ class Visit extends Model
         return $this->form['patient']['name'] ?? null;
     }
 
+    public function setPatientNameAttribute($value)
+    {
+        $this->forceFill(['form->patient->name' => $value]);
+    }
+
     public function getUpdatedAtForHumansAttribute()
     {
         return $this->updated_at->locale('th_TH')->diffForHumans(now());

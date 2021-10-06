@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\PatientAPI;
 use App\Events\VisitUpdated;
+use App\Managers\PatientManager;
 use App\Managers\VisitManager;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +22,13 @@ class PrintOPDCardController extends Controller
             $visit->attached_opd_card_at = now();
             $visit->save();
             VisitUpdated::dispatch($visit);
+        }
+
+        $manager = new PatientManager();
+        $patient = $manager->manage($visit->hn, true);
+        if ($patient['found'] && $visit->patient_name !== $patient['patient']->full_name) {
+            $visit->patient_name = $patient['patient']->full_name;
+            $visit->save();
         }
 
         return Inertia::render('Printouts/OPDCard', [
