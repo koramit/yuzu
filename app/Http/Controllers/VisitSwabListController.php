@@ -105,6 +105,11 @@ class VisitSwabListController extends Controller
             $route = 'visits.screen-list';
         }
 
+        $fastTrackGroups = collect(['ก่อนไป elective', 'ก่อนไปต่างประเทศ', 'ก่อนไปตามเสด็จ', 'ผ่านการบริหารความเสี่ยง']);
+        if ($fastTrackGroups->contains($visit->form['exposure']['evaluation'])) {
+            $visit->enqueued_at = now();
+        }
+
         // running specimen no
         if (! ($visit->form['management']['specimen_no'])) {
             $cacheName = now('asia/bangkok')->format('Y-m-d').'-specimen-running-no';
