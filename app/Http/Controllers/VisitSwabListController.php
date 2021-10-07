@@ -105,16 +105,6 @@ class VisitSwabListController extends Controller
             $route = 'visits.screen-list';
         }
 
-        /* CR 2021-09-12 staffs have to enqueue */
-        // if ($visit->patient_type === 'เจ้าหน้าที่ศิริราช' && $visit->patient_id) {
-        //     $visit->enqueued_at = now();
-        // }
-        /* CR 2021-09-12 add fast track */
-        $fastTrackGroups = collect(['ก่อนไป elective', 'ก่อนไปต่างประเทศ', 'ก่อนไปตามเสด็จ', 'ผ่านการบริหารความเสี่ยง']);
-        if ($fastTrackGroups->contains($visit->form['exposure']['evaluation'])) {
-            $visit->enqueued_at = now();
-        }
-
         // running specimen no
         if (! ($visit->form['management']['specimen_no'])) {
             $cacheName = now('asia/bangkok')->format('Y-m-d').'-specimen-running-no';
