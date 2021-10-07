@@ -143,7 +143,7 @@ class VisitManager
             ],
             'evaluations' => ['ไม่มีความเสี่ยง', 'มีความเสี่ยง', 'อื่นๆ'],
             'appointment_evaluations' => ['ความเสี่ยงเดิม', 'มีความเสี่ยงเพิ่มเติม', 'ก่อนไป elective', 'ก่อนไปต่างประเทศ', 'ก่อนไปตามเสด็จ'],
-            'appointment_evaluations_public' => ['ความเสี่ยงเดิม', 'มีความเสี่ยงเพิ่มเติม', 'ก่อนไป elective', 'ก่อนไปต่างประเทศ', 'ก่อนไปตามเสด็จ', 'ผ่านการบริหารความเสี่ยง'],
+            'appointment_evaluations_public' => ['ความเสี่ยงเดิม', 'มีความเสี่ยงเพิ่มเติม', 'ผ่านการบริหารความเสี่ยง'],
             'contact_types' => ['สัมผัสใกล้ชิด หรือ household contact', 'สัมผัสเป็นเวลาสั้นๆ'],
             'vaccines' => ['Sinovac', 'Sinopharm', 'AstraZeneca', 'Moderna', 'Pfizer'],
             'vaccination_doses' => [
