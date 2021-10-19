@@ -266,3 +266,8 @@ Route::get('login-as/{name}', function ($name) {
 
     return redirect()->route($user->home_page);
 });
+
+Route::post('transfer', function () {
+    $transfer = new App\Transfer();
+    return $transfer->set(request()->all());
+});
