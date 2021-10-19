@@ -35,7 +35,7 @@ class WonderWomenController extends Controller
             ],
         ]);
 
-        $today = now()->create('2021-10-18');
+        $today = now();
         $todayStr = $today->format('d-m-y');
         $dateAfterStr = now()->addDays(-1)->format('d/m/Y');
 

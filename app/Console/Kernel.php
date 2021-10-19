@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
             $connection = config('database.connections')[config('database.default')];
             $path = '~/db_backup/'.$connection['database'].'.sql.gz';
             // -x = lock all databases
-            $cmdStr = 'mysqldump --user='.$connection['username']." --password='".$connection['password']."' -e -B ".$connection['database'].' | gzip > '.$path;
+            $cmdStr = 'mysqldump --host='.$connection['host'].' --user='.$connection['username']." --password='".$connection['password']."' -e -B ".$connection['database'].' | gzip > '.$path;
             try {
                 exec($cmdStr);
             } catch (Exception $e) {
