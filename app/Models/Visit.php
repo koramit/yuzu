@@ -214,7 +214,7 @@ class Visit extends Model
 
     public function getEnlistedSwabAtForHumansAttribute()
     {
-        return $this->enlisted_swab_at->locale('th_TH')->diffForHumans(now());
+        return $this->enlisted_swab_at ? $this->enlisted_swab_at->locale('th_TH')->diffForHumans(now()) : null;
     }
 
     public function getTitleAttribute()
