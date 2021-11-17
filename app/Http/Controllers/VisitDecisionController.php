@@ -41,7 +41,7 @@ class VisitDecisionController extends Controller
         return Inertia::render('Decisions/Index', [
             'positiveCases' => $positiveCases,
             'dateVisit' => $dateVisit,
-            'referToOptions' => ['Ward', 'Baiyoke', 'Riverside', 'HI', 'Colink', 'อื่นๆ'],
+            'referToOptions' => ['Ward', 'HI', 'อื่นๆ'],
         ]);
     }
 
