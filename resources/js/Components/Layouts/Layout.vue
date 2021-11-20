@@ -7,7 +7,7 @@
         <div class="md:h-screen md:flex md:flex-col">
             <!-- this is navbar, with no shrink (fixed width) -->
             <div class="md:flex md:flex-shrink-0 sticky top-0 z-30">
-                <!-- left navbar on desktop and full bar on mobile -->
+                <!-- full navbar on mobile and left brand on desktop -->
                 <div class="bg-dark-theme-light text-white md:flex-shrink-0 md:w-56 xl:w-64 px-4 py-2 flex items-center justify-between md:justify-center">
                     <!-- the logo -->
                     <Link
@@ -36,7 +36,7 @@
                         /></svg>
                     </button>
                 </div>
-                <!-- right navbar on desktop -->
+                <!-- middle and right navbar on desktop -->
                 <div class="hidden md:flex w-full font-semibold text-dark-theme-light bg-alt-theme-light border-b sticky top-0 z-30 p-4 md:py-0 md:px-12 justify-between items-center">
                     <!-- title display on desktop -->
                     <div class="mr-4 w-full flex justify-between items-center">
