@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\VisitUpdated;
+use App\Models\Visit;
 use Illuminate\Support\Facades\Cache;
 
 class ManageVisitEvent
@@ -34,5 +35,9 @@ class ManageVisitEvent
         } elseif ($event->visit->status === 'screen') {
             Cache::put('screen-list-new', time());
         }
+
+        // if ($event->visit->status === 'discharged') {
+        //     $data = $this->exportToSiIT($event->visit);
+        // }
     }
 }
