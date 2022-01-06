@@ -253,7 +253,7 @@ Route::post('mocktail', MocktailController::class)
      ->name('mocktail.link');
 
 // LINE notify
-Route::post('webhook/line/{token}', LINEWebhooksController::class);
+Route::post('webhook/line', LINEWebhooksController::class);
 
 /*
  * Route for testing ONLY
