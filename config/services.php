@@ -75,6 +75,7 @@ return [
     ],
 
     'line' => [
+        'bot_secret' => env('LINE_BOT_SECRET'),
         'bot_token' => env('LINE_BOT_TOKEN')
     ]
 ];
