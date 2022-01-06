@@ -16,6 +16,7 @@ use App\Http\Controllers\PrintOPDCardController;
 use App\Http\Controllers\ResourceEmployeesController;
 use App\Http\Controllers\ResourcePatientsController;
 use App\Http\Controllers\ServerSendEventsController;
+use App\Http\Controllers\Services\LINEWebhooksController;
 use App\Http\Controllers\VisitActionsController;
 use App\Http\Controllers\VisitAttachOPDCardController;
 use App\Http\Controllers\VisitAuthorizationController;
@@ -251,6 +252,9 @@ Route::post('mocktail', MocktailController::class)
      ->middleware('auth', 'can:link_mocktail')
      ->name('mocktail.link');
 
+// LINE notify
+Route::post('webhook/line/{token}', LINEWebhooksController::class);
+
 /*
  * Route for testing ONLY
  */
@@ -268,6 +272,10 @@ Route::get('login-as/{name}', function ($name) {
 });
 
 Route::post('transfer', function () {
+    if (config('app.env') === 'production') {
+        abort(404);
+    }
+
     $transfer = new App\Transfer();
     return $transfer->set(request()->all());
 });
