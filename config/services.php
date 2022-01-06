@@ -73,4 +73,8 @@ return [
         'link_user_endpoint' => env('MOCKTAIL_LINK_USER_ENDPOINT'),
         'refer_case_endpoint' => env('MOCKTAIL_REFER_CASE_ENDPOINT'),
     ],
+
+    'line' => [
+        'bot_token' => env('LINE_BOT_TOKEN')
+    ]
 ];
