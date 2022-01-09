@@ -15,17 +15,17 @@ class SiITManager
         try {
             $res = Http::timeout(2)
                         ->retry(5, 100)
-                        ->post('https://devsiwebapi.mahidol.ac.th/CovidCare/api/ImportPatientInfo', $data)
+                        ->post(config('services.siit.export_case_endpoint'), $data)
                         ->json();
         } catch (Exception $e) {
-            Log::error($visit->slug.'@'.$e->getMessage());
+            Log::error('SiIT_EXPORT@'.$visit->slug.'@'.$e->getMessage());
 
             return false;
         }
         if ($res['messageStatus'] === 'Sccuess.') {
             return true;
         }
-        Log::error($visit->slug.'@'.$res['messageDescription']);
+        Log::error('SiIT_EXPORT@'.$visit->slug.'@'.$res['messageDescription']);
 
         return false;
     }

@@ -74,6 +74,10 @@ return [
         'refer_case_endpoint' => env('MOCKTAIL_REFER_CASE_ENDPOINT'),
     ],
 
+    'siit' => [
+        'export_case_endpoint' => env('SIIT_EXPORT_CASE_ENDPOINT'),
+    ],
+
     'line' => [
         'bot_secret' => env('LINE_BOT_SECRET'),
         'bot_token' => env('LINE_BOT_TOKEN')
