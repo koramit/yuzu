@@ -318,6 +318,28 @@
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
+                ประวัติอื่น
+            </h2>
+            <FormInput
+                class="mt-2"
+                label="น้ำหนัก (kg.)"
+                type="number"
+                name="weight"
+                v-model="form.patient.weight"
+                :error="form.errors.weight"
+            />
+            <FormRadio
+                v-if="visit.is_female"
+                label="การตั้งครรภ์/ภาวะประจำเดือน"
+                v-model="form.patient.menstruation"
+                name="menstruation"
+                :options="configs.menstruations"
+                :allow-reset="true"
+            />
+        </div>
+
+        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+            <h2 class="font-semibold text-thick-theme-light">
                 ประวัติเสี่ยง
             </h2>
             <div class="mt-2">

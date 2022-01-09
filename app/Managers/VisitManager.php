@@ -37,6 +37,7 @@ class VisitManager
                 'track' => null,
                 'passport_no' => null,
                 'mobility' => null,
+                'menstruation' => null,
             ],
             'symptoms' => [
                 'asymptomatic_symptom' => false,
@@ -141,6 +142,7 @@ class VisitManager
                 ['label' => 'ปวดเมื่อยกล้ามเนื้อ', 'name' => 'myalgia'],
                 ['label' => 'ท้องเสีย', 'name' => 'diarrhea'],
             ],
+            'menstruations' => ['กำลังตั้งครรภ์', 'ประจำเดือนมาปรกติ', 'ประจำเดือนมาไม่ปรกติ', 'ภาวะวัยหมดประจำเดือน'],
             'evaluations' => ['ไม่มีความเสี่ยง', 'มีความเสี่ยง', 'อื่นๆ'],
             'appointment_evaluations' => ['ความเสี่ยงเดิม', 'มีความเสี่ยงเพิ่มเติม', 'ก่อนไป elective', 'ก่อนไปต่างประเทศ', 'ก่อนไปตามเสด็จ'],
             'appointment_evaluations_public' => ['ความเสี่ยงเดิม', 'มีความเสี่ยงเพิ่มเติม', 'ผ่านการบริหารความเสี่ยง'],
@@ -515,6 +517,19 @@ class VisitManager
             $atkPositive = null;
         }
 
+        // other conditions
+        $otherConditions = '';
+        if ($visit->form['patient']['weight'] ?? null) {
+            $otherConditions .= 'น้ำหนัก ' . $visit->form['patient']['weight'] . ' กก.<br>';
+        }
+
+        if (
+            ($visit->form['patient']['menstruation'] ?? null) &&
+            (($visit->patient->profile['gender'] ?? null) === 'female')
+        ) {
+            $otherConditions .= $visit->form['patient']['menstruation'];
+        }
+
         // exposure
         $exposure = $visit->form['exposure'];
         if ($exposure['evaluation'] === 'อื่นๆ') {
@@ -681,6 +696,7 @@ class VisitManager
             'symptoms' => $symptoms,
             'ATK' => $atkPositive,
             'ประวัติเสี่ยง' => $exposure,
+            'ประวัติอื่น' => $otherConditions,
             'โรคประจำตัว' => $comorbids,
             'ประวัติการฉีดวัคซีน COVID-19' => $vaccination,
             'วินิจฉัย' => $diagnosis,

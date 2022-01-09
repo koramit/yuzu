@@ -34,7 +34,7 @@ class PrintOPDCardController extends Controller
         return Inertia::render('Printouts/OPDCard', [
             'content' => (new VisitManager())->getPrintConent($visit),
             'configs' => [
-                'left_topics' => ['อาการแสดง', 'ATK', 'ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19'],
+                'left_topics' => ['อาการแสดง', 'ATK', 'ประวัติอื่น', 'ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19'],
                 'right_topics' => ['วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย', 'note'],
             ],
         ]);
