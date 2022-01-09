@@ -10,7 +10,7 @@
         <FormInput
             class="mb-2 md:w-3/5 xl:w-3/4"
             name="date_visit"
-            label="ค้นหาด้วยชื่อหรือ HN"
+            label="ค้นหาด้วยชื่อหรือ HN หรือ Decision"
             v-model="search"
         />
     </div>
@@ -421,7 +421,11 @@ const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom'
 const formDateVisit = ref(props.dateVisit);
 const search = ref('');
 const positives = computed(() => {
-    return props.positiveCases.filter(p => p.hn.indexOf(search.value) !== -1 || p.patient_name.indexOf(search.value) !== -1);
+    return props.positiveCases.filter(p =>
+        p.hn.indexOf(search.value) !== -1 ||
+        p.patient_name.indexOf(search.value) !== -1 ||
+        (p.refer_to ?? 'ยังไม่ตัดสินใจ').toLowerCase().startsWith(search.value.toLowerCase())
+    );
 });
 const showRemark = ref(false);
 
