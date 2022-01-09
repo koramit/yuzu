@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 class Visit extends Model
 {
@@ -340,5 +341,27 @@ class Visit extends Model
         } else {
             return 'ธุรการ';
         }
+    }
+
+    public function getVaccinationTextAttribute()
+    {
+        if ($this->form['vaccination']['unvaccinated']) {
+            return 'ไม่เคยฉีดวัคซีน';
+        }
+
+        $text = '';
+        foreach (['Sinovac', 'Sinopharm', 'AstraZeneca', 'Moderna', 'Pfizer'] as $vaccine) {
+            if ($this->form['vaccination'][$vaccine]) {
+                $text .= $vaccine.' + ';
+            }
+        }
+
+        $text = trim($text, ' + ');
+        $text .= ' รวม ' . $this->form['vaccination']['doses'] . ' เข็ม';
+        if ($this->form['vaccination']['date_latest_vacciniated']) {
+            $text .= ' เมื่อ ' . Carbon::create($this->form['vaccination']['date_latest_vacciniated'])->format('d/m/y');
+        }
+
+        return $text;
     }
 }

@@ -29,7 +29,7 @@ class CertificateManager
             'date_quarantine_end_label' => ($visit->form['evaluation']['date_quarantine_end'] ?? null) ? Carbon::create($visit->form['evaluation']['date_quarantine_end'])->format('M d') : null,
             'date_reswab' => $visit->form['evaluation']['date_reswab'] ?? null,
             'date_reswab_label' => ($visit->form['evaluation']['date_reswab'] ?? null) ? Carbon::create($visit->form['evaluation']['date_reswab'])->format('M d') : null,
-            'note' => $visit->form['note'],
+            'note' => implode("\n", [$visit->vaccination_text, $visit->form['note']]),
             'checked' => false,
             'config' => $this->getConfig($visit->date_visit->format('Y-m-d'), $visit->form['management']['np_swab_result']),
             'medical_records' => $this->getMedicalRecords($visit),
