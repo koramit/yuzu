@@ -3,7 +3,7 @@
         <FormDatetime
             class="mb-2 md:w-2/5 xl:w-1/4"
             name="date_visit"
-            label="วันที่ตรวจพบเชื้อ"
+            :label="labelCounter"
             v-model="formDateVisit"
             @autosave="$inertia.visit(route('certifications') + '?date_visit=' + formDateVisit)"
         />
@@ -460,6 +460,10 @@ const props = defineProps({
 
 const createVisitForm = ref(null);
 const appointmentForm = ref(null);
+
+const labelCounter = computed(() => {
+    return `วันที่ตรวจพบเชื้อ (${props.certificates.filter(p => p.recommendation).length}/${props.certificates.length})`;
+});
 
 watch (
     () => usePage().props.value.event.fire,

@@ -7,11 +7,13 @@
                 :key="key"
                 @click="$emit('action-clicked', action.action)"
             >
-                <icon
+                <Icon
                     :name="action.icon"
-                    class="w-4 h-4 mr-2 group-hover:text-alt-theme-light transition-colors duration-200 ease-in-out"
+                    class="w-4 h-4 group-hover:text-alt-theme-light transition-colors duration-200 ease-in-out"
                 />
-                <div class="group-hover:text-alt-theme-light transition-colors duration-200 ease-in-out">
+                <div
+                    class="ml-2 group-hover:text-alt-theme-light transition-colors duration-200 ease-in-out"
+                    v-if="!zenMode">
                     {{ action.label }}
                 </div>
             </button>
@@ -19,10 +21,10 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import Icon from '@/Components/Helpers/Icon.vue';
-export default {
-    components: { Icon },
-    emits: ['action-clicked'],
-};
+defineEmits(['action-clicked']);
+defineProps({
+    zenMode: { type: Boolean }
+});
 </script>

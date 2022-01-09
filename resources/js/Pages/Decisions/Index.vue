@@ -3,14 +3,14 @@
         <FormDatetime
             class="mb-2 md:w-2/5 xl:w-1/4"
             name="date_visit"
-            label="วันที่ตรวจพบเชื้อ"
+            :label="labelCounter"
             v-model="formDateVisit"
             @autosave="$inertia.visit(route('decisions') + '?date_visit=' + formDateVisit)"
         />
         <FormInput
             class="mb-2 md:w-3/5 xl:w-3/4"
             name="date_visit"
-            label="ค้นหาด้วยชื่อหรือ HN"
+            label="ค้นหาด้วยชื่อหรือ HN หรือ Decision"
             v-model="search"
         />
     </div>
@@ -400,6 +400,10 @@ const props = defineProps({
 const createVisitForm = ref(null);
 const appointmentForm = ref(null);
 
+const labelCounter = computed(() => {
+    return `วันที่ตรวจพบเชื้อ (${props.positiveCases.filter(p => p.refer_to).length}/${props.positiveCases.length})`;
+});
+
 watch (
     () => usePage().props.value.event.fire,
     (event) => {
@@ -421,7 +425,11 @@ const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom'
 const formDateVisit = ref(props.dateVisit);
 const search = ref('');
 const positives = computed(() => {
-    return props.positiveCases.filter(p => p.hn.indexOf(search.value) !== -1 || p.patient_name.indexOf(search.value) !== -1);
+    return props.positiveCases.filter(p =>
+        p.hn.indexOf(search.value) !== -1 ||
+        p.patient_name.indexOf(search.value) !== -1 ||
+        (p.refer_to ?? 'ยังไม่ตัดสินใจ').toLowerCase().startsWith(search.value.toLowerCase())
+    );
 });
 const showRemark = ref(false);
 

@@ -80,7 +80,7 @@ class MocktailManager
             'date_pneumonia' => $visit->form['symptoms']['date_symptom_start'],
             'gastroenteritis' => $visit->form['symptoms']['diarrhea'],
             'other_diagnosis' => $visit->form['diagnosis']['other_diagnosis'],
-            'note' => $visit->form['note'],
+            'note' => implode("\n", [$visit->vaccination_text, $visit->form['note']]),
             'lab_remark' => $visit->form['management']['np_swab_result_note'] ?? null,
             'refer_to' => $visit->form['decision']['refer_to'] ?? null,
             'remark' => $visit->form['decision']['remark'] ?? null,

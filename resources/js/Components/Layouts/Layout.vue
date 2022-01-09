@@ -8,14 +8,24 @@
             <!-- this is navbar, with no shrink (fixed width) -->
             <div class="md:flex md:flex-shrink-0 sticky top-0 z-30">
                 <!-- full navbar on mobile and left brand on desktop -->
-                <div class="bg-dark-theme-light text-white md:flex-shrink-0 md:w-56 xl:w-64 px-4 py-2 flex items-center justify-between md:justify-center">
+                <div
+                    class="bg-dark-theme-light text-white md:flex-shrink-0 px-4 py-2 flex items-center justify-between md:justify-center"
+                    :class="{
+                        'md:w-56 xl:w-64': !zenMode,
+                        'md:w-12': zenMode
+                    }"
+                >
                     <!-- the logo -->
                     <Link
-                        class="inline-block"
+                        class="inline-block md:hidden"
                         :href="route('home')"
                     >
                         <span class="font-bold text-lg md:text-2xl">Yuzu</span>
                     </Link>
+                    <button
+                        class="hidden md:inline-block font-bold text-lg md:text-2xl"
+                        @click="zenMode = !zenMode"
+                    >{{ zenMode ? '🍊':'Yuzu' }}</button>
                     <!-- title display on mobile -->
                     <div class="text-soft-theme-light text-sm truncate mx-1 md:hidden">
                         {{ $page.props.flash.title }}
@@ -143,13 +153,23 @@
             <!-- this is content -->
             <div class="md:flex md:flex-grow md:overflow-hidden">
                 <!-- this is sidebar menu on desktop -->
-                <div class="hidden md:block bg-thick-theme-light flex-shrink-0 w-56 xl:w-64 py-12 px-6 overflow-y-auto">
-                    <MainMenu />
-                    <ActionMenu @action-clicked="actionClicked" />
+                <div
+                    class="hidden md:block bg-thick-theme-light flex-shrink-0 overflow-y-auto"
+                    :class="{
+                        'w-56 xl:w-64 px-6 py-12': !zenMode,
+                        'w-12 md:p-4': zenMode,
+                    }"
+                >
+                    <MainMenu :zenMode="zenMode" />
+                    <ActionMenu :zenMode="zenMode" @action-clicked="actionClicked" />
                 </div>
                 <!-- this is main page -->
                 <div
-                    class="w-full p-4 md:overflow-y-auto sm:p-8 md:p-16 lg:px-24"
+                    class="w-full p-4 md:overflow-y-auto sm:p-8"
+                    :class="{
+                        'md:p-16 lg:px-24': !zenMode,
+                        'md:p-4': zenMode
+                    }"
                     scroll-region
                 >
                     <FlashMessages />
@@ -179,6 +199,7 @@ useRemoveLoader();
 const confirmForm = ref(null);
 const mobileMenuVisible = ref(false);
 const avatarSrcError = ref(false);
+const zenMode = ref(false);
 
 const actionClicked = (action) => {
     mobileMenuVisible.value = false;
