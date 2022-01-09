@@ -37,7 +37,7 @@ class ManageVisitEvent
             Cache::put('screen-list-new', time());
         }
 
-        if ($event->visit->status === 'discharged') {
+        if ($event->visit->status === 'discharged' && config('app.env') === 'production') {
             (new SiITManager)->manage($event->visit);
         }
     }
