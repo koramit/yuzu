@@ -22,9 +22,15 @@ class SiITManager
 
             return false;
         }
-        if ($res['messageStatus'] === 'Sccuess.') {
+        if ($res['messageStatus'] === 'Sccuess.') { // not typo, this is actually return value
             return true;
         }
+
+        $duplicateCase = $res['messageDescription']['dupplicated_hn_visit_date'] ?? [];
+        if (count($duplicateCase) === 0) {
+            return true;
+        }
+
         Log::error('SiIT_EXPORT@'.$visit->slug.'@'.$res['messageDescription']);
 
         return false;
