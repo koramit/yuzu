@@ -12,12 +12,13 @@
                 >
                     <Icon
                         :name="link.icon"
-                        class="w-4 h-4 mr-2 transition-colors duration-200 ease-linear"
+                        class="w-4 h-4 transition-colors duration-200 ease-linear"
                         :class="isUrl(route(link.route)) ? 'text-white' : 'text-soft-theme-light group-hover:text-bitter-theme-light'"
                     />
                     <div
-                        class="duration-300 ease-linear"
+                        class="ml-2 duration-300 ease-linear"
                         :class="isUrl(route(link.route)) ? 'text-white' : 'text-soft-theme-light group-hover:text-bitter-theme-light'"
+                        v-if="!zenMode"
                     >
                         {{ link.label }}
                     </div>
@@ -29,12 +30,13 @@
                 >
                     <Icon
                         :name="link.icon"
-                        class="w-4 h-4 mr-2 transition-colors duration-200 ease-linear"
+                        class="w-4 h-4 transition-colors duration-200 ease-linear"
                         :class="isUrl(route(link.route)) ? 'text-white' : 'text-soft-theme-light group-hover:text-bitter-theme-light'"
                     />
                     <div
-                        class="duration-300 ease-linear"
+                        class="ml-2 duration-300 ease-linear"
                         :class="isUrl(route(link.route)) ? 'text-white' : 'text-soft-theme-light group-hover:text-bitter-theme-light'"
+                        v-if="!zenMode"
                     >
                         {{ link.label }}
                     </div>
@@ -44,19 +46,13 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import Icon from '@/Components/Helpers/Icon.vue';
 import { Link } from '@inertiajs/inertia-vue3';
-export default {
-    components: { Icon, Link },
-    setup () {
-        const isUrl = (url) => {
-            return (location.origin + location.pathname) === url;
-        };
-
-        return {
-            isUrl
-        };
-    }
+defineProps({
+    zenMode: { type: Boolean }
+});
+const isUrl = (url) => {
+    return (location.origin + location.pathname) === url;
 };
 </script>
