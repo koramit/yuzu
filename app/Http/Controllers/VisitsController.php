@@ -182,9 +182,11 @@ class VisitsController extends Controller
         if ($visit->patient) {
             $visit->patient_document_id = $visit->patient->profile['document_id'];
             $visit->has_patient = true;
+            $visit->is_female = ($visit->patient->profile['gender'] ?? '') === 'female';
             unset($visit->patient);
         } else {
             $visit->has_patient = false;
+            $visit->is_female = true;
         }
 
         $configs = $this->manager->getConfigs($visit);
@@ -232,7 +234,7 @@ class VisitsController extends Controller
         return Inertia::render('Visits/Show', [
             'content' => $this->manager->getReportContent($visit),
             'configs' => [
-                'topics' => ['ATK', 'ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย', 'note'],
+                'topics' => ['ATK', 'ประวัติอื่น', 'ประวัติเสี่ยง', 'โรคประจำตัว', 'ประวัติการฉีดวัคซีน COVID-19', 'วินิจฉัย', 'การจัดการ', 'คำแนะนำสำหรับผู้ป่วย', 'note'],
             ],
             'can' => [
                 'evaluate' => $user->can('evaluate'),
