@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\VisitUpdated;
+use App\Managers\SiITManager;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Cache;
 
@@ -37,7 +38,7 @@ class ManageVisitEvent
         }
 
         // if ($event->visit->status === 'discharged') {
-        //     $data = $this->exportToSiIT($event->visit);
+        //     (new SiITManager)->manage($event->visit);
         // }
     }
 }
