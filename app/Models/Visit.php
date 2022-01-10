@@ -364,4 +364,23 @@ class Visit extends Model
 
         return $text;
     }
+
+    public function getMenstruationAttribute()
+    {
+        if ($this->patient->profile['gender'] === 'male') {
+            return null;
+        }
+
+        return $this->form['patient']['menstruation'] ?? null;
+    }
+
+    public function getWeightAttribute()
+    {
+        $weight = $this->form['patient']['weight'] ?? null;
+        if ($weight) {
+            return $weight;
+        }
+
+        return null;
+    }
 }

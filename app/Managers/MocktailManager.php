@@ -65,7 +65,7 @@ class MocktailManager
             'myalgia' => $visit->form['symptoms']['myalgia'],
             'diarrhea' => $visit->form['symptoms']['diarrhea'],
             'other_symptoms' => $visit->form['symptoms']['other_symptoms'],
-            'ud' => $this->ud($visit->form['comorbids']),
+            'ud' => $this->ud($visit->form['comorbids'], $visit->menstruation),
             'comorbids' => $content['โรคประจำตัว'],
             'no_comorbids' => $visit->form['comorbids']['no_comorbids'],
             'dm' => $visit->form['comorbids']['dm'],
@@ -88,13 +88,13 @@ class MocktailManager
         ];
     }
 
-    protected function ud($comorbids)
+    protected function ud($comorbids, $menstruation)
     {
-        if ($comorbids['no_comorbids']) {
+        if ($comorbids['no_comorbids'] && (!$menstruation || $menstruation === 'ประจำเดือนมาปรกติ')) {
             return 'no';
         }
 
-        $text = collect(['dm', 'ht', 'dlp', 'obesity'])->filter(fn ($d) => $comorbids[$d])->join(' ');
+        $text = $menstruation.' '. collect(['dm', 'ht', 'dlp', 'obesity'])->filter(fn ($d) => $comorbids[$d])->join(' ');
         if ($comorbids['other_comorbids']) {
             $text .= (' '.$comorbids['other_comorbids']);
         }
