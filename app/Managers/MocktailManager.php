@@ -94,6 +94,10 @@ class MocktailManager
             return 'no';
         }
 
+        if ($menstruation === 'ประจำเดือนมาปรกติ') {
+            $menstruation = '';
+        }
+
         $text = $menstruation.' '. collect(['dm', 'ht', 'dlp', 'obesity'])->filter(fn ($d) => $comorbids[$d])->join(' ');
         if ($comorbids['other_comorbids']) {
             $text .= (' '.$comorbids['other_comorbids']);
