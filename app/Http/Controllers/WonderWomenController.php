@@ -39,12 +39,14 @@ class WonderWomenController extends Controller
         $todayStr = $today->format('d-m-y');
         $dateAfterStr = now()->addDays(-1)->format('d/m/Y');
 
+        $orderBy = Request::input('order', 'asc');
+
         $visits = Visit::with('patient')
                        ->whereDateVisit($today->format('Y-m-d'))
                        ->whereStatus(4) // discharged
                        ->where('swabbed', true)
                        ->whereNull('form->management->np_swab_result')
-                       ->orderBy('discharged_at')
+                       ->orderBy('discharged_at', $orderBy)
                        ->get()
                        ->transform(function ($visit) use ($todayStr, $dateAfterStr) {
                            return [
