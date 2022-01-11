@@ -381,6 +381,46 @@ class Visit extends Model
             return $weight;
         }
 
+        $note = $this->form['note'] ?? null;
+        if (!$note) {
+            return null;
+        }
+
+        $note = str_replace("\n", ' ', $note);
+        $phases = explode(' ', $note);
+        $weight = null;
+        for ($i = 0; $i < count($phases) - 1; $i++) {
+            $phase = strtolower($phases[$i]);
+            if (
+                $phase == 'นน' ||
+                $phase == 'นน.' ||
+                $phase == 'bw' ||
+                $phase == 'น้ำหนัก'
+            ) {
+                $weight = strtolower($phases[$i+1]);
+                $weight = str_replace('kg', '', $weight);
+                $weight = str_replace('kg.', '', $weight);
+                $weight = str_replace('กก', '', $weight);
+                $weight = str_replace('กก.', '', $weight);
+                break;
+            } elseif (
+                str_starts_with($phase, 'นน') ||
+                str_starts_with($phase, 'นน.') ||
+                str_starts_with($phase, 'น้ำหนัก') ||
+                str_starts_with($phase, 'bw')
+            ) {
+                $weight = str_replace('kg', '', $phase);
+                $weight = str_replace('kg.', '', $weight);
+                $weight = str_replace('กก', '', $weight);
+                $weight = str_replace('กก.', '', $weight);
+                break;
+            }
+        }
+
+        if ($weight && is_numeric($weight)) {
+            return $weight;
+        }
+
         return null;
     }
 }
