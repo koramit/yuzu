@@ -390,9 +390,6 @@ class Visit extends Model
         $note = str_replace('(', ' ', $note);
         $note = str_replace('นน .', 'นน', $note);
         $note = str_replace('นนฝ', 'นน', $note);
-        $note = str_replace('น้ำหนั', 'น้ำหนัก', $note);
-        $note = str_replace('นำ้หนั', 'นำ้หนัก', $note);
-        $note = str_replace('นำหนั', 'นำหนัก', $note);
         $note = preg_replace('/\s\s+/', ' ', $note); // multiple spaces to one
         $phases = explode(' ', $note);
         $weight = null;
