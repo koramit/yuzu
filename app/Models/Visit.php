@@ -398,10 +398,10 @@ class Visit extends Model
                 $phase == 'น้ำหนัก'
             ) {
                 $weight = strtolower($phases[$i+1]);
-                $weight = str_replace('kg', '', $weight);
                 $weight = str_replace('kg.', '', $weight);
-                $weight = str_replace('กก', '', $weight);
+                $weight = str_replace('kg', '', $weight);
                 $weight = str_replace('กก.', '', $weight);
+                $weight = str_replace('กก', '', $weight);
                 break;
             } elseif (
                 str_starts_with($phase, 'นน') ||
@@ -409,10 +409,10 @@ class Visit extends Model
                 str_starts_with($phase, 'น้ำหนัก') ||
                 str_starts_with($phase, 'bw')
             ) {
-                $weight = str_replace('kg', '', $phase);
-                $weight = str_replace('kg.', '', $weight);
-                $weight = str_replace('กก', '', $weight);
+                $weight = str_replace('kg.', '', $phase);
+                $weight = str_replace('kg', '', $weight);
                 $weight = str_replace('กก.', '', $weight);
+                $weight = str_replace('กก', '', $weight);
                 break;
             }
         }
