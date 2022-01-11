@@ -387,6 +387,7 @@ class Visit extends Model
         }
 
         $note = str_replace("\n", ' ', $note);
+        $note = str_replace(' .', '', $note);
         $phases = explode(' ', $note);
         $weight = null;
         for ($i = 0; $i < count($phases) - 1; $i++) {
@@ -407,7 +408,11 @@ class Visit extends Model
                 str_starts_with($phase, 'นน') ||
                 str_starts_with($phase, 'นน.') ||
                 str_starts_with($phase, 'น้ำหนัก') ||
-                str_starts_with($phase, 'bw')
+                str_starts_with($phase, 'bw') ||
+                str_ends_with($phase, 'kg.') ||
+                str_ends_with($phase, 'kg') ||
+                str_ends_with($phase, 'กก.') ||
+                str_ends_with($phase, 'กก')
             ) {
                 $weight = str_replace('kg.', '', $phase);
                 $weight = str_replace('kg', '', $weight);
