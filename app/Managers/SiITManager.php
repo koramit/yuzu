@@ -4,6 +4,7 @@ namespace App\Managers;
 
 use App\Models\Visit;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -12,6 +13,13 @@ class SiITManager
     public function manage(Visit $visit)
     {
         $data = $this->formatData($visit);
+        $siitLog = Cache::get('siit-log', []);
+        $today = now()->tz(7)->format('Y-m-d');
+        if (isset($siitLog[$today])) {
+            $siitLog[$today] = [0,0,0]; // sent,accept,reject
+        }
+        $siitLog[$today][0] = $siitLog[$today][0] + 1; // sent
+        Cache::put('siit-log', $siitLog);
         try {
             $res = Http::timeout(2)
                         ->retry(5, 100)
@@ -23,11 +31,17 @@ class SiITManager
             return false;
         }
         if ($res['messageStatus'] === 'Sccuess.') { // not typo, this is actually return value
+            $siitLog[$today][1] = $siitLog[$today][1] + 1; // accept
+            Cache::put('siit-log', $siitLog);
+
             return true;
         }
 
         $duplicateCase = $res['messageDescription']['dupplicated_hn_visit_date'] ?? [];
-        if (count($duplicateCase) === 0) {
+        if (count($duplicateCase)) {
+            $siitLog[$today][2] = $siitLog[$today][2] + 1; // reject
+            Cache::put('siit-log', $siitLog);
+
             return true;
         }
 

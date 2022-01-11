@@ -35,6 +35,7 @@ use App\Http\Controllers\VisitScreenListController;
 use App\Http\Controllers\VisitSwabListController;
 use App\Http\Controllers\VisitTodayListController;
 use App\Http\Controllers\WonderWomenController;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 // Auth
@@ -254,6 +255,22 @@ Route::post('mocktail', MocktailController::class)
 
 // LINE notify
 Route::post('webhook/line', LINEWebhooksController::class);
+
+// SiIT feedback
+Route::get('siit-feedback', function () {
+    $siitLog = Cache::get('siit-log', []);
+
+    if (!count($siitLog)) {
+        return 'no data';
+    }
+
+    $reply = 'date => sent/accept/reject'."<br><br>";
+    foreach ($siitLog as $key => $value) {
+        $reply .= ($key . ' => ' . implode('/', $value) . "<br>");
+    }
+
+    return $reply;
+});
 
 /*
  * Route for testing ONLY
