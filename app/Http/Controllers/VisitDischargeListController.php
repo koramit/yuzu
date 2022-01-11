@@ -91,6 +91,12 @@ class VisitDischargeListController extends Controller
         $visit->actions()->create(['action' => 'discharge', 'user_id' => Auth::id()]);
         VisitUpdated::dispatch($visit);
 
+        try {
+            (new SiITManager)->manage($visit);
+        } catch (Exception $e) {
+            Log::error('export error on discharged'.'@'.$e->getMessage());
+        }
+
         return Redirect::back();
     }
 }
