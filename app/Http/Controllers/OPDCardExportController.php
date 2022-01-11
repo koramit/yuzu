@@ -100,7 +100,7 @@ class OPDCardExportController extends Controller
             'ht' => $form['comorbids']['ht'] ? 'YES' : 'NO',
             'dlp' => $form['comorbids']['dlp'] ? 'YES' : 'NO',
             'obesity' => $form['comorbids']['obesity'] ? 'YES' : 'NO',
-            'weight' => $form['patient']['weight'],
+            'weight' => $visit->weight,
             'height' => $form['patient']['height'],
             'BMI' => $form['patient']['weight'] && $form['patient']['height']
                 ? ($form['patient']['weight'] / $form['patient']['height'] / $form['patient']['height'] * 10000)
