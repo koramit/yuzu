@@ -12,6 +12,11 @@ class SiITManager
 {
     public function manage(Visit $visit)
     {
+        $url = config('services.siit.export_case_endpoint');
+        if (!$url) {
+            return false;
+        }
+
         $data = $this->formatData($visit);
         $siitLog = Cache::get('siit-log', []);
         $today = now()->tz(7)->format('Y-m-d');
@@ -23,7 +28,7 @@ class SiITManager
         try {
             $res = Http::timeout(2)
                         ->retry(5, 100)
-                        ->post(config('services.siit.export_case_endpoint'), $data)
+                        ->post($url, $data)
                         ->json();
         } catch (Exception $e) {
             Log::error('SiIT_EXPORT_REQUEST@'.$visit->slug.'@'.$e->getMessage());
