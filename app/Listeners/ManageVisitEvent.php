@@ -37,7 +37,10 @@ class ManageVisitEvent
             Cache::put('screen-list-new', time());
         }
 
-        if ($event->visit->status === 'discharged' && config('app.env') === 'production') {
+        if (
+            $event->visit->status === 'discharged' &&
+            !($event->visit->form['management']['np_swab_result'] ?? null) && // exclude on lab reported
+            config('app.env') === 'production') {
             (new SiITManager)->manage($event->visit);
         }
     }
