@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\VisitUpdated;
-use App\Managers\SiITManager;
-use App\Models\Visit;
 use Illuminate\Support\Facades\Cache;
 
 class ManageVisitEvent
@@ -35,13 +33,6 @@ class ManageVisitEvent
             Cache::put('mr-list-new', time());
         } elseif ($event->visit->status === 'screen') {
             Cache::put('screen-list-new', time());
-        }
-
-        if (
-            $event->visit->status === 'discharged' &&
-            !($event->visit->form['management']['np_swab_result'] ?? null) && // exclude on lab reported
-            config('app.env') === 'production') {
-            (new SiITManager)->manage($event->visit);
         }
     }
 }
