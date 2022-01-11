@@ -37,8 +37,8 @@ class SiITManager
             return true;
         }
 
-        $duplicateCase = $res['messageDescription']['dupplicated_hn_visit_date'] ?? [];
-        if (count($duplicateCase)) {
+        $resJson = json_decode($res['messageDescription'], true);
+        if ($resJson && $resJson['dupplicated_hn_visit_date']) {
             $siitLog[$today][2] = $siitLog[$today][2] + 1; // reject
             Cache::put('siit-log', $siitLog);
 
