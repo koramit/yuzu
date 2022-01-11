@@ -26,7 +26,7 @@ class SiITManager
                         ->post(config('services.siit.export_case_endpoint'), $data)
                         ->json();
         } catch (Exception $e) {
-            Log::error('SiIT_EXPORT@'.$visit->slug.'@'.$e->getMessage());
+            Log::error('SiIT_EXPORT_REQUEST@'.$visit->slug.'@'.$e->getMessage());
 
             return false;
         }
@@ -45,7 +45,7 @@ class SiITManager
             return true;
         }
 
-        Log::error('SiIT_EXPORT@'.$visit->slug.'@'.$res['messageDescription']);
+        Log::error('SiIT_EXPORT_RESPONSE@'.$visit->slug.'@'.$res['messageDescription']);
 
         return false;
     }
