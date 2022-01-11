@@ -387,7 +387,12 @@ class Visit extends Model
         }
 
         $note = str_replace("\n", ' ', $note);
+        $note = str_replace('(', ' ', $note);
         $note = str_replace('นน .', 'นน', $note);
+        $note = str_replace('นนฝ', 'นน', $note);
+        $note = str_replace('น้ำหนั', 'น้ำหนัก', $note);
+        $note = str_replace('นำ้หนั', 'นำ้หนัก', $note);
+        $note = str_replace('นำหนั', 'นำหนัก', $note);
         $note = preg_replace('/\s\s+/', ' ', $note); // multiple spaces to one
         $phases = explode(' ', $note);
         $weight = null;
@@ -440,73 +445,4 @@ class Visit extends Model
 
         return null;
     }
-
-    // public static function extraction($notes)
-    // {
-    //     $results = [];
-    //     foreach ($notes as $note) {
-    //         $note = str_replace('|', ' ', $note);
-    //         $weight =  static::getWeight($note);
-    //         $results[] = $weight.' -> '.$note;
-    //     }
-
-    //     return $results;
-    // }
-
-    // public static function getWeight($note)
-    // {
-    //     $note = str_replace("\n", ' ', $note);
-    //     $note = str_replace('นน .', 'นน', $note);
-    //     $note = preg_replace('/\s\s+/', ' ', $note); // multiple spaces to one
-    //     $phases = explode(' ', $note);
-    //     $weight = null;
-    //     $phases[] = 'empty';
-    //     for ($i = 0; $i < count($phases) -1 ; $i++) {
-    //         $phase = strtolower($phases[$i]);
-    //         if (
-    //             $phase == 'นน' ||
-    //             $phase == 'นน.' ||
-    //             $phase == 'bw' ||
-    //             $phase == 'น้ำหนัก' ||
-    //             $phase == 'นำ้หนัก' ||
-    //             $phase == 'นำหนัก'
-    //         ) {
-    //             $weight = strtolower($phases[$i+1]);
-    //             $weight = str_replace('kg.', '', $weight);
-    //             $weight = str_replace('kg', '', $weight);
-    //             $weight = str_replace('กก.', '', $weight);
-    //             $weight = str_replace('กก', '', $weight);
-    //             break;
-    //         } elseif (
-    //             str_starts_with($phase, 'นน.') ||
-    //             str_starts_with($phase, 'นน') ||
-    //             str_starts_with($phase, 'น้ำหนัก') ||
-    //             str_starts_with($phase, 'นำหนัก') ||
-    //             str_starts_with($phase, 'นำ้หนัก') ||
-    //             str_starts_with($phase, 'bw') ||
-    //             str_ends_with($phase, 'kg.') ||
-    //             str_ends_with($phase, 'kg') ||
-    //             str_ends_with($phase, 'กก.') ||
-    //             str_ends_with($phase, 'กก')
-    //         ) {
-    //             $weight = str_replace('นน.', '', $phase);
-    //             $weight = str_replace('นน', '', $weight);
-    //             $weight = str_replace('bw', '', $weight);
-    //             $weight = str_replace('น้ำหนัก', '', $weight);
-    //             $weight = str_replace('นำหนัก', '', $weight);
-    //             $weight = str_replace('นำ้หนัก', '', $weight);
-    //             $weight = str_replace('kg.', '', $weight);
-    //             $weight = str_replace('kg', '', $weight);
-    //             $weight = str_replace('กก.', '', $weight);
-    //             $weight = str_replace('กก', '', $weight);
-    //             break;
-    //         }
-    //     }
-
-    //     if ($weight && is_numeric($weight)) {
-    //         return $weight;
-    //     }
-
-    //     return null;
-    // }
 }
