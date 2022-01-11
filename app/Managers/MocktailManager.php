@@ -43,7 +43,7 @@ class MocktailManager
             'insuranceShow' => $insuranceShow,
             'ward' => 'ARI คลินิก',
             'age' => $visit->age_at_visit,
-            'weight' => $visit->form['patient']['weight'],
+            'weight' => $visit->weight,
             'date_symptom_start' => $visit->form['symptoms']['date_symptom_start'] ?? $visit->date_visit->format('Y-m-d'),
             'date_covid_infected' => $visit->date_visit->format('Y-m-d'),
             'date_admit_origin' => $visit->form['decision']['date_refer'] ?? $visit->date_visit->addDay()->format('Y-m-d'),
