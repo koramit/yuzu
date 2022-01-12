@@ -264,7 +264,7 @@ Route::get('siit-feedback', function () {
         return 'no data';
     }
 
-    $reply = 'date => sent/accept/reject'."<br><br>";
+    $reply = 'date => sent/accepted/rejected'."<br><br>";
     foreach ($siitLog as $key => $value) {
         $reply .= ($key . ' => ' . implode('/', $value) . "<br>");
     }
