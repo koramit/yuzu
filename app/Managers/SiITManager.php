@@ -43,7 +43,9 @@ class SiITManager
         }
 
         $resJson = json_decode($res['messageDescription'], true);
-        if ($resJson && $resJson['dupplicated_hn_visit_date']) {
+        if ($resJson &&
+            (!empty($resJson['dupplicated_hn_visit_date']) || !empty($resJson['invalid_symp_code']))
+        ) {
             $siitLog[$today][2] = $siitLog[$today][2] + 1; // reject
             Cache::put('siit-log', $siitLog);
 
