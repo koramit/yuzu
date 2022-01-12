@@ -18,6 +18,12 @@
             class="mb-2"
             v-if="($page.props.user.roles.includes('admin') || $page.props.user.roles.includes('root')) && card === 'lab'"
         >
+            <FormSelect
+                label="กลุ่มเปรียบเทียบ"
+                name="jkCompareMode"
+                v-model="jkCompareMode"
+                :options="['ทั้งหมด', 'บุคคลทั่วไป', 'เจ้าหน้าที่ศิริราช']"
+            />
             <div class="grid grid-cols-3">
                 <FormTextarea
                     name="jk_hn"
@@ -29,28 +35,14 @@
                     v-model="yuzuNotInJk"
                     placeholder="HN Yuzu ที่ไม่มีใน JK"
                     :readonly="true"
-                    v-if="yuzuNotInJk.length"
-                />
-                <FormTextarea
-                    name="jk_hn"
-                    v-model="yuzuNotInJk"
-                    placeholder="HN Yuzu ที่ไม่มีใน JK"
-                    :readonly="true"
-                    v-else
+                    ref="yuzuNotInJkTextarea"
                 />
                 <FormTextarea
                     name="jk_hn"
                     v-model="jkNotInYuzu"
                     placeholder="HN JK ที่ไม่มีใน Yuzu"
                     :readonly="true"
-                    v-if="jkNotInYuzu.length"
-                />
-                <FormTextarea
-                    name="jk_hn"
-                    v-model="jkNotInYuzu"
-                    placeholder="HN JK ที่ไม่มีใน Yuzu"
-                    :readonly="true"
-                    v-else
+                    ref="jkNotInYuzuTextarea"
                 />
             </div>
         </div>
@@ -141,6 +133,7 @@ import CardQueue from '@/Components/Cards/Queue';
 import Filters from '@/Components/Cards/Filters';
 import Visit from '@/Components/Forms/Visit';
 import Appointment from '@/Components/Forms/Appointment';
+import FormSelect from '@/Components/Controls/FormSelect';
 import FormTextarea from '@/Components/Controls/FormTextarea';
 import { computed, nextTick, onUnmounted, reactive, ref, watch } from '@vue/runtime-core';
 import { Inertia } from '@inertiajs/inertia';
@@ -148,7 +141,7 @@ import { usePage } from '@inertiajs/inertia-vue3';
 
 export default {
     layout: Layout,
-    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, CardEnqueueSwab, CardQueue, CardLab, CardVisit, Filters, Appointment, FormTextarea },
+    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, CardEnqueueSwab, CardQueue, CardLab, CardVisit, Filters, Appointment, FormTextarea, FormSelect },
     props: {
         visits: { type: Object, required: true },
         card: { type: String, required: true },
@@ -327,11 +320,16 @@ export default {
         };
 
         const jk_hn = ref('');
+        const jkCompareMode = ref('เจ้าหน้าที่ศิริราช');
         const jk = computed(() => {
             return jk_hn.value.split('\n').map(h => h.replace('-', '')).filter(h => h && h.length === 8);
         });
         const yuzu = computed(() => {
-            return props.visits.map(v => v.hn);
+            if (jkCompareMode.value === 'ทั้งหมด') {
+                return props.visits.map(v => v.hn);
+            } else {
+                return props.visits.filter(v => v.patient_type === jkCompareMode.value).map(v => v.hn);
+            }
         });
         const yuzuNotInJk = computed(() => {
             if (! jk_hn.value) {
@@ -342,6 +340,24 @@ export default {
         const jkNotInYuzu = computed(() => {
             return jk.value.filter(y => !yuzu.value.includes(y)).join('\n');
         });
+        const yuzuNotInJkTextarea = ref(null);
+        const jkNotInYuzuTextarea = ref(null);
+        const resizeCompareTextarea = () => {
+            nextTick(() => {
+                yuzuNotInJkTextarea.value.resize();
+                jkNotInYuzuTextarea.value.resize();
+            });
+        };
+
+        watch(
+            () => jk_hn.value,
+            () => resizeCompareTextarea()
+        );
+
+        watch(
+            () => jkCompareMode.value,
+            () => resizeCompareTextarea()
+        );
 
         return {
             createVisitForm,
@@ -358,6 +374,9 @@ export default {
             jk_hn,
             yuzuNotInJk,
             jkNotInYuzu,
+            jkCompareMode,
+            yuzuNotInJkTextarea,
+            jkNotInYuzuTextarea
         };
     },
 };
