@@ -3,12 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Events\VisitUpdated;
-use App\Managers\SiITManager;
 use App\Managers\VisitManager;
 use App\Models\Visit;
-use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 
@@ -55,12 +52,6 @@ class VisitDischargeListController extends Controller
 
         VisitUpdated::dispatch($visit);
 
-        try {
-            (new SiITManager)->manage($visit);
-        } catch (Exception $e) {
-            Log::error('export error on discharged'.'@'.$e->getMessage());
-        }
-
         return Redirect::route($route)->with('messages', [
             'status' => 'success',
             'messages' => [
@@ -90,12 +81,6 @@ class VisitDischargeListController extends Controller
         $visit->save();
         $visit->actions()->create(['action' => 'discharge', 'user_id' => Auth::id()]);
         VisitUpdated::dispatch($visit);
-
-        try {
-            (new SiITManager)->manage($visit);
-        } catch (Exception $e) {
-            Log::error('export error on discharged'.'@'.$e->getMessage());
-        }
 
         return Redirect::back();
     }
