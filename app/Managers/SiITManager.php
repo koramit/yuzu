@@ -21,9 +21,17 @@ class SiITManager
         $siitLog = Cache::get('siit-log', []);
         $today = now()->tz(7)->format('Y-m-d');
         if (!isset($siitLog[$today])) {
-            $siitLog[$today] = [0,0,0]; // sent,accept,reject
+            $siitLog[$today] = [
+                'send' => 0,
+                'accept' => 0,
+                'duplicate_error' => 0,
+                'invalid_symp_code_error' => 0,
+                'other_validation_error' => 0,
+                'request_error' => 0,
+                'response_error' => 0,
+            ];
         }
-        $siitLog[$today][0] = $siitLog[$today][0] + 1; // sent
+        $siitLog[$today]['send'] = $siitLog[$today]['send'] + 1;
         Cache::put('siit-log', $siitLog);
         try {
             $res = Http::timeout(2)
@@ -32,27 +40,36 @@ class SiITManager
                         ->json();
         } catch (Exception $e) {
             Log::error('SiIT_EXPORT_REQUEST@'.$visit->slug.'@'.$e->getMessage());
+            $siitLog[$today]['request_error'] = $siitLog[$today]['request_error'] + 1;
+            Cache::put('siit-log', $siitLog);
 
             return false;
         }
         if ($res['messageStatus'] === 'Sccuess.') { // not typo, this is actually return value
-            $siitLog[$today][1] = $siitLog[$today][1] + 1; // accept
+            $siitLog[$today]['accept'] = $siitLog[$today]['accept'] + 1;
             Cache::put('siit-log', $siitLog);
 
             return true;
         }
 
         $resJson = json_decode($res['messageDescription'], true);
-        if ($resJson &&
-            (!empty($resJson['dupplicated_hn_visit_date']) || !empty($resJson['invalid_symp_code']))
-        ) {
-            $siitLog[$today][2] = $siitLog[$today][2] + 1; // reject
+        if ($resJson) {
+            if (!empty($resJson['dupplicated_hn_visit_date'])) {
+                $siitLog[$today]['duplicate_error'] = $siitLog[$today]['duplicate_error'] + 1;
+            } elseif (!empty($resJson['invalid_symp_code'])) {
+                $siitLog[$today]['invalid_symp_code_error'] = $siitLog[$today]['invalid_symp_code_error'] + 1;
+            } else {
+                Log::error('SiIT_OTHER_ERROR@'.$visit->slug.'@'.$res['messageDescription']);
+                $siitLog[$today]['other_validation_error'] = $siitLog[$today]['other_validation_error'] + 1;
+            }
             Cache::put('siit-log', $siitLog);
 
             return true;
         }
 
         Log::error('SiIT_EXPORT_RESPONSE@'.$visit->slug.'@'.$res['messageDescription']);
+        $siitLog[$today]['response_error'] = $siitLog[$today]['response_error'] + 1;
+        Cache::put('siit-log', $siitLog);
 
         return false;
     }
