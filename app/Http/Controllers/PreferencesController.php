@@ -43,7 +43,7 @@ class PreferencesController extends Controller
                     ['label' => 'เวชระเบียน', 'can' => $user->can('view_mr_list')],
                     ['label' => 'ธุรการ', 'can' => $user->can('view_queue_list')],
                     ['label' => 'รายการเคสวันนี้', 'can' => $user->can('view_today_list')],
-                    ['label' => 'ผลแลปวันนี้', 'can' => $user->can('view_any_visits')],
+                    ['label' => 'ผลแลปวันนี้', 'can' => $user->can('view_lab_list')],
                     ['label' => 'รายการเคสทั้งหมด', 'can' => $user->can('view_any_visits')],
                     ['label' => 'Decision', 'can' => $user->can('view_decision_list')],
                     ['label' => 'Certification', 'can' => $user->can('view_certification_list')],
