@@ -103,6 +103,9 @@
                 <td class="border-t px-3 py-2 whitespace-nowrap">
                     {{ positive.onset }}
                 </td>
+                <td class="border-t px-3 py-2 whitespace-nowrap">
+                    {{ positive.o2_sat }}
+                </td>
                 <td
                     class="border-t px-3 py-2"
                     :class="{'text-red-400': positive.weight > 90}"
@@ -243,6 +246,10 @@
                         <span class="italic">UD: </span>
                         <span :class="{'text-bitter-theme-light font-medium': positive.comorbids === 'ไม่มี'}">{{ positive.ud }}</span>
                     </p>
+                    <p v-if="positive.o2_sat">
+                        <span class="italic">O2 sat: </span>
+                        {{ positive.o2_sat }}
+                    </p>
                     <p v-if="positive.weight">
                         <span class="italic">Weight: </span>
                         <span :class="{'text-red-400 font-semibold': positive.weight > 90}">{{ positive.weight }}</span>
@@ -298,6 +305,10 @@
                         <p>
                             <span class="italic">UD: </span>
                             <span :class="{'text-bitter-theme-light font-medium': selectedPositive.comorbids === 'ไม่มี'}">{{ selectedPositive.ud }}</span>
+                        </p>
+                        <p v-if="selectedPositive.o2_sat">
+                            <span class="italic">O2 sat: </span>
+                            {{ selectedPositive.o2_sat }}
                         </p>
                         <p v-if="selectedPositive.weight">
                             <span class="italic">Weight: </span>
@@ -421,7 +432,7 @@ watch (
     }
 );
 
-const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom','Onset','Weight','Remark','Decision']);
+const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom','Onset','O2 sat','Weight','Remark','Decision']);
 const formDateVisit = ref(props.dateVisit);
 const search = ref('');
 const positives = computed(() => {

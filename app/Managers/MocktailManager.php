@@ -94,7 +94,7 @@ class MocktailManager
             return 'no';
         }
 
-        if ($menstruation === 'ประจำเดือนมาปรกติ') {
+        if ($menstruation === 'ประจำเดือนมาปรกติ' || $menstruation === 'ภาวะวัยหมดประจำเดือน') {
             $menstruation = '';
         }
 

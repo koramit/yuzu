@@ -34,6 +34,7 @@ class PositiveCaseDecisionExportController extends Controller
                                       'U/D' => $positive['ud'],
                                       'Symptom' => $positive['symptom'],
                                       'Onset' => $positive['onset'],
+                                      'O2 sat' => $positive['o2_sat'],
                                       'Weight' => $positive['weight'],
                                       'Remark' => $positive['remark'] ? str_replace("\n", ' ', $positive['remark']) : null,
                                       'Decision' => $positive['refer_to'],
