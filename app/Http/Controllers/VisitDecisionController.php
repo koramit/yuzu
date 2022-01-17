@@ -41,7 +41,7 @@ class VisitDecisionController extends Controller
         return Inertia::render('Decisions/Index', [
             'positiveCases' => $positiveCases,
             'dateVisit' => $dateVisit,
-            'referToOptions' => ['Ward', 'HI', 'อื่นๆ'],
+            'referToOptions' => ['HI', 'HP', 'Ward', 'อื่นๆ'],
         ]);
     }
 
@@ -54,7 +54,7 @@ class VisitDecisionController extends Controller
 
         $user = Auth::user();
         $decision = Request::only(['refer_to', 'date_refer', 'remark']);
-        $mocktailOptions = collect(['Baiyoke', 'Riverside', 'HI']);
+        $mocktailOptions = collect(['Baiyoke', 'Riverside']); // remove HI due to not use mocktail anymore
 
         if (! $mocktailOptions->contains(Request::input('refer_to'))) {
             $decision['linked'] = true;
