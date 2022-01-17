@@ -90,7 +90,7 @@ class MocktailManager
 
     protected function ud($comorbids, $menstruation)
     {
-        if ($comorbids['no_comorbids'] && (!$menstruation || $menstruation === 'ประจำเดือนมาปรกติ')) {
+        if ($comorbids['no_comorbids'] && (!$menstruation || $menstruation === 'ประจำเดือนมาปรกติ' || $menstruation === 'ภาวะวัยหมดประจำเดือน')) {
             return 'no';
         }
 
