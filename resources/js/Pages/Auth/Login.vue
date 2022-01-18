@@ -45,7 +45,7 @@
                 <p>ประกาศ</p>
                 <div class="mt-4">
                     <p class="mt-2 italic text-xs">
-                        <span class="underline">วันที่ 20 ม.ค. 2565 เวลา 16:30 - 17:00 น.</span> โดยประมาณ หน่วยเวชสารสนเทศ ภาควิชาอายุรศาสตร์ <span class="underline">จะเตรียมการ</span>เปลี่ยนอุปกรณ์เครื่องสำรองไฟที่ชำรุด
+                        <span class="underline">วันที่ 19 ม.ค. 2565 เวลา 16:30 - 17:00 น.</span> โดยประมาณ หน่วยเวชสารสนเทศ ภาควิชาอายุรศาสตร์ <span class="underline">จะเตรียมการ</span>เปลี่ยนอุปกรณ์เครื่องสำรองไฟที่ชำรุด
                     </p>
                     <p class="mt-2 text-xs">
                         ซึ่งจะทำให้ไม่สามารถใช้งานระบบได้ทาง <span class="italic text-bitter-theme-light">https://simed.mahidol.ac.th/yuzu</span> ทั้งจากระบบ Internet และระบบ Intranet ของศิริราช
