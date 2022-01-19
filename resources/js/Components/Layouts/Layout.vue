@@ -190,7 +190,7 @@ import MainMenu from '@/Components/Helpers/MainMenu';
 import ActionMenu from '@/Components/Helpers/ActionMenu';
 import FlashMessages from '@/Components/Helpers/FlashMessages';
 import ConfirmForm from '@/Components/Forms/ConfirmForm';
-import { nextTick, ref, watch } from '@vue/runtime-core';
+import { nextTick, onMounted, ref, watch } from '@vue/runtime-core';
 import { useCheckSessionTimeout } from '@/Functions/useCheckSessionTimeout';
 import { useRemoveLoader } from '@/Functions/useRemoveLoader';
 import { Head, Link, usePage } from '@inertiajs/inertia-vue3';
@@ -199,7 +199,7 @@ useRemoveLoader();
 const confirmForm = ref(null);
 const mobileMenuVisible = ref(false);
 const avatarSrcError = ref(false);
-const zenMode = ref(false);
+const zenMode = ref(usePage().props.value.user.configs.zenMode);
 
 const actionClicked = (action) => {
     mobileMenuVisible.value = false;
@@ -228,7 +228,7 @@ watch (
     }
 );
 
-let fontScaleIndex = 3;
+let fontScaleIndex = usePage().props.value.user.configs.fontScaleIndex;
 let fontScales = [67, 80, 90, 100];
 const scaleFont = (mode) => {
     fontScaleIndex = mode === 'up' ? (fontScaleIndex+1) : (fontScaleIndex-1);
@@ -238,6 +238,7 @@ const scaleFont = (mode) => {
         fontScaleIndex = 0;
     }
 
-    document.querySelector('body').style.fontSize = fontScales[fontScaleIndex] + '%';
+    document.querySelector('html').style.fontSize = fontScales[fontScaleIndex] + '%';
 };
+onMounted(() => document.querySelector('html').style.fontSize = fontScales[fontScaleIndex] + '%');
 </script>
