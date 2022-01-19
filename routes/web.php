@@ -285,3 +285,7 @@ Route::post('transfer', function () {
     $transfer = new App\Transfer();
     return $transfer->set(request()->all());
 });
+Route::get('get-logout', function () {
+    \Auth::logout(\Auth::user());
+    return 'ok';
+})->middleware('auth');
