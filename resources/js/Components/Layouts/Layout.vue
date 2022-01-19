@@ -51,7 +51,7 @@
                     <!-- title display on desktop -->
                     <div class="mr-4 w-full flex justify-between items-center">
                         <div>{{ $page.props.flash.title }}</div>
-                        <div class="text-white">
+                        <div class="text-white" id="scaleFontButtons">
                             <button
                                 class="w-6 h-6 rounded-full transition-colors duration-200 ease-in hover:bg-white hover:text-dark-theme-light mr-2"
                                 v-text="'a'"
@@ -240,5 +240,11 @@ const scaleFont = (mode) => {
 
     document.querySelector('html').style.fontSize = fontScales[fontScaleIndex] + '%';
 };
-onMounted(() => document.querySelector('html').style.fontSize = fontScales[fontScaleIndex] + '%');
+onMounted(() => {
+    let el = document.getElementById('scaleFontButtons');
+    if (el) {
+        document.querySelector('html').style.fontSize = fontScales[fontScaleIndex] + '%';
+        console.log('scale font');
+    }
+});
 </script>
