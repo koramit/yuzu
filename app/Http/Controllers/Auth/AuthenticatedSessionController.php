@@ -59,6 +59,11 @@ class AuthenticatedSessionController extends Controller
             Cache::forget("uid-{$user->id}-role-names");
             Cache::forget("uid-{$user->id}-abilities");
 
+            Session::put('configs', [
+                'zenMode' => false,
+                'fontScaleIndex' => 3
+            ]);
+
             return Redirect::intended(route($user->home_page));
         }
 
