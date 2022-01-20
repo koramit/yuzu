@@ -263,7 +263,7 @@ Route::get('siit-feedback', function () {
     foreach (array_reverse(array_keys($log)) as $key) {
         $reversed[$key] = $log[$key];
     }
-    return $reversed[$key];
+    return $reversed;
 });
 
 /*
