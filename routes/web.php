@@ -258,7 +258,12 @@ Route::post('webhook/line', LINEWebhooksController::class);
 
 // SiIT feedback
 Route::get('siit-feedback', function () {
-    return Cache::get('siit-log', []);
+    $log = Cache::get('siit-log', []);
+    $reversed = [];
+    foreach (array_reverse(array_keys($log)) as $key) {
+        $reversed[$key] = $log[$key];
+    }
+    return $reversed[$key];
 });
 
 /*
@@ -285,7 +290,3 @@ Route::post('transfer', function () {
     $transfer = new App\Transfer();
     return $transfer->set(request()->all());
 });
-Route::get('get-logout', function () {
-    \Auth::logout(\Auth::user());
-    return 'ok';
-})->middleware('auth');
