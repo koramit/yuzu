@@ -55,7 +55,7 @@ class HandleInertiaRequests extends Middleware
                     'name' => $request->user()->name,
                     'roles' => $request->user()->role_names->toArray(),
                     'abilities' => $request->user()->abilities->toArray(),
-                    'configs' => $request->session()->get('configs'),
+                    'configs' => $request->session()->get('configs', ['zenMode' => false, 'fontScaleIndex' => 3]),
                 ] : null,
             'event' => [
                 'fire' => null,
