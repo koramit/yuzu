@@ -168,7 +168,7 @@ class VisitManager
                 ],
                 [
                     'value' => 13,
-                    'label' => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 14 วัน',
+                    'label' => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 10 วัน',
                 ],
             ],
             'employee_recommendations' => [
@@ -664,7 +664,38 @@ class VisitManager
         // recommendation
         $recommendation = $visit->form['recommendation'];
         if ($recommendation['choice'] && ! $visit->form['management']['np_swab']) {
-            $choices = collect($this->getConfigs($visit)['public_recommendations']);
+            if ($visit->date_visit->lessThan(Carbon::create('2022-01-25'))) { // CR affected on this date
+                $choices = collect([
+                    [
+                        'value' => 11,
+                        'label' => 'ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา',
+                    ],
+                    [
+                        'value' => 12,
+                        'label' => 'ลางาน 1 - 2 วัน หากอาการดีขึ้น ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา',
+                    ],
+                    [
+                        'value' => 13,
+                        'label' => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 14 วัน',
+                    ],
+                ]);
+            } else { // CR 20220124
+                $choices = collect([
+                    [
+                        'value' => 11,
+                        'label' => 'ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา',
+                    ],
+                    [
+                        'value' => 12,
+                        'label' => 'ลางาน 1 - 2 วัน หากอาการดีขึ้น ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา',
+                    ],
+                    [
+                        'value' => 13,
+                        'label' => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 10 วัน',
+                    ],
+                ]);
+            }
+            // $choices = collect($this->getConfigs($visit)['public_recommendations']);
             $text = $choices->firstWhere('value', $recommendation['choice'])['label'];
             if ($recommendation['date_isolation_end']) {
                 $text .= ('<br>กักตัวถึงวันที่ - '.Carbon::create($recommendation['date_isolation_end'])->format('d M Y'));

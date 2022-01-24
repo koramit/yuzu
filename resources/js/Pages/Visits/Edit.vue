@@ -667,11 +667,11 @@
                         ref="dateIsolationEndInput"
                     />
                     <button
-                        @click="addDays(form.exposure.date_latest_expose, dateIsolationEndInput, 14)"
+                        @click="addDays(form.exposure.date_latest_expose, dateIsolationEndInput, 10)"
                         class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
                         :disabled="!(form.exposure.date_latest_expose && true)"
                     >
-                        14 วัน
+                        10 วัน
                     </button>
                     <FormDatetime
                         class="mt-2"
@@ -682,18 +682,18 @@
                         ref="dateReswabInput"
                     />
                     <button
-                        @click="addDays(form.exposure.date_latest_expose, dateReswabInput, 7)"
+                        @click="addDays(form.exposure.date_latest_expose, dateReswabInput, 5)"
                         class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
                         :disabled="!(form.exposure.date_latest_expose && true)"
                     >
-                        7 วัน
+                        5 วัน
                     </button>
                     <button
-                        @click="addDays(form.exposure.date_latest_expose, dateReswabInput, 14)"
+                        @click="addDays(form.exposure.date_latest_expose, dateReswabInput, 10)"
                         class="ml-2 text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
                         :disabled="!(form.exposure.date_latest_expose && true)"
                     >
-                        14 วัน
+                        10 วัน
                     </button>
                     <FormDatetime
                         class="mt-2"
