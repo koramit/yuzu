@@ -5,15 +5,19 @@ namespace App\Http\Controllers;
 use App\Managers\PatientManager;
 use App\Models\LoadDataRecord;
 use App\Models\Visit;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
 class CertificateListExportController extends Controller
 {
+    protected $daysCriteria;
+
     public function __invoke()
     {
         $dateVisit = Session::get('certificate-list-export-date', now('asia/bangkok')->format('Y-m-d'));
+        $this->daysCriteria = Carbon::create($dateVisit)->lessThan(Carbon::create('2022-01-24')) ? 14 : 10;
         $user = Auth::user();
         $manager = new PatientManager();
         $certificates = Visit::with('patient')
@@ -73,9 +77,9 @@ class CertificateListExportController extends Controller
         if ($recommendation === 'ไปทำงานได้') {
             return 'ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลาทุกวัน';
         } elseif ($recommendation === 'กักตัว') {
-            return 'กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 10 วัน'; // CR 220124 change 14 => 10 days
+            return "กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ {$this->daysCriteria} วัน"; // CR 220124 change 14 => 10 days
         } elseif ($recommendation === 'กักตัวนัดสวอบซ้ำ') {
-            return 'กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 10 วัน และนัดมาตรวจซ้ำ'; // CR 220124 change 14 => 10 days
+            return "กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ {$this->daysCriteria} วัน และนัดมาตรวจซ้ำ"; // CR 220124 change 14 => 10 days
         } else {
             return '!!!';
         }
