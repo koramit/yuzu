@@ -64,7 +64,7 @@ class CertificateManager
 
     protected function getConfig($dateVisit, $result)
     {
-        $dateQuarantineEnd = Carbon::create($this->lastExposure ?? $dateVisit)->addDays(14);
+        $dateQuarantineEnd = Carbon::create($this->lastExposure ?? $dateVisit)->addDays(10); // CR 20220124 change 14 => 10 days
         $dateReswab = ($result === 'Inconclusive') ? Carbon::create($dateVisit)->addDays(3) : $dateQuarantineEnd;
         // $dateReswab = Carbon::create($dateVisit)->addDays(3);  CR 20210923
 
