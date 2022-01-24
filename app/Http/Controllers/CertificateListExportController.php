@@ -73,9 +73,9 @@ class CertificateListExportController extends Controller
         if ($recommendation === 'ไปทำงานได้') {
             return 'ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลาทุกวัน';
         } elseif ($recommendation === 'กักตัว') {
-            return 'กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 14 วัน';
+            return 'กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 10 วัน'; // CR 220124 change 14 => 10 days
         } elseif ($recommendation === 'กักตัวนัดสวอบซ้ำ') {
-            return 'กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 14 วัน และนัดมาตรวจซ้ำ';
+            return 'กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 10 วัน และนัดมาตรวจซ้ำ'; // CR 220124 change 14 => 10 days
         } else {
             return '!!!';
         }
