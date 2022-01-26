@@ -9,13 +9,23 @@
             <p class="mt-2 italic p-2">
                 ๏ ทำการขอรหัสยืนยัน จากนั้นสแกน QR Code หรือคลิก <span class="underline">LINE Add Friend</span> เพื่อเพิ่มเพื่อนแล้วใส่รหัสยืนยันในแชทเพื่อระบุตัวตน
             </p>
+            <p class="mt-2 italic p-2">
+                ๏ โดยการขอรหัสยืนยันถือว่า <span class="underline">ท่านยินยอมให้ระบบจัดเก็บข้อมูล LINE โปรไฟล์ของท่าน</span> ได้แก่ LINE ID สถานะและรูปโปรไฟล์
+            </p>
             <SpinnerButton
-                :spin="form.processing"
+                :spin="busy"
                 class="btn-dark w-full mt-4"
                 @click="requestVerificationCode"
+                v-if="!code"
             >
                 ขอรหัสยืนยัน
             </SpinnerButton>
+            <p
+                v-else
+                class="p-2 font-semibold text-center text-white bg-thick-theme-light mt-4"
+            >
+                {{ code }}
+            </p>
             <div class="mt-12 p-8 border-2 border-thick-theme-light rounded">
                 <img
                     class="w-40 md:w-60 h-40 md:h-60 mx-auto"
@@ -41,10 +51,29 @@
 // import FormInput from '@/Components/Controls/FormInput';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import Icon from '@/Components/Helpers/Icon';
-import { useForm } from '@inertiajs/inertia-vue3';
+// import { useForm } from '@inertiajs/inertia-vue3';
+import { ref } from '@vue/reactivity';
 
-const form = useForm({});
+const busy = ref(false);
+const code = ref(null);
 
-const requestVerificationCode = () => {};
+const requestVerificationCode = () => {
+    busy.value = true;
+    window.axios
+        .post(window.route('request-verification-code'), {issue: 'line-verification'})
+        .then(response => {
+            if (!response.data.code) {
+                // error
+                return;
+            }
+            code.value = response.data.code;
+        })
+        .catch(error => {
+            console.log(error);
+        })
+        .finally(() => {
+            busy.value = false;
+        });
+};
 
 </script>
