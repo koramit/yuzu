@@ -32,5 +32,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('refer', fn ($user) => $user->can('evaluate') && $user->mocktail_token);
+
+        Gate::define('line_notify', fn ($user) => $user->line_active);
     }
 }

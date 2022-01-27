@@ -17,6 +17,7 @@ class VerificationCodeManager
             // invalid
         }
 
+        // check if user already has unverified code for the issue
         $code = VerificationCode::whereUserId($user->id)
                                 ->whereIssue($this->issues[$issue])
                                 ->whereVerified(false)
@@ -43,10 +44,9 @@ class VerificationCodeManager
         return $code;
     }
 
-    public function verifyCode(int $code, string $issue, User $user)
+    public function verifyCode(int $code, string $issue)
     {
-        $verified = VerificationCode::whereUserId($user->id)
-                                    ->whereIssue($this->issues[$issue])
+        $verified = VerificationCode::whereIssue($this->issues[$issue])
                                     ->whereCode($code)
                                     ->whereVerified(false)
                                     ->first();
@@ -55,6 +55,8 @@ class VerificationCodeManager
             return false;
         }
 
-        return $verified->update(['verified' => true]);
+        $verified->update(['verified' => true]);
+
+        return User::find($verified->user_id);
     }
 }

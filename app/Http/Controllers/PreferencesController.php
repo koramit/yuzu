@@ -50,9 +50,14 @@ class PreferencesController extends Controller
                 ],
             ],
             'linkMocktail' => [
-                'linked' =>$user->mocktail_token !== null,
+                'linked' => $user->mocktail_token !== null,
                 'can' => $user->can('link_mocktail'),
             ],
+            'setupNotification' => [
+                'line_bot_link_url' => config('services.line.bot_link_url'),
+                'line_bot_qrcode' => url(config('services.line.bot_qrcode')),
+                'line_verified' =>$user->line_verified,
+            ]
         ]);
     }
 

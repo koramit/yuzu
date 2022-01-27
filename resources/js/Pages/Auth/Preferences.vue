@@ -1,7 +1,7 @@
 <template>
     <SelectHomePage :configs="selectHomePage" />
     <LinkMocktail :configs="linkMocktail" />
-    <SetupNotification />
+    <SetupNotification :configs="setupNotification" />
 </template>
 
 
@@ -12,7 +12,8 @@ import SetupNotification from '@/Components/Forms/SetupNotification';
 
 defineProps({
     selectHomePage: { type: Object, required: true},
-    linkMocktail: { type: Object, required: true}
+    linkMocktail: { type: Object, required: true},
+    setupNotification: { type: Object, required: true},
 });
 </script>
 
