@@ -17,11 +17,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -128,5 +124,30 @@ class User extends Authenticatable
         }
 
         return Crypt::decryptString($this->profile['mocktail_token']);
+    }
+
+    public function getLineVerifiedAttribute()
+    {
+        if (
+            ($this->profile['notification'] ?? null) &&
+            $this->profile['notification']['provider'] === 'line'
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getLineActiveAttribute()
+    {
+        if (
+            ($this->profile['notification'] ?? null) &&
+            $this->profile['notification']['provider'] === 'line' &&
+            $this->profile['notification']['active']
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

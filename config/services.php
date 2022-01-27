@@ -80,6 +80,9 @@ return [
 
     'line' => [
         'bot_secret' => env('LINE_BOT_SECRET'),
-        'bot_token' => env('LINE_BOT_TOKEN')
+        'bot_token' => env('LINE_BOT_TOKEN'),
+        'bot_link_url' => env('LINE_BOT_LINK_URL'),
+        'base_endpoint' => env('LINE_BASE_ENDPOINT'),
+        'bot_qrcode' =>  env('LINE_BOT_QRCODE'),
     ]
 ];

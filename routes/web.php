@@ -13,6 +13,7 @@ use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PositiveCaseDecisionExportController;
 use App\Http\Controllers\PreferencesController;
 use App\Http\Controllers\PrintOPDCardController;
+use App\Http\Controllers\RequestVerificationCodeController;
 use App\Http\Controllers\ResourceEmployeesController;
 use App\Http\Controllers\ResourcePatientsController;
 use App\Http\Controllers\ServerSendEventsController;
@@ -255,6 +256,11 @@ Route::post('mocktail', MocktailController::class)
 
 // LINE notify
 Route::post('webhook/line', LINEWebhooksController::class);
+
+// Verification
+Route::post('request-verification-code', RequestVerificationCodeController::class)
+     ->middleware('auth')
+     ->name('request-verification-code');
 
 // SiIT feedback
 Route::get('siit-feedback', function () {
