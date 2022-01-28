@@ -57,6 +57,11 @@ class PreferencesController extends Controller
                 'line_bot_link_url' => config('services.line.bot_link_url'),
                 'line_bot_qrcode' => url(config('services.line.bot_qrcode')),
                 'line_verified' =>$user->line_verified,
+            ],
+            'linkPatient' => [
+                'patient_id' => $user->profile['patient_id'] ?? null,
+                'hn' => $user->profile['hn'] ?? null,
+                'sap_mode' => $user->profile['org_id'] ?? null,
             ]
         ]);
     }

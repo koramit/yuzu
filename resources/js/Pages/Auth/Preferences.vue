@@ -2,6 +2,7 @@
     <SelectHomePage :configs="selectHomePage" />
     <LinkMocktail :configs="linkMocktail" />
     <SetupNotification :configs="setupNotification" />
+    <LinkPatient :configs="linkPatient" />
 </template>
 
 
@@ -9,11 +10,14 @@
 import SelectHomePage from '@/Components/Forms/SelectHomePage';
 import LinkMocktail from '@/Components/Forms/LinkMocktail';
 import SetupNotification from '@/Components/Forms/SetupNotification';
+import LinkPatient from '@/Components/Forms/LinkPatient';
 
 defineProps({
     selectHomePage: { type: Object, required: true},
     linkMocktail: { type: Object, required: true},
     setupNotification: { type: Object, required: true},
+    linkPatient: { type: Object, required: true},
+    // linkPatient: { type: Object, required: true},
 });
 </script>
 

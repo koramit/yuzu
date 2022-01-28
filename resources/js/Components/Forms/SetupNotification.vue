@@ -8,7 +8,7 @@
         <div>
             <template v-if="!configs.line_verified">
                 <p class="mt-2 italic p-2">
-                    ๏ ทำการขอรหัสยืนยัน จากนั้นสแกน QR Code หรือคลิก <span class="underline">LINE Add Friend</span> เพื่อเพิ่มเพื่อนแล้วส่งรหัสยืนยันมาในแชทเพื่อระบุตัวตน
+                    ๏ คลิกขอรหัสยืนยัน จากนั้นสแกน QR Code หรือคลิก <span class="underline">LINE Add Friend</span> เพื่อเพิ่มเพื่อนแล้วส่งรหัสยืนยันมาในแชทเพื่อระบุตัวตน
                 </p>
                 <p class="mt-2 italic p-2">
                     ๏ โดยการขอรหัสยืนยันถือว่า <span class="underline">ท่านยินยอมให้ระบบจัดเก็บข้อมูล LINE โปรไฟล์ของท่าน</span> ได้แก่ LINE ID สถานะและรูปโปรไฟล์

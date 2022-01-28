@@ -7,6 +7,7 @@ use App\Http\Controllers\CertificateListExportController;
 use App\Http\Controllers\CertificationsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportAppointmentsController;
+use App\Http\Controllers\LinkPatientController;
 use App\Http\Controllers\MocktailController;
 use App\Http\Controllers\OPDCardExportController;
 use App\Http\Controllers\PagesController;
@@ -261,6 +262,11 @@ Route::post('webhook/line', LINEWebhooksController::class);
 Route::post('request-verification-code', RequestVerificationCodeController::class)
      ->middleware('auth')
      ->name('request-verification-code');
+
+// link HN
+Route::post('link-patient', LinkPatientController::class)
+     ->middleware('auth')
+     ->name('link-patient');
 
 // SiIT feedback
 Route::get('siit-feedback', function () {

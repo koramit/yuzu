@@ -69,10 +69,6 @@ class InitRole
             }
         }
 
-        if ($event->user->roles->count() === 0) {
-            Log::notice('Cannot assign role for '.$event->user->profile['full_name'].' '.$event->user->profile['org_id'].' '.$event->user->profile['remark']);
-        }
-
         Session::forget('profile');
     }
 }
