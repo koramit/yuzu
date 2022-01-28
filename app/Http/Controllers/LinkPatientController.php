@@ -18,10 +18,7 @@ class LinkPatientController extends Controller
             'sap_mode' => 'required'
         ]);
 
-        $manager = new PatientManager;
-
         $authUser = Auth::user();
-
         $sapUser = $api->getUserById($authUser->profile['org_id']);
         if (!$sapUser['found']) {
             return [
@@ -29,7 +26,7 @@ class LinkPatientController extends Controller
             ];
         }
 
-        $patient = $manager->manage(Request::input('hn'));
+        $patient = (new PatientManager)->manage(Request::input('hn'));
         if (!$patient['found']) {
             return [
                 'errors' => ['hn' => 'ไม่พบข้อมูล HN กรุณาลองใหม่']
