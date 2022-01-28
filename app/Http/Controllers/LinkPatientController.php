@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Contracts\AuthenticationAPI;
 use App\Contracts\PatientAPI;
 use App\Managers\PatientManager;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -39,10 +40,14 @@ class LinkPatientController extends Controller
             ];
         }
 
-        $authUser->update([
-            'profile->patient_id' => $patient['patient']->id,
-            'profile->hn' => $patient['patient']->hn
-        ]);
+        $duplicate = User::where('profile->patient_id', $patient['patient']->id)->first();
+        if ($duplicate) {
+            return [
+                'errors' => ['hn' => 'มีผู้ใช้งาน HN นี้แล้ว กรุณาลองใหม่']
+            ];
+        }
+
+        $authUser->update(['profile->patient_id' => $patient['patient']->id]);
 
         return ['ok' => true];
     }
