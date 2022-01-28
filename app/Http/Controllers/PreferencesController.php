@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Patient;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
@@ -60,7 +61,7 @@ class PreferencesController extends Controller
             ],
             'linkPatient' => [
                 'patient_id' => $user->profile['patient_id'] ?? null,
-                'hn' => $user->profile['hn'] ?? null,
+                'hn' => Patient::find($user->profile['patient_id'] ?? null)?->hn,
                 'sap_mode' => $user->profile['org_id'] ?? null,
             ]
         ]);
