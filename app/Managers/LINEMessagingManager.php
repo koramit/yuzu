@@ -60,27 +60,27 @@ class LINEMessagingManager
         $this->replyMessage(userId: $userId, replyToken: $replyToken, messages: $messages);
     }
 
-    public function replyAuto(string $token, User $user)
+    public function replyAuto(string $replyToken, User $user)
     {
         if (Cache::has("bot-auto-reply-to-user-{$user->id}")) {
             return;
         }
 
         $messages[] = $this->buildTextMessage(__('bot.auto_reply'));
-        $this->replyMessage(userId: $user->profile['notification']['user_id'], replyToken: $token, messages: $messages);
+        $this->replyMessage(userId: $user->profile['notification']['user_id'], replyToken: $replyToken, messages: $messages);
         Cache::put("bot-auto-reply-to-user-{$user->id}", true, now()->addMinutes(10));
     }
 
-    public function replyRefollow(string $userId, string $token)
+    public function replyRefollow(string $userId, string $replyToken)
     {
         $messages[] = $this->buildTextMessage(__('bot.regreeting'));
-        $this->replyMessage(userId: $userId, replyToken: $token, messages: $messages);
+        $this->replyMessage(userId: $userId, replyToken: $replyToken, messages: $messages);
     }
 
-    public function replyInvalidVerificationCode(string $userId, string $token)
+    public function replyInvalidVerificationCode(string $userId, string $replyToken)
     {
         $messages[] = $this->buildTextMessage(__('bot.invalid_verification_code'));
-        $this->replyMessage(userId: $userId, replyToken: $token, messages: $messages);
+        $this->replyMessage(userId: $userId, replyToken: $replyToken, messages: $messages);
     }
 
     public function buildTextMessage(string $text)
@@ -137,7 +137,7 @@ class LINEMessagingManager
         $cmds = collect(['คิวตรวจ']);
 
         if (!($event['message']['type'] === 'text') || !$cmds->contains($event['message']['text'])) {
-            $this->replyAuto(token: $event['replyToken'], user: $user);
+            $this->replyAuto(replyToken: $event['replyToken'], user: $user);
             return;
         }
 
