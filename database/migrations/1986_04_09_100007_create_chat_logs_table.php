@@ -16,7 +16,7 @@ class CreateChatLogsTable extends Migration
         Schema::create('chat_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedTinyInteger('platform')->defualt(1)->index(); // LINE = 1
-            $table->unsignedTinyInteger('mode')->defualt(1)->index(); // read = 1, reply = 2
+            $table->unsignedTinyInteger('mode')->defualt(1)->index(); // read = 1, reply = 2, push = 3,...
             $table->string('platform_user_id')->index();
             $table->json('payload');
             $table->timestamps();
