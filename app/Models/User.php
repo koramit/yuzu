@@ -59,6 +59,16 @@ class User extends Authenticatable
     }
 
     /**
+     * A user may subscribe to many events.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function subscribedNotifications()
+    {
+        return $this->belongsToMany(NotificationEvent::class)->withTimestamps();
+    }
+
+    /**
      * Assign a new role to the user.
      *
      * @param  mixed  $role
