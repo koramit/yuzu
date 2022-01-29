@@ -42,9 +42,39 @@
                 </li>
                 <li class="my-6">
                     เมื่อทำการตั้งค่าการแจ้งเตือนและยืนยัน HN สำเร็จเรียบร้อยแล้ว สามารถสอบถามลำดับคิวทำสวอปของท่าน โดยการพิมพ์คำว่า <span class="font-semibold">"คิวตรวจ"</span> ส่งมาใน LINE
+                    <img
+                        class="mx-auto w-80 rounded shadow"
+                        :src="route('home')+'/image/tutorial/get-swab-queue.png'"
+                        alt=""
+                    >
                 </li>
                 <li class="my-6">
                     เมื่อใกล้ถึงคิวของท่านจะมีการแจ้งเตือนผ่านทาง LINE
+                    <img
+                        class="mx-auto w-80 rounded shadow"
+                        :src="route('home')+'/image/tutorial/calling-queue-notify.png'"
+                        alt=""
+                    >
+                </li>
+            </ul>
+        </div>
+        <div class=" p-4 bg-white shadow rounded mt-4">
+            <p>ข้อควรทราบ</p>
+            <ul class="list-outside list-disc pl-4 mt-6">
+                <li class="my-6">
+                    ท่านต้องมารับการตรวจคัดกรองที่ ARI คลินิกก่อนเสมอ
+                </li>
+                <li class="my-6">
+                    คิวทำสวอปจะเป็นคนละคิวกับที่ท่านได้เมื่อตอนเปิดสิทธิ์การรักษา โดยคิวนี้จะได้เมื่อพยาบาลคัดกรองหรือแพทย์สั่งสวอป
+                </li>
+                <li class="my-6">
+                    การตั้งค่าการแจ้งเตือนและการยืนยัน HN ทำเพียงครั้งเดียวเท่านั้น หากท่านมีนัดสวอปซ้ำก็ไม่จำเป็นต้องทำการตั้งค่าเหล่านี้อีก
+                </li>
+                <li class="my-6">
+                    หากท่านลบแชทแล้วหา LINE นี้ไม่เจอ สามารถสแกน QR Code หรือคลิก Add Friend ได้ที่หน้า <span class="font-semibold">ตั้งค่า</span>
+                </li>
+                <li class="my-6">
+                    หากท่าน Block LINE นี้ ทางคลินิกจะไม่สามารถทำการแจ้งเตือนท่านได้
                 </li>
             </ul>
         </div>
