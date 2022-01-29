@@ -127,11 +127,11 @@ class LINEMessagingManager
     {
         $cmds = collect(['คิวตรวจ']);
 
-        if (!$event['message']['type'] === 'text' || !$cmds->contains($event['message']['text'])) {
-            $this->replyAuto(token: $event['replyToken'], user: $user);
+        if ($event['message']['type'] === 'text' && $cmds->contains($event['message']['text'])) {
+            $messages[] = $this->buildTextMessage(text: 'คิวทำสวอปของท่านในวันนี้คือ #49');
+            $this->replyMessage(replyToken: $event['replyToken'], messages: $messages);
         }
 
-        $messages[] = $this->buildTextMessage(text: 'คิวทำสวอปของท่านในวันนี้คือ #49');
-        $this->replyMessage(replyToken: $event['replyToken'], messages: $messages);
+        $this->replyAuto(token: $event['replyToken'], user: $user);
     }
 }
