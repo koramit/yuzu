@@ -34,6 +34,8 @@ class CreateNotificationEventsTable extends Migration
             ['name' => 'read'] + $timestamps,
             ['name' => 'reply'] + $timestamps,
             ['name' => 'push'] + $timestamps,
+            ['name' => 'get_queue_number'] + $timestamps,
+            ['name' => 'get_queue_update'] + $timestamps,
         ]);
     }
 

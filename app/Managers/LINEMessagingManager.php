@@ -16,23 +16,27 @@ class LINEMessagingManager
     public function __construct()
     {
         $this->baseEndpoint = config('services.line.base_endpoint');
-        $this->client = Http::withToken(config('services.line.bot_token'));
+        $this->client = Http::timeout(2)->retry(3, 100)->withToken(config('services.line.bot_token'));
     }
 
-    public function replyMessage(string $replyToken, array $messages)
+    public function replyMessage(string $userId, string $replyToken, array $messages, string $mode = 'reply')
     {
         $this->client->post($this->baseEndpoint.'message/reply', [
             'replyToken' => $replyToken,
             'messages' => $messages,
         ]);
+
+        $this->log(platformUserId: $userId, payload: $messages, mode: $mode);
     }
 
-    public function pushMessage(string $userId, array $messages)
+    public function pushMessage(string $userId, array $messages, string $mode = 'push')
     {
         $this->client->post($this->baseEndpoint.'message/push', [
             'to' => $userId,
             'messages' => $messages,
         ]);
+
+        $this->log(platformUserId: $userId, payload: $messages, mode: $mode);
     }
 
     public function getProfile(string $userId)
@@ -42,17 +46,18 @@ class LINEMessagingManager
         return $response->json();
     }
 
-    public function replyGreeting(string $token, string $username)
+    public function replyGreeting(string $userId, string $replyToken, string $username)
     {
         $messages[] = $this->buildTextMessage(__('bot.greeting', ['PLACEHOLDER' => $username]));
+        $messages[] = $this->buildTextMessage(__('bot.auto_reply'));
         $messages[] = $this->buildStickerMessage(packageId: 6359, stickerId: collect([11069855, 11069867, 11069868, 11069870])->random());
-        $this->replyMessage($token, $messages);
+        $this->replyMessage(userId: $userId, replyToken: $replyToken, messages: $messages);
     }
 
-    public function replyUnauthorized(string $token, string $username)
+    public function replyUnauthorized(string $userId, string $replyToken, string $username)
     {
         $messages[] = $this->buildTextMessage(__('bot.user_not_verified', ['PLACEHOLDER' => $username]));
-        $this->replyMessage($token, $messages);
+        $this->replyMessage(userId: $userId, replyToken: $replyToken, messages: $messages);
     }
 
     public function replyAuto(string $token, User $user)
@@ -62,20 +67,20 @@ class LINEMessagingManager
         }
 
         $messages[] = $this->buildTextMessage(__('bot.auto_reply'));
-        $this->replyMessage($token, $messages);
+        $this->replyMessage(userId: $user->profile['notification']['user_id'], replyToken: $token, messages: $messages);
         Cache::put("bot-auto-reply-to-user-{$user->id}", true, now()->addMinutes(10));
     }
 
-    public function replyRefollow(string $token)
+    public function replyRefollow(string $userId, string $token)
     {
         $messages[] = $this->buildTextMessage(__('bot.regreeting'));
-        $this->replyMessage($token, $messages);
+        $this->replyMessage(userId: $userId, replyToken: $token, messages: $messages);
     }
 
-    public function replyInvalidVerificationCode(string $token)
+    public function replyInvalidVerificationCode(string $userId, string $token)
     {
         $messages[] = $this->buildTextMessage(__('bot.invalid_verification_code'));
-        $this->replyMessage($token, $messages);
+        $this->replyMessage(userId: $userId, replyToken: $token, messages: $messages);
     }
 
     public function buildTextMessage(string $text)
@@ -100,6 +105,9 @@ class LINEMessagingManager
         $modes = [
             'read' => 1,
             'reply' => 2,
+            'push' => 3,
+            'get_queue_number' => 4,
+            'get_queue_update' => 5,
         ];
 
         return ChatLog::create([
@@ -147,6 +155,6 @@ class LINEMessagingManager
             }
         }
         $messages[] = $this->buildTextMessage(text: $m);
-        $this->replyMessage(replyToken: $event['replyToken'], messages: $messages);
+        $this->replyMessage(userId: $user->profile['notification']['user_id'], replyToken: $event['replyToken'], messages: $messages, mode: 'get_queue_number');
     }
 }

@@ -35,7 +35,7 @@ class LINEWebhooksController extends Controller
             abort(400);
         }
 
-        $this->bot = new LINEMessagingManager;
+        $this->bot = new LINEMessagingManager();
 
         foreach (Request::input('events') as $event) {
             $this->bot->log(
@@ -63,19 +63,19 @@ class LINEWebhooksController extends Controller
         // not verified yet
         if (! $this->user) {
             $profile = $this->bot->getProfile($event['source']['userId']);
-            $this->bot->replyUnauthorized(token: $event['replyToken'], username: $profile['displayName']);
+            $this->bot->replyUnauthorized(userId: $event['source']['userId'], replyToken: $event['replyToken'], username: $profile['displayName']);
 
             return;
         }
 
         // still friend, just scan qrcode or click link add friend
         if ($this->user->profile['notification']['active']) {
-            $this->bot->replyGreeting(token: $event['replyToken'], username: $this->user->profile['full_name']);
+            $this->bot->replyGreeting(userId: $event['source']['userId'], replyToken: $event['replyToken'], username: $this->user->profile['full_name']);
         }
 
         // unfriended then ask for the make up - refollow
         $this->user->update(['profile->notification->active' => true]);
-        $this->bot->replyRefollow(token: $event['replyToken']);
+        $this->bot->replyRefollow(userId: $event['source']['userId'], replyToken: $event['replyToken']);
     }
 
     protected function unfollow($event)
@@ -101,7 +101,7 @@ class LINEWebhooksController extends Controller
             !is_numeric($event['message']['text'])
         ) {
             $profile = $this->bot->getProfile($event['source']['userId']);
-            $this->bot->replyUnauthorized($event['replyToken'], $profile['displayName']);
+            $this->bot->replyUnauthorized(userId: $event['source']['userId'], replyToken: $event['replyToken'], username: $profile['displayName']);
 
             return;
         }
@@ -109,13 +109,13 @@ class LINEWebhooksController extends Controller
         // if no user and message is possible verification code
         $manager = new VerificationCodeManager;
         if (! $user = $manager->verifyCode(code: $event['message']['text'], issue: 'line-verification')) {
-            $this->bot->replyInvalidVerificationCode(token: $event['replyToken']);
+            $this->bot->replyInvalidVerificationCode(userId: $event['source']['userId'], replyToken: $event['replyToken']);
 
             return;
         }
 
         // code verified
         $this->bot->updateProfile(userId: $event['source']['userId'], user: $user);
-        $this->bot->replyGreeting(token: $event['replyToken'], username: $user->profile['full_name']);
+        $this->bot->replyGreeting(userId: $event['source']['userId'], replyToken: $event['replyToken'], username: $user->profile['full_name']);
     }
 }
