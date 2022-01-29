@@ -123,7 +123,7 @@ class LINEMessagingManager
         ]);
     }
 
-    public function handleMessageEvent(object $event, User $user)
+    public function handleMessageEvent(array $event, User $user)
     {
         $cmds = collect(['คิวตรวจ']);
 
