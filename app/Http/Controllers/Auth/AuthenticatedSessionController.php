@@ -64,7 +64,13 @@ class AuthenticatedSessionController extends Controller
                 'fontScaleIndex' => 3
             ]);
 
-            return Redirect::intended(route($user->home_page));
+            $redirectTo = $user->home_page;
+            $specificRoles = collect(['root', 'admin', 'id_md', 'pm_md', 'ari_nurse', 'icn_nurse']);
+            if ($user->role_names->count() && !$user->role_names->intersect($specificRoles)->count()) {
+                $redirectTo = 'in-transit';
+            }
+
+            return Redirect::intended(route($redirectTo));
         }
 
         Session::put('profile', $data);

@@ -10,4 +10,9 @@ class PagesController extends Controller
     {
         return Inertia::render('TermsAndPolicies/Revision1');
     }
+
+    public function tutorial()
+    {
+        return Inertia::render('Tutorial');
+    }
 }
