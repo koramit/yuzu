@@ -49,8 +49,8 @@ class LINEMessagingManager
     public function replyGreeting(string $userId, string $replyToken, string $username)
     {
         $messages[] = $this->buildTextMessage(__('bot.greeting', ['PLACEHOLDER' => $username]));
-        $messages[] = $this->buildTextMessage(__('bot.auto_reply'));
         $messages[] = $this->buildStickerMessage(packageId: 6359, stickerId: collect([11069855, 11069867, 11069868, 11069870])->random());
+        $messages[] = $this->buildTextMessage(__('bot.auto_reply'));
         $this->replyMessage(userId: $userId, replyToken: $replyToken, messages: $messages);
     }
 
