@@ -150,4 +150,9 @@ class User extends Authenticatable
 
         return false;
     }
+
+    public function getPatientLinkedAttribute()
+    {
+        return ($this->profile['patient_id'] ?? false) ? true : false;
+    }
 }

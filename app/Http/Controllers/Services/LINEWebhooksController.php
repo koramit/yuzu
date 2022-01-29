@@ -90,7 +90,7 @@ class LINEWebhooksController extends Controller
     protected function message($event)
     {
         if ($this->user) {
-            $this->bot->replyAuto($event['replyToken']);
+            $this->bot->handleMessageEvent(event: $event, user: $this->user);
 
             return;
         }

@@ -4,6 +4,7 @@ namespace App\Managers;
 
 use App\Models\ChatLog;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class LINEMessagingManager
@@ -53,10 +54,15 @@ class LINEMessagingManager
         $this->replyMessage($token, $messages);
     }
 
-    public function replyAuto(string $token)
+    public function replyAuto(string $token, User $user)
     {
+        if (Cache::has("bot-auto-reply-to-user-{$user->id}")) {
+            return;
+        }
+
         $messages[] = $this->buildTextMessage(__('bot.auto_reply'));
         $this->replyMessage($token, $messages);
+        Cache::put("bot-auto-reply-to-user-{$user->id}", true, now()->addMinutes(10));
     }
 
     public function replyRefollow(string $token)
@@ -115,5 +121,17 @@ class LINEMessagingManager
             'profile->notification->status' => $profile['statusMessage'] ?? null,
             'profile->notification->active' => true,
         ]);
+    }
+
+    public function handleMessageEvent(object $event, User $user)
+    {
+        $cmds = collect(['คิวตรวจ']);
+
+        if (!$event['message']['type'] === 'text' || !$cmds->contains($event['message']['text'])) {
+            $this->replyAuto(token: $event['replyToken'], user: $user);
+        }
+
+        $messages[] = $this->buildTextMessage(text: 'คิวทำสวอปของท่านในวันนี้คือ #49');
+        $this->replyMessage(replyToken: $event['replyToken'], messages: $messages);
     }
 }

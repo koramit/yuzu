@@ -7,6 +7,7 @@ use App\Http\Controllers\CertificateListExportController;
 use App\Http\Controllers\CertificationsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportAppointmentsController;
+use App\Http\Controllers\InTransitController;
 use App\Http\Controllers\LinkPatientController;
 use App\Http\Controllers\MocktailController;
 use App\Http\Controllers\OPDCardExportController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\ResourceEmployeesController;
 use App\Http\Controllers\ResourcePatientsController;
 use App\Http\Controllers\ServerSendEventsController;
 use App\Http\Controllers\Services\LINEWebhooksController;
+use App\Http\Controllers\UserMedicalRecordsController;
 use App\Http\Controllers\VisitActionsController;
 use App\Http\Controllers\VisitAttachOPDCardController;
 use App\Http\Controllers\VisitAuthorizationController;
@@ -63,6 +65,8 @@ Route::post('register', [RegisteredUserController::class, 'store'])
 // Page
 Route::get('terms-and-policies', [PagesController::class, 'terms'])
      ->name('terms');
+Route::get('tutorial', [PagesController::class, 'tutorial'])
+     ->name('tutorial');
 
 // preferences
 Route::get('preferences', [PreferencesController::class, 'show'])
@@ -267,6 +271,16 @@ Route::post('request-verification-code', RequestVerificationCodeController::clas
 Route::post('link-patient', LinkPatientController::class)
      ->middleware('auth')
      ->name('link-patient');
+
+// in-transit
+Route::get('in-transit', InTransitController::class)
+     ->middleware('auth', 'can:in_transit')
+     ->name('in-transit');
+
+// medical-records
+Route::get('medical-records', UserMedicalRecordsController::class)
+     ->middleware('auth')
+     ->name('medical-records');
 
 // SiIT feedback
 Route::get('siit-feedback', function () {

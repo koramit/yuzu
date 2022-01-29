@@ -25,7 +25,9 @@
                     <button
                         class="hidden md:inline-block font-bold text-lg md:text-2xl"
                         @click="zenMode = !zenMode"
-                    >{{ zenMode ? '🍊':'Yuzu' }}</button>
+                    >
+                        {{ zenMode ? '🍊':'Yuzu' }}
+                    </button>
                     <!-- title display on mobile -->
                     <div class="text-soft-theme-light text-sm truncate mx-1 md:hidden">
                         {{ $page.props.flash.title }}
@@ -51,7 +53,10 @@
                     <!-- title display on desktop -->
                     <div class="mr-4 w-full flex justify-between items-center">
                         <div>{{ $page.props.flash.title }}</div>
-                        <div class="text-white" id="scaleFontButtons">
+                        <div
+                            class="text-white"
+                            id="scaleFontButtons"
+                        >
                             <button
                                 class="w-6 h-6 rounded-full transition-colors duration-200 ease-in hover:bg-white hover:text-dark-theme-light mr-2"
                                 v-text="'a'"
@@ -79,15 +84,22 @@
                         </template>
                         <template #dropdown>
                             <div class="mt-2 py-2 shadow-xl min-w-max bg-thick-theme-light text-white cursor-pointer rounded text-sm">
-                                <template v-if="$page.props.user.roles.length">
-                                    <Link
-                                        class="block px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
-                                        :href="route('preferences')"
-                                        v-if="! isUrl(route('preferences'))"
-                                    >
-                                        ตั้งค่า
-                                    </Link>
-                                </template>
+                                <!-- <template v-if="$page.props.user.roles.length"> -->
+                                <Link
+                                    class="block px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
+                                    :href="route('preferences')"
+                                    v-if="! isUrl(route('preferences'))"
+                                >
+                                    ตั้งค่า
+                                </Link>
+                                <Link
+                                    class="block px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
+                                    :href="route('medical-records')"
+                                    v-if="! isUrl(route('medical-records'))"
+                                >
+                                    ประวัติการตรวจ
+                                </Link>
+                                <!-- </template> -->
                                 <Link
                                     class="w-full font-semibold text-left px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
                                     :href="route('logout')"
@@ -125,15 +137,22 @@
                                 </div>
                             </div> -->
                             <span class="inline-block py-1 text-white">{{ $page.props.user.name }}</span>
-                            <template v-if="$page.props.user.roles.length">
-                                <Link
-                                    class="block py-1"
-                                    :href="route('preferences')"
-                                    v-if="! isUrl(route('preferences'))"
-                                >
-                                    ตั้งค่า
-                                </Link>
-                            </template>
+                            <!-- <template v-if="$page.props.user.roles.length"> -->
+                            <Link
+                                class="block py-1"
+                                :href="route('preferences')"
+                                v-if="! isUrl(route('preferences'))"
+                            >
+                                ตั้งค่า
+                            </Link>
+                            <Link
+                                class="block py-1"
+                                :href="route('medical-records')"
+                                v-if="! isUrl(route('medical-records'))"
+                            >
+                                ประวัติการตรวจ
+                            </Link>
+                            <!-- </template> -->
                             <Link
                                 class="block py-1"
                                 :href="route('logout')"
@@ -160,8 +179,11 @@
                         'w-12 md:p-4': zenMode,
                     }"
                 >
-                    <MainMenu :zenMode="zenMode" />
-                    <ActionMenu :zenMode="zenMode" @action-clicked="actionClicked" />
+                    <MainMenu :zen-mode="zenMode" />
+                    <ActionMenu
+                        :zen-mode="zenMode"
+                        @action-clicked="actionClicked"
+                    />
                 </div>
                 <!-- this is main page -->
                 <div
