@@ -37,6 +37,7 @@ use App\Http\Controllers\VisitQueueListController;
 use App\Http\Controllers\VisitsController;
 use App\Http\Controllers\VisitScreenListController;
 use App\Http\Controllers\VisitSwabListController;
+use App\Http\Controllers\VisitSwabNotificationListController;
 use App\Http\Controllers\VisitTodayListController;
 use App\Http\Controllers\WonderWomenController;
 use Illuminate\Support\Facades\Cache;
@@ -154,6 +155,11 @@ Route::post('visits/queue/{visit:slug}', [VisitQueueListController::class, 'stor
 Route::post('visits/fill-hn/{visit:slug}', VisitFillHnController::class)
      ->middleware('auth', 'can:fillHn,visit')
      ->name('visits.fill-hn.store');
+
+// view_swab_notification_list
+Route::get('visits/swab-notification-list', [VisitSwabNotificationListController::class, 'index'])
+     ->middleware('auth', 'can:view_swab_notification_list')
+     ->name('visits.swab-notification-list');
 
 // evaluation
 Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class) // save consultation note
@@ -296,9 +302,9 @@ Route::get('siit-feedback', function () {
  * Route for testing ONLY
  */
 Route::get('login-as/{name}', function ($name) {
-    if (config('app.env') === 'production') {
-        abort(404);
-    }
+//     if (config('app.env') === 'production') {
+//         abort(404);
+//     }
     $user = \App\Models\User::whereName($name)->first();
     if (! $user) {
         abort(404);

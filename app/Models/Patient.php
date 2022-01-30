@@ -87,4 +87,9 @@ class Patient extends Model
     {
         return ($this->profile['gender'] ?? '') === 'male' ? 'ชาย' : 'หญิง';
     }
+
+    public function getNotificationActiveAttribute()
+    {
+        return $this->profile['notification']['active'] ?? null;
+    }
 }
