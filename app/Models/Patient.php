@@ -92,4 +92,29 @@ class Patient extends Model
     {
         return $this->profile['notification']['active'] ?? null;
     }
+
+    public function chatLogs()
+    {
+        return $this->hasMany(ChatLog::class, 'platform_user_id', 'notification_user_id');
+    }
+
+    public function scopeWithNotificationConfig($query)
+    {
+        $query->addSelect([
+            'notification_user_id' => User::select('profile->notification->user_id')
+                        ->whereColumn('profile->patient_id', 'patients.id')
+                        ->limit(1)
+                        ->latest(),
+            'notification_active' => User::select('profile->notification->active')
+                        ->whereColumn('profile->patient_id', 'patients.id')
+                        ->limit(1)
+                        ->latest(),
+        ]);
+    }
+
+    public function scopeWithTodaySwabNotifications($query)
+    {
+        $query->withNotificationConfig()
+            ->with(['chatLogs' => fn ($q) => $q->todaySwabNotifications()]);
+    }
 }
