@@ -160,6 +160,9 @@ Route::post('visits/fill-hn/{visit:slug}', VisitFillHnController::class)
 Route::get('visits/swab-notification-list', [VisitSwabNotificationListController::class, 'index'])
      ->middleware('auth', 'can:view_swab_notification_list')
      ->name('visits.swab-notification-list');
+Route::post('visits/swab-notification-list', [VisitSwabNotificationListController::class, 'store'])
+     ->middleware('auth', 'can:notify_swab_queue')
+     ->name('visits.swab-notification-list.store');
 
 // evaluation
 Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class) // save consultation note

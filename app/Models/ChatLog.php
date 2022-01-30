@@ -15,4 +15,15 @@ class ChatLog extends Model
     protected $casts = [
         'payload' => AsArrayObject::class,
     ];
+
+    public function scopeSwabNotifications($query)
+    {
+        $query->select('id', 'platform_user_id')->where('mode', 6);
+    }
+
+    public function scopeTodaySwabNotifications($query)
+    {
+        $query->swabNotifications()
+            ->where('created_at', '>', now()->addHours(-12)->format('Y-m-d H:i:s')); // last 12 hours
+    }
 }

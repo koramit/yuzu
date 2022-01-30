@@ -108,6 +108,7 @@ class LINEMessagingManager
             'push' => 3,
             'get_queue_number' => 4,
             'get_queue_update' => 5,
+            'notify_swab_queue' => 6,
         ];
 
         return ChatLog::create([
