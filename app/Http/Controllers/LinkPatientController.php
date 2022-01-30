@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\AuthenticationAPI;
 use App\Contracts\PatientAPI;
+use App\Managers\NotificationManager;
 use App\Managers\PatientManager;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -48,7 +49,7 @@ class LinkPatientController extends Controller
         }
 
         $authUser->update(['profile->patient_id' => $patient['patient']->id]);
-
+        (new NotificationManager)->patientUserUpdate($this->user);
         return ['ok' => true];
     }
 }

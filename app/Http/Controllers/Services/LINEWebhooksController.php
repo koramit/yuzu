@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Services;
 
 use App\Http\Controllers\Controller;
 use App\Managers\LINEMessagingManager;
+use App\Managers\NotificationManager;
 use App\Managers\VerificationCodeManager;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
@@ -75,6 +76,7 @@ class LINEWebhooksController extends Controller
 
         // unfriended then ask for the make up - refollow
         $this->user->update(['profile->notification->active' => true]);
+        (new NotificationManager)->patientUserUpdate($this->user);
         $this->bot->replyRefollow(userId: $event['source']['userId'], replyToken: $event['replyToken']);
     }
 
@@ -82,6 +84,7 @@ class LINEWebhooksController extends Controller
     {
         if ($this->user) {
             $this->user->update(['profile->notification->active' => false]);
+            (new NotificationManager)->patientUserUpdate($this->user);
         } else {
             Log::notice('guest '.$event['source']['userId'].' unsubscribed LINE bot');
         }
@@ -116,6 +119,7 @@ class LINEWebhooksController extends Controller
 
         // code verified
         $this->bot->updateProfile(userId: $event['source']['userId'], user: $user);
+        (new NotificationManager)->patientUserUpdate($this->user);
         $this->bot->replyGreeting(userId: $event['source']['userId'], replyToken: $event['replyToken'], username: $user->profile['full_name']);
     }
 }
