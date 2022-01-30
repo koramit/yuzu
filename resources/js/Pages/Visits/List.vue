@@ -113,6 +113,10 @@
             v-else-if="card === 'lab'"
             :visits="filteredVisits"
         />
+        <CardSwabNotification
+            v-else-if="card === 'swab-notification'"
+            :visits="filteredVisits"
+        />
 
         <Visit ref="createVisitForm" />
         <Appointment ref="appointmentForm" />
@@ -130,6 +134,7 @@ import CardVisit from '@/Components/Cards/Visit';
 import CardEnqueueSwab from '@/Components/Cards/EnqueueSwab';
 import CardMedicalRecord from '@/Components/Cards/MedicalRecord';
 import CardQueue from '@/Components/Cards/Queue';
+import CardSwabNotification from '@/Components/Cards/SwabNotification';
 import Filters from '@/Components/Cards/Filters';
 import Visit from '@/Components/Forms/Visit';
 import Appointment from '@/Components/Forms/Appointment';
@@ -141,7 +146,7 @@ import { usePage } from '@inertiajs/inertia-vue3';
 
 export default {
     layout: Layout,
-    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, CardEnqueueSwab, CardQueue, CardLab, CardVisit, Filters, Appointment, FormTextarea, FormSelect },
+    components: { Visit, Icon, CardScreen, CardExam, CardSwab, CardMedicalRecord, CardEnqueueSwab, CardQueue, CardLab, CardVisit, CardSwabNotification, Filters, Appointment, FormTextarea, FormSelect },
     props: {
         visits: { type: Object, required: true },
         card: { type: String, required: true },
@@ -283,7 +288,7 @@ export default {
                     { name: 'swab_at_scg', label: 'SCG', on: false },
                     { name: 'swab_at_sky_walk', label: 'Sky Walk', on: false },
                 ];
-            } else if (props.card === 'enqueue-swab' || props.card === 'swab') {
+            } else if (['enqueue-swab', 'swab', 'swab-notification'].includes(props.card)) {
                 return [
                     { name: 'swab_at_scg', label: 'SCG', on: false },
                     { name: 'swab_at_sky_walk', label: 'Sky Walk', on: false },
