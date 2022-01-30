@@ -49,7 +49,7 @@ class LinkPatientController extends Controller
         }
 
         $authUser->update(['profile->patient_id' => $patient['patient']->id]);
-        (new NotificationManager)->patientUserUpdate($this->user);
+        (new NotificationManager)->patientUserUpdate($authUser);
         return ['ok' => true];
     }
 }

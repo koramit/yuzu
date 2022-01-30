@@ -119,7 +119,7 @@ class LINEWebhooksController extends Controller
 
         // code verified
         $this->bot->updateProfile(userId: $event['source']['userId'], user: $user);
-        (new NotificationManager)->patientUserUpdate($this->user);
+        (new NotificationManager)->patientUserUpdate($user);
         $this->bot->replyGreeting(userId: $event['source']['userId'], replyToken: $event['replyToken'], username: $user->profile['full_name']);
     }
 }
