@@ -301,6 +301,20 @@ Route::get('siit-feedback', function () {
     return $reversed;
 });
 
+Route::get('user-add-line', function () {
+    return \App\Models\User::whereNotNull('profile->notification')
+                              ->get()
+                              ->transform(function ($u) {
+                                  return [
+                                        'nickname' => $u->profile['notification']['nickname'] ?? null,
+                                        'avatar' => $u->profile['notification']['avatar'] ?? null,
+                                        'status' => $u->profile['notification']['status'] ?? null,
+                                        'active' => $u->profile['notification']['active'] ?? null,
+                                        'patient_linked' => $u->profile['patient_id'] ?? null
+                                   ];
+                              });
+})->middleware('auth', 'can:notify_swab_queue');
+
 /*
  * Route for testing ONLY
  */
