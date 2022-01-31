@@ -1,5 +1,6 @@
 <template>
     <SelectHomePage :configs="selectHomePage" />
+    <LayoutAppearance :configs="layoutAppearance" />
     <LinkMocktail :configs="linkMocktail" />
     <SetupNotification :configs="setupNotification" />
     <LinkPatient :configs="linkPatient" />
@@ -8,12 +9,14 @@
 
 <script setup>
 import SelectHomePage from '@/Components/Forms/SelectHomePage';
+import LayoutAppearance from '@/Components/Forms/LayoutAppearance';
 import LinkMocktail from '@/Components/Forms/LinkMocktail';
 import SetupNotification from '@/Components/Forms/SetupNotification';
 import LinkPatient from '@/Components/Forms/LinkPatient';
 
 defineProps({
     selectHomePage: { type: Object, required: true},
+    layoutAppearance: { type: Object, required: true},
     linkMocktail: { type: Object, required: true},
     setupNotification: { type: Object, required: true},
     linkPatient: { type: Object, required: true},

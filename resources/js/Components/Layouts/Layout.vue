@@ -221,7 +221,7 @@ useRemoveLoader();
 const confirmForm = ref(null);
 const mobileMenuVisible = ref(false);
 const avatarSrcError = ref(false);
-const zenMode = ref(usePage().props.value.user.configs.zenMode);
+const zenMode = ref(usePage().props.value.user.configs.appearance.zenMode);
 
 const actionClicked = (action) => {
     mobileMenuVisible.value = false;
@@ -250,7 +250,7 @@ watch (
     }
 );
 
-let fontScaleIndex = usePage().props.value.user.configs.fontScaleIndex;
+let fontScaleIndex = usePage().props.value.user.configs.appearance.fontScaleIndex;
 let fontScales = [67, 80, 90, 100];
 const scaleFont = (mode) => {
     fontScaleIndex = mode === 'up' ? (fontScaleIndex+1) : (fontScaleIndex-1);
@@ -263,10 +263,9 @@ const scaleFont = (mode) => {
     document.querySelector('html').style.fontSize = fontScales[fontScaleIndex] + '%';
 };
 onMounted(() => {
-    let el = document.getElementById('scaleFontButtons');
-    if (el) {
+    let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    if (vw >= 768) { // md breakpoint
         document.querySelector('html').style.fontSize = fontScales[fontScaleIndex] + '%';
-        console.log('scale font');
     }
 });
 </script>
