@@ -221,7 +221,7 @@ useRemoveLoader();
 const confirmForm = ref(null);
 const mobileMenuVisible = ref(false);
 const avatarSrcError = ref(false);
-const zenMode = ref(usePage().props.value.user.configs.appearance.zenMode);
+const zenMode = ref(usePage().props.value.user.configs.appearance?.zenMode ?? false);
 
 const actionClicked = (action) => {
     mobileMenuVisible.value = false;
@@ -250,7 +250,7 @@ watch (
     }
 );
 
-let fontScaleIndex = usePage().props.value.user.configs.appearance.fontScaleIndex;
+let fontScaleIndex = usePage().props.value.user.configs.appearance?.fontScaleIndex ?? 3;
 let fontScales = [67, 80, 90, 100];
 const scaleFont = (mode) => {
     fontScaleIndex = mode === 'up' ? (fontScaleIndex+1) : (fontScaleIndex-1);
