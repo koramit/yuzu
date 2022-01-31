@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Patient;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
 class PreferencesController extends Controller
@@ -14,6 +15,7 @@ class PreferencesController extends Controller
         'visits.exam-list' => 'ห้องตรวจ',
         'visits.enqueue-swab-list' => 'จัดกระติก',
         'visits.swab-list' => 'ห้อง Swab',
+        'visits.swab-notification-list' => 'เรียกคิว Swab',
         'visits.mr-list' => 'เวชระเบียน',
         'visits.queue-list' => 'ธุรการ',
         'visits.today-list' => 'รายการเคสวันนี้',
@@ -41,6 +43,7 @@ class PreferencesController extends Controller
                     ['label' => 'ห้องตรวจ', 'can' => $user->can('view_exam_list')],
                     ['label' => 'จัดกระติก', 'can' => $user->can('view_enqueue_swab_list')],
                     ['label' => 'ห้อง Swab', 'can' => $user->can('view_swab_list')],
+                    ['label' => 'เรียกคิว Swab', 'can' => $user->can('view_swab_notification_list')],
                     ['label' => 'เวชระเบียน', 'can' => $user->can('view_mr_list')],
                     ['label' => 'ธุรการ', 'can' => $user->can('view_queue_list')],
                     ['label' => 'รายการเคสวันนี้', 'can' => $user->can('view_today_list')],
@@ -49,6 +52,10 @@ class PreferencesController extends Controller
                     ['label' => 'Decision', 'can' => $user->can('view_decision_list')],
                     ['label' => 'Certification', 'can' => $user->can('view_certification_list')],
                 ],
+            ],
+            'layoutAppearance' => [
+                'fontScaleIndex' => strval($user->profile['configs']['appearance']['fontScaleIndex'] ?? 3),
+                'zenMode' => $user->profile['configs']['appearance']['zenMode'] ?? false,
             ],
             'linkMocktail' => [
                 'linked' => $user->mocktail_token !== null,
@@ -72,6 +79,8 @@ class PreferencesController extends Controller
         $data = Request::all();
         if (isset($data['home_page'])) {
             return $this->updateHomePage($data);
+        } elseif (isset($data['appearance'])) {
+            return $this->updateConfigs(key: 'appearance', data: $data['appearance']);
         } else {
             return ['ok' => true];
         }
@@ -94,5 +103,15 @@ class PreferencesController extends Controller
         }
 
         return ['ok' => true];
+    }
+
+    protected function updateConfigs(string $key, array $data)
+    {
+        $user = Auth::user();
+        $user->update(['profile->configs->'.$key => $data]);
+
+        return [
+            'ok' => Session::put('configs', $user->profile['configs']),
+        ];
     }
 }

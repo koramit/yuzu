@@ -59,9 +59,11 @@ class AuthenticatedSessionController extends Controller
             Cache::forget("uid-{$user->id}-role-names");
             Cache::forget("uid-{$user->id}-abilities");
 
-            Session::put('configs', [
-                'zenMode' => false,
-                'fontScaleIndex' => 3
+            Session::put('configs', $user->profile['configs'] ?? [
+                'appearance' => [
+                    'zenMode' => false,
+                    'fontScaleIndex' => 3
+                ]
             ]);
 
             $redirectTo = $user->home_page;
