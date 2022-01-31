@@ -58,6 +58,8 @@ class SiITManager
                 $siitLog[$today]['duplicate_error'] = $siitLog[$today]['duplicate_error'] + 1;
             } elseif (!empty($resJson['invalid_symp_code'])) {
                 $siitLog[$today]['invalid_symp_code_error'] = $siitLog[$today]['invalid_symp_code_error'] + 1;
+            } elseif (!empty($resJson['no_updated'])) {
+                $siitLog[$today]['no_updated_error'] = ($siitLog[$today]['no_updated_error'] ?? 0) + 1;
             } else {
                 Log::error('SiIT_OTHER_ERROR@'.$visit->slug.'@'.$res['messageDescription']);
                 $siitLog[$today]['other_validation_error'] = $siitLog[$today]['other_validation_error'] + 1;
