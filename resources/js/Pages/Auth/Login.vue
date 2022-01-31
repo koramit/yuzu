@@ -75,9 +75,10 @@
             <a
                 v-if="form.errors.login"
                 class="mt-4 block text-xs text-red-400"
-                href="https://si-eservice.mahidol.ac.th/myaccount/"
+                href="https://intranet3.si.mahidol.ac.th/ServiceApplicationUser"
                 target="_blank"
-            >เปลี่ยนรหัสผ่านได้ที่นี่</a>
+            >เปลี่ยนรหัสผ่านได้ที่นี่ (intranet/SiWiFi/Si_vWork WiFi) เท่านั้น</a>
+            <!-- href="https://si-eservice.mahidol.ac.th/myaccount/" -->
         </div>
     </div>
 </template>
