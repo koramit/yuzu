@@ -68,7 +68,7 @@ class PatientManager
         }
 
         foreach ($profile as $key => $value) {
-            if (isset($oldProfile[$key]) || collect(['subdistrict', 'district'])->contains($key)) {
+            if (isset($oldProfile[$key])) {
                 $oldProfile[$key] = $value;
             }
         }
