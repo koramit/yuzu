@@ -41,6 +41,7 @@ class OPDCardExportController extends Controller
     protected function allData(Visit $visit)
     {
         $form = $visit->form;
+        $profile = $visit->patient->profile;
 
         return [
             'date_visit' => $visit->date_visit->format('d-M-Y'),
@@ -57,6 +58,11 @@ class OPDCardExportController extends Controller
             'insurance' => $form['patient']['insurance'],
             'tel_no' => $form['patient']['tel_no'],
             'tel_no_alt' => $form['patient']['tel_no_alt'],
+            'address' => $profile['address'],
+            'subdistrict' => $profile['subdistrict'],
+            'district' => $profile['district'],
+            'postcode' => $profile['postcode'],
+            'province' => $profile['province'],
 
             'sap_id' => $form['patient']['sap_id'],
             'position' => $form['patient']['position'],
