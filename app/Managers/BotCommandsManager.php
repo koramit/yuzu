@@ -100,7 +100,9 @@ class BotCommandsManager
                 'inconclusive' => $labs->filter(fn ($l) => $l->lab === '"Inconclusive"')->flatten(),
             ];
 
-            $stat  = "ผล => รวม (ทั่วไป/บุคลากร)\n";
+            $stat = "ผล => รวม (ทั่วไป/บุคลากร)\n";
+            $totPub = 0;
+            $totHcw = 0;
 
             foreach ($results as $key => $value) {
                 $stat .= $key.' => ';
@@ -109,7 +111,11 @@ class BotCommandsManager
                 $hcw = $value->search(fn ($l) => $l->patient_type === 2);
                 $hcw = $hcw === false ? 0 : $value[$hcw]->count_lab;
                 $stat .= $pub+$hcw . ' (' . $pub . '/' . $hcw . ")\n";
+                $totPub += $pub;
+                $totHcw += $hcw;
             }
+
+            $stat .= "swab => ". ($totPub+$totHcw) ." ({$totPub}/{$totHcw})\n";
 
             return [
                 'stat' => $stat,
