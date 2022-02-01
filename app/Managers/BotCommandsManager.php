@@ -67,6 +67,7 @@ class BotCommandsManager
             $stat .= 'ส่ง swab ' . Visit::whereDateVisit($today)->whereNotNull('enlisted_swab_at')->count(). " ราย\n";
             $stat .= 'ทำ swab ' . Visit::whereDateVisit($today)->whereSwabbed(true)->count(). " ราย\n";
             $stat .= 'จำหน่าย ' . Visit::whereDateVisit($today)->whereNotNull('discharged_at')->count(). " ราย\n";
+            $stat .= 'คิวที่ระบบแจก ' . Visit::whereDateVisit($today)->whereNotNull('form->management->specimen_no')->count(). " ราย\n";
             $stat .= 'เลขคิวสูงสุด #' . Visit::selectRaw("MAX(CAST(JSON_EXTRACT(`form`, '$.management.specimen_no') AS INT )) AS max")->whereDateVisit($today)->value('max') ?? 0;
             return [
                 'stat' => $stat,
