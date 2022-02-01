@@ -73,7 +73,7 @@ class BotCommandsManager
                 'updated_at' => now()
             ];
         });
-        $text = $data['stat'] . "\n\nข้อมูลเมื่อจ๊ะ :username:" . $data['updated_at']->locale('th_TH')->diffForHumans(now());
+        $text = $data['stat'] . "\n\nข้อมูลเมื่อ " . $data['updated_at']->locale('th_TH')->diffForHumans(now()) . ' จ๊ะ :username:';
 
         return [
             'text' => $text,
@@ -117,7 +117,7 @@ class BotCommandsManager
             ];
         });
 
-        $text = $data['stat'] . "\nข้อมูลเมื่อจ๊ะ :username:" . $data['updated_at']->locale('th_TH')->diffForHumans(now());
+        $text = $data['stat'] . "\nข้อมูลเมื่อ" . $data['updated_at']->locale('th_TH')->diffForHumans(now()) . ' จ๊ะ :username:';
         return [
             'text' => $text,
             'mode' => 'get_today_lab',
