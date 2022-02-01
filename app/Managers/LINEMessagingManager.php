@@ -151,7 +151,8 @@ class LINEMessagingManager
 
         $messages[] = $this->buildTextMessage(text: $reply['text'], placeholders: ['username' => $user->profile['notification']['nickname']]);
         if (isset($reply['sticker'])) {
-            // grab sticker
+            $sticker = collect(config('sticker.line.'.$reply['sticker']))->random();
+            $messages[] = $this->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
         }
         $this->replyMessage(userId: $user->profile['notification']['user_id'], replyToken: $event['replyToken'], messages: $messages, mode: $reply['mode']);
     }
