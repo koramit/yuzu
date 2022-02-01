@@ -21,7 +21,7 @@ class BotCommandsManager
         }
 
         $index = $cmds->search(fn ($c) => $c['cmd'] === $cmd);
-        if ($cmds[$index]['ability'] || !$user->can($cmds[$index]['ability'])) {
+        if (!$cmds[$index]['ability'] || $user->can($cmds[$index]['ability'])) {
             return false;
         }
 
