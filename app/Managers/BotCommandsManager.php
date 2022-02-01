@@ -77,7 +77,8 @@ class BotCommandsManager
 
         return [
             'text' => $text,
-            'mode' => 'get_today_stat'
+            'mode' => 'get_today_stat',
+            'sticker' => 'cheerup',
         ];
     }
 
@@ -119,7 +120,8 @@ class BotCommandsManager
         $text = $data['stat'] . "\nข้อมูลเมื่อจ๊ะ :username:" . $data['updated_at']->locale('th_TH')->diffForHumans(now());
         return [
             'text' => $text,
-            'mode' => 'get_today_lab'
+            'mode' => 'get_today_lab',
+            'sticker' => 'cheerup',
         ];
     }
 }
