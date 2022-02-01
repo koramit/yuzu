@@ -29,6 +29,10 @@ class BotCommandsManager
             return $this->handleSwabQueue(user: $user);
         } elseif ($cmd === 'ยอด') {
             return $this->handleTodayStat();
+        } elseif ($cmd === 'แลป') {
+            return $this->handleTodayLab();
+        } else {
+            return false;
         }
     }
 
@@ -62,6 +66,7 @@ class BotCommandsManager
             $stat .= 'ส่ง swab ' . Visit::whereDateVisit($today)->whereNotNull('enlisted_swab_at')->count(). " ราย\n";
             $stat .= 'ทำ swab ' . Visit::whereDateVisit($today)->whereSwabbed(true)->count(). " ราย\n";
             $stat .= 'จำหน่าย ' . Visit::whereDateVisit($today)->whereNotNull('discharged_at')->count(). " ราย\n";
+            $stat .= 'เลขคิวสูงสุด ' . Visit::selectRaw("MAX(CAST(JSON_EXTRACT(`form`, '$.management.specimen_no') AS INT )) AS max")->whereDateVisit($today)->value('max');
             return [
                 'stat' => $stat,
                 'updated_at' => now()
@@ -73,5 +78,9 @@ class BotCommandsManager
             'text' => $text,
             'mode' => 'get_today_stat'
         ];
+    }
+
+    protected function handleTodayLab()
+    {
     }
 }
