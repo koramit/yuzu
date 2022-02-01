@@ -30,7 +30,7 @@ class UserMedicalRecordsController extends Controller
 
         Request::session()->flash('page-title', 'ประวัติการตรวจของฉัน');
         Request::session()->flash('main-menu-links', [
-            ['icon' => 'home', 'label' => 'หน้าหลัก', 'route' => 'home', 'can' => true],
+            ['icon' => 'home', 'label' => 'หน้าหลัก', 'route' => $user->home_page, 'can' => true],
         ]);
 
         // $visits = Visit::whereIn('id', [2500, 2750, 3000, 3250, 3505])
