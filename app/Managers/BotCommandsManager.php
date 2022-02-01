@@ -5,6 +5,7 @@ namespace App\Managers;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class BotCommandsManager
 {
@@ -66,13 +67,13 @@ class BotCommandsManager
             $stat .= 'ส่ง swab ' . Visit::whereDateVisit($today)->whereNotNull('enlisted_swab_at')->count(). " ราย\n";
             $stat .= 'ทำ swab ' . Visit::whereDateVisit($today)->whereSwabbed(true)->count(). " ราย\n";
             $stat .= 'จำหน่าย ' . Visit::whereDateVisit($today)->whereNotNull('discharged_at')->count(). " ราย\n";
-            $stat .= 'เลขคิวสูงสุด ' . Visit::selectRaw("MAX(CAST(JSON_EXTRACT(`form`, '$.management.specimen_no') AS INT )) AS max")->whereDateVisit($today)->value('max');
+            $stat .= 'เลขคิวสูงสุด #' . Visit::selectRaw("MAX(CAST(JSON_EXTRACT(`form`, '$.management.specimen_no') AS INT )) AS max")->whereDateVisit($today)->value('max') ?? 0;
             return [
                 'stat' => $stat,
                 'updated_at' => now()
             ];
         });
-        $text = $data['stat'] . "\nข้อมูลเมื่อ" . $data['updated_at']->locale('th_TH')->diffForHumans(now());
+        $text = $data['stat'] . "\n\nข้อมูลเมื่อ" . $data['updated_at']->locale('th_TH')->diffForHumans(now());
 
         return [
             'text' => $text,
@@ -82,5 +83,43 @@ class BotCommandsManager
 
     protected function handleTodayLab()
     {
+        $data = Cache::remember('bot-cmd-today-stat', now()->addMinutes(5), function () {
+            $today = now('asia/bangkok')->format('Y-m-d');
+            $labs = DB::table('visits')
+                        ->whereDateVisit($today)
+                        ->whereSwabbed(true)
+                        ->whereStatus(4)->selectRaw("count(JSON_EXTRACT(`form`, '$.management.np_swab_result')) as count_lab, JSON_EXTRACT(`form`, '$.management.np_swab_result') as lab, patient_type")
+                        ->groupBy('lab', 'patient_type')
+                        ->get();
+
+            $results = [
+                'pending' => $labs->filter(fn ($l) => $l->lab === 'null')->flatten(),
+                'detected' => $labs->filter(fn ($l) => $l->lab === '"Detected"')->flatten(),
+                'not_detected' => $labs->filter(fn ($l) => $l->lab === '"Not detected"')->flatten(),
+                'inconclusive' => $labs->filter(fn ($l) => $l->lab === '"Inconclusive"')->flatten(),
+            ];
+
+            $stat  = "ผล => รวม (ทั่วไป/บุคลากร)\n";
+
+            foreach ($results as $key => $value) {
+                $stat .= $key.' => ';
+                $pub = $value->search(fn ($l) => $l->patient_type === 1);
+                $pub = $pub === false ? 0 : $value[$pub]->count_lab;
+                $hcw = $value->search(fn ($l) => $l->patient_type === 2);
+                $hcw = $hcw === false ? 0 : $value[$hcw]->count_lab;
+                $stat .= $pub+$hcw . ' (' . $pub . '/' . $hcw . ")\n";
+            }
+
+            return [
+                'stat' => $stat,
+                'updated_at' => now()
+            ];
+        });
+
+        $text = $data['stat'] . "\nข้อมูลเมื่อ" . $data['updated_at']->locale('th_TH')->diffForHumans(now());
+        return [
+            'text' => $text,
+            'mode' => 'get_today_lab'
+        ];
     }
 }
