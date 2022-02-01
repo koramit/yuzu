@@ -28,12 +28,11 @@ class PreferencesController extends Controller
 
     public function show()
     {
+        $user = Auth::user();
         Request::session()->flash('page-title', 'ตั้งค่า');
         Request::session()->flash('main-menu-links', [
-            ['icon' => 'home', 'label' => 'หน้าหลัก', 'route' => 'home', 'can' => true],
+            ['icon' => 'home', 'label' => 'หน้าหลัก', 'route' => $user->home_page, 'can' => true],
         ]);
-
-        $user = Auth::user();
 
         return Inertia::render('Auth/Preferences', [
             'selectHomePage' => [
