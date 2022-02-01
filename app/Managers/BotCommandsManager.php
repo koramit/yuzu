@@ -83,7 +83,7 @@ class BotCommandsManager
 
     protected function handleTodayLab()
     {
-        $data = Cache::remember('bot-cmd-today-stat', now()->addMinutes(5), function () {
+        $data = Cache::remember('bot-cmd-today-lab', now()->addMinutes(5), function () {
             $today = now('asia/bangkok')->format('Y-m-d');
             $labs = DB::table('visits')
                         ->whereDateVisit($today)
