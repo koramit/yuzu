@@ -85,10 +85,8 @@ class LINEMessagingManager
 
     public function buildTextMessage(string $text, array $placeholders = [])
     {
-        if (count($placeholders)) {
-            foreach ($placeholders as $search => $replace) {
-                $text = str_replace(':'.$search.':', $replace, $text);
-            }
+        foreach ($placeholders as $search => $replace) {
+            $text = str_replace(":{$search}:", $replace, $text);
         }
 
         return [
@@ -151,7 +149,7 @@ class LINEMessagingManager
             return $this->replyAuto(replyToken: $event['replyToken'], user: $user);
         }
 
-        $messages[] = $this->buildTextMessage(text: $reply['text'], placeholders: ['username', $user->profile['notification']['nickname']]);
+        $messages[] = $this->buildTextMessage(text: $reply['text'], placeholders: ['username' => $user->profile['notification']['nickname']]);
         if (isset($reply['sticker'])) {
             // grab sticker
         }
