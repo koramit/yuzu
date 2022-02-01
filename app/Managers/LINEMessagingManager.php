@@ -83,8 +83,14 @@ class LINEMessagingManager
         $this->replyMessage(userId: $userId, replyToken: $replyToken, messages: $messages);
     }
 
-    public function buildTextMessage(string $text)
+    public function buildTextMessage(string $text, array $placeholders = [])
     {
+        if (count($placeholders)) {
+            foreach ($placeholders as $search => $replace) {
+                $text = str_replace($search, $replace, $text);
+            }
+        }
+
         return [
             'type' => 'text',
             'text' => $text
@@ -109,6 +115,8 @@ class LINEMessagingManager
             'get_queue_number' => 4,
             'get_queue_update' => 5,
             'notify_swab_queue' => 6,
+            'get_today_lab' => 7,
+            'get_today_stat' => 8,
         ];
 
         return ChatLog::create([
@@ -135,27 +143,18 @@ class LINEMessagingManager
 
     public function handleMessageEvent(array $event, User $user)
     {
-        $cmds = collect(['คิวตรวจ']);
-
-        if (!($event['message']['type'] === 'text') || !$cmds->contains($event['message']['text'])) {
-            $this->replyAuto(replyToken: $event['replyToken'], user: $user);
-            return;
+        if ($event['message']['type'] !== 'text') {
+            return $this->replyAuto(replyToken: $event['replyToken'], user: $user);
         }
 
-        if (!$user->patient_linked) {
-            $m = 'กรุณาทำการยืนยัน HN ในระบบก่อน';
-        } else {
-            $today = now()->tz(7)->format('Y-m-d');
-            $visit = Visit::whereDateVisit($today)->wherePatientId($user->profile['patient_id'])->first();
-            if (!$visit) {
-                $m = 'ยังไม่มีการตรวจของท่านสำหรับวันนี้';
-            } elseif (!($visit->form['management']['specimen_no'] ?? null)) {
-                $m = 'ท่านยังไม่ได้คิวสำหรับวันนี้ กรุณาลองใหม่ในอีกสักครู่';
-            } else {
-                $m = 'คิวของท่านในวันนี้คือ #'.$visit->form['management']['specimen_no'];
-            }
+        if (!$reply = (new BotCommandsManager)->handleCommand(cmd: $event['message']['text'], user: $user)) {
+            return $this->replyAuto(replyToken: $event['replyToken'], user: $user);
         }
-        $messages[] = $this->buildTextMessage(text: $m);
-        $this->replyMessage(userId: $user->profile['notification']['user_id'], replyToken: $event['replyToken'], messages: $messages, mode: 'get_queue_number');
+
+        $messages[] = $this->buildTextMessage(text: $reply['text'], placeholders: ['username', $user->profile['notification']['nickname']]);
+        if (isset($reply['sticker'])) {
+            // grab sticker
+        }
+        $this->replyMessage(userId: $user->profile['notification']['user_id'], replyToken: $event['replyToken'], messages: $messages, mode: $reply['mode']);
     }
 }
