@@ -40,7 +40,10 @@ class BotCommandsManager
     protected function handleSwabQueue(User &$user)
     {
         if (!$user->patient_linked) {
-            return ['text' => 'กรุณาทำการยืนยัน HN ในระบบก่อน'];
+            return [
+                'text' => 'กรุณาทำการยืนยัน HN ในระบบก่อน',
+                'mode' => 'get_queue_number'
+            ];
         }
         $today = now('asia/bangkok')->format('Y-m-d');
         $visit = Visit::whereDateVisit($today)->wherePatientId($user->profile['patient_id'])->first();
