@@ -154,6 +154,6 @@ class LINEMessagingManager
             $sticker = collect(config('sticker.line.'.$reply['sticker']))->random();
             $messages[] = $this->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
         }
-        $this->replyMessage(userId: $user->profile['notification']['user_id'], replyToken: $event['replyToken'], messages: $messages, mode: $reply['mode']);
+        $this->replyMessage(userId: $user->profile['notification']['user_id'], replyToken: $event['replyToken'], messages: $messages, mode: $reply['mode'] ?? 'reply');
     }
 }
