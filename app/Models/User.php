@@ -165,4 +165,19 @@ class User extends Authenticatable
     {
         return ($this->profile['patient_id'] ?? false) ? true : false;
     }
+
+    public function setDutyTokenAttribute($value)
+    {
+        $encrypted = $value ? Crypt::encryptString($value) : null;
+        $this->update(['profile->duty_token' => $encrypted]);
+    }
+
+    public function getDutyTokenAttribute()
+    {
+        if (!$encrypted = $this->profile['duty_token'] ?? null) {
+            return null;
+        }
+
+        return Crypt::decryptString($encrypted);
+    }
 }
