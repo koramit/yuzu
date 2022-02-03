@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Models\DutyToken;
 use Exception;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -25,6 +26,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // create duty token every sunday 20:14 UTC => monday pie time
+        $schedule->call(fn () => DutyToken::generate())->weeklyOn(7, '20:14');
+
+        // drink water
+
+        // clear patients
+        // ->dailyAt('08:40'); => 15:40
+        // ->dailyAt('09:15'); => 16:15
+        // ->dailyAt('09:30'); => 16:30
     }
 
     /**
