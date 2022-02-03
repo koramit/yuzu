@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CertificateListExportController;
 use App\Http\Controllers\CertificationsController;
+use App\Http\Controllers\DutyTokensController;
+use App\Http\Controllers\DutyTokenUserAuthorizationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportAppointmentsController;
 use App\Http\Controllers\InTransitController;
@@ -55,6 +57,22 @@ Route::post('check-timeout', [AuthenticatedSessionController::class, 'update'])
 Route::delete('logout', [AuthenticatedSessionController::class, 'destroy'])
      ->name('logout');
 
+// authorize duty token
+Route::get('duty-token-user-authorization', [DutyTokenUserAuthorizationController::class, 'create'])
+     ->middleware('auth')
+     ->name('duty-token-user-authorization');
+Route::post('duty-token-user-authorization', [DutyTokenUserAuthorizationController::class, 'store'])
+     ->middleware('auth')
+     ->name('duty-token-user-authorization.store');
+
+// duty token
+Route::get('active-duty-token', [DutyTokensController::class, 'show'])
+     ->middleware('auth', 'can:view_active_duty_token')
+     ->name('duty-token.show');
+Route::post('active-duty-token', [DutyTokensController::class, 'store'])
+     ->middleware('auth', 'can:create_active_duty_token')
+     ->name('duty-token.store');
+
 // Register
 Route::get('register', [RegisteredUserController::class, 'create'])
      ->middleware('guest')
@@ -84,76 +102,76 @@ Route::get('/', HomeController::class)
 
 // screen list
 Route::get('visits/screen-list', [VisitScreenListController::class, 'index'])
-     ->middleware('auth', 'can:view_screen_list')
+     ->middleware('auth', 'authorize', 'can:view_screen_list')
      ->name('visits.screen-list');
 
 // exam list
 Route::get('visits/exam-list', [VisitExamListController::class, 'index'])
-     ->middleware('auth', 'can:view_exam_list')
+     ->middleware('auth', 'authorize', 'can:view_exam_list')
      ->name('visits.exam-list');
 Route::patch('visits/exam-list/{visit:slug}', [VisitExamListController::class, 'store'])
-     ->middleware('auth', 'can:update,visit')
+     ->middleware('auth', 'authorize', 'can:update,visit')
      ->name('visits.exam-list.store');
 
 // enqueue swab list
 Route::get('visits/enqueue-swab-list', [VisitEnqueueSwabListController::class, 'index'])
-     ->middleware('auth', 'can:view_enqueue_swab_list')
+     ->middleware('auth', 'authorize', 'can:view_enqueue_swab_list')
      ->name('visits.enqueue-swab-list');
 Route::post('visits/enqueue-swab-list', [VisitEnqueueSwabListController::class, 'store'])
-     ->middleware('auth', 'can:enqueue_swab')
+     ->middleware('auth', 'authorize', 'can:enqueue_swab')
      ->name('visits.enqueue-swab-list.store');
 Route::patch('visits/enqueue-swab-list/{visit:slug}', [VisitEnqueueSwabListController::class, 'update']) // hold
-     ->middleware('auth', 'can:enqueue_swab')
+     ->middleware('auth', 'authorize', 'can:enqueue_swab')
      ->name('visits.enqueue-swab-list.update');
 
 // swab list
 Route::get('visits/swab-list', [VisitSwabListController::class, 'index'])
-     ->middleware('auth', 'can:view_swab_list')
+     ->middleware('auth', 'authorize', 'can:view_swab_list')
      ->name('visits.swab-list');
 Route::patch('visits/swab-list/{visit:slug}', [VisitSwabListController::class, 'store'])
-     ->middleware('auth', 'can:update,visit')
+     ->middleware('auth', 'authorize', 'can:update,visit')
      ->name('visits.swab-list.store');
 
 // discharge from exam
 Route::post('visits/discharge-list/{visit:slug}', [VisitDischargeListController::class, 'store'])
-     ->middleware('auth', 'can:discharge,visit')
+     ->middleware('auth', 'authorize', 'can:discharge,visit')
      ->name('visits.discharge-list.store');
 
 // discharge from swab
 Route::patch('visits/discharge-list/{visit:slug}', [VisitDischargeListController::class, 'update'])
-     ->middleware('auth', 'can:discharge,visit')
+     ->middleware('auth', 'authorize', 'can:discharge,visit')
      ->name('visits.discharge-list.update');
 
 // medical record
 Route::get('visits/mr-list', [VisitMedicalRecordListController::class, 'index'])
-     ->middleware('auth', 'can:view_mr_list')
+     ->middleware('auth', 'authorize', 'can:view_mr_list')
      ->name('visits.mr-list');
 Route::post('visits/authorize/{visit:slug}', [VisitAuthorizationController::class, 'store'])
-     ->middleware('auth', 'can:authorize,visit')
+     ->middleware('auth', 'authorize', 'can:authorize,visit')
      ->name('visits.authorize.store');
 Route::post('visits/attach-opd-card/{visit:slug}', [VisitAttachOPDCardController::class, 'store'])
-     ->middleware('auth', 'can:attachOPDCard,visit')
+     ->middleware('auth', 'authorize', 'can:attachOPDCard,visit')
      ->name('visits.attach-opd-card.store');
 
 // today list
 Route::get('visits/today-list', [VisitTodayListController::class, 'index'])
-     ->middleware('auth', 'can:view_today_list')
+     ->middleware('auth', 'authorize', 'can:view_today_list')
      ->name('visits.today-list');
 
 // lab list
 Route::get('visits/lab-list', [VisitLabListController::class, 'index'])
-     ->middleware('auth', 'can:view_any_visits')
+     ->middleware('auth', 'authorize', 'can:view_any_visits')
      ->name('visits.lab-list');
 
 // queue
 Route::get('visits/queue-list', [VisitQueueListController::class, 'index'])
-     ->middleware('auth', 'can:view_queue_list')
+     ->middleware('auth', 'authorize', 'can:view_queue_list')
      ->name('visits.queue-list');
 Route::post('visits/queue/{visit:slug}', [VisitQueueListController::class, 'store'])
-     ->middleware('auth', 'can:queue,visit')
+     ->middleware('auth', 'authorize', 'can:queue,visit')
      ->name('visits.queue.store');
 Route::post('visits/fill-hn/{visit:slug}', VisitFillHnController::class)
-     ->middleware('auth', 'can:fillHn,visit')
+     ->middleware('auth', 'authorize', 'can:fillHn,visit')
      ->name('visits.fill-hn.store');
 
 // view_swab_notification_list
@@ -190,7 +208,7 @@ Route::get('export/opd_cards', OPDCardExportController::class)
      ->middleware('auth', 'can:export_opd_cards')
      ->name('export.opd_cards');
 Route::get('export/visits', VisitExportController::class)
-     ->middleware('auth', 'can:export_visits')
+     ->middleware('auth', 'authorize', 'can:export_visits')
      ->name('export.visits');
 Route::get('export/decisions', PositiveCaseDecisionExportController::class)
      ->middleware('auth', 'can:view_decision_list')
@@ -227,15 +245,15 @@ Route::get('visits/{visit:slug}/transactions', [VisitActionsController::class, '
 
 // appointments
 Route::post('import/appointments', ImportAppointmentsController::class)
-     ->middleware('auth', 'can:create_visit')
+     ->middleware('auth', 'authorize', 'can:create_visit')
      ->name('import.appointments');
 Route::post('appointments', AppointmentsController::class)
-     ->middleware('auth', 'can:create_visit')
+     ->middleware('auth', 'authorize', 'can:create_visit')
      ->name('appointments.store');
 
 // print OPD card
 Route::get('print-opd-card/{visit:slug}', PrintOPDCardController::class)
-     ->middleware('auth', 'can:printOPDCard,visit')
+     ->middleware('auth', 'authorize', 'can:printOPDCard,visit')
      ->name('print-opd-card');
 
 // resources
@@ -319,16 +337,21 @@ Route::get('user-add-line', function () {
  * Route for testing ONLY
  */
 Route::get('login-as/{name}', function ($name) {
-//     if (config('app.env') === 'production') {
-//         abort(404);
-//     }
+    if (config('app.env') === 'production') {
+        abort(404);
+    }
     $user = \App\Models\User::whereName($name)->first();
     if (! $user) {
         abort(404);
     }
     \Auth::login($user);
 
-    return redirect()->route($user->home_page);
+    $redirectTo = $user->home_page;
+    if ($user->role_names->count() && !$user->role_names->intersect(config('app.specific_roles'))->count()) {
+        $redirectTo = 'in-transit';
+    }
+
+    return redirect()->route($redirectTo);
 });
 
 Route::post('transfer', function () {

@@ -67,8 +67,7 @@ class AuthenticatedSessionController extends Controller
             ]);
 
             $redirectTo = $user->home_page;
-            $specificRoles = collect(['root', 'admin', 'id_md', 'pm_md', 'ari_nurse', 'icn_nurse']);
-            if ($user->role_names->count() && !$user->role_names->intersect($specificRoles)->count()) {
+            if ($user->role_names->count() && !$user->role_names->intersect(config('app.specific_roles'))->count()) {
                 $redirectTo = 'in-transit';
             }
 

@@ -64,6 +64,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'remember' => \App\Http\Middleware\RememberQueryStrings::class,
+        'authorize' => \App\Http\Middleware\EnsureUserIsOnDuty::class,
         // 'remember' => \Reinink\RememberQueryStrings::class,
     ];
 }
