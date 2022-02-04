@@ -65,6 +65,17 @@ class PreferencesController extends Controller
                 'line_bot_qrcode' => url(config('services.line.bot_qrcode')),
                 'line_verified' =>$user->line_verified,
             ],
+            'manageNotification' => [
+                'can' => $user->line_active && $user->role_names->intersect(config('app.specific_roles'))->count(),
+                'notifications' => [
+                    ['value' =>  9, 'set' => false, 'label' => 'ดื่มน้ำ'],
+                    ['value' => 10, 'set' => false, 'label' => 'มีผู้ป่วยตกค้าง'],
+                    ['value' => 11, 'set' => false, 'label' => 'ผลแลปเป็นระยะ'],
+                    ['value' => 12, 'set' => false, 'label' => 'เมื่อมีผลบวก'],
+                    ['value' => 13, 'set' => false, 'label' => 'เมื่อผลแลปครบตามกลุ่มผู้ป่วย'],
+                ],
+                'subscriptions' => $user->subscribedNotifications()->pluck('id'),
+            ],
             'linkPatient' => [
                 'patient_id' => $user->profile['patient_id'] ?? null,
                 'hn' => Patient::find($user->profile['patient_id'] ?? null)?->hn,
@@ -80,6 +91,14 @@ class PreferencesController extends Controller
             return $this->updateHomePage($data);
         } elseif (isset($data['appearance'])) {
             return $this->updateConfigs(key: 'appearance', data: $data['appearance']);
+        } elseif (isset($data['notification_event_id'])) {
+            $user = Auth::user();
+            if ($data['subscribe']) {
+                $user->subscribedNotifications()->attach($data['notification_event_id']);
+            } else {
+                $user->subscribedNotifications()->detach($data['notification_event_id']);
+            }
+            return ['ok' => true];
         } else {
             return ['ok' => true];
         }

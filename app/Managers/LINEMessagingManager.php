@@ -115,6 +115,11 @@ class LINEMessagingManager
             'notify_swab_queue' => 6,
             'get_today_lab' => 7,
             'get_today_stat' => 8,
+            'notify_drink_water' => 9,
+            'notify_clear_patient' => 10,
+            'notify_lab_progress' => 11,
+            'notify_lab_detected' => 12,
+            'notify_lab_finished' => 13,
         ];
 
         return ChatLog::create([

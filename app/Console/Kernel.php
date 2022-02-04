@@ -3,6 +3,8 @@
 namespace App\Console;
 
 use App\Models\DutyToken;
+use App\Tasks\ClearPatientNotification;
+use App\Tasks\DrinkWaterNotification;
 use Exception;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -30,11 +32,17 @@ class Kernel extends ConsoleKernel
         $schedule->call(fn () => DutyToken::generate())->weeklyOn(7, '20:14');
 
         // drink water
+        $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('23:06'); // 06:06
+        $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('02:09'); // 09:09
+        $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('04:11'); // 11:11
+        $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('07:14'); // 14:14
+        $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('10:17'); // 17:17
+        $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('13:20'); // 20:20
 
         // clear patients
-        // ->dailyAt('08:40'); => 15:40
-        // ->dailyAt('09:15'); => 16:15
-        // ->dailyAt('09:30'); => 16:30
+        $schedule->call(fn () => ClearPatientNotification::run())->dailyAt('08:40'); // 15:40
+        $schedule->call(fn () => ClearPatientNotification::run())->dailyAt('09:15'); // 16:15
+        $schedule->call(fn () => ClearPatientNotification::run())->dailyAt('09:30'); // 16:30
     }
 
     /**
