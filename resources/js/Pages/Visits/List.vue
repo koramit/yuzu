@@ -225,9 +225,7 @@ export default {
             eventSource.onmessage = (e) => {
                 let data = JSON.parse(e.data);
                 if (data.updatestamp > updatestamp) {
-                    if (updatestamp) {
-                        Inertia.reload();
-                    }
+                    Inertia.reload();
                     updatestamp = data.updatestamp;
                 }
             };
