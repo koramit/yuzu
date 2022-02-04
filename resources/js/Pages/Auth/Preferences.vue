@@ -3,6 +3,7 @@
     <LayoutAppearance :configs="layoutAppearance" />
     <LinkMocktail :configs="linkMocktail" />
     <SetupNotification :configs="setupNotification" />
+    <ManageNotification :configs="manageNotification" />
     <LinkPatient :configs="linkPatient" />
 </template>
 
@@ -12,6 +13,7 @@ import SelectHomePage from '@/Components/Forms/SelectHomePage';
 import LayoutAppearance from '@/Components/Forms/LayoutAppearance';
 import LinkMocktail from '@/Components/Forms/LinkMocktail';
 import SetupNotification from '@/Components/Forms/SetupNotification';
+import ManageNotification from '@/Components/Forms/ManageNotification';
 import LinkPatient from '@/Components/Forms/LinkPatient';
 
 defineProps({
@@ -19,8 +21,8 @@ defineProps({
     layoutAppearance: { type: Object, required: true},
     linkMocktail: { type: Object, required: true},
     setupNotification: { type: Object, required: true},
+    manageNotification: { type: Object, required: true},
     linkPatient: { type: Object, required: true},
-    // linkPatient: { type: Object, required: true},
 });
 </script>
 
