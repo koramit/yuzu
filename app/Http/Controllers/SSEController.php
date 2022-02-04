@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SSEController extends Controller
 {
     public function __invoke()
     {
+        $channel = Request::input('channel', 'mr');
         $response = new StreamedResponse();
-        $response->setCallback(function () {
-            echo 'data: '.json_encode(['updatestamp' => Cache::get('exam-list-new', 0)])."\n\n";
+        $response->setCallback(function () use ($channel) {
+            echo 'data: '.json_encode(['updatestamp' => Cache::get("{$channel}-list-new", 0)])."\n\n";
             ob_flush();
             flush();
             usleep(500000);
