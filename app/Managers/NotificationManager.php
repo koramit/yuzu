@@ -45,15 +45,15 @@ class NotificationManager
     {
         // get subscribers
         $subscribers = NotificationEvent::whereName($mode)->first()?->subscribers ?? [];
-
+        $stickers = $sticker ? collect(config('sticker.line.'.$sticker)) : null;
         foreach ($subscribers as $subscriber) {
             if (!$subscriber->line_active) {
                 continue;
             }
             $messages[] = $this->bot->buildTextMessage(text: $text, placeholders: ['username' => $subscriber->profile['notification']['nickname']]);
-            if ($sticker) {
-                $item = collect(config('sticker.line.'.$sticker))->random();
-                $messages[] = $this->bot->buildStickerMessage(packageId: $item['packageId'], stickerId: $item['stickerId']);
+            if ($stickers) {
+                $sticker = $stickers->random();
+                $messages[] = $this->bot->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
             }
             $this->bot->pushMessage(userId: $subscriber->profile['notification']['user_id'], messages: $messages, mode: $mode);
         }
@@ -63,15 +63,15 @@ class NotificationManager
     {
         // get subscribers
         $subscribers = NotificationEvent::whereName($mode)->first()?->subscribers ?? [];
-
+        $stickers = $sticker ? collect(config('sticker.line.'.$sticker)) : null;
         foreach ($subscribers as $subscriber) {
             if (!$subscriber->line_active || Cache::has("notify-lab-user-{$subscriber->id}")) {
                 continue;
             }
             $messages[] = $this->bot->buildTextMessage(text: $text, placeholders: ['username' => $subscriber->profile['notification']['nickname']]);
-            if ($sticker) {
-                $item = collect(config('sticker.line.'.$sticker))->random();
-                $messages[] = $this->bot->buildStickerMessage(packageId: $item['packageId'], stickerId: $item['stickerId']);
+            if ($stickers) {
+                $sticker = $stickers->random();
+                $messages[] = $this->bot->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
             }
             $this->bot->pushMessage(userId: $subscriber->profile['notification']['user_id'], messages: $messages, mode: $mode);
             Cache::put(key: "notify-lab-user-{$subscriber->id}", value: true, ttl: now()->addMinutes(5));
