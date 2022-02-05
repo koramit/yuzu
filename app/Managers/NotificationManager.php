@@ -47,6 +47,7 @@ class NotificationManager
         $subscribers = NotificationEvent::whereName($mode)->first()?->subscribers ?? [];
         $stickers = $sticker ? collect(config('sticker.line.'.$sticker)) : null;
         foreach ($subscribers as $subscriber) {
+            $messages = [];
             if (!$subscriber->line_active) {
                 continue;
             }
@@ -65,6 +66,7 @@ class NotificationManager
         $subscribers = NotificationEvent::whereName($mode)->first()?->subscribers ?? [];
         $stickers = $sticker ? collect(config('sticker.line.'.$sticker)) : null;
         foreach ($subscribers as $subscriber) {
+            $messages = [];
             if (!$subscriber->line_active || Cache::has("notify-lab-user-{$subscriber->id}")) {
                 continue;
             }
