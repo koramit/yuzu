@@ -46,7 +46,9 @@ class NotifyLabSubscribers
 
         // เมื่อผลครบตามกลุ่มผู้ป่วย
         $text = $this->labFinished() . "จ๊ะ :username:";
-        $bot->notifyLabSubscribers(mode: 'notify_lab_finished', text: $text, sticker: 'cheerup');
+        if ($text) {
+            $bot->notifyLabSubscribers(mode: 'notify_lab_finished', text: $text, sticker: 'cheerup');
+        }
 
         // รายงานถ่ายทอดสด
         $today = now('asia/bangkok')->format('Y-m-d');
