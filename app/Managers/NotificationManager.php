@@ -36,7 +36,8 @@ class NotificationManager
     public function notifySwabQueue(string $userId)
     {
         $messages[] = $this->bot->buildTextMessage(__('bot.notify_swab_queue'));
-        $messages[] = $this->bot->buildStickerMessage(packageId:6359, stickerId:11069859);
+        $sticker = collect(config('sticker.line.notify'))->random();
+        $messages[] = $this->bot->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
         $this->bot->pushMessage(userId: $userId, messages: $messages, mode: 'notify_swab_queue');
     }
 
