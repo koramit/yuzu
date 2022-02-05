@@ -9,7 +9,8 @@ class CroissantNeedHelpNotification
 {
     public static function run()
     {
-        if (Cache::get('croissant-message') === 'fetch') {
+        $status = Cache::get('croissant-message', 'fetch');
+        if (str_starts_with($status, 'fetch')) {
             return;
         }
 
