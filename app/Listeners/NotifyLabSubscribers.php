@@ -37,6 +37,7 @@ class NotifyLabSubscribers
         // เมื่อมีผลบวก
         if ($event->visit->form['management']['np_swab_result'] === 'Detected') {
             $text = $this->labDetectedNowText() . "จ๊ะ :username:";
+            \Log::notice($text);
             $bot->notifyLabSubscribers(mode: 'notify_lab_detected', text: $text, sticker: 'warning');
         }
 
