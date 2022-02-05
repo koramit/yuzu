@@ -5,6 +5,7 @@ namespace App\Managers;
 use App\Models\NotificationEvent;
 use App\Models\Patient;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class NotificationManager
 {
@@ -44,15 +45,35 @@ class NotificationManager
         // get subscribers
         $subscribers = NotificationEvent::whereName($mode)->first()?->subscribers ?? [];
 
-        $messages[] = $this->bot->buildTextMessage(text: $text);
-        if ($sticker) {
-            // $messages[] = $this->bot->buildTextMessage(text: $text);
-        }
         foreach ($subscribers as $subscriber) {
             if (!$subscriber->line_active) {
                 continue;
             }
+            $messages[] = $this->bot->buildTextMessage(text: $text, placeholders: ['username' => $subscriber->profile['notification']['nickname']]);
+            if ($sticker) {
+                $sticker = collect(config('sticker.line.'.$sticker))->random();
+                $messages[] = $this->bot->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
+            }
             $this->bot->pushMessage(userId: $subscriber->profile['notification']['user_id'], messages: $messages, mode: $mode);
+        }
+    }
+
+    public function notifyLabSubscribers(string $mode, string $text, string $sticker = '')
+    {
+        // get subscribers
+        $subscribers = NotificationEvent::whereName($mode)->first()?->subscribers ?? [];
+
+        foreach ($subscribers as $subscriber) {
+            if (!$subscriber->line_active || Cache::has("notify-lab-user-{$subscriber->id}")) {
+                continue;
+            }
+            $messages[] = $this->bot->buildTextMessage(text: $text, placeholders: ['username' => $subscriber->profile['notification']['nickname']]);
+            if ($sticker) {
+                $sticker = collect(config('sticker.line.'.$sticker))->random();
+                $messages[] = $this->bot->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
+            }
+            $this->bot->pushMessage(userId: $subscriber->profile['notification']['user_id'], messages: $messages, mode: $mode);
+            Cache::put(key: "notify-lab-user-{$subscriber->id}", value: true, ttl: now()->addMinutes(5));
         }
     }
 }

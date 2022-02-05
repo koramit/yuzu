@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\LabReported;
 use App\Events\VisitUpdated;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Cache;
@@ -124,6 +125,8 @@ class WonderWomenController extends Controller
         Cache::put('croissant-pending-hits', 0);
         Cache::put('croissant-not-found-hits', 0);
         $this->resolveNotFound($visit->slug);
+
+        LabReported::dispatch($visit);
 
         return ['ok' => true];
     }
