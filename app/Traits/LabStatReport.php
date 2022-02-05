@@ -84,5 +84,7 @@ trait LabStatReport
         if (!$hcw) {
             return 'ผลแลปวันนี้ของผู้ป่วยกลุ่มเจ้าหน้าที่ออกครบแล้ว';
         }
+
+        return false;
     }
 }
