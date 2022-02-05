@@ -70,6 +70,11 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return Redirect::route('home');
+        $redirectTo = $user->home_page;
+        if ($user->role_names->count() && !$user->role_names->intersect(config('app.specific_roles'))->count()) {
+            $redirectTo = 'in-transit';
+        }
+
+        return Redirect::route($redirectTo);
     }
 }
