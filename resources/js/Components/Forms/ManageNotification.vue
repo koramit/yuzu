@@ -1,9 +1,8 @@
 <template>
     <div
         class="bg-white rounded shadow-sm p-4 mb-4 sm:mb-6 md:mb-12"
-        v-if="form.length && $page.props.user.roles.includes('root')"
+        v-if="form.length"
     >
-        <!-- v-if="form.length" -->
         <h2 class="font-semibold text-thick-theme-light border-b-2 border-dashed pb-2">
             จัดการการแจ้งเตือน
         </h2>
