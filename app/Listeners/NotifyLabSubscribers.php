@@ -45,8 +45,9 @@ class NotifyLabSubscribers
         }
 
         // เมื่อผลครบตามกลุ่มผู้ป่วย
-        $text = $this->labFinished() . "จ๊ะ :username:";
+        $text = $this->labFinished();
         if ($text) {
+            $text .= "จ๊ะ :username:";
             $bot->notifyLabSubscribers(mode: 'notify_lab_finished', text: $text, sticker: 'cheerup');
         }
 
