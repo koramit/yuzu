@@ -120,6 +120,7 @@ class LINEMessagingManager
             'notify_lab_progress' => 11,
             'notify_lab_detected' => 12,
             'notify_lab_finished' => 13,
+            'notify_croissant_need_help' => 14,
         ];
 
         return ChatLog::create([

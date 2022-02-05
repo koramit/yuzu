@@ -4,11 +4,14 @@ namespace App\Managers;
 
 use App\Models\User;
 use App\Models\Visit;
+use App\Traits\LabStatReport;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class BotCommandsManager
 {
+    use LabStatReport;
+
     public function handleCommand(string $cmd, User &$user)
     {
         $cmds = collect([
@@ -89,40 +92,8 @@ class BotCommandsManager
     protected function handleTodayLab()
     {
         $data = Cache::remember('bot-cmd-today-lab', now()->addMinutes(5), function () {
-            $today = now('asia/bangkok')->format('Y-m-d');
-            $labs = DB::table('visits')
-                        ->whereDateVisit($today)
-                        ->whereSwabbed(true)
-                        ->whereStatus(4)->selectRaw("count(JSON_EXTRACT(`form`, '$.management.np_swab_result')) as count_lab, JSON_EXTRACT(`form`, '$.management.np_swab_result') as lab, patient_type")
-                        ->groupBy('lab', 'patient_type')
-                        ->get();
-
-            $results = [
-                'pending' => $labs->filter(fn ($l) => $l->lab === 'null')->flatten(),
-                'detected' => $labs->filter(fn ($l) => $l->lab === '"Detected"')->flatten(),
-                'not_detected' => $labs->filter(fn ($l) => $l->lab === '"Not detected"')->flatten(),
-                'inconclusive' => $labs->filter(fn ($l) => $l->lab === '"Inconclusive"')->flatten(),
-            ];
-
-            $stat = "ผล => รวม (ทั่วไป/บุคลากร)\n";
-            $totPub = 0;
-            $totHcw = 0;
-
-            foreach ($results as $key => $value) {
-                $stat .= $key.' => ';
-                $pub = $value->search(fn ($l) => $l->patient_type === 1);
-                $pub = $pub === false ? 0 : $value[$pub]->count_lab;
-                $hcw = $value->search(fn ($l) => $l->patient_type === 2);
-                $hcw = $hcw === false ? 0 : $value[$hcw]->count_lab;
-                $stat .= $pub+$hcw . ' (' . $pub . '/' . $hcw . ")\n";
-                $totPub += $pub;
-                $totHcw += $hcw;
-            }
-
-            $stat .= "swab => ". ($totPub+$totHcw) ." ({$totPub}/{$totHcw})\n";
-
             return [
-                'stat' => $stat,
+                'stat' => $this->labStatNowText(),
                 'updated_at' => now()
             ];
         });

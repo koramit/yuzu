@@ -2,12 +2,13 @@
 
 namespace App\Providers;
 
+use App\Events\LabReported;
 use App\Events\Registered;
 use App\Events\VisitUpdated;
 use App\Listeners\InitRole;
 use App\Listeners\ManageVisitEvent;
+use App\Listeners\NotifyLabSubscribers;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         VisitUpdated::class => [
             ManageVisitEvent::class,
         ],
+        LabReported::class => [
+            NotifyLabSubscribers::class
+        ]
     ];
 
     /**
