@@ -5,8 +5,10 @@ namespace App\Managers;
 use App\Models\ChatLog;
 use App\Models\User;
 use App\Models\Visit;
+use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class LINEMessagingManager
 {
@@ -31,10 +33,17 @@ class LINEMessagingManager
 
     public function pushMessage(string $userId, array $messages, string $mode = 'push')
     {
-        $this->client->post($this->baseEndpoint.'message/push', [
-            'to' => $userId,
-            'messages' => $messages,
-        ]);
+        try {
+            $this->client->post($this->baseEndpoint.'message/push', [
+                'to' => $userId,
+                'messages' => $messages,
+            ]);
+        } catch (Exception $e) {
+            Log::error('LINE-push-error');
+            Log::error($messages);
+            Log::error($e->getMessage());
+            return;
+        }
 
         $this->log(platformUserId: $userId, payload: $messages, mode: $mode);
     }
