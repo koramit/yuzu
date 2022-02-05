@@ -11,9 +11,9 @@ class ClearPatientNotification
     {
         $today = now('asia/bangkok')->format('Y-m-d');
         // ห้องจัดกระติก
-        $enqueueSwabRemain = Visit::whereDatrVisit($today)->whereStatus(3);
+        $enqueueSwabRemain = Visit::whereDateVisit($today)->whereStatus(3)->count();
         // ห้อง swab
-        $swabRemain = Visit::whereDatrVisit($today)->whereStatus(7);
+        $swabRemain = Visit::whereDateVisit($today)->whereStatus(7)->count();
 
         if (!$enqueueSwabRemain && !$swabRemain) {
             return;
