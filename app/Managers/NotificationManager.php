@@ -52,8 +52,8 @@ class NotificationManager
             }
             $messages[] = $this->bot->buildTextMessage(text: $text, placeholders: ['username' => $subscriber->profile['notification']['nickname']]);
             if ($sticker) {
-                $sticker = collect(config('sticker.line.'.$sticker))->random();
-                $messages[] = $this->bot->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
+                $item = collect(config('sticker.line.'.$sticker))->random();
+                $messages[] = $this->bot->buildStickerMessage(packageId: $item['packageId'], stickerId: $item['stickerId']);
             }
             $this->bot->pushMessage(userId: $subscriber->profile['notification']['user_id'], messages: $messages, mode: $mode);
         }
@@ -70,8 +70,8 @@ class NotificationManager
             }
             $messages[] = $this->bot->buildTextMessage(text: $text, placeholders: ['username' => $subscriber->profile['notification']['nickname']]);
             if ($sticker) {
-                $sticker = collect(config('sticker.line.'.$sticker))->random();
-                $messages[] = $this->bot->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
+                $item = collect(config('sticker.line.'.$sticker))->random();
+                $messages[] = $this->bot->buildStickerMessage(packageId: $item['packageId'], stickerId: $item['stickerId']);
             }
             $this->bot->pushMessage(userId: $subscriber->profile['notification']['user_id'], messages: $messages, mode: $mode);
             Cache::put(key: "notify-lab-user-{$subscriber->id}", value: true, ttl: now()->addMinutes(5));
