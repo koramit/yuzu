@@ -53,7 +53,7 @@ trait LabStatReport
                 ->where('form->management->np_swab_result', 'Detected')
                 ->count();
 
-        return "มีเคสบวกใหม่ รวม {$labs} ราย";
+        return "มีเคสบวกใหม่ รวมเป็น {$labs} ราย";
     }
 
     protected function labFinished()
