@@ -44,22 +44,29 @@ class NotifyLabSubscribers
             return;
         }
 
-        // เมื่อผลครบตามกลุ่มผู้ป่วย
-        $text = $this->labFinished();
-        if ($text) {
-            $bot->notifyLabSubscribers(mode: 'notify_lab_finished', text: $text.'จ๊ะ :username:', sticker: 'cheerup');
-        }
-
         // รายงานถ่ายทอดสด
         $today = now('asia/bangkok')->format('Y-m-d');
-        $baseQuery = Visit::whereDateVisit($today)
+        $total = Visit::whereDateVisit($today)
                         ->whereSwabbed(true)
-                        ->whereStatus(4);
-        $progress = intval($baseQuery->whereNotNull('form->management->np_swab_result')->count() / $baseQuery->count() * 100);
+                        ->whereStatus(4)
+                        ->count();
+        $reported = Visit::whereDateVisit($today)
+                        ->whereSwabbed(true)
+                        ->whereStatus(4)
+                        ->whereNotNull('form->management->np_swab_result')
+                        ->count();
+
+        $progress = intval($reported / $total * 100);
         if (collect([30, 40, 50, 60, 70, 80, 90, 100])->contains($progress) && !Cache::has("notify-lab-progress-{$progress}")) {
             $text = $this->labStatNowText() . "\n\n{$progress}% แล้วจ๊ะ :username:";
             $bot->notifyLabSubscribers(mode: 'notify_lab_progress', text: $text, sticker: 'cheerup');
             Cache::put(key: "notify-lab-progress-{$progress}", value: true, ttl: now()->addHours(12));
+        }
+
+        // เมื่อผลครบตามกลุ่มผู้ป่วย
+        $text = $this->labFinished();
+        if ($text) {
+            $bot->notifyLabSubscribers(mode: 'notify_lab_finished', text: $text.'จ๊ะ :username:', sticker: 'cheerup');
         }
     }
 }
