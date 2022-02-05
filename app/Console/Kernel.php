@@ -35,11 +35,6 @@ class Kernel extends ConsoleKernel
         $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('23:06'); // 06:06
         $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('02:09'); // 09:09
         $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('04:11'); // 11:11
-
-        $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('05:45'); // 11:11
-        $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('05:50'); // 11:11
-        $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('05:55'); // 11:11
-
         $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('07:14'); // 14:14
         $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('10:17'); // 17:17
         $schedule->call(fn () => DrinkWaterNotification::run())->dailyAt('13:20'); // 20:20
