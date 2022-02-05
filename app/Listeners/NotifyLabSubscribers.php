@@ -37,7 +37,6 @@ class NotifyLabSubscribers
         // เมื่อมีผลบวก
         if ($event->visit->form['management']['np_swab_result'] === 'Detected') {
             $text = $this->labDetectedNowText() . "จ๊ะ :username:";
-            \Log::notice($text);
             $bot->notifyLabSubscribers(mode: 'notify_lab_detected', text: $text, sticker: 'warning');
         }
 
@@ -48,8 +47,7 @@ class NotifyLabSubscribers
         // เมื่อผลครบตามกลุ่มผู้ป่วย
         $text = $this->labFinished();
         if ($text) {
-            $text .= "จ๊ะ :username:";
-            $bot->notifyLabSubscribers(mode: 'notify_lab_finished', text: $text, sticker: 'cheerup');
+            $bot->notifyLabSubscribers(mode: 'notify_lab_finished', text: $text.'จ๊ะ :username:', sticker: 'cheerup');
         }
 
         // รายงานถ่ายทอดสด
