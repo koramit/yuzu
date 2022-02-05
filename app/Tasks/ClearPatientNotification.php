@@ -21,10 +21,10 @@ class ClearPatientNotification
 
         $text = '';
         if ($enqueueSwabRemain) {
-            $text .= "ยังมีค้นไข้ค้างในห้องจัดกระติก {$enqueueSwabRemain} ราย\n";
+            $text .= "ยังมีคนไข้ค้างในห้องจัดกระติก {$enqueueSwabRemain} ราย\n";
         }
         if ($swabRemain) {
-            $text .= "ยังมีค้นไข้ค้างในห้อง Swab {$swabRemain} ราย\n";
+            $text .= "ยังมีคนไข้ค้างในห้อง Swab {$swabRemain} ราย\n";
         }
 
         (new NotificationManager)->notifySubscribers(mode: 'notify_clear_patient', text: $text, sticker: 'warning');
