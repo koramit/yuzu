@@ -28,7 +28,7 @@
                     :href="route('preferences')"
                     class="text-blue-400 underline hover:text-blue-600"
                 >
-                    ตั่งค่า
+                    ตั้งค่า
                 </Link>
                 <Link
                     :href="route('logout')"

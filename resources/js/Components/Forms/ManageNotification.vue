@@ -35,7 +35,6 @@ const form = ref(props.configs.notifications.map(n => {
 }));
 
 const autosave = (notify) => {
-    console.log(notify);
     window.axios
         .patch(window.route('preferences.update'), { notification_event_id: notify.value, subscribe: notify.set })
         .catch(error => console.log(error));
