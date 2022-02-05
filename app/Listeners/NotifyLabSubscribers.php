@@ -37,7 +37,7 @@ class NotifyLabSubscribers
         // เมื่อมีผลบวก
         if ($event->visit->form['management']['np_swab_result'] === 'Detected') {
             $text = $this->labDetectedNowText() . "จ๊ะ :username:";
-            $bot->notifyLabSubscribers(mode: 'notify_lab_detected', text: $text, sticker: 'cheerup');
+            $bot->notifyLabSubscribers(mode: 'notify_lab_detected', text: $text, sticker: 'warning');
         }
 
         if (now()->hour < 10) { // after 17:00 only
