@@ -10,7 +10,7 @@ class CroissantNeedHelpNotification
     public static function run()
     {
         $status = Cache::get('croissant-message', 'fetch');
-        if (str_starts_with($status, 'fetch')) {
+        if (str_starts_with($status, 'fetch') || Cache::has('notify-lab-progress-100')) {
             return;
         }
 
