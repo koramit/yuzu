@@ -65,6 +65,7 @@ class NotificationManager
         // get subscribers
         $subscribers = NotificationEvent::whereName($mode)->first()?->subscribers ?? [];
         $stickers = $sticker ? collect(config('sticker.line.'.$sticker)) : null;
+        $count = 0;
         foreach ($subscribers as $subscriber) {
             $messages = [];
             if (!$subscriber->line_active || Cache::has("notify-lab-user-{$subscriber->id}")) {
@@ -77,6 +78,9 @@ class NotificationManager
             }
             $this->bot->pushMessage(userId: $subscriber->profile['notification']['user_id'], messages: $messages, mode: $mode);
             Cache::put(key: "notify-lab-user-{$subscriber->id}", value: true, ttl: now()->addMinutes(5));
+            $count++;
         }
+
+        return $count;
     }
 }
