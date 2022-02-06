@@ -26,6 +26,6 @@ class CroissantNeedHelpNotification
             return;
         }
 
-        (new NotificationManager)->notifySubscribers(mode: 'notify_clear_patient', text: 'มาดู croissant หน่อยยยย', sticker: 'warning');
+        (new NotificationManager)->notifySubscribers(mode: 'notify_croissant_need_help', text: 'มาดู croissant หน่อยยยย', sticker: 'warning');
     }
 }
