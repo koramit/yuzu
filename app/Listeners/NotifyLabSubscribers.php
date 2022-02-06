@@ -50,8 +50,10 @@ class NotifyLabSubscribers
             $progress = intval($reported / $total * 100);
             if (collect([30, 40, 50, 60, 70, 80, 90, 100])->contains($progress) && !Cache::has("notify-lab-progress-{$progress}")) {
                 $text = $this->labStatNowText() . "\n\n{$progress}% แล้วจ๊ะ :username:";
-                $bot->notifyLabSubscribers(mode: 'notify_lab_progress', text: $text, sticker: 'cheerup');
-                Cache::put(key: "notify-lab-progress-{$progress}", value: true, ttl: now()->addHours(12));
+                $notifyCount = $bot->notifyLabSubscribers(mode: 'notify_lab_progress', text: $text, sticker: 'cheerup');
+                if ($notifyCount) {
+                    Cache::put(key: "notify-lab-progress-{$progress}", value: true, ttl: now()->addHours(12));
+                }
             }
 
             // เมื่อผลครบตามกลุ่มผู้ป่วย
