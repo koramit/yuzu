@@ -60,7 +60,7 @@ class NotificationManager
         }
     }
 
-    public function notifyLabSubscribers(string $mode, string $text, string $sticker = '')
+    public function notifyLabSubscribers(string $mode, string $text, string $sticker = '', bool $force = false)
     {
         // get subscribers
         $subscribers = NotificationEvent::whereName($mode)->first()?->subscribers ?? [];
@@ -68,7 +68,10 @@ class NotificationManager
         $count = 0;
         foreach ($subscribers as $subscriber) {
             $messages = [];
-            if (!$subscriber->line_active || Cache::has("notify-lab-user-{$subscriber->id}")) {
+            if (
+                !$subscriber->line_active
+                || (Cache::has("notify-lab-user-{$subscriber->id}") && !$force)
+            ) {
                 continue;
             }
             $messages[] = $this->bot->buildTextMessage(text: $text, placeholders: ['username' => $subscriber->profile['notification']['nickname']]);
