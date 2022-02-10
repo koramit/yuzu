@@ -53,7 +53,9 @@ class CaptainMarvelController extends Controller
         }
 
         $index = $patients->search(fn ($p) => $p['hn'] === $patient['hn']);
-        $patients[$index]['retry'] = $patients[$index]['retry'] + 1;
+        $patient = $patients[$index];
+        $patient['retry'] = $patient['retry'] + 1;
+        $patients[$index] = $patient;
         Cache::put(key: 'today-lab-patients', value: $patients, ttl: now()->addHours(6));
 
         return $patient;
