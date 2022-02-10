@@ -284,6 +284,9 @@ Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
 
 // captain marvel
 Route::get('cm', [CaptainMarvelController::class, 'index']);
+Route::get('cm-clear', function () {
+    return \Cache::pull('today-labs-patients', []);
+});
 
 // link mocktail
 Route::post('mocktail', MocktailController::class)
