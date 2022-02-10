@@ -28,7 +28,7 @@ class CaptainMarvelController extends Controller
                         ->whereDateVisit($todayStr)
                         ->whereStatus(4) // discharged
                         ->where('swabbed', true)
-                        ->whereNull('form->management->np_swab_result')
+                        // ->whereNull('form->management->np_swab_result')
                         ->orderBy('discharged_at')
                         ->get()
                         ->transform(function ($visit) use ($todayStr) {
