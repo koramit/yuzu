@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CaptainMarvelController;
 use App\Http\Controllers\CertificateListExportController;
 use App\Http\Controllers\CertificationsController;
 use App\Http\Controllers\DutyTokensController;
@@ -280,6 +281,9 @@ Route::get('croissant/feedback', [WonderWomenController::class, 'feedback']);
 Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
      ->middleware('auth')
      ->name('croissant');
+
+// captain marvel
+Route::get('cm', [CaptainMarvelController::class, 'index']);
 
 // link mocktail
 Route::post('mocktail', MocktailController::class)
