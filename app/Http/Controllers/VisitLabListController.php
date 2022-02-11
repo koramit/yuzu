@@ -28,6 +28,7 @@ class VisitLabListController extends Controller
         $visits = Visit::with('patient')
                        ->whereDateVisit($today->format('Y-m-d'))
                        ->where('swabbed', true)
+                       ->where('status', 4)
                        ->orderByDesc('updated_at')
                        ->get()
                        ->transform(function ($visit) use ($user) {
