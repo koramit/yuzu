@@ -84,5 +84,11 @@ return [
         'bot_link_url' => env('LINE_BOT_LINK_URL'),
         'base_endpoint' => env('LINE_BASE_ENDPOINT'),
         'bot_qrcode' =>  env('LINE_BOT_QRCODE'),
+    ],
+
+    'toto' => [
+        'url' => env('TOTO_URL'),
+        'token' => env('TOTO_TOKEN'),
+        'method' => env('TOTO_METHOD'),
     ]
 ];
