@@ -21,6 +21,7 @@ class TotoMedicineManager
             'count' => $ari->count(),
             'detected' => $ari->filter(fn ($p) => $p['result'] === 'Detected')->count(),
             'not_detected' => $ari->filter(fn ($p) => $p['result'] === 'Not Detected')->count(),
+            'inconclusive' => $ari->filter(fn ($p) => $p['result'] === 'Inconclusive')->count(),
             'pending' => $ari->filter(fn ($p) => $p['result'] === 'Pending')->count(),
         ];
     }
@@ -41,7 +42,7 @@ class TotoMedicineManager
                         ->post(config('services.toto.url'), $data)
                         ->json();
 
-            return collect($res['cargo'])->transform(fn ($p) => [
+            return collect($res['cargo'] ?? [])->transform(fn ($p) => [
                 'hn' => $p['hn'],
                 'name' => $p['patient_name'],
                 'gender' => $p['sex'],
