@@ -37,10 +37,10 @@ class TotoMedicineManager
             ],
             'yuzu' => [
                 'count' => $yuzu->count(),
-                'detected' => $yuzu->filter(fn ($p) => $p['result'] === 'Detected')->count(),
-                'not_detected' => $yuzu->filter(fn ($p) => $p['result'] === 'Not Detected')->count(),
-                'inconclusive' => $yuzu->filter(fn ($p) => $p['result'] === 'Inconclusive')->count(),
-                'pending' => $yuzu->filter(fn ($p) => $p['result'] === 'Pending')->count(),
+                'detected' => $yuzu->filter(fn ($p) => $p['result'] == 'Detected')->count(),
+                'not_detected' => $yuzu->filter(fn ($p) => $p['result'] == 'Not detected')->count(),
+                'inconclusive' => $yuzu->filter(fn ($p) => $p['result'] == 'Inconclusive')->count(),
+                'pending' => $yuzu->filter(fn ($p) => $p['result'] == 'Pending')->count(),
             ]
         ];
     }
