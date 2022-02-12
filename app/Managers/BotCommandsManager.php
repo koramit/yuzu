@@ -112,9 +112,17 @@ class BotCommandsManager
     protected function handleSccTodayStat()
     {
         $data = (new TotoMedicineManager)->manage(dateReff: now('asia/bangkok')->format('Y-m-d'));
-        $text = "ข้อมูล SCC(AR) ตอนนี้\n\n";
-        foreach ($data as $key => $value) {
-            $text .= "{$key} => {$value}\n";
+
+        if (!$data) {
+            return [
+                'text' => 'การเชื่อมต่อขัดข้อง',
+                'mode' => 'get_today_lab',
+            ];
+        }
+
+        $text = "เปรียบเทียบข้อมูล SCC (Yuzu) ตอนนี้\n\n";
+        foreach ($data['scc'] as $key => $value) {
+            $text .= "{$key} => {$value} ({$data['yuzu'][$key]})\n";
         }
 
         return [
