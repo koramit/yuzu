@@ -112,7 +112,7 @@ class BotCommandsManager
     protected function handleSccTodayStat()
     {
         $data = (new TotoMedicineManager)->manage(dateReff: now('asia/bangkok')->format('Y-m-d'));
-        $text = "ข้อมูล scc ตอนนี้\n\n";
+        $text = "ข้อมูล SCC(AR) ตอนนี้\n\n";
         foreach ($data as $key => $value) {
             $text .= "{$key} => {$value}\n";
         }
