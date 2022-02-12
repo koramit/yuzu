@@ -2,6 +2,7 @@
 
 namespace App\Managers;
 
+use App\Models\Visit;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -16,13 +17,31 @@ class TotoMedicineManager
             return $all;
         }
 
-        $ari = $all->filter(fn ($p) => $p['source'] === 'ARI');
+        $scc = $all->filter(fn ($p) => $p['source'] === 'ARI');
+
+        $yuzu = Visit::whereDateVisit($dateReff)
+                    ->whereSwabbed(true)
+                    ->whereStatus(4)
+                    ->get()
+                    ->transform(fn ($v) => [
+                        'result' => $v->forms['management']['np_swab_result'] ?? 'Pending'
+                    ]);
+
         return [
-            'count' => $ari->count(),
-            'detected' => $ari->filter(fn ($p) => $p['result'] === 'Detected')->count(),
-            'not_detected' => $ari->filter(fn ($p) => $p['result'] === 'Not Detected')->count(),
-            'inconclusive' => $ari->filter(fn ($p) => $p['result'] === 'Inconclusive')->count(),
-            'pending' => $ari->filter(fn ($p) => $p['result'] === 'Pending')->count(),
+            'scc' => [
+                'count' => $scc->count(),
+                'detected' => $scc->filter(fn ($p) => $p['result'] === 'Detected')->count(),
+                'not_detected' => $scc->filter(fn ($p) => $p['result'] === 'Not Detected')->count(),
+                'inconclusive' => $scc->filter(fn ($p) => $p['result'] === 'Inconclusive')->count(),
+                'pending' => $scc->filter(fn ($p) => $p['result'] === 'Pending')->count(),
+            ],
+            'yuzu' => [
+                'count' => $yuzu->count(),
+                'detected' => $yuzu->filter(fn ($p) => $p['result'] === 'Detected')->count(),
+                'not_detected' => $yuzu->filter(fn ($p) => $p['result'] === 'Not Detected')->count(),
+                'inconclusive' => $yuzu->filter(fn ($p) => $p['result'] === 'Inconclusive')->count(),
+                'pending' => $yuzu->filter(fn ($p) => $p['result'] === 'Pending')->count(),
+            ]
         ];
     }
     public function fetch(string $dateReff)
