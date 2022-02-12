@@ -24,7 +24,7 @@ class TotoMedicineManager
                     ->whereStatus(4)
                     ->get()
                     ->transform(fn ($v) => [
-                        'result' => $v->forms['management']['np_swab_result'] ?? 'Pending'
+                        'result' => $v->form['management']['np_swab_result'] ?? 'Pending'
                     ]);
 
         return [
