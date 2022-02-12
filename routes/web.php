@@ -340,6 +340,10 @@ Route::get('user-add-line', function () {
                               });
 })->middleware('auth', 'can:notify_swab_queue');
 
+Route::get('nephro-fellow-2023', function () {
+    return response()->file(public_path('/download/nephro-fellow-2023.zip'));
+});
+
 /*
  * Route for testing ONLY
  */
