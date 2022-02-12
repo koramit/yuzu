@@ -18,6 +18,7 @@ class BotCommandsManager
             ['cmd' => 'คิวตรวจ', 'ability' => null],
             ['cmd' => 'ยอด', 'ability' => 'view_any_visits'],
             ['cmd' => 'แลป', 'ability' => 'view_lab_list'],
+            ['cmd' => 'scc', 'ability' => 'view_lab_list'],
         ]);
 
         if (! $cmds->pluck('cmd')->contains($cmd)) {
@@ -35,6 +36,8 @@ class BotCommandsManager
             return $this->handleTodayStat();
         } elseif ($cmd === 'แลป') {
             return $this->handleTodayLab();
+        } elseif ($cmd === 'scc') {
+            return $this->handleSccTodayStat();
         } else {
             return false;
         }
@@ -103,6 +106,20 @@ class BotCommandsManager
             'text' => $text,
             'mode' => 'get_today_lab',
             'sticker' => 'cheerup',
+        ];
+    }
+
+    protected function handleSccTodayStat()
+    {
+        $data = (new TotoMedicineManager)->manage(dateReff: now('asia/bangkok')->format('Y-m-d'));
+        $text = "ข้อมูล scc ตอนนี้\n\n";
+        foreach ($data as $key => $value) {
+            $text .= "{$key} => {$value}\n";
+        }
+
+        return [
+            'text' => $text,
+            'mode' => 'get_today_lab',
         ];
     }
 }

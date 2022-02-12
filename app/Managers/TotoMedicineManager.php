@@ -5,15 +5,24 @@ namespace App\Managers;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class TotoMedicineManager
 {
-    public function mange(string $dateReff)
+    public function manage(string $dateReff)
     {
-        $data = $this->fetch(dateReff: $dateReff);
-        if (!$data) {
-            return $data;
+        $all = $this->fetch(dateReff: $dateReff);
+        if (!$all) {
+            return $all;
         }
+
+        $ari = $all->filter(fn ($p) => $p['source'] === 'ARI');
+        return [
+            'count' => $ari->count(),
+            'detected' => $ari->filter(fn ($p) => $p['result'] === 'Detected')->count(),
+            'not_detected' => $ari->filter(fn ($p) => $p['result'] === 'Not Detected')->count(),
+            'pending' => $ari->filter(fn ($p) => $p['result'] === 'Pending')->count(),
+        ];
     }
     public function fetch(string $dateReff)
     {
@@ -26,7 +35,7 @@ class TotoMedicineManager
                 'start_date' => $dateStr,
                 'end_date' => $dateStr,
             ];
-            $res = Http::timeout(2)
+            $res = Http::timeout(4)
                         ->retry(5, 100)
                         ->asForm()
                         ->post(config('services.toto.url'), $data)
@@ -37,8 +46,8 @@ class TotoMedicineManager
                 'name' => $p['patient_name'],
                 'gender' => $p['sex'],
                 'age' => $p['age'],
-                'source' => $p['case1'],
-                'result' => $p['case2'],
+                'source' => Str::of($p['case1'])->replace('AR', 'ARI')->__toString(),
+                'result' => Str::of($p['case2'])->replace(' (PCR)', '')->replace('รอผลตรวจ', 'Pending')->__toString(),
             ]);
         } catch (Exception $e) {
             Log::error('toto_medicine_error@'.$e->getMessage());
