@@ -7,6 +7,8 @@ use App\Events\VisitUpdated;
 use App\Managers\ColabManager;
 use App\Managers\NotificationManager;
 use App\Models\Visit;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -78,8 +80,23 @@ class KotoController extends Controller
 
         Storage::delete($path);
 
+        $logs = Cache::remember(key: 'today-koto-logs', ttl: now()->addHours(7), callback: fn () => []);
+        $logs[] = [
+            'timestamp' => now(),
+            'remains' => $remains,
+            'updated_count' => $updatedCount,
+        ];
+        Cache::put(key: 'today-koto-logs', value: $logs);
+
+        Log::notice('koto success');
+
         return [
             'finished' => $remains === 0
         ];
+    }
+
+    public function update()
+    {
+        return Cache::get('today-koto-logs', []);
     }
 }

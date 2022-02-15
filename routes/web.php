@@ -285,6 +285,7 @@ Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
 
 // koto
 Route::get('koto', [KotoController::class, 'index']);
+Route::get('koto/feedback', [KotoController::class, 'update']);
 Route::post('koto', [KotoController::class, 'store']);
 
 // captain marvel
