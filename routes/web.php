@@ -11,6 +11,7 @@ use App\Http\Controllers\DutyTokenUserAuthorizationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportAppointmentsController;
 use App\Http\Controllers\InTransitController;
+use App\Http\Controllers\KotoController;
 use App\Http\Controllers\LinkPatientController;
 use App\Http\Controllers\MocktailController;
 use App\Http\Controllers\OPDCardExportController;
@@ -281,6 +282,10 @@ Route::get('croissant/feedback', [WonderWomenController::class, 'feedback']);
 Route::get('croissant/{visit:slug}', [WonderWomenController::class, 'show'])
      ->middleware('auth')
      ->name('croissant');
+
+// koto
+Route::get('koto', [KotoController::class, 'index']);
+Route::post('koto', [KotoController::class, 'store']);
 
 // captain marvel
 Route::get('cm', [CaptainMarvelController::class, 'index']);
