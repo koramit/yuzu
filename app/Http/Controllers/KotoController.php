@@ -71,7 +71,7 @@ class KotoController extends Controller
                         ->count();
 
         if ($updatedCount) {
-            $visit = Visit::orderDesc('updated_at')->first();
+            $visit = Visit::orderByDesc('updated_at')->first();
             VisitUpdated::dispatch($visit);
             LabReported::dispatch($visit);
         }
