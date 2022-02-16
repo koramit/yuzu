@@ -72,12 +72,6 @@ class KotoController extends Controller
                         ->whereNull('form->management->np_swab_result')
                         ->count();
 
-        // if ($updatedCount) {
-        //     $visit = Visit::orderByDesc('updated_at')->first();
-        //     VisitUpdated::dispatch($visit);
-        //     LabReported::dispatch($visit);
-        // }
-
         Storage::delete($path);
 
         $logs = Cache::get(key: 'today-koto-logs', default: []);
