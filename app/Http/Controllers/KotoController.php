@@ -35,6 +35,8 @@ class KotoController extends Controller
                     ->whereNull('form->management->np_swab_result')
                     ->count();
 
+        Log::notice('koto order sent');
+
         return [
             'run' => $remains !== 0,
             'dateReff' => $todayStr
@@ -80,15 +82,17 @@ class KotoController extends Controller
 
         Storage::delete($path);
 
-        $logs = Cache::remember(key: 'today-koto-logs', ttl: now()->addHours(7), callback: fn () => []);
+        $logs = Cache::get(key: 'today-koto-logs', default: []);
         $logs[] = [
             'timestamp' => now(),
             'remains' => $remains,
             'updated_count' => $updatedCount,
         ];
-        Cache::put(key: 'today-koto-logs', value: $logs);
+        Cache::put(key: 'today-koto-logs', value: $logs, ttl: now()->addHours(7));
 
-        Log::notice('koto success');
+        if (count($logs) % 3 === 0) {
+            Log::notice('koto upload success #'.count($logs));
+        }
 
         return [
             'finished' => $remains === 0
