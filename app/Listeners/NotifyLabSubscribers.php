@@ -41,6 +41,12 @@ class NotifyLabSubscribers
         }
 
         if (now()->hour >= 10) { // after 17:00 only
+            // เมื่อผลครบตามกลุ่มผู้ป่วย
+            $text = $this->labFinished();
+            if ($text) {
+                $bot->notifyLabSubscribers(mode: 'notify_lab_finished', text: $text.'จ๊ะ :username:', sticker: 'cheerup');
+            }
+
             // รายงานถ่ายทอดสด
             $today = $event->visit->date_visit->format('Y-m-d');
             $total = Visit::whereDateVisit($today)
@@ -59,12 +65,6 @@ class NotifyLabSubscribers
             if (collect([30, 40, 50, 60, 70, 80, 90, 100])->contains($progressRange) && !Cache::has("notify-lab-progress-{$progressRange}")) {
                 $bot->notifyLabSubscribers(mode: 'notify_lab_progress', text: $text, sticker: 'cheerup');
                 Cache::put(key: "notify-lab-progress-{$progressRange}", value: true, ttl: now()->addHours(12));
-            }
-
-            // เมื่อผลครบตามกลุ่มผู้ป่วย
-            $text = $this->labFinished();
-            if ($text) {
-                $bot->notifyLabSubscribers(mode: 'notify_lab_finished', text: $text.'จ๊ะ :username:', sticker: 'cheerup');
             }
         }
     }

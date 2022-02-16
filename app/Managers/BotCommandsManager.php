@@ -14,11 +14,14 @@ class BotCommandsManager
 
     public function handleCommand(string $cmd, User &$user)
     {
+        $cmd = strtolower($cmd);
+
         $cmds = collect([
             ['cmd' => 'คิวตรวจ', 'ability' => null],
             ['cmd' => 'ยอด', 'ability' => 'view_any_visits'],
             ['cmd' => 'แลป', 'ability' => 'view_lab_list'],
             ['cmd' => 'scc', 'ability' => 'view_lab_list'],
+            ['cmd' => 'croissant', 'ability' => 'view_lab_list'],
         ]);
 
         if (! $cmds->pluck('cmd')->contains($cmd)) {
@@ -38,6 +41,8 @@ class BotCommandsManager
             return $this->handleTodayLab();
         } elseif ($cmd === 'scc') {
             return $this->handleSccTodayStat();
+        } elseif ($cmd === 'croissant') {
+            return $this->handleCroissantFeedback();
         } else {
             return false;
         }
@@ -124,6 +129,27 @@ class BotCommandsManager
         foreach ($data['scc'] as $key => $value) {
             $text .= "{$key} => {$value} ({$data['yuzu'][$key]})\n";
         }
+
+        return [
+            'text' => $text,
+            'mode' => 'get_today_lab',
+        ];
+    }
+
+    protected function handleCroissantFeedback()
+    {
+        $logs = Cache::get(key: 'today-koto-logs', default: []);
+        if (!count($logs)) {
+            return [
+                'text' => 'ยังไม่มีแลปเข้าสำหรับวันนี้',
+                'mode' => 'get_today_lab',
+            ];
+        }
+
+        $log = end($logs);
+        $text  = 'แลปเข้าเมื่อ ' . $log['timestamp']->locale('th_TH')->diffForHumans(now()) . "\n";
+        $text .= 'เข้าใหม่ ' . $log['updated_count'] . " ราย\n";
+        $text .= 'เหลืออีก ' . $log['remains'] . " ราย\n";
 
         return [
             'text' => $text,
