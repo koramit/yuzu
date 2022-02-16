@@ -40,6 +40,7 @@ class ColabManager
         }
 
         $count = 0;
+        $detected = null;
 
         foreach ($colabs as $lab) {
             $index = $visits->search(function ($v) use ($lab) {
@@ -65,12 +66,16 @@ class ColabManager
                 'form->management->np_swab_result_note' => $colab->remark,
             ])->save();
 
+            if ($colab->result === 'Detected') {
+                $detected = $visit;
+            }
+
             $count++;
         }
 
         if ($count) {
             VisitUpdated::dispatch($visit);
-            LabReported::dispatch($visit);
+            LabReported::dispatch($detected ?? $visit);
         }
 
         return $count;
