@@ -2,6 +2,8 @@
 
 namespace App\Managers;
 
+use App\Events\LabReported;
+use App\Events\VisitUpdated;
 use App\Models\Colab;
 use App\Models\Visit;
 use Carbon\Carbon;
@@ -64,6 +66,11 @@ class ColabManager
             ])->save();
 
             $count++;
+        }
+
+        if ($count) {
+            VisitUpdated::dispatch($visit);
+            LabReported::dispatch($visit);
         }
 
         return $count;
