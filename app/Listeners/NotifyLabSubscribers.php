@@ -36,7 +36,7 @@ class NotifyLabSubscribers
 
         if (now()->hour >= 10) { // after 17:00 only
             // รายงานถ่ายทอดสด
-            $today = $event->date_visit->format('Y-m-d');
+            $today = $event->visit->date_visit->format('Y-m-d');
             $total = Visit::whereDateVisit($today)
                             ->whereSwabbed(true)
                             ->whereStatus(4)
