@@ -36,7 +36,7 @@ class NotifyLabSubscribers
 
         if (now()->hour >= 10) { // after 17:00 only
             // รายงานถ่ายทอดสด
-            $today = now('asia/bangkok')->format('Y-m-d');
+            $today = $event->date_visit->format('Y-m-d');
             $total = Visit::whereDateVisit($today)
                             ->whereSwabbed(true)
                             ->whereStatus(4)
@@ -48,6 +48,7 @@ class NotifyLabSubscribers
                             ->count();
 
             $progress = intval($reported / $total * 100);
+            \Log::notice('progress '.$progress);
             if (collect([30, 40, 50, 60, 70, 80, 90, 100])->contains($progress) && !Cache::has("notify-lab-progress-{$progress}")) {
                 $text = $this->labStatNowText() . "\n\n{$progress}% แล้วจ๊ะ :username:";
                 $notifyCount = $bot->notifyLabSubscribers(mode: 'notify_lab_progress', text: $text, sticker: 'cheerup', force: str_contains($text, '100%'));
