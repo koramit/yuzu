@@ -77,6 +77,7 @@ class NotificationManager
                 $messages[] = $this->bot->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
             }
             $this->bot->pushMessage(userId: $subscriber->profile['notification']['user_id'], messages: $messages, mode: $mode);
+            usleep(1500000);
             $count++;
         }
 
