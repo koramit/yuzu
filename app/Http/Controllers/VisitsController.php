@@ -33,6 +33,7 @@ class VisitsController extends Controller
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
+                       ->whereIn('status', [4,5])
                        ->filter(Request::only('search'))
                        ->orderByDesc('date_visit')
                        ->orderByDesc('updated_at')
