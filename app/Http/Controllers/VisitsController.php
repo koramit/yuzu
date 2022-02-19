@@ -33,6 +33,7 @@ class VisitsController extends Controller
         $this->manager->setFlash($flash);
 
         $visits = Visit::with('patient')
+                       ->whereNotNull('patient_id')
                        ->whereIn('status', [4,5])
                        ->filter(Request::only('search'))
                        ->orderByDesc('date_visit')
@@ -43,10 +44,14 @@ class VisitsController extends Controller
                            return [
                                'slug' => $visit->slug,
                                'hn' => $visit->hn,
+                               'swabbed' => $visit->swabbed,
+                               'swab' => $visit->form['management']['np_swab'],
                                'patient_name' => $visit->patient_name,
                                'patient_type' => $visit->patient_type,
                                'date_visit' => $visit->date_visit->format('d M Y'),
                                'updated_at_for_humans' => $visit->updated_at_for_humans,
+                               'result' => $visit->form['management']['np_swab_result'] ?? 'Pending',
+                               'note' => $visit->form['management']['np_swab_result_note'],
                                'can' => [
                                    'view' => $user->can('view', $visit),
                                    'view_visit_actions' => $user->can('view_visit_actions'),

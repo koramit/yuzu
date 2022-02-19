@@ -24,6 +24,7 @@ use App\Http\Controllers\ResourceEmployeesController;
 use App\Http\Controllers\ResourcePatientsController;
 use App\Http\Controllers\ServerSendEventsController;
 use App\Http\Controllers\Services\LINEWebhooksController;
+use App\Http\Controllers\SwapSwabController;
 use App\Http\Controllers\UserMedicalRecordsController;
 use App\Http\Controllers\VisitActionsController;
 use App\Http\Controllers\VisitAttachOPDCardController;
@@ -183,6 +184,11 @@ Route::get('visits/swab-notification-list', [VisitSwabNotificationListController
 Route::post('visits/swab-notification-list', [VisitSwabNotificationListController::class, 'store'])
      ->middleware('auth', 'can:notify_swab_queue')
      ->name('visits.swab-notification-list.store');
+
+// swap wab
+Route::patch('visits/{visit:slug}/swap-swab', SwapSwabController::class)
+     ->middleware('auth', 'can:view_visit_actions')
+     ->name('visits.swap-swab');
 
 // evaluation
 Route::patch('visits/{visit:slug}/evaluate', VisitEvaluateController::class) // save consultation note

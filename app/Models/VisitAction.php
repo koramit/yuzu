@@ -27,6 +27,7 @@ class VisitAction extends Model
         'unlock',
         'update',
         'view',
+        'swap'
     ];
 
     protected $actionLabel = [
@@ -46,6 +47,7 @@ class VisitAction extends Model
         'update' => 'บันทึก',
         'view' => 'อ่าน',
         'link_mocktail' => 'link mocktail',
+        'swap' => 'แก้ทำ/ไม่ทำ swab'
     ];
 
     public function visit()
