@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\LabReported;
-use App\Events\VisitUpdated;
 use App\Managers\ColabManager;
 use App\Managers\NotificationManager;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 

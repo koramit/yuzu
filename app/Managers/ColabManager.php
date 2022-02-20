@@ -15,7 +15,7 @@ class ColabManager
     public function manage(string $filePath, string $dateVisit)
     {
         $colabs = FastExcel::import($filePath)
-                        ->filter(fn ($l) => $l['CLINIC_CODE'] == '1402')
+                        ->filter(fn ($l) => $l['SPECIMEN'] == 'NP swab+throat swab')
                         ->transform(fn ($l) => [
                             'hn' => $l['HN'],
                             'id' => $l['LAB_NO'],
