@@ -213,6 +213,11 @@ class VisitManager
             ],
             'swab_units' => ['SCG', 'Sky Walk'],
             'mobilities' => ['เดินได้', 'รถนั่ง', 'เปลนอน'],
+            'public_patient_walkin_diagnosis_atk_positive' => ['Suspected COVID-19 infection (Pending for PCR)', 'COVID-19 infection by positive ATK', 'Upper respiratory tract infection (URI)', 'Suspected pneumonia', 'ไม่มีอาการ'],
+            'public_patient_walkin_diagnosis' => ['Suspected COVID-19 infection (Pending for PCR)', 'Upper respiratory tract infection (URI)', 'Suspected pneumonia', 'ไม่มีอาการ'],
+            'public_patient_walkin_managment_atk_positive' => ['NP swab for PCR test of SARS-CoV-2', 'ไม่ต้องการยืนยันผลด้วยวิธี PCR และต้องการรับยาเลย (หากต้องการเข้าระบบ ให้ติดต่อ 1330 เอง)', 'ไม่เข้าเกณฑ์ส่ง swab'],
+            'public_patient_walkin_managment_atk_positive_no_pcr_needed' => ['ไม่ต้องการยืนยันผลด้วยวิธี PCR และต้องการรับยาเลย (หากต้องการเข้าระบบ ให้ติดต่อ 1330 เอง)', 'ไม่เข้าเกณฑ์ส่ง swab'],
+            'atk_positive_no_pcr_medications' => ['ไม่รับยา', 'Set A', 'Set B', 'Set C'],
         ];
     }
 
