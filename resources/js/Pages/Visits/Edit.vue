@@ -299,25 +299,6 @@
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
-                ATK
-            </h2>
-            <FormCheckbox
-                class="mt-2"
-                name="atk_positive"
-                label="ตรวจ Antigen test kit (ATK) ได้ผลบวก"
-                v-model="form.exposure.atk_positive"
-            />
-            <FormDatetime
-                class="mt-2"
-                label="เมื่อวันที่"
-                v-model="form.exposure.date_atk_positive"
-                :error="form.errors.date_atk_positive"
-                name="date_atk_positive"
-            />
-        </div>
-
-        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
-            <h2 class="font-semibold text-thick-theme-light">
                 ประวัติอื่น
             </h2>
             <FormInput
@@ -558,6 +539,25 @@
             <Error :error="form.errors.unvaccinated" />
         </div>
 
+        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+            <h2 class="font-semibold text-thick-theme-light">
+                ATK
+            </h2>
+            <FormCheckbox
+                class="mt-2"
+                name="atk_positive"
+                label="ตรวจ Antigen test kit (ATK) ได้ผลบวก"
+                v-model="form.exposure.atk_positive"
+            />
+            <FormDatetime
+                class="mt-2"
+                label="เมื่อวันที่"
+                v-model="form.exposure.date_atk_positive"
+                :error="form.errors.date_atk_positive"
+                name="date_atk_positive"
+            />
+        </div>
+
         <template v-if="!(form.patient.track && form.patient.track === 'Walk-in' && $page.props.user.roles.includes('nurse'))">
             <!-- diagnosis -->
             <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
@@ -565,35 +565,50 @@
                     วินิจฉัย
                 </h2>
                 <div :class="{'mt-2 rounded border-2 border-red-400 p-2': form.errors.diagnosis}">
-                    <FormCheckbox
-                        class="mt-2"
-                        v-model="form.diagnosis.no_symptom"
-                        label="ไม่มีอาการ"
-                        :toggler="true"
-                    />
-                    <div v-if="!form.diagnosis.no_symptom">
+                    <template
+                        v-if="form.visit.patient_type === 'บุคคลทั่วไป'
+                            && form.visit.screen_type === 'เริ่มตรวจใหม่'
+                            && form.exposure.atk_positive"
+                    >
+                        <FormRadio
+                            class="mt-2"
+                            v-model="form.diagnosis.public_patient_walkin_diagnosis"
+                            name="public_patient_walkin_diagnosis"
+                            :options="configs.public_patient_walkin_diagnosis_atk_positive"
+                            ref="publicPatientWalkinDiagnosis"
+                        />
+                    </template>
+                    <template v-else>
                         <FormCheckbox
                             class="mt-2"
-                            v-model="form.diagnosis.suspected_covid_19"
-                            label="Suspected COVID-19 infection"
+                            v-model="form.diagnosis.no_symptom"
+                            label="ไม่มีอาการ"
+                            :toggler="true"
                         />
-                        <FormCheckbox
-                            class="mt-2"
-                            v-model="form.diagnosis.uri"
-                            label="Upper respiratory tract infection (URI)"
-                        />
-                        <FormCheckbox
-                            class="mt-2"
-                            v-model="form.diagnosis.suspected_pneumonia"
-                            label="Suspected pneumonia"
-                        />
-                        <FormInput
-                            class="mt-2"
-                            name="other_diagnosis"
-                            placeholder="วินิจฉัยอื่นๆ"
-                            v-model="form.diagnosis.other_diagnosis"
-                        />
-                    </div>
+                        <div v-if="!form.diagnosis.no_symptom">
+                            <FormCheckbox
+                                class="mt-2"
+                                v-model="form.diagnosis.suspected_covid_19"
+                                label="Suspected COVID-19 infection"
+                            />
+                            <FormCheckbox
+                                class="mt-2"
+                                v-model="form.diagnosis.uri"
+                                label="Upper respiratory tract infection (URI)"
+                            />
+                            <FormCheckbox
+                                class="mt-2"
+                                v-model="form.diagnosis.suspected_pneumonia"
+                                label="Suspected pneumonia"
+                            />
+                            <FormInput
+                                class="mt-2"
+                                name="other_diagnosis"
+                                placeholder="วินิจฉัยอื่นๆ"
+                                v-model="form.diagnosis.other_diagnosis"
+                            />
+                        </div>
+                    </template>
                 </div>
                 <Error :error="form.errors.diagnosis" />
             </div>
@@ -603,10 +618,24 @@
                     การจัดการ
                 </h2>
                 <template v-if="!visit.swabbed">
+                    <FormRadio
+                        v-if="form.exposure.atk_positive
+                            && form.visit.patient_type === 'บุคคลทั่วไป'
+                            && form.visit.screen_type === 'เริ่มตรวจใหม่'"
+                        class="mt-2"
+                        v-model="form.management.manage_atk_positive"
+                        name="manage_atk_positive"
+                        :options="( !(form.diagnosis.public_patient_walkin_diagnosis ?? null))
+                            ? configs.public_patient_walkin_managment_atk_positive
+                            : (form.diagnosis.public_patient_walkin_diagnosis === 'COVID-19 infection by positive ATK'
+                                ? configs.public_patient_walkin_managment_atk_positive_without_pcr
+                                : configs.public_patient_walkin_managment_atk_positive_with_pcr)"
+                    />
                     <FormCheckbox
                         class="mt-2"
                         v-model="form.management.np_swab"
                         label="NP swab for PCR test of SARS-CoV-2"
+                        v-else
                     />
                     <Error :error="form.errors.np_swab" />
                 </template>
@@ -627,7 +656,26 @@
                     name="management_other_tests"
                     v-model="form.management.other_tests"
                 />
+                <div v-if="(form.management.manage_atk_positive ?? '').startsWith('ไม่ต้องการยืนยันผลด้วยวิธี PCR')">
+                    <div :class="{'mt-2 rounded border-2 border-red-400 p-2': form.errors.atk_positive_without_pcr_medication}">
+                        <FormRadio
+                            label="Home medication"
+                            name="atk_positive_without_pcr_medication"
+                            v-model="form.management.atk_positive_without_pcr_medication"
+                            :options="configs.atk_positive_without_pcr_medications"
+                        />
+                        <FormTextarea
+                            class="mt-2"
+                            label="ยาอื่น ๆ"
+                            name="atk_positive_without_pcr_medication_other"
+                            v-model="form.management.atk_positive_without_pcr_medication_other"
+                            @focus="form.management.atk_positive_without_pcr_medication = null"
+                        />
+                    </div>
+                    <Error :error="form.errors.atk_positive_without_pcr_medication" />
+                </div>
                 <FormTextarea
+                    v-else
                     class="mt-2"
                     label="Home medication"
                     name="home_medication"
@@ -637,7 +685,21 @@
             <!-- recommendation -->
             <div
                 class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
-                v-if="form.visit.patient_type && !(form.visit.patient_type === 'บุคคลทั่วไป' && form.management.np_swab)"
+                v-if="form.exposure.atk_positive
+                    && form.visit.patient_type === 'บุคคลทั่วไป'
+                    && form.visit.screen_type === 'เริ่มตรวจใหม่'
+                    && (form.management.manage_atk_positive ?? '').startsWith('ไม่ต้องการยืนยันผลด้วยวิธี PCR')"
+            >
+                <h2 class="font-semibold text-thick-theme-light">
+                    คำแนะนำสำหรับผู้ป่วย
+                </h2>
+                <p class="mt-2">
+                    ๏ {{ configs.atk_positive_without_pcr_recommendation }}
+                </p>
+            </div>
+            <div
+                class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
+                v-else-if="form.visit.patient_type && !(form.visit.patient_type === 'บุคคลทั่วไป' && form.management.np_swab)"
             >
                 <h2 class="font-semibold text-thick-theme-light">
                     คำแนะนำสำหรับ{{ isEmployee ? 'เจ้าหน้าที่ศิริราช' : 'ผู้ป่วย' }}
@@ -1135,6 +1197,30 @@ export default {
             configs.appointment_evaluations.push(form.exposure.evaluation);
         }
 
+        const publicPatientWalkinDiagnosis = ref(null);
+        // watch (
+        //     () => form.diagnosis.public_patient_walkin_diagnosis,
+        //     (val) => {
+        //         if (val !== 'other') {
+        //             return;
+        //         }
+
+        //         selectOther.placeholder = 'ระบุวินิจฉัยอื่นๆ';
+        //         selectOther.configs = form.exposure.atk_positive ? 'public_patient_walkin_diagnosis_atk_positive' :'public_patient_walkin_diagnosis';
+        //         selectOther.input = publicPatientWalkinDiagnosis.value;
+        //         selectOtherInput.value.open();
+        //     }
+        // );
+        // if (form.exposure.atk_positive) {
+        //     if (form.diagnosis.public_patient_walkin_diagnosis && !configs.public_patient_walkin_diagnosis_atk_positive.includes(form.diagnosis.public_patient_walkin_diagnosis)) {
+        //         configs.public_patient_walkin_diagnosis_atk_positive.push(form.diagnosis.public_patient_walkin_diagnosis);
+        //     }
+        // } else {
+        //     if (form.diagnosis.public_patient_walkin_diagnosis && !configs.public_patient_walkin_diagnosis.includes(form.diagnosis.public_patient_walkin_diagnosis)) {
+        //         configs.public_patient_walkin_diagnosis.push(form.diagnosis.public_patient_walkin_diagnosis);
+        //     }
+        // }
+
         const BMI = computed(() => {
             if (form.patient.weight && form.patient.height) {
                 return (form.patient.weight / form.patient.height / form.patient.height * 10000).toFixed(2);
@@ -1248,6 +1334,58 @@ export default {
             }
         );
 
+        watch (
+            () => form.exposure.atk_positive,
+            () => {
+                if (form.visit.patient_type !== 'บุคคลทั่วไป' || form.visit.screen_type !== 'เริ่มตรวจใหม่') {
+                    return;
+                }
+                form.diagnosis.public_patient_walkin_diagnosis = null;
+            }
+        );
+
+        watch (
+            () => form.diagnosis.public_patient_walkin_diagnosis,
+            (val) => {
+                form.management.np_swab = false;
+                if (val === 'Suspected COVID-19 infection (Pending for PCR)') {
+                    form.management.manage_atk_positive = 'NP swab for PCR test of SARS-CoV-2';
+                    form.management.np_swab = true;
+                } else if (val === 'COVID-19 infection by positive ATK') {
+                    form.management.manage_atk_positive = 'ไม่ต้องการยืนยันผลด้วยวิธี PCR แพทย์พิจารณาให้ยาเลย (หากต้องการเข้าระบบ ให้ติดต่อ 1330 เอง)';
+                } else {
+                    form.management.manage_atk_positive = null;
+                }
+            }
+        );
+
+        watch (
+            () => form.management.manage_atk_positive,
+            () => {
+                form.management.atk_positive_without_pcr_medication = null;
+
+                form.recommendation.choice = null;
+                form.recommendation.date_isolation_end = null;
+                form.recommendation.date_reswab = null;
+                form.recommendation.date_reswab_next = null;
+            }
+        );
+
+        watch (
+            () => form.management.atk_positive_without_pcr_medication,
+            () => {
+                form.management.atk_positive_without_pcr_medication_other = null;
+            }
+        );
+
+        // watch (
+        //     () => form.management.atk_positive_without_pcr_medication_other,
+        //     (val) => {
+        //         console.log(val);
+        //         form.management.atk_positive_without_pcr_medication = null;
+        //     }
+        // );
+
         const canSaveToSwab = computed(() => {
             if (props.visit.status !== 'appointment') {
                 if (usePage().props.value.user.roles.includes('nurse')) {
@@ -1274,6 +1412,7 @@ export default {
             insurance,
             position,
             evaluation,
+            publicPatientWalkinDiagnosis,
             sapIdUpdated,
             isAppointment,
             showExposureForm,

@@ -53,6 +53,13 @@ export default {
         const selected = ref(props.modelValue);
 
         watch (
+            () => props.modelValue,
+            (val) => {
+                selected.value = val;
+            },
+        );
+
+        watch (
             () => selected.value,
             (val) => {
                 context.emit('update:modelValue', val);

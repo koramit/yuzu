@@ -213,6 +213,12 @@ class VisitManager
             ],
             'swab_units' => ['SCG', 'Sky Walk'],
             'mobilities' => ['เดินได้', 'รถนั่ง', 'เปลนอน'],
+            'public_patient_walkin_diagnosis_atk_positive' => ['Suspected COVID-19 infection (Pending for PCR)', 'COVID-19 infection by positive ATK'],
+            'public_patient_walkin_managment_atk_positive' => ['NP swab for PCR test of SARS-CoV-2', 'ไม่ต้องการยืนยันผลด้วยวิธี PCR แพทย์พิจารณาให้ยาเลย (หากต้องการเข้าระบบ ให้ติดต่อ 1330 เอง)'],
+            'public_patient_walkin_managment_atk_positive_with_pcr' => ['NP swab for PCR test of SARS-CoV-2'],
+            'public_patient_walkin_managment_atk_positive_without_pcr' => ['ไม่ต้องการยืนยันผลด้วยวิธี PCR แพทย์พิจารณาให้ยาเลย (หากต้องการเข้าระบบ ให้ติดต่อ 1330 เอง)'],
+            'atk_positive_without_pcr_medications' => ['ไม่รับยา', 'Set A', 'Set B', 'Set C'],
+            'atk_positive_without_pcr_recommendation' => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 10 วัน จะส่งใบรับรองแพทย์ไปทาง sms ด้วยหมายเลขโทรศัพท์ที่ให้ไว้'
         ];
     }
 
@@ -390,13 +396,18 @@ class VisitManager
         if ($diagErrors = $this->validateDiagnosis($data['diagnosis'])) {
             $errors += $diagErrors;
         }
+        if (isset($data['management']['manage_atk_positive']) && str_starts_with($data['management']['manage_atk_positive'], 'ไม่ต้องการยืนยันผลด้วยวิธี PCR')) {
+            if (!($data['management']['atk_positive_without_pcr_medication'] ?? null) && !($data['management']['atk_positive_without_pcr_medication_other'] ?? null)) {
+                $errors += ['atk_positive_without_pcr_medication' => 'โปรดระบุการรับยา'];
+            }
+        }
 
         return $errors;
     }
 
     protected function validateDiagnosis(array $data)
     {
-        if ($data['no_symptom'] || $data['suspected_covid_19'] || $data['uri'] || $data['suspected_pneumonia'] || $data['other_diagnosis']) {
+        if ($data['no_symptom'] || $data['suspected_covid_19'] || $data['uri'] || $data['suspected_pneumonia'] || $data['other_diagnosis'] || ($data['public_patient_walkin_diagnosis'] ?? null)) {
             return null;
         } else {
             return ['diagnosis' => 'โปรดระบุการวินิจฉัย'];
@@ -618,6 +629,8 @@ class VisitManager
         $diagnosis = $visit->form['diagnosis'];
         if ($diagnosis['no_symptom']) {
             $diagnosis = 'ไม่มีอาการ';
+        } elseif ($diagnosis['public_patient_walkin_diagnosis'] ?? null) {
+            $diagnosis = $diagnosis['public_patient_walkin_diagnosis'];
         } else {
             $text = '';
             if ($diagnosis['suspected_covid_19']) {
@@ -655,7 +668,20 @@ class VisitManager
                 $text .= '<p class="underline">home medication</p>';
             }
             $lines = explode("\n", $management['home_medication']);
-            if (count($lines) > 1) {
+            if (count($lines)) {
+                $text .= collect($lines)->map(function ($line) {
+                    return "<p>{$line}</p>";
+                })->join('');
+            }
+        } elseif (($management['atk_positive_without_pcr_medication'] ?? null) || ($management['atk_positive_without_pcr_medication_other'] ?? null)) {
+            if ($text) {
+                $text .= '<p class="underline">home medication</p>';
+            } else {
+                $text = '<p>home medication</p>';
+            }
+            $meds = ($management['atk_positive_without_pcr_medication'] ?? null) ?? ($management['atk_positive_without_pcr_medication_other'] ?? null);
+            $lines = explode("\n", $meds);
+            if (count($lines)) {
                 $text .= collect($lines)->map(function ($line) {
                     return "<p>{$line}</p>";
                 })->join('');
@@ -709,6 +735,8 @@ class VisitManager
                 $text .= ('<br>นัดทำ reswab ครั้งที่ 2 - '.Carbon::create($recommendation['date_reswab_next'])->format('d M Y'));
             }
             $recommendation = $text;
+        } elseif (($visit->form['management']['manage_atk_positive'] ?? null) && str_starts_with($visit->form['management']['manage_atk_positive'], 'ไม่ต้องการยืนยันผลด้วยวิธี PCR')) {
+            $recommendation = $this->getConfigs($visit)['atk_positive_without_pcr_recommendation'];
         } else {
             $recommendation = null;
         }
