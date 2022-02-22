@@ -11,6 +11,7 @@
             ref="textarea"
             @input="oninput"
             @change="$emit('autosave')"
+            @focus="$emit('focus')"
             :type="type"
             :placeholder="placeholder"
             :pattern="pattern"
@@ -32,7 +33,7 @@
 import debounce from 'lodash/debounce';
 import autosize from 'autosize';
 export default {
-    emits: ['autosave', 'update:modelValue'],
+    emits: ['autosave', 'update:modelValue', 'focus'],
     props: {
         modelValue: { type: String, default: '' },
         name: { type: String, required: true },
@@ -54,7 +55,7 @@ export default {
             this.$refs.textarea.focus();
         },
         resize () {
-            autosize.update(this.$refs.textarea)
+            autosize.update(this.$refs.textarea);
         },
         oninput () {
             this.$emit('update:modelValue', this.$refs.textarea.value);
