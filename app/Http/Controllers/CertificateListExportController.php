@@ -118,15 +118,6 @@ class CertificateListExportController extends Controller
 
     protected function getResult(Visit &$visit)
     {
-        if (
-            $visit->patient_type === 'บุคคลทั่วไป'
-            && $visit->screen_type === 'เริ่มตรวจใหม่'
-            && $visit->form['exposure']['atk_positive']
-            && str_starts_with(($visit->form['management']['manage_atk_positive'] ?? ''), 'ไม่ต้องการยืนยันผลด้วยวิธี PCR')
-        ) {
-            return 'ATK+';
-        } else {
-            return $visit->form['management']['np_swab_result'];
-        }
+        return $visit->atk_positive_case ? 'ATK+' : $visit->form['management']['np_swab_result'];
     }
 }

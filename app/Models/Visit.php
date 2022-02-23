@@ -442,4 +442,12 @@ class Visit extends Model
 
         return null;
     }
+
+    public function getAtkPositiveCaseAttribute()
+    {
+        return $this->patient_type === 'บุคคลทั่วไป'
+            && $this->screen_type === 'เริ่มตรวจใหม่'
+            && $this->form['exposure']['atk_positive']
+            && str_starts_with(($this->form['management']['manage_atk_positive'] ?? ''), 'ไม่ต้องการยืนยันผลด้วยวิธี PCR');
+    }
 }
