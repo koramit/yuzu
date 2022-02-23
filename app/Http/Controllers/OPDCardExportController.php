@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\LoadDataRecord;
 use App\Models\Visit;
 use App\Traits\OPDCardExportable;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;

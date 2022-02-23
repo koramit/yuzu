@@ -7,10 +7,14 @@ use Carbon\Carbon;
 
 trait OPDCardExportable
 {
+    protected $daysCriteria;
+
     protected function allData(Visit $visit)
     {
         $form = $visit->form;
         $profile = $visit->patient->profile;
+
+        $this->daysCriteria = $visit->date_visit->lessThan(Carbon::create('2022-01-24')) ? 14 : 10;
 
         return [
             'date_visit' => $visit->date_visit->format('d-M-Y'),
@@ -92,19 +96,21 @@ trait OPDCardExportable
             'date_latest_vacciniated' => $this->castDate($form['vaccination']['date_latest_vacciniated']),
 
             'no_symptom' => $form['diagnosis']['no_symptom'] ? 'YES' : 'NO',
-            'suspected_covid_19' => $form['diagnosis']['suspected_covid_19'] ? 'YES' : 'NO',
+            'suspected_covid_19' => $this->suspectedCovidDx($visit), // $form['diagnosis']['suspected_covid_19'] ? 'YES' : 'NO', // defect
             'uri' => $form['diagnosis']['uri'] ? 'YES' : 'NO',
             'suspected_pneumonia' => $form['diagnosis']['suspected_pneumonia'] ? 'YES' : 'NO',
             'other_diagnosis' => $form['diagnosis']['other_diagnosis'] ? 'YES' : 'NO',
+            'atk_positive' => ($form['exposure']['atk_positive'] ?? false) ? 'YES' : 'NO',
+            'date_atk_positive' => $this->castDate($form['exposure']['date_atk_positive']),
 
-            'np_swab' => ($form['management']['np_swab'] && ($visit->swabbed ?? false)) ? 'YES' : 'NO',
+            'np_swab' => ($form['management']['np_swab'] && $visit->swabbed) ? 'YES' : 'NO',
             'tube_no' => $form['management']['specimen_no'],
             'np_swab_result' => $form['management']['np_swab_result'],
             'np_swab_result_note' => $form['management']['np_swab_result_note'],
             'other_tests' => $form['management']['other_tests'] ? str_replace("\n", ' ', $form['management']['other_tests']) : null,
-            'home_medication' => $form['management']['home_medication'] ? str_replace("\n", ' ', $form['management']['home_medication']) : null,
+            'home_medication' => $this->homeMedication($visit), // $form['management']['home_medication'] ? str_replace("\n", ' ', $form['management']['home_medication']) : null, // defect
 
-            'recommendation' => $this->recommendation($form['recommendation']['choice']),
+            'recommendation' => $this->recommendation($visit), // defect
             'date_isolation_end' => $this->castDate($form['recommendation']['date_isolation_end']),
             'date_reswab' => $this->castDate($form['recommendation']['date_reswab']),
             'date_reswab_next' => $this->castDate($form['recommendation']['date_reswab_next']),
@@ -122,8 +128,13 @@ trait OPDCardExportable
         return Carbon::create($dateStr)->format('d M Y');
     }
 
-    protected function recommendation($value)
+    protected function recommendation(Visit &$visit)
     {
+        if ($visit->atk_positive_case) {
+            return 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 10 วัน';
+        }
+
+        $value = $visit->form['recommendation']['choice'];
         if (! $value) {
             return null;
         }
@@ -131,7 +142,37 @@ trait OPDCardExportable
         return [
             11  => 'ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา',
             12  => 'ลางาน 1 - 2 วัน หากอาการดีขึ้น ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลา',
-            13 => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 14 วัน',
+            13 => "กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ {$this->daysCriteria} วัน",
         ][$value];
+    }
+
+    protected function suspectedCovidDx(Visit &$visit)
+    {
+        if ($visit->atk_positive_case) {
+            return 'NO';
+        }
+
+        if ($visit->form['diagnosis']['suspected_covid_19']) {
+            return 'YES';
+        }
+
+        if (str_starts_with($visit->form['diagnosis']['public_patient_walkin_diagnosis'] ?? '', 'Suspected COVID-19')) {
+            return 'YES';
+        }
+
+        return 'NO';
+    }
+
+    protected function homeMedication(Visit &$visit)
+    {
+        if (!$visit->atk_positive_case) {
+            return $visit->form['management']['home_medication'] ? str_replace("\n", ' ', $visit->form['management']['home_medication']) : null;
+        }
+
+        if ($visit->form['management']['atk_positive_without_pcr_medication'] ?? false) {
+            return $visit->form['management']['atk_positive_without_pcr_medication'];
+        }
+
+        return str_replace("\n", ' ', $visit->form['management']['atk_positive_without_pcr_medication']);
     }
 }
