@@ -67,6 +67,17 @@ class Visit extends Model
         });
     }
 
+    public function scopeWithPublicPatientWalkinATKPosWithoutPCR($query, $dateVisit)
+    {
+        $query->orWhere(function ($query) use ($dateVisit) {
+            $query->whereDateVisit($dateVisit)
+              ->wherePatientType(1)
+              ->whereScreenType(1)
+              ->where('form->exposure->atk_positive', true)
+              ->where('form->management->manage_atk_positive', 'ไม่ต้องการยืนยันผลด้วยวิธี PCR แพทย์พิจารณาให้ยาเลย (หากต้องการเข้าระบบ ให้ติดต่อ 1330 เอง)');
+        });
+    }
+
     public function setPatientTypeAttribute($value)
     {
         if (! $value) {

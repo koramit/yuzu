@@ -29,6 +29,7 @@ class CertificationsController extends Controller
                              ->wherePatientType(1)
                              ->whereNotNull('form->management->np_swab_result')
                              ->where('form->management->np_swab_result', '<>', 'Detected')
+                             ->withPublicPatientWalkinATKPosWithoutPCR($dateVisit)
                              ->get()
                              ->transform(function ($visit) use ($manager) {
                                  return $manager->getData($visit);
