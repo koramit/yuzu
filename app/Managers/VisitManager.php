@@ -357,6 +357,9 @@ class VisitManager
                 $errors['exposure_other_detail'] = 'จำเป็นต้องระบุความเสี่ยงอื่นๆ';
             }
         }
+        if ($exposure['atk_positive'] && !$exposure['date_atk_positive']) {
+            $errors['date_atk_positive'] = 'จำเป็นต้องลงวันที่ตรวจ ATK ได้ผลบวก';
+        }
 
         return $errors;
     }
