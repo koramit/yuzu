@@ -99,7 +99,8 @@ trait OPDCardExportable
             'suspected_covid_19' => $this->suspectedCovidDx($visit), // $form['diagnosis']['suspected_covid_19'] ? 'YES' : 'NO', // defect
             'uri' => $form['diagnosis']['uri'] ? 'YES' : 'NO',
             'suspected_pneumonia' => $form['diagnosis']['suspected_pneumonia'] ? 'YES' : 'NO',
-            'other_diagnosis' => $form['diagnosis']['other_diagnosis'] ? 'YES' : 'NO',
+            'other_diagnosis' => $form['diagnosis']['other_diagnosis'] ? str_replace("\n", ' ', $form['diagnosis']['other_diagnosis']) : null,
+            'civid_19_infection_by_positive_atk' => ($visit->atk_positive_case && !$visit->swabbed) ? 'YES' : 'NO',
             'atk_positive' => ($form['exposure']['atk_positive'] ?? false) ? 'YES' : 'NO',
             'date_atk_positive' => $this->castDate($form['exposure']['date_atk_positive']),
 
