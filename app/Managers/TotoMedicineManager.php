@@ -24,8 +24,15 @@ class TotoMedicineManager
                     ->whereStatus(4)
                     ->get()
                     ->transform(fn ($v) => [
-                        'result' => $v->form['management']['np_swab_result'] ?? 'Pending'
+                        'result' => $v->form['management']['np_swab_result'] ?? 'Pending',
+                        'hn' => $v->hn,
                     ]);
+
+        // ddd
+        $sccAheadCount = 0;
+        $sccReported = $scc->filter(fn ($p) => $p['result'] !== 'Pending');
+        $yuzuPending = $yuzu->filter(fn ($p) => $p['result'] == 'Pending');
+        $yuzuPending->each(fn ($y) => $sccAheadCount += ($sccReported->search(fn ($s) => $y['hn'] === $s['hn']) !== false ? 1 : 0));
 
         return [
             'scc' => [
@@ -41,6 +48,7 @@ class TotoMedicineManager
                 'not_detected' => $yuzu->filter(fn ($p) => $p['result'] == 'Not detected')->count(),
                 'inconclusive' => $yuzu->filter(fn ($p) => $p['result'] == 'Inconclusive')->count(),
                 'pending' => $yuzu->filter(fn ($p) => $p['result'] == 'Pending')->count(),
+                'scc_ahead_count' => $sccAheadCount,
             ]
         ];
     }
