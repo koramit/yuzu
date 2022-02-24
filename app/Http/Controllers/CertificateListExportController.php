@@ -24,11 +24,12 @@ class CertificateListExportController extends Controller
                              ->where('swabbed', true)
                              ->wherePatientType(1)
                              ->whereDateVisit($dateVisit)
+                             ->whereNotNull('form->management->np_swab_result')
                              ->where('form->management->np_swab_result', '<>', 'Detected')
                              ->withPublicPatientWalkinATKPosWithoutPCR($dateVisit)
                              ->get()
                              ->transform(function ($visit) use ($manager) {
-                                 $atkPos = $this->getResult($visit) === 'ATK+';
+                                 //  $atkPos = $this->getResult($visit) === 'ATK+';
                                  return [
                                       'HN' => $visit->hn,
                                       'name' => $this->getPatientName($visit, $manager),
@@ -36,10 +37,10 @@ class CertificateListExportController extends Controller
                                       'age' => $visit->age_at_visit,
                                       'tel_no' => $visit->form['patient']['tel_no'],
                                       'tel_no_alt' => $visit->form['patient']['tel_no_alt'],
-                                      'ใบรับรองแพทย์' => $this->getRecommendation($visit, $atkPos),
-                                      'กักตัวถึง' => $this->quarantineUltil($visit, $atkPos),
+                                      'ใบรับรองแพทย์' => $this->getRecommendation($visit->form['evaluation']['recommendation'] ?? null),// $this->getRecommendation($visit, $atkPos),
+                                      'กักตัวถึง' => $this->getThaiDate($visit->form['evaluation']['date_quarantine_end'] ?? null), //$this->quarantineUltil($visit, $atkPos),
                                       'นัดสวอบซ้ำ' => $this->getThaiDate($visit->form['evaluation']['date_reswab'] ?? null),
-                                      'np_swab_result' => $atkPos ? 'ผู้มาขอใบรับรองทำการตรวจการติดเชื้อด้วยตนเอง และพบว่าผลบวก' : $visit->form['management']['np_swab_result'],
+                                      'np_swab_result' => $visit->atk_positive_case ? 'ผู้มาขอใบรับรองทำการตรวจการติดเชื้อด้วยตนเอง และพบว่าผลบวก' : $visit->form['management']['np_swab_result'],
                                   ];
                              });
 
@@ -70,16 +71,15 @@ class CertificateListExportController extends Controller
         return ((int) $ymd[2]).' '.($thaiMonths[(int) $ymd[1]]).' '.(((int) $ymd[0]) + 543);
     }
 
-    protected function getRecommendation(Visit &$visit, bool $atkPos)
+    protected function getRecommendation($recommendation)
     {
-        $recommendation = $atkPos ? 'ATK+' : ($visit->form['evaluation']['recommendation'] ?? null);
         if (! $recommendation) {
             return null;
         }
 
         if ($recommendation === 'ไปทำงานได้') {
             return 'ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลาทุกวัน';
-        } elseif ($recommendation === 'ATK+') {
+        } elseif ($recommendation === 'ATK positive') {
             return "กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ {$this->daysCriteria} วัน";
         } elseif ($recommendation === 'กักตัว') {
             return "กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ {$this->daysCriteria} วัน"; // CR 220124 change 14 => 10 days
@@ -101,17 +101,17 @@ class CertificateListExportController extends Controller
         return $visit->patient_name;
     }
 
-    protected function quarantineUltil(Visit &$visit, bool $atkPos)
-    {
-        $dateReff = $atkPos ? ($visit->form['exposure']['date_atk_positive'] ?? null) : ($visit->form['evaluation']['date_quarantine_end'] ?? null);
-        if ($dateReff && $atkPos) {
-            $dateReff = Carbon::create($dateReff)->addDays($this->daysCriteria);
-        }
-        return $this->getThaiDate($dateReff);
-    }
+    // protected function quarantineUltil(Visit &$visit, bool $atkPos)
+    // {
+    //     $dateReff = $atkPos ? ($visit->form['exposure']['date_atk_positive'] ?? null) : ($visit->form['evaluation']['date_quarantine_end'] ?? null);
+    //     if ($dateReff && $atkPos) {
+    //         $dateReff = Carbon::create($dateReff)->addDays($this->daysCriteria);
+    //     }
+    //     return $this->getThaiDate($dateReff);
+    // }
 
-    protected function getResult(Visit &$visit)
-    {
-        return $visit->atk_positive_case ? 'ATK+' : $visit->form['management']['np_swab_result'];
-    }
+    // protected function getResult(Visit &$visit)
+    // {
+    //     return $visit->atk_positive_case ? 'ATK+' : $visit->form['management']['np_swab_result'];
+    // }
 }

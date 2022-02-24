@@ -15,25 +15,34 @@ class CertificateManager
         $this->risk = $visit->form['exposure']['evaluation'];
         $this->lastExposure = $visit->form['exposure']['date_latest_expose'];
 
+        if ($visit->atk_positive_case && !$visit->form['evaluation']['recommendation']) {
+            $visit->forceFill([
+                'form->evaluation->recommendation' => 'ATK positive',
+                'form->evaluation->date_quarantine_end' => Carbon::create($visit->form['exposure']['date_atk_positive'])->addDays(10)->format('Y-m-d'),
+            ])->save();
+        }
+
         return [
             'slug' => $visit->slug,
             'patient_name' => 'HN '.$visit->hn.' '.$visit->patient->profile['first_name'],
             'result' => $visit->atk_positive_case ? 'ATK positive' : $visit->form['management']['np_swab_result'],
             'age' => $visit->age_at_visit,
-            'risk' => $this->risk,
+            'risk' => $visit->atk_positive_case ? 'ATK positive' : $this->risk,
             'detail' => $this->risk === 'ไม่มีความเสี่ยง' ? '' : $this->getRiskDetail($visit),
             'last_exposure' => $this->lastExposure,
             'last_exposure_label' => $this->lastExposure ? Carbon::create($this->lastExposure)->format('M d') : null,
-            'recommendation' => $visit->form['evaluation']['recommendation'],
+            'recommendation' => $visit->form['evaluation']['recommendation'] ?? null,
             'date_quarantine_end' => $visit->form['evaluation']['date_quarantine_end'] ?? null,
             'date_quarantine_end_label' => ($visit->form['evaluation']['date_quarantine_end'] ?? null) ? Carbon::create($visit->form['evaluation']['date_quarantine_end'])->format('M d') : null,
             'date_reswab' => $visit->form['evaluation']['date_reswab'] ?? null,
             'date_reswab_label' => ($visit->form['evaluation']['date_reswab'] ?? null) ? Carbon::create($visit->form['evaluation']['date_reswab'])->format('M d') : null,
             'note' => implode("\n", [$visit->vaccination_text, $visit->form['note']]),
             'checked' => false,
-            'config' => $this->getConfig($visit->date_visit->format('Y-m-d'), $visit->form['management']['np_swab_result']),
+            'config' => $this->getConfig($visit),
             'medical_records' => $this->getMedicalRecords($visit),
             'screen_type' => $visit->screen_type,
+            'atk_positive' => $visit->atk_positive_case,
+            'date_atk_positive' => $visit->form['exposure']['date_atk_positive']
         ];
     }
 
@@ -62,10 +71,12 @@ class CertificateManager
         return trim(implode(' ', [$exposure['contact_type'], $exposure['contact_detail'], $exposure['hot_spot_detail'], $exposure['other_detail']]));
     }
 
-    protected function getConfig($dateVisit, $result)
+    protected function getConfig(Visit &$visit)
     {
-        $dateQuarantineEnd = Carbon::create($this->lastExposure ?? $dateVisit)->addDays(10); // CR 20220124 change 14 => 10 days
-        $dateReswab = ($result === 'Inconclusive') ? Carbon::create($dateVisit)->addDays(3) : $dateQuarantineEnd;
+        $dateRef = $visit->atk_positive_case ? $visit->form['exposure']['date_atk_positive'] : $visit->date_visit->format('Y-m-d');
+        $result = $visit->atk_positive_case ? 'ATK positive' : $visit->form['management']['np_swab_result'];
+        $dateQuarantineEnd = Carbon::create($this->lastExposure ?? $dateRef)->addDays(10); // CR 20220124 change 14 => 10 days
+        $dateReswab = ($result === 'Inconclusive') ? Carbon::create($dateRef)->addDays(3) : $dateQuarantineEnd;
         // $dateReswab = Carbon::create($dateVisit)->addDays(3);  CR 20210923
 
         return [

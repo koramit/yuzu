@@ -84,10 +84,11 @@
                     <button
                         :disabled="!can.certify"
                         @click="certify(certificate)"
-                        class="inline-flex items-center text-blue-300 px-3 py-2 disabled:cursor-not-allowed"
+                        class="inline-flex items-center px-3 py-2 disabled:cursor-not-allowed"
                         :class="{
                             'text-alt-theme-light': certificate.result === 'Inconclusive',
                             'text-thick-theme-light': certificate.result === 'Not detected',
+                            'text-red-300': certificate.result === 'ATK positive',
                         }"
                     >
                         <Icon
@@ -142,7 +143,7 @@
                         <template #dropdown>
                             <div class="rounded shadow bg-bitter-theme-light text-white py-2">
                                 <button
-                                    v-for="recommend in recommendations"
+                                    v-for="recommend in (certificate.atk_positive ? atkPositiveRecommendations : recommendations)"
                                     :key="recommend"
                                     class="block w-full whitespace-nowrap px-4 py-1 text-left text-sm hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
                                     v-text="recommend"
@@ -214,7 +215,7 @@
                     <template #dropdown>
                         <div class="rounded shadow bg-bitter-theme-light text-white py-2">
                             <button
-                                v-for="recommendation in recommendations"
+                                v-for="recommendation in (certificate.atk_positive ? atkPositiveRecommendations : recommendations)"
                                 :key="recommendation"
                                 @click="recommendFromDropdown(certificate, recommendation)"
                                 class="block w-full px-4 py-1 text-left whitespace-nowrap hover:text-bitter-theme-light hover:bg-white transition-colors duration-200 ease-in-out"
@@ -341,6 +342,14 @@
                     v-model="formDateVisit"
                 />
                 <FormDatetime
+                    v-if="selectedCertificate.atk_positive"
+                    class="mt-4"
+                    label="วันที่ตรวจ ATK ได้ผลบวก"
+                    name="date_atk_positive"
+                    :disabled="true"
+                    v-model="selectedCertificate.date_atk_positive"
+                />
+                <FormDatetime
                     class="mt-2"
                     label="กักตัวถึง"
                     name="date_quarantine_end"
@@ -357,18 +366,13 @@
                     <FormRadio
                         class="md:grid grid-cols-2 gap-x-2"
                         name="recommendation"
-                        :options="recommendations"
+                        :options="selectedCertificate.atk_positive ? atkPositiveRecommendations : recommendations"
                         v-model="form.recommendation"
                     />
                 </div>
-                <template
-                    class="form-label"
-                    v-if="selectedCertificate.screen_type !== 'เริ่มตรวจใหม่'"
-                >
+                <template v-if="selectedCertificate.screen_type !== 'เริ่มตรวจใหม่'">
                     <template v-if="selectedCertificate.medical_records.length">
-                        <p
-                            class="form-label"
-                        >
+                        <p class="form-label">
                             ประวัติภายใน 14 วัน
                         </p>
                         <div
@@ -462,7 +466,7 @@ const createVisitForm = ref(null);
 const appointmentForm = ref(null);
 
 const labelCounter = computed(() => {
-    return `วันที่ตรวจพบเชื้อ (${props.certificates.filter(p => p.recommendation).length}/${props.certificates.length})`;
+    return `วันที่ตรวจหาเชื้อ (${props.certificates.filter(p => p.recommendation).length}/${props.certificates.length})`;
 });
 
 watch (
@@ -543,6 +547,7 @@ const recommendFromDropdown = (certificate, recommendation) => {
 };
 
 const recommendations = ref(['ไปทำงานได้','กักตัว','กักตัวนัดสวอบซ้ำ']);
+const atkPositiveRecommendations = ref(['ไปทำงานได้','กักตัว','กักตัวนัดสวอบซ้ำ', 'ATK positive']);
 const certificateModal = ref(null);
 const selectedCertificate = ref(null);
 const form = reactive({});
@@ -559,7 +564,7 @@ const recommended = () => {
 
     selectedCertificate.value.recommendation = form.recommendation;
 
-    if (form.recommendation.startsWith('กักตัว')) {
+    if (form.recommendation.startsWith('กักตัว') || form.recommendation === 'ATK positive') {
         selectedCertificate.value.date_quarantine_end = form.date_quarantine_end ?? selectedCertificate.value.config.date_quarantine_end;
         ymd = selectedCertificate.value.date_quarantine_end.split('-');
         selectedCertificate.value.date_quarantine_end_label = `${mos[parseInt(ymd[1])]} ${ymd[2]}`;
