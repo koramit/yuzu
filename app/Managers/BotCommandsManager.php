@@ -130,6 +130,8 @@ class BotCommandsManager
             $text .= "{$key} => {$value} ({$data['yuzu'][$key]})\n";
         }
 
+        $text .= "\nเคส Yuzu ที่ผลยังไม่ออกแต่ที่ scc ออกแล้ว {$data['yuzu']['scc_ahead_count']} เคส";
+
         return [
             'text' => $text,
             'mode' => 'get_today_lab',
