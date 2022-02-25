@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\Visit;
 use Illuminate\Support\Facades\DB;
 
 trait LabStatReport
@@ -22,6 +23,13 @@ trait LabStatReport
             'detected' => $labs->filter(fn ($l) => $l->lab === '"Detected"')->flatten(),
             'not_detected' => $labs->filter(fn ($l) => $l->lab === '"Not detected"')->flatten(),
             'inconclusive' => $labs->filter(fn ($l) => $l->lab === '"Inconclusive"')->flatten(),
+            'self ATK+ w/o PCR' => Visit::whereDateVisit($today)
+                                    ->wherePatientType(1)
+                                    ->whereScreenType(1)
+                                    ->whereStatus(4)
+                                    ->where('form->exposure->atk_positive', true)
+                                    ->where('form->management->manage_atk_positive', 'ไม่ต้องการยืนยันผลด้วยวิธี PCR แพทย์พิจารณาให้ยาเลย (หากต้องการเข้าระบบ ให้ติดต่อ 1330 เอง)')
+                                    ->count()
         ];
 
         $stat = "ผล => รวม (ทั่วไป/บุคลากร)\n";
