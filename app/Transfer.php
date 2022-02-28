@@ -8,10 +8,10 @@ use Illuminate\Support\Str;
 
 class Transfer
 {
-    public function push()
+    public function push($dateStart, $dateStop)
     {
-        Visit::whereDateVisit('2021-10-19')
-             ->whereStatus(4)
+        Visit::whereStatus(4)
+             ->whereBetween('date_visit', [$dateStart, $dateStop])
              ->each(function ($visit) {
                  $response = Http::post(env('TRANSFER_ENDPOINT'), $visit->toArray());
                  echo $visit->id .' '.$response->json()['message']."\n";
