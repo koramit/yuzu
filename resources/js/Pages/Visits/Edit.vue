@@ -70,6 +70,12 @@
                 :options="configs.screen_types"
             />
             <Error :error="form.errors.screen_type" />
+
+            <PatientMedicalRecord
+                :records="records"
+                v-if="form.visit.patient_type === 'บุคคลทั่วไป' && form.visit.screen_type === 'เริ่มตรวจใหม่'"
+            />
+
             <template v-if="form.visit.screen_type === 'นัดมา swab ซ้ำ'">
                 <FormDatetime
                     class="mt-2"
@@ -872,6 +878,7 @@ import FormSelectOther from '@/Components/Controls/FormSelectOther';
 import FormTextarea from '@/Components/Controls/FormTextarea';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import Error from '@/Components/Controls/Error';
+import PatientMedicalRecord from '@/Components/Cards/PatientMedicalRecord';
 import { useForm, usePage } from '@inertiajs/inertia-vue3';
 import Layout from '@/Components/Layouts/Layout';
 import { reactive, ref } from '@vue/reactivity';
@@ -889,10 +896,12 @@ export default {
         FormTextarea,
         SpinnerButton,
         Error,
+        PatientMedicalRecord
     },
     props: {
         visit: { type: Object, required: true },
         formConfigs: { type: Object, required: true },
+        records: { type: Array, default: () => [] },
     },
     setup (props) {
         const saveForm = () => {

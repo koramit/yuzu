@@ -198,9 +198,27 @@ class VisitsController extends Controller
         $configs = $this->manager->getConfigs($visit);
         $configs['can'] = $can;
 
+        // history
+        $records = Visit::wherePatientId($visit->patient_id)
+                        ->whereStatus(4)
+                        ->where('date_visit', '>=', $visit->date_visit->addDays(-90))
+                        ->orderByDesc('date_visit')
+                        ->get()
+                        ->transform(fn ($v) => [
+                            'date_visit' => $v->date_visit->format('d M Y'),
+                            'result' => $v->atk_positive_case ? 'ATK positive' : $v->form['management']['np_swab_result'],
+                            'screen_type' => $v->screen_type,
+                            'risk' => $v->form['exposure']['evaluation'],
+                            'ct' => $v->form['management']['np_swab_result_note'],
+                            'swabbed' => $v->swabbed,
+                            'slug' => $v->slug,
+                            'note' => $v->form['note'],
+                        ]);
+
         return Inertia::render('Visits/Edit', [
             'visit' => $visit,
             'formConfigs' => $configs,
+            'records' => $records
         ]);
     }
 
