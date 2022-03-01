@@ -434,8 +434,19 @@
         </div>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
-            <h2 class="font-semibold text-thick-theme-light">
-                โรคประจำตัว
+            <h2 class="font-semibold text-thick-theme-light sm:flex justify-between">
+                <p>โรคประจำตัว</p>
+                <button
+                    class="inline-flex justify-start items-center sm:mt-0"
+                    v-if="records.length"
+                    @click="form.comorbids = {...records[0].comorbids}"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="clone"
+                    />
+                    <span class="block font-normal text-bitter-theme-light">ใช้ข้อมูลเมื่อ {{ records[0].date_visit }}</span>
+                </button>
             </h2>
             <div :class="{'mt-2 rounded border-2 border-red-400 p-2': form.errors.comorbids}">
                 <FormCheckbox
@@ -503,8 +514,19 @@
         </div>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
-            <h2 class="font-semibold text-thick-theme-light">
-                ประวัติการฉีดวัคซีน COVID-19
+            <h2 class="font-semibold text-thick-theme-light sm:flex justify-between">
+                <p>ประวัติการฉีดวัคซีน COVID-19</p>
+                <button
+                    class="inline-flex justify-start items-center mt-2 sm:mt-0"
+                    v-if="records.length"
+                    @click="cloneVaccination(records[0].vaccination)"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="clone"
+                    />
+                    <span class="block font-normal text-bitter-theme-light">ใช้ข้อมูลเมื่อ {{ records[0].date_visit }}</span>
+                </button>
             </h2>
             <FormCheckbox
                 class="mt-2"
@@ -540,6 +562,7 @@
                     v-model="form.vaccination.date_latest_vacciniated"
                     :error="form.errors.date_latest_vacciniated"
                     name="date_latest_vacciniated"
+                    ref="dateLatestVaccinatedInput"
                 />
             </div>
             <Error :error="form.errors.unvaccinated" />
@@ -878,6 +901,7 @@ import FormSelectOther from '@/Components/Controls/FormSelectOther';
 import FormTextarea from '@/Components/Controls/FormTextarea';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import Error from '@/Components/Controls/Error';
+import Icon from '@/Components/Helpers/Icon';
 import PatientMedicalRecord from '@/Components/Cards/PatientMedicalRecord';
 import { useForm, usePage } from '@inertiajs/inertia-vue3';
 import Layout from '@/Components/Layouts/Layout';
@@ -896,6 +920,7 @@ export default {
         FormTextarea,
         SpinnerButton,
         Error,
+        Icon,
         PatientMedicalRecord
     },
     props: {
@@ -1406,11 +1431,19 @@ export default {
             return false;
         });
 
+        const cloneVaccination = (vaccination) => {
+            form.vaccination = {...vaccination};
+            if (vaccination.date_latest_vacciniated) {
+                dateLatestVaccinatedInput.value.setDate(vaccination.date_latest_vacciniated);
+            }
+        };
+
         const dateIsolationEndInput = ref(null);
         const dateReswabInput = ref(null);
         const dateReswabNextInput = ref(null);
         const dateSwabbedInput = ref(null);
         const dateReswabbedInput = ref(null);
+        const dateLatestVaccinatedInput = ref(null);
 
         return {
             form,
@@ -1441,6 +1474,8 @@ export default {
             saveToDischarge,
             saveToDischargeSwabbed,
             canSaveToSwab,
+            cloneVaccination,
+            dateLatestVaccinatedInput
         };
     },
 };
