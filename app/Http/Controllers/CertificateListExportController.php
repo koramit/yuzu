@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Managers\PatientManager;
 use App\Models\LoadDataRecord;
 use App\Models\Visit;
 use Illuminate\Support\Carbon;
@@ -19,7 +18,6 @@ class CertificateListExportController extends Controller
         $dateVisit = Session::get('certificate-list-export-date', now('asia/bangkok')->format('Y-m-d'));
         $this->daysCriteria = Carbon::create($dateVisit)->lessThan(Carbon::create('2022-01-24')) ? 14 : 10;
         $user = Auth::user();
-        $manager = new PatientManager();
         $certificates = Visit::with('patient')
                              ->where('swabbed', true)
                              ->wherePatientType(1)
@@ -28,11 +26,10 @@ class CertificateListExportController extends Controller
                              ->where('form->management->np_swab_result', '<>', 'Detected')
                              ->withPublicPatientWalkinATKPosWithoutPCR($dateVisit)
                              ->get()
-                             ->transform(function ($visit) use ($manager) {
-                                 //  $atkPos = $this->getResult($visit) === 'ATK+';
+                             ->transform(function ($visit) {
                                  return [
                                       'HN' => $visit->hn,
-                                      'name' => $this->getPatientName($visit, $manager),
+                                      'name' => $visit->patient_name,
                                       'patient_type' => $visit->patient_type,
                                       'age' => $visit->age_at_visit,
                                       'tel_no' => $visit->form['patient']['tel_no'],
@@ -89,29 +86,4 @@ class CertificateListExportController extends Controller
             return '!!!';
         }
     }
-
-    protected function getPatientName(Visit $visit, $manager)
-    {
-        $patient = $manager->manage($visit->hn, true);
-        if ($patient['found'] && $visit->patient_name !== $patient['patient']->full_name) {
-            $visit->patient_name = $patient['patient']->full_name;
-            $visit->save();
-        }
-
-        return $visit->patient_name;
-    }
-
-    // protected function quarantineUltil(Visit &$visit, bool $atkPos)
-    // {
-    //     $dateReff = $atkPos ? ($visit->form['exposure']['date_atk_positive'] ?? null) : ($visit->form['evaluation']['date_quarantine_end'] ?? null);
-    //     if ($dateReff && $atkPos) {
-    //         $dateReff = Carbon::create($dateReff)->addDays($this->daysCriteria);
-    //     }
-    //     return $this->getThaiDate($dateReff);
-    // }
-
-    // protected function getResult(Visit &$visit)
-    // {
-    //     return $visit->atk_positive_case ? 'ATK+' : $visit->form['management']['np_swab_result'];
-    // }
 }

@@ -6,6 +6,7 @@ use App\Models\DutyToken;
 use App\Tasks\ClearPatientNotification;
 use App\Tasks\CroissantNeedHelpNotification;
 use App\Tasks\DrinkWaterNotification;
+use App\Tasks\UpdatePatientName;
 use Exception;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -58,6 +59,9 @@ class Kernel extends ConsoleKernel
         $schedule->call(fn () => CroissantNeedHelpNotification::run())->dailyAt('15:50'); // 22:50
         $schedule->call(fn () => CroissantNeedHelpNotification::run())->dailyAt('16:20'); // 23:20
         $schedule->call(fn () => CroissantNeedHelpNotification::run())->dailyAt('16:50'); // 23:50
+
+        // update patient name after clinic closed for certification
+        $schedule->call(fn () => UpdatePatientName::run())->dailyAt('12:00'); // 19:00
     }
 
     /**
