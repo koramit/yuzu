@@ -86,16 +86,16 @@
                     ref="dateSwabbedInput"
                 />
                 <button
-                    @click="addDays(form.visit.date_visit, dateSwabbedInput, -7)"
+                    @click="addDays(form.visit.date_visit, dateSwabbedInput, -5)"
                     class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    -7
+                    -5
                 </button>
                 <button
-                    @click="addDays(form.visit.date_visit, dateSwabbedInput, -14)"
+                    @click="addDays(form.visit.date_visit, dateSwabbedInput, -10)"
                     class="ml-2 text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    -14
+                    -10
                 </button>
                 <FormDatetime
                     class="mt-2"
@@ -107,11 +107,11 @@
                     :disabled="!(form.patient.date_swabbed && true)"
                 />
                 <button
-                    @click="addDays(form.visit.date_visit, dateReswabbedInput, -7)"
+                    @click="addDays(form.visit.date_visit, dateReswabbedInput, -5)"
                     class="text-xs shadow-sm italic px-2 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
                     :disabled="!(form.patient.date_swabbed && true)"
                 >
-                    -7
+                    -5
                 </button>
             </template>
             <FormReveal
@@ -548,7 +548,7 @@
                 <div class="mt-2">
                     <label class="form-label">จำนวนเข็มที่ฉีดแล้ว</label>
                     <FormRadio
-                        class="md:grid grid-flow-col grid-cols-2 grid-rows-2 gap-x-2"
+                        class="md:grid grid-flow-col grid-cols-3 grid-rows-2 gap-x-2"
                         v-model="form.vaccination.doses"
                         :error="form.errors.doses"
                         name="vaccination_doses"

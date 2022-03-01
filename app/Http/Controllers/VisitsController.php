@@ -205,7 +205,7 @@ class VisitsController extends Controller
                         ->orderByDesc('date_visit')
                         ->get()
                         ->transform(fn ($v) => [
-                            'date_visit' => $v->date_visit->format('d M Y'),
+                            'date_visit' => $v->date_visit->format('d M'),
                             'result' => $v->atk_positive_case ? 'ATK positive' : $v->form['management']['np_swab_result'],
                             'screen_type' => $v->screen_type,
                             'risk' => $v->form['exposure']['evaluation'],

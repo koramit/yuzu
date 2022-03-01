@@ -153,9 +153,8 @@ class VisitManager
                 ['value' => 2, 'label' => '2 เข็ม'],
                 ['value' => 3, 'label' => '3 เข็ม'],
                 ['value' => 4, 'label' => '4 เข็ม'],
+                ['value' => 5, 'label' => '5 เข็ม'],
             ],
-            'next_7_days' => $visit->date_visit->addDays(7)->format('Y-m-d'),
-            'next_14_days' => $visit->date_visit->addDays(14)->format('Y-m-d'),
             'patchEndpoint' => route('visits.update', $visit),
             'public_recommendations' => [
                 [
