@@ -212,6 +212,8 @@ class VisitsController extends Controller
                             'ct' => $v->form['management']['np_swab_result_note'],
                             'swabbed' => $v->swabbed,
                             'slug' => $v->slug,
+                            'comorbids' => $v->form['comorbids'],
+                            'vaccination' => $v->form['vaccination'],
                             'note' => $v->form['note'],
                         ]);
 
