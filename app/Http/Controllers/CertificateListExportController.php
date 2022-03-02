@@ -38,6 +38,7 @@ class CertificateListExportController extends Controller
                                       'กักตัวถึง' => $this->getThaiDate($visit->form['evaluation']['date_quarantine_end'] ?? null), //$this->quarantineUltil($visit, $atkPos),
                                       'นัดสวอบซ้ำ' => $this->getThaiDate($visit->form['evaluation']['date_reswab'] ?? null),
                                       'np_swab_result' => $visit->atk_positive_case ? 'ผู้มาขอใบรับรองทำการตรวจการติดเชื้อด้วยตนเอง และพบว่าผลบวก' : $visit->form['management']['np_swab_result'],
+                                      'swab_at' => $visit->form['management']['container_swab_at'],
                                   ];
                              });
 
@@ -52,7 +53,15 @@ class CertificateListExportController extends Controller
             'user_id' => $user->id,
         ]);
 
-        return FastExcel::data($certificates->filter(fn ($v) => $v['age'] >= 18))->download($filename);
+        $filtered = $certificates->filter(fn ($v) => $v['age'] >= 18)
+                                ->filter(fn ($v) => !(!$v['ใบรับรองแพทย์'] && $v['swab_at'] === 'Sky Walk'))
+                                ->map(function ($v) {
+                                    unset($v['swab_at']);
+                                    return $v;
+                                })
+                                ->sortBy('ใบรับรองแพทย์');
+
+        return FastExcel::data($filtered)->download($filename);
     }
 
     protected function getThaiDate($dateStr)
