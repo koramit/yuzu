@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Http;
 
-class LISAPI
+class SiITLabAPI
 {
     protected $token;
 
@@ -26,12 +26,12 @@ class LISAPI
         }
     }
 
-    public function getCovidLabs(string $hn, string $dateLab)
+    public function getLabs(string $hn, string $dateLab, array $labs = ['204592'])
     {
         $form = [
             'HN' => $hn,
             'GROUP' => true,
-            'GROUP_SERVICE_ID' => ['204592', '204593'],
+            'GROUP_SERVICE_ID' => $labs,
             'START_DATE' => $dateLab,
             'END_DATE' => Carbon::create($dateLab)->addDay()->format('Y-m-d')
         ];
