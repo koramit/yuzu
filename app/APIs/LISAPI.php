@@ -20,7 +20,7 @@ class LISAPI
                                 'client_id' => config('services.lisapi.id'),
                                 'client_secret' => config('services.lisapi.secret'),
                                 'grant_type' => 'client_credentials'
-                            ])->json();
+                            ])->json()['access_token'];
         } catch (Exception $e) {
             $this->token === false;
         }
