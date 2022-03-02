@@ -4,6 +4,7 @@ namespace App\Managers;
 
 use App\APIs\SiITLabAPI;
 use App\Models\Visit;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
 class LabCovidManager
@@ -24,15 +25,25 @@ class LabCovidManager
         $this->api = new SiITLabAPI;
     }
 
+    public function run(string $dateStart, int $days)
+    {
+        for ($i = 0; $i <= $days; $i++) {
+            $dateVisit = Carbon::create($dateStart)->addDays($i)->format('Y-m-d');
+
+            $visits = Visit::whereDateVisit($dateVisit)
+                            ->whereSwabbed(true)
+                            ->get();
+
+            $this->fetchPCR($visits);
+        }
+    }
+
     public function fetchPCR(Collection $visits)
     {
         $matchCount = 0;
         foreach ($visits as $visit) {
             $matchCount += ($this->manage($visit, 'pcr') === 1 ? 1 : 0);
         }
-        // $visits->each(function ($visit) use ($matchCount) {
-        //     $matchCount += $this->manage($visit, 'pcr') === 1 ? 1 : 0;
-        // });
 
         echo $visits[0]->date_visit->format('Y-d-m') . ' => ' . $visits->count() . ' : ' . $matchCount . "\n";
     }
@@ -68,21 +79,15 @@ class LabCovidManager
 
         $labResultFinally = false;
         foreach ($result['RESULT'] as $record) {
-            if ($record['TI_CODE'] === $this->labIds[$lab]) {
+            if ($record['TI_CODE'] === $this->labIds[$lab] && collect(['detected', 'not detected', 'inconclusive'])->contains($record['RESULT_CHAR'])) {
                 $labResultFinally = $record;
                 break;
             }
         }
 
         if (!$labResultFinally) {
-            return; // no lab in result 😓
-        }
-
-        if (!$labResultFinally['RESULT_CHAR']) {
             return; // pending
         }
-
-        // return $visit->form['management']['np_swab_result'] === $labResultFinally['RESULT_CHAR'] ? 1 : null;
 
         if ($visit->form['management']['np_swab_result'] != $labResultFinally['RESULT_CHAR']) {
             echo $visit->id . ' => ' . $visit->form['management']['np_swab_result'] . ' : ' . $labResultFinally['RESULT_CHAR'] . "\n";
