@@ -26,9 +26,12 @@ class LabCovidManager
 
     public function fetchPCR(Collection $visits)
     {
-        $visits->each(function ($visit) {
-            $this->manage($visit, 'pcr');
+        $matchCount = 0;
+        $visits->each(function ($visit) use ($matchCount) {
+            $matchCount += $this->manage($visit, 'pcr') === 1 ? 1 : 0;
         });
+
+        echo $visits[0]->date_visit->format('Y-d-m') . ' => ' . $visits->count() . ' : ' . $matchCount . "\n";
     }
 
     protected function manage(Visit &$visit, string $lab)
@@ -76,8 +79,10 @@ class LabCovidManager
             return; // pending
         }
 
-        if ($visit->form['management']['np_swab_result'] != $labResultFinally['RESULT_CHAR']) {
-            echo $visit->id . ' => ' . $visit->form['management']['np_swab_result'] . ' : ' . $labResultFinally['RESULT_CHAR'] . "\n";
-        }
+        return $visit->form['management']['np_swab_result'] === $labResultFinally['RESULT_CHAR'] ? 1 : null;
+
+        // if ($visit->form['management']['np_swab_result'] != $labResultFinally['RESULT_CHAR']) {
+        //     echo $visit->id . ' => ' . $visit->form['management']['np_swab_result'] . ' : ' . $labResultFinally['RESULT_CHAR'] . "\n";
+        // }
     }
 }
