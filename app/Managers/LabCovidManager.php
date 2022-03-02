@@ -45,7 +45,7 @@ class LabCovidManager
             $matchCount += ($this->manage($visit, 'pcr') === 1 ? 1 : 0);
         }
 
-        echo $visits[0]->date_visit->format('Y-d-m') . ' => ' . $visits->count() . ' : ' . $matchCount . "\n";
+        echo $visits[0]->date_visit->format('Y-m-d') . ' => ' . $visits->count() . ' : ' . $matchCount . "\n";
     }
 
     protected function manage(Visit &$visit, string $lab)
