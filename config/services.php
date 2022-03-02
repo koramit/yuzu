@@ -90,5 +90,12 @@ return [
         'url' => env('TOTO_URL'),
         'token' => env('TOTO_TOKEN'),
         'method' => env('TOTO_METHOD'),
+    ],
+
+    'lisapi' => [
+        'auth_url' => env('LISAPI_AUTH_URL'),
+        'service_url' => env('LISAPI_SERVICE_URL'),
+        'id' => env('LISAPI_ID'),
+        'secret' => env('LISAPI_SECRET'),
     ]
 ];
