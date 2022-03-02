@@ -59,7 +59,10 @@ class CertificateListExportController extends Controller
                                     unset($v['swab_at']);
                                     return $v;
                                 })
-                                ->sortBy('ใบรับรองแพทย์');
+                                ->sortBy([
+                                    ['ใบรับรองแพทย์', 'asc'],
+                                    ['np_swab_result', 'asc']
+                                ]);
 
         return FastExcel::data($filtered)->download($filename);
     }
