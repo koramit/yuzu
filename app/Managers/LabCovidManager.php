@@ -27,9 +27,12 @@ class LabCovidManager
     public function fetchPCR(Collection $visits)
     {
         $matchCount = 0;
-        $visits->each(function ($visit) use ($matchCount) {
-            $matchCount += $this->manage($visit, 'pcr') === 1 ? 1 : 0;
-        });
+        foreach ($visits as $visit) {
+            $matchCount += ($this->manage($visit, 'pcr') === 1 ? 1 : 0);
+        }
+        // $visits->each(function ($visit) use ($matchCount) {
+        //     $matchCount += $this->manage($visit, 'pcr') === 1 ? 1 : 0;
+        // });
 
         echo $visits[0]->date_visit->format('Y-d-m') . ' => ' . $visits->count() . ' : ' . $matchCount . "\n";
     }
@@ -79,10 +82,13 @@ class LabCovidManager
             return; // pending
         }
 
-        return $visit->form['management']['np_swab_result'] === $labResultFinally['RESULT_CHAR'] ? 1 : null;
+        // return $visit->form['management']['np_swab_result'] === $labResultFinally['RESULT_CHAR'] ? 1 : null;
 
-        // if ($visit->form['management']['np_swab_result'] != $labResultFinally['RESULT_CHAR']) {
-        //     echo $visit->id . ' => ' . $visit->form['management']['np_swab_result'] . ' : ' . $labResultFinally['RESULT_CHAR'] . "\n";
-        // }
+        if ($visit->form['management']['np_swab_result'] != $labResultFinally['RESULT_CHAR']) {
+            echo $visit->id . ' => ' . $visit->form['management']['np_swab_result'] . ' : ' . $labResultFinally['RESULT_CHAR'] . "\n";
+            return;
+        }
+
+        return 1;
     }
 }
