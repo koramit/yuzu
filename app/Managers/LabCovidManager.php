@@ -54,43 +54,61 @@ class LabCovidManager
         $results = $this->api->getLabs(hn: $visit->hn, dateLab: $dateLab, labs: [$this->labIds[$lab]]);
 
         if ($results === false) {
+            echo "call error\n";
             return; // should notify if to many errors
         }
 
         if (!count($results)) {
+            echo "no result\n";
             return; // no results;
         }
 
-        $result = false;
         foreach ($results as $record) {
             if (
                 $record['ORDER_DATE'] === $dateLab
                 || $record['SPECIMEN_RECEIVED'] === $dateLab
                 || $record['REPORT_DATE'] === $dateLab
             ) {
+                $labResult = false;
+                foreach ($record['RESULT'] as $result) {
+                    if (
+                        $result['TI_CODE'] === $this->labIds[$lab] // exclude specimen
+                        && collect(['detected', 'not detected', 'inconclusive'])->contains(strtolower($result['RESULT_CHAR'] ?? ''))
+                    ) {
+                        $labResult = $result;
+                        break;
+                    }
+                }
+
+                if ($labResult) {
+                    if ($visit->form['management']['np_swab_result'] != $labResult['RESULT_CHAR']) {
+                        echo $visit->id . ' => ' . $visit->form['management']['np_swab_result'] . ' : ' . $labResult['RESULT_CHAR'] . "\n";
+                        return;
+                    } else {
+                        return 1;
+                    }
+                }
+            }
+        }
+
+        echo "pending\n";
+        return; // pending
+
+
+        $result = false;
+        foreach ($result['RESULT'] as $record) {
+            if ($record['TI_CODE'] === $this->labIds[$lab] && collect(['detected', 'not detected', 'inconclusive'])->contains($record['RESULT_CHAR'])) {
                 $result = $record;
                 break;
             }
         }
 
         if (!$result) {
-            return; // no result on the date
-        }
-
-        $labResultFinally = false;
-        foreach ($result['RESULT'] as $record) {
-            if ($record['TI_CODE'] === $this->labIds[$lab] && collect(['detected', 'not detected', 'inconclusive'])->contains($record['RESULT_CHAR'])) {
-                $labResultFinally = $record;
-                break;
-            }
-        }
-
-        if (!$labResultFinally) {
             return; // pending
         }
 
-        if ($visit->form['management']['np_swab_result'] != $labResultFinally['RESULT_CHAR']) {
-            echo $visit->id . ' => ' . $visit->form['management']['np_swab_result'] . ' : ' . $labResultFinally['RESULT_CHAR'] . "\n";
+        if ($visit->form['management']['np_swab_result'] != $result['RESULT_CHAR']) {
+            echo $visit->id . ' => ' . $visit->form['management']['np_swab_result'] . ' : ' . $result['RESULT_CHAR'] . "\n";
             return;
         }
 
