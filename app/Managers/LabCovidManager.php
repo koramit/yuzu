@@ -54,12 +54,12 @@ class LabCovidManager
         $results = $this->api->getLabs(hn: $visit->hn, dateLab: $dateLab, labs: [$this->labIds[$lab]]);
 
         if ($results === false) {
-            echo "call error\n";
+            echo $visit->hn .'-' . $dateLab ." => call error\n";
             return; // should notify if to many errors
         }
 
         if (!count($results)) {
-            echo "no result\n";
+            echo $visit->hn .'-' . $dateLab ." => no result\n";
             return; // no results;
         }
 
@@ -91,27 +91,7 @@ class LabCovidManager
             }
         }
 
-        echo "pending\n";
+        echo $visit->hn .'-' . $dateLab ." => pending\n";
         return; // pending
-
-
-        $result = false;
-        foreach ($result['RESULT'] as $record) {
-            if ($record['TI_CODE'] === $this->labIds[$lab] && collect(['detected', 'not detected', 'inconclusive'])->contains($record['RESULT_CHAR'])) {
-                $result = $record;
-                break;
-            }
-        }
-
-        if (!$result) {
-            return; // pending
-        }
-
-        if ($visit->form['management']['np_swab_result'] != $result['RESULT_CHAR']) {
-            echo $visit->id . ' => ' . $visit->form['management']['np_swab_result'] . ' : ' . $result['RESULT_CHAR'] . "\n";
-            return;
-        }
-
-        return 1;
     }
 }
