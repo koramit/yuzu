@@ -54,12 +54,12 @@ class LabCovidManager
         $results = $this->api->getLabs(hn: $visit->hn, dateLab: $dateLab, labs: [$this->labIds[$lab]]);
 
         if ($results === false) {
-            echo $visit->hn .'-' . $dateLab ." => call error\n";
+            echo $visit->hn .' : ' . $dateLab ." => call error\n";
             return; // should notify if to many errors
         }
 
         if (!count($results)) {
-            echo $visit->hn .'-' . $dateLab ." => no result\n";
+            echo $visit->hn .' : ' . $dateLab ." => no result\n";
             return; // no results;
         }
 
@@ -91,7 +91,7 @@ class LabCovidManager
             }
         }
 
-        echo $visit->hn .'-' . $dateLab ." => pending\n";
+        echo $visit->hn .' : ' . $dateLab ." => pending\n";
         return; // pending
     }
 }
