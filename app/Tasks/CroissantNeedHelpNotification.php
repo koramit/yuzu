@@ -9,6 +9,10 @@ class CroissantNeedHelpNotification
 {
     public static function run()
     {
+        return;
+        ////////
+        $status = Cache::get('today-koto-logs', []);
+        ///////
         $status = Cache::get('croissant-message', 'fetch');
         if (str_starts_with($status, 'fetch') || Cache::has('notify-lab-progress-100')) {
             return;
