@@ -10,17 +10,19 @@ use Illuminate\Database\Eloquent\Collection;
 class LabCovidManager
 {
     protected $api;
-    protected $labs = [
-        'pcr' => [
-            'service_id' => ['204592', '5565'],
-            'ti_code' => collect(['204592', '556A03']),
-            'result' => collect(['detected', 'not detected', 'inconclusive']),
-        ],
-    ];
+    protected $labs;
 
     public function __construct()
     {
         $this->api = new SiITLabAPI;
+
+        $this->labs = [
+            'pcr' => [
+                'service_id' => ['204592', '5565'],
+                'ti_code' => collect(['204592', '556A03']),
+                'result' => collect(['detected', 'not detected', 'inconclusive']),
+            ],
+        ];
     }
 
     public function run(string $dateStart, int $days)
