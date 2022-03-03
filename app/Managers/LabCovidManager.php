@@ -10,14 +10,12 @@ use Illuminate\Database\Eloquent\Collection;
 class LabCovidManager
 {
     protected $api;
-    protected $labIds = [
-        'pcr' => '204592',
-        'rapid_pcr' => '204593'
-    ];
-
-    protected $labNames = [
-        'pcr' => '**SARS-CoV-2(COVID-19)RNA',
-        'rapid_pcr' => ''
+    protected $labs = [
+        'pcr' => [
+            'service_id' => ['204592', '5565'],
+            'ti_code' => collect(['204592', '556A03']),
+            'result' => collect(['detected', 'not detected', 'inconclusive']),
+        ],
     ];
 
     public function __construct()
@@ -42,7 +40,9 @@ class LabCovidManager
     {
         $matchCount = 0;
         foreach ($visits as $visit) {
-            $matchCount += ($this->manage($visit, 'pcr') === 1 ? 1 : 0);
+            if ($this->manage($visit, 'pcr') === 'ok') {
+                $matchCount++;
+            }
         }
 
         echo $visits[0]->date_visit->format('Y-m-d') . ' => ' . $visits->count() . ' : ' . $matchCount . "\n";
@@ -50,48 +50,49 @@ class LabCovidManager
 
     protected function manage(Visit &$visit, string $lab)
     {
+        // call lab
         $dateLab = $visit->date_visit->format('Y-m-d');
-        $results = $this->api->getLabs(hn: $visit->hn, dateLab: $dateLab, labs: [$this->labIds[$lab]]);
+        $results = $this->api->getLabs(hn: $visit->hn, dateLab: $dateLab, labs: $this->labs[$lab]['service_id']);
 
+        // validate resutls
         if ($results === false) {
             echo $visit->hn .' : ' . $dateLab ." => call error\n";
-            return; // should notify if to many errors
+            return 'error'; // should notify if to many errors
         }
-
         if (!count($results)) {
             echo $visit->hn .' : ' . $dateLab ." => no result\n";
-            return; // no results;
+            return 'no lab'; // no results;
         }
+        $filtered = collect($results)->filter(
+            fn ($r) => $r['ORDER_DATE'] === $dateLab || $r['SPECIMEN_RECEIVED'] === $dateLab || $r['REPORT_DATE'] === $dateLab
+        );
 
-        foreach ($results as $record) {
-            if (
-                $record['ORDER_DATE'] === $dateLab
-                || $record['SPECIMEN_RECEIVED'] === $dateLab
-                || $record['REPORT_DATE'] === $dateLab
-            ) {
-                $labResult = false;
-                foreach ($record['RESULT'] as $result) {
-                    if (
-                        $result['TI_CODE'] === $this->labIds[$lab] // exclude specimen
-                        && collect(['detected', 'not detected', 'inconclusive'])->contains(strtolower($result['RESULT_CHAR'] ?? ''))
-                    ) {
-                        $labResult = $result;
-                        break;
-                    }
-                }
+        $recordIndex = $filtered->search(function ($r) use ($lab) {
+            $foundIndex = collect($r['RESULT'])->search(
+                fn ($l) => $this->labs[$lab]['ti_code']->contains($l['TI_CODE'])
+                        && $this->labs[$lab]['result']->contains(strtolower($l['RESULT_CHAR'] ?? ''))
+            );
 
-                if ($labResult) {
-                    if ($visit->form['management']['np_swab_result'] != $labResult['RESULT_CHAR']) {
-                        echo $visit->id . ' => ' . $visit->form['management']['np_swab_result'] . ' : ' . $labResult['RESULT_CHAR'] . "\n";
-                        return;
-                    } else {
-                        return 1;
-                    }
-                }
+            if ($foundIndex === false) {
+                return false;
             }
+
+            $r['selected'] = $r['RESULT'][$foundIndex];
+            return true;
+        });
+
+        if ($recordIndex === false) {
+            echo $visit->hn .' : ' . $dateLab ." => pending\n";
+            return 'pending'; // pending
         }
 
-        echo $visit->hn .' : ' . $dateLab ." => pending\n";
-        return; // pending
+        // update
+        $record = $filtered[$recordIndex];
+        if ($record['selected']['RESULT_CHAR'] != $visit->form['management']['np_swab_result']) {
+            echo $visit->hn .' : ' . $dateLab ." => not match\n";
+            return 'not match';
+        }
+
+        return 'ok';
     }
 }
