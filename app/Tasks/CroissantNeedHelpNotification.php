@@ -9,6 +9,7 @@ class CroissantNeedHelpNotification
 {
     public static function run()
     {
+        return;
         //////// toto case
         if (Cache::has('notify-lab-progress-100')) {
             return;
