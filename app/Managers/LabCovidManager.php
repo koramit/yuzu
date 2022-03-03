@@ -11,6 +11,7 @@ class LabCovidManager
 {
     protected $api;
     protected $labs;
+    protected $labSelected;
 
     public function __construct()
     {
@@ -79,7 +80,7 @@ class LabCovidManager
                 return false;
             }
 
-            $r['selected'] = $r['RESULT'][$foundIndex];
+            $this->labSelected = $r['RESULT'][$foundIndex];
             return true;
         });
 
@@ -90,7 +91,7 @@ class LabCovidManager
 
         // update
         $record = $filtered[$recordIndex];
-        if ($record['selected']['RESULT_CHAR'] != $visit->form['management']['np_swab_result']) {
+        if ($this->labSelected['RESULT_CHAR'] != $visit->form['management']['np_swab_result']) {
             echo $visit->hn .' : ' . $dateLab ." => not match\n";
             return 'not match';
         }
