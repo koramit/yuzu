@@ -140,17 +140,17 @@ class BotCommandsManager
 
     protected function handleCroissantFeedback()
     {
-        $logs = Cache::get(key: 'today-koto-logs', default: []);
-        if (!count($logs)) {
+        $logs = Cache::get(key: 'lis-api-logs', default: []);
+        if (!$logs->count()) {
             return [
                 'text' => 'ยังไม่มีแลปเข้าสำหรับวันนี้',
                 'mode' => 'get_today_lab',
             ];
         }
 
-        $log = end($logs);
+        $log = $logs->last();
         $text  = 'แลปเข้าเมื่อ ' . $log['timestamp']->locale('th_TH')->diffForHumans(now()) . "\n";
-        $text .= 'เข้าใหม่ ' . $log['updated_count'] . " ราย\n";
+        $text .= 'เข้าใหม่ ' . $log['reported'] . " ราย\n";
         $text .= 'เหลืออีก ' . $log['remains'] . " ราย\n";
 
         return [

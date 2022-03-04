@@ -42,11 +42,12 @@ class LabCovidManager
         }
 
         $count = [
-            'remains' => $visits->count(),
+            'start' => $visits->count(),
             'error' => 0,
             'no lab' => 0,
             'pending' => 0,
             'reported' => 0,
+            'remains' => $visits->count(),
         ];
 
         foreach ($visits as $visit) {
@@ -65,6 +66,7 @@ class LabCovidManager
         if ($count['reported']) {
             VisitUpdated::dispatch($this->reported);
             LabReported::dispatch($this->detected ?? $this->reported);
+            $count['remains'] = $count['start'] - $count['reported'];
         }
 
         return $count;
