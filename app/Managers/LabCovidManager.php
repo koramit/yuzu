@@ -3,15 +3,17 @@
 namespace App\Managers;
 
 use App\APIs\SiITLabAPI;
+use App\Events\LabReported;
+use App\Events\VisitUpdated;
 use App\Models\Visit;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 
 class LabCovidManager
 {
     protected $api;
     protected $labs;
     protected $labSelected;
+    protected $reported;
+    protected $detected;
 
     public function __construct()
     {
@@ -24,31 +26,48 @@ class LabCovidManager
                 'result' => collect(['detected', 'not detected', 'inconclusive']),
             ],
         ];
+
+        $this->reported = null;
+        $this->detected = null;
     }
 
-    public function run(string $dateStart, int $days)
+    public function fetchPCR(string $dateVisit)
     {
-        for ($i = 0; $i <= $days; $i++) {
-            $dateVisit = Carbon::create($dateStart)->addDays($i)->format('Y-m-d');
+        $visits = Visit::whereDateVisit($dateVisit)
+                        ->whereSwabbed(true)
+                        ->get();
 
-            $visits = Visit::whereDateVisit($dateVisit)
-                            ->whereSwabbed(true)
-                            ->get();
-
-            $this->fetchPCR($visits);
+        if (! $visits->count()) {
+            return false;
         }
-    }
 
-    public function fetchPCR(Collection $visits)
-    {
-        $matchCount = 0;
+        $count = [
+            'remains' => $visits->count(),
+            'error' => 0,
+            'no lab' => 0,
+            'pending' => 0,
+            'reported' => 0,
+        ];
+
         foreach ($visits as $visit) {
-            if ($this->manage($visit, 'pcr') === 'ok') {
-                $matchCount++;
+            $result = $this->manage($visit, 'pcr');
+            if ($result === 'error') {
+                $count['error']++;
+            } elseif ($result === 'ok') {
+                $count['no lab']++;
+            } elseif ($result === 'pending') {
+                $count['pending']++;
+            } elseif ($result === 'reported') {
+                $count['reported']++;
             }
         }
 
-        echo $visits[0]->date_visit->format('Y-m-d') . ' => ' . $visits->count() . ' : ' . $matchCount . "\n";
+        if ($count['reported']) {
+            VisitUpdated::dispatch($this->reported);
+            LabReported::dispatch($this->detected ?? $this->reported);
+        }
+
+        return $count;
     }
 
     protected function manage(Visit &$visit, string $lab)
@@ -59,12 +78,10 @@ class LabCovidManager
 
         // validate resutls
         if ($results === false) {
-            echo $visit->hn .' : ' . $dateLab ." => call error\n";
-            return 'error'; // should notify if to many errors
+            return 'error';
         }
         if (!count($results)) {
-            echo $visit->hn .' : ' . $dateLab ." => no result\n";
-            return 'no lab'; // no results;
+            return 'no lab';
         }
         $filtered = collect($results)->filter(
             fn ($r) => $r['ORDER_DATE'] === $dateLab || $r['SPECIMEN_RECEIVED'] === $dateLab || $r['REPORT_DATE'] === $dateLab
@@ -85,16 +102,11 @@ class LabCovidManager
         });
 
         if ($recordIndex === false) {
-            echo $visit->hn .' : ' . $dateLab ." => pending\n";
             return 'pending'; // pending
         }
 
         // update
         $record = $filtered[$recordIndex];
-        // if ($this->labSelected['RESULT_CHAR'] != $visit->form['management']['np_swab_result']) {
-        //     echo $visit->hn .' : ' . $dateLab ." => not match\n";
-        //     return 'not match';
-        // }
         $specimen = collect($record['RESULT'])->filter(fn ($r) => ($r['TI_NAME'] ?? '') === 'SPECIMEN')[0] ?? null;
         $transaction = [
             'lab_no' => $record['LAB_NO'],
@@ -104,12 +116,20 @@ class LabCovidManager
             'specimen' => $specimen ? ($specimen['RESULT_CHAR'] ?? null) : null,
             'lab_code' => $record['SERV_ID'] ?? null,
             'lab_name' => $record['SERV_DESC'] ?? null,
-            'result' => $this->labSelected['RESULT_CHAR'],
-            'note' => ($record['NOTE'] ?? null) ? str_replace("\r\n", ' | ', $record['NOTE']) : null,
         ];
 
-        print_r($transaction);
+        $visit->forceFill([
+            'form->management->np_swab_result' => $this->labSelected['RESULT_CHAR'],
+            'form->management->np_swab_result_note' => ($record['NOTE'] ?? null) ? str_replace("\r\n", ' | ', $record['NOTE']) : null,
+            'form->management->np_swab_result_transaction' => $transaction,
+        ])->save();
 
-        return 'ok';
+        if (!$this->detected && strtolower($this->labSelected['RESULT_CHAR']) === 'detected') {
+            $this->detected = $visit;
+        } elseif (!$this->reported) {
+            $this->reported = $visit;
+        }
+
+        return 'reported';
     }
 }
