@@ -21,7 +21,12 @@ class PatientManager
             }
 
             unset($data['ok'], $data['found']);
-            $patient = Patient::create(['hn' => $hn, 'slug' => Str::uuid()->toString(), 'profile' => $data]);
+            // use $data['hn'] instead of $hn param because
+            // some how, invisible chars work with api
+            // then check existing patient again
+            if (!$patient = Patient::findByEncryptedKey($data['hn'])) {
+                $patient = Patient::create(['hn' => $data['hn'], 'slug' => Str::uuid()->toString(), 'profile' => $data]);
+            }
 
             return [
                 'found' => true,

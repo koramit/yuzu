@@ -236,6 +236,7 @@ class VisitManager
             $patient = (new PatientManager)->manage($data['patient']['hn']);
             if ($patient['found']) {
                 $visit->patient_id = $patient['patient']->id;
+                $data['patient']['hn'] = $patient['patient']->hn;
             } else { // fallback
                 $data['patient']['hn'] = null;
                 $data['patient']['name'] = $visit->form['patient']['name'];
