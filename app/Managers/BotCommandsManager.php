@@ -140,7 +140,7 @@ class BotCommandsManager
 
     protected function handleCroissantFeedback()
     {
-        $logs = Cache::get(key: 'lis-api-logs', default: []);
+        $logs = Cache::get(key: 'lis-api-logs', default: collect([]));
         if (!$logs->count()) {
             return [
                 'text' => 'ยังไม่มีแลปเข้าสำหรับวันนี้',
