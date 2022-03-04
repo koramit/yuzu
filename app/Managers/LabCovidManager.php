@@ -34,6 +34,7 @@ class LabCovidManager
     public function fetchPCR(string $dateVisit)
     {
         $visits = Visit::whereDateVisit($dateVisit)
+                        ->whereNull('form->management->np_swab_result')
                         ->whereSwabbed(true)
                         ->get();
 
