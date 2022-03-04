@@ -108,7 +108,7 @@ class LabCovidManager
             'note' => $record['NOTE'] ?? null,
         ];
 
-        echo $transaction;
+        print_r($transaction);
 
         return 'ok';
     }
