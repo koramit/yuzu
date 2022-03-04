@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LoadDataRecord;
 use App\Models\Visit;
+use App\Traits\MedicalCertifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -11,6 +12,8 @@ use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
 class CertificateListExportController extends Controller
 {
+    use MedicalCertifiable;
+
     protected $daysCriteria;
 
     public function __invoke()
@@ -65,37 +68,5 @@ class CertificateListExportController extends Controller
                                 ]);
 
         return FastExcel::data($filtered)->download($filename);
-    }
-
-    protected function getThaiDate($dateStr)
-    {
-        if (! $dateStr) {
-            return null;
-        }
-
-        $thaiMonths = ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-
-        $ymd = explode('-', $dateStr);
-
-        return ((int) $ymd[2]).' '.($thaiMonths[(int) $ymd[1]]).' '.(((int) $ymd[0]) + 543);
-    }
-
-    protected function getRecommendation($recommendation)
-    {
-        if (! $recommendation) {
-            return null;
-        }
-
-        if ($recommendation === 'ไปทำงานได้') {
-            return 'ไปทำงานได้โดยใส่หน้ากากอนามัยตลอดเวลาทุกวัน';
-        } elseif ($recommendation === 'ATK positive') {
-            return "กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ {$this->daysCriteria} วัน";
-        } elseif ($recommendation === 'กักตัว') {
-            return "กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ {$this->daysCriteria} วัน"; // CR 220124 change 14 => 10 days
-        } elseif ($recommendation === 'กักตัวนัดสวอบซ้ำ') {
-            return "กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ {$this->daysCriteria} วัน และนัดมาตรวจซ้ำ"; // CR 220124 change 14 => 10 days
-        } else {
-            return '!!!';
-        }
     }
 }

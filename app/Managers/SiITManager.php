@@ -3,6 +3,7 @@
 namespace App\Managers;
 
 use App\Models\Visit;
+use App\Traits\MedicalCertifiable;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 class SiITManager
 {
+    use MedicalCertifiable;
+
     public function manage(Visit $visit)
     {
         $url = config('services.siit.export_case_endpoint');
@@ -140,5 +143,46 @@ class SiITManager
         $dataArray[] = $data;
 
         return $dataArray;
+    }
+
+    public function manageCertificate(Visit $visit)
+    {
+        $tx = $visit->form['management']['np_swab_result_transaction'] ?? null;
+        $cert = $visit->form['evaluation'];
+        $form = [
+            'hn' => $visit->hn,
+            'lab_no' => $visit->atk_positive_case ? '' : ($tx ? $tx['lab_no'] : ''),
+            'atk_result' => $visit->atk_positive_case ? 'Detected' : '',
+            'doctor_code' => 'placeholder',
+            'doctor_name' => 'placeholder',
+            'doctor_comments' => [
+                ['seq' => 1, 'comments' => $this->getRecommendation($cert['recommendation'] ?? null)],
+                ['seq' => 2, 'comments' => $this->getThaiDate($cert['date_quarantine_end'] ?? null)],
+                ['seq' => 3, 'comments' => $this->getThaiDate($cert['date_reswab'] ?? null)],
+            ]
+        ];
+        try {
+            $res = Http::withHeaders(['token' => config('services.siit.export_certificate_token')])
+                        ->timeout(2)
+                        ->retry(5, 100)
+                        ->post(config('services.siit.export_certificate_endpoint'), $form)
+                        ->json();
+        } catch (Exception $e) {
+            // Log::error('SiIT_EXPORT_REQUEST@'.$visit->slug.'@'.$e->getMessage());
+            // $siitLog[$today]['request_error'] = $siitLog[$today]['request_error'] + 1;
+            // Cache::put('siit-log', $siitLog);
+
+            return false;
+        }
+
+        if ($res['messageCode'] === '0') {
+            // $siitLog[$today]['accept'] = $siitLog[$today]['accept'] + 1;
+            // Cache::put('siit-log', $siitLog);
+
+            return true;
+        }
+
+        echo $res['messageStatus'] . "\n";
+        return false;
     }
 }

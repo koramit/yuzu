@@ -57,7 +57,7 @@ class CertificationsController extends Controller
                 continue;
             }
 
-            if (! $manager->update($visit, $certificate)) {
+            if (! $manager->update($visit, $certificate, Auth::user())) {
                 $errors[] = $certificate['slug'];
             }
         }
