@@ -150,8 +150,8 @@ class BotCommandsManager
 
         $log = $logs->last();
         $text  = 'แลปเข้าเมื่อ ' . $log['timestamp']->locale('th_TH')->diffForHumans(now()) . "\n";
-        $text .= 'เข้าใหม่ ' . $log['reported'] . " ราย\n";
-        $text .= 'เหลืออีก ' . $log['remains'] . " ราย\n";
+        $text .= 'เข้าใหม่ ' . $log['count']['reported'] . " ราย\n";
+        $text .= 'เหลืออีก ' . $log['count']['remains'] . " ราย\n";
 
         return [
             'text' => $text,
