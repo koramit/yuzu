@@ -91,10 +91,24 @@ class LabCovidManager
 
         // update
         $record = $filtered[$recordIndex];
-        if ($this->labSelected['RESULT_CHAR'] != $visit->form['management']['np_swab_result']) {
-            echo $visit->hn .' : ' . $dateLab ." => not match\n";
-            return 'not match';
-        }
+        // if ($this->labSelected['RESULT_CHAR'] != $visit->form['management']['np_swab_result']) {
+        //     echo $visit->hn .' : ' . $dateLab ." => not match\n";
+        //     return 'not match';
+        // }
+        $specimen = collect($record['RESULT'])->filter(fn ($r) => ($r['TI_NAME'] ?? '') === 'SPECIMEN')[0] ?? null;
+        $transaction = [
+            'lab_no' => $record['LAB_NO'],
+            'ordered_at' => $record['ORDER_DATE'] . ' ' . $record['ORDER_TIME'],
+            'received_at' => $record['SPECIMEN_RECEIVED'] . ' ' . $record['SPECIMEN_RECEIVED_TIME'],
+            'reported_at' => $record['REPORT_DATE'] . ' ' . $record['REPORT_TIME'],
+            'specimen' => $specimen ? ($specimen['RESULT_CHAR'] ?? null) : null,
+            'lab_code' => $record['SERV_ID'] ?? null,
+            'lab_name' => $record['SERV_DESC'] ?? null,
+            'result' => $this->labSelected['RESULT_CHAR'],
+            'note' => $record['NOTE'] ?? null,
+        ];
+
+        echo $transaction;
 
         return 'ok';
     }
