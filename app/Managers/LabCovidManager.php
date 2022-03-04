@@ -105,7 +105,7 @@ class LabCovidManager
             'lab_code' => $record['SERV_ID'] ?? null,
             'lab_name' => $record['SERV_DESC'] ?? null,
             'result' => $this->labSelected['RESULT_CHAR'],
-            'note' => $record['NOTE'] ?? null,
+            'note' => ($record['NOTE'] ?? null) ? str_replace("\r\n", ' | ', $record['NOTE']) : null,
         ];
 
         print_r($transaction);
