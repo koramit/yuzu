@@ -6,6 +6,7 @@ use App\Models\DutyToken;
 use App\Tasks\ClearPatientNotification;
 use App\Tasks\CroissantNeedHelpNotification;
 use App\Tasks\DrinkWaterNotification;
+use App\Tasks\FetchLabCovid;
 use App\Tasks\UpdatePatientName;
 use Exception;
 use Illuminate\Console\Scheduling\Schedule;
@@ -62,6 +63,9 @@ class Kernel extends ConsoleKernel
 
         // update patient name after clinic closed for certification
         $schedule->call(fn () => UpdatePatientName::run())->dailyAt('12:00'); // 19:00
+
+        // fetch LIS API
+        $schedule->call(fn () => FetchLabCovid::run())->everyTenMinutes(); // hours define in task
     }
 
     /**
