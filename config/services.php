@@ -76,6 +76,8 @@ return [
 
     'siit' => [
         'export_case_endpoint' => env('SIIT_EXPORT_CASE_ENDPOINT'),
+        'export_certificate_endpoint' => env('SIIT_EXPORT_CERTIFICATE_ENDPOINT'),
+        'export_certificate_token' => env('SIIT_EXPORT_CERTIFICATE_TOKEN'),
     ],
 
     'line' => [

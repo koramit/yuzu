@@ -2,6 +2,7 @@
 
 namespace App\Managers;
 
+use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Support\Carbon;
 
@@ -115,7 +116,7 @@ class CertificateManager
         return $records;
     }
 
-    public function update(Visit $visit, array $certificate)
+    public function update(Visit $visit, array $certificate, User $md)
     {
         $evaluation = $visit->form['evaluation'];
         if (
@@ -129,6 +130,8 @@ class CertificateManager
         $evaluation['recommendation'] = $certificate['recommendation'];
         $evaluation['date_quarantine_end'] = $certificate['date_quarantine_end'];
         $evaluation['date_reswab'] = $certificate['date_reswab'];
+        $evaluation['md_name'] = $md->profile['full_name'];
+        $evaluation['md_pln'] = $md->profile['pln'] ?? null;
 
         return $visit->forceFill(['form->evaluation' => $evaluation])->save();
     }
