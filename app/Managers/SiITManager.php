@@ -208,10 +208,7 @@ class SiITManager
 
         $md = $certificates->filter(fn ($cert) => $cert->form['evaluation']['md_name'] ?? null);
         if (! $md->count()) {
-            return [
-                'md_name' => null,
-                'md_pln' => null,
-            ];
+            return;
         }
         $md = [
             'md_name' => $md[0]->form['evaluation']['md_name'],

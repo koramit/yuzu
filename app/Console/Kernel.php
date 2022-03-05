@@ -7,6 +7,7 @@ use App\Tasks\ClearPatientNotification;
 use App\Tasks\CroissantNeedHelpNotification;
 use App\Tasks\DrinkWaterNotification;
 use App\Tasks\FetchLabCovid;
+use App\Tasks\SendSccCerts;
 use App\Tasks\UpdatePatientName;
 use Exception;
 use Illuminate\Console\Scheduling\Schedule;
@@ -66,6 +67,9 @@ class Kernel extends ConsoleKernel
 
         // fetch LIS API
         $schedule->call(fn () => FetchLabCovid::run())->everyTenMinutes(); // hours define in task
+
+        // send Scc certs job
+        $schedule->call(fn () => SendSccCerts::run())->everyMinute();
     }
 
     /**
