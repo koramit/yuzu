@@ -214,8 +214,11 @@ class SiITManager
 
         $this->daysCriteria = Carbon::create($dateVisit)->lessThan(Carbon::create('2022-01-24')) ? 14 : 10;
 
+        $count = 1;
         foreach ($certificates as $cert) {
+            echo $count."\n";
             $this->manageCertificate($cert, $md);
+            $count++;
         }
     }
 }
