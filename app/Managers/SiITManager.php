@@ -193,8 +193,7 @@ class SiITManager
         $certificates = Visit::where('swabbed', true)
                              ->wherePatientType(1)
                              ->whereDateVisit($dateVisit)
-                             ->whereNotNull('form->management->np_swab_result')
-                             ->where('form->management->np_swab_result', '<>', 'Detected')
+                             ->whereNotNull('form->evaluation->recommendation')
                              ->withPublicPatientWalkinATKPosWithoutPCR($dateVisit)
                              ->get();
 
