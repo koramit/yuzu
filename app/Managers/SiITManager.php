@@ -171,6 +171,7 @@ class SiITManager
                         ->post(config('services.siit.export_certificate_endpoint'), $form)
                         ->json();
         } catch (Exception $e) {
+            dd($e);
             echo str_replace("\n", '', $e->getMessage())  . "\n";
             // Log::error('SiIT_EXPORT_REQUEST@'.$visit->slug.'@'.$e->getMessage());
             // $siitLog[$today]['request_error'] = $siitLog[$today]['request_error'] + 1;
