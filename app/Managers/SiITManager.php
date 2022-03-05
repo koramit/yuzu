@@ -149,6 +149,7 @@ class SiITManager
     {
         $tx = $visit->form['management']['np_swab_result_transaction'] ?? null;
         $cert = $visit->form['evaluation'];
+        print_r($cert);
         $form = [
             'hn' => $visit->hn,
             'lab_no' => $visit->atk_positive_case ? '' : ($tx ? $tx['lab_no'] : ''),
