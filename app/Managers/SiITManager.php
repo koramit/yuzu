@@ -4,6 +4,7 @@ namespace App\Managers;
 
 use App\Models\Visit;
 use App\Traits\MedicalCertifiable;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 class SiITManager
 {
     use MedicalCertifiable;
+
+    protected $daysCriteria;
 
     public function manage(Visit $visit)
     {
@@ -149,7 +152,6 @@ class SiITManager
     {
         $tx = $visit->form['management']['np_swab_result_transaction'] ?? null;
         $cert = $visit->form['evaluation'];
-        print_r($cert);
         $form = [
             'hn' => $visit->hn,
             'lab_no' => $visit->atk_positive_case ? '' : ($tx ? $tx['lab_no'] : ''),
@@ -169,7 +171,7 @@ class SiITManager
                         ->post(config('services.siit.export_certificate_endpoint'), $form)
                         ->json();
         } catch (Exception $e) {
-            echo $e->getMessage() . "\n";
+            echo str_replace("\n", '', $e->getMessage())  . "\n";
             // Log::error('SiIT_EXPORT_REQUEST@'.$visit->slug.'@'.$e->getMessage());
             // $siitLog[$today]['request_error'] = $siitLog[$today]['request_error'] + 1;
             // Cache::put('siit-log', $siitLog);
@@ -194,6 +196,7 @@ class SiITManager
                              ->wherePatientType(1)
                              ->whereDateVisit($dateVisit)
                              ->whereNotNull('form->evaluation->recommendation')
+                             ->whereNotNull('form->management->np_swab_result_transaction->lab_no')
                              ->withPublicPatientWalkinATKPosWithoutPCR($dateVisit)
                              ->get();
 
@@ -208,6 +211,8 @@ class SiITManager
             'md_name' => $md[0]->form['evaluation']['md_name'],
             'md_pln' => $md[0]->form['evaluation']['md_pln'],
         ];
+
+        $this->daysCriteria = Carbon::create($dateVisit)->lessThan(Carbon::create('2022-01-24')) ? 14 : 10;
 
         foreach ($certificates as $cert) {
             $this->manageCertificate($cert, $md);
