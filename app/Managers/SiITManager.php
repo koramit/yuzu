@@ -145,7 +145,7 @@ class SiITManager
         return $dataArray;
     }
 
-    public function manageCertificate(Visit $visit)
+    public function manageCertificate(Visit $visit, array $md)
     {
         $tx = $visit->form['management']['np_swab_result_transaction'] ?? null;
         $cert = $visit->form['evaluation'];
@@ -153,8 +153,8 @@ class SiITManager
             'hn' => $visit->hn,
             'lab_no' => $visit->atk_positive_case ? '' : ($tx ? $tx['lab_no'] : ''),
             'atk_result' => $visit->atk_positive_case ? 'Detected' : '',
-            'doctor_code' => 'placeholder',
-            'doctor_name' => 'placeholder',
+            'doctor_code' => $visit->atk_positive_case ? $md['md_pln'] : $cert['md_pln'],
+            'doctor_name' => $visit->atk_positive_case ? $md['md_name'] : $cert['md_name'],
             'doctor_comments' => [
                 ['seq' => 1, 'comments' => $this->getRecommendation($cert['recommendation'] ?? null)],
                 ['seq' => 2, 'comments' => $this->getThaiDate($cert['date_quarantine_end'] ?? null)],
@@ -168,6 +168,7 @@ class SiITManager
                         ->post(config('services.siit.export_certificate_endpoint'), $form)
                         ->json();
         } catch (Exception $e) {
+            echo $e->getMessage() . "\n";
             // Log::error('SiIT_EXPORT_REQUEST@'.$visit->slug.'@'.$e->getMessage());
             // $siitLog[$today]['request_error'] = $siitLog[$today]['request_error'] + 1;
             // Cache::put('siit-log', $siitLog);
@@ -184,5 +185,32 @@ class SiITManager
 
         echo $res['messageStatus'] . "\n";
         return false;
+    }
+
+    public function runCert(string $dateVisit)
+    {
+        $certificates = Visit::where('swabbed', true)
+                             ->wherePatientType(1)
+                             ->whereDateVisit($dateVisit)
+                             ->whereNotNull('form->management->np_swab_result')
+                             ->where('form->management->np_swab_result', '<>', 'Detected')
+                             ->withPublicPatientWalkinATKPosWithoutPCR($dateVisit)
+                             ->get();
+
+        $md = $certificates->filter(fn ($cert) => $cert->form['evaluation']['md_name'] ?? null);
+        if (! $md->count()) {
+            return [
+                'md_name' => null,
+                'md_pln' => null,
+            ];
+        }
+        $md = [
+            'md_name' => $md[0]->form['evaluation']['md_name'],
+            'md_pln' => $md[0]->form['evaluation']['md_pln'],
+        ];
+
+        foreach ($certificates as $cert) {
+            $this->manageCertificate($cert, $md);
+        }
     }
 }
