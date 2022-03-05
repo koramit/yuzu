@@ -462,4 +462,14 @@ class Visit extends Model
             && $this->form['exposure']['atk_positive']
             && str_starts_with(($this->form['management']['manage_atk_positive'] ?? ''), 'ไม่ต้องการยืนยันผลด้วยวิธี PCR');
     }
+
+    public function getSccCertSentHashAttribute()
+    {
+        $hashData = [
+            'recommendation' => $this->form['evaluation']['recommendation'] ?? null,
+            'date_quarantine_end' => $this->form['evaluation']['date_quarantine_end'] ?? null,
+            'date_reswab' => $this->form['evaluation']['date_reswab'] ?? null,
+        ];
+        return hash_hmac('sha256', json_encode($hashData), config('app.key'));
+    }
 }

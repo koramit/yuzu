@@ -164,7 +164,9 @@ class SiITManager
                 ['seq' => 3, 'comments' => $this->getThaiDate($cert['date_reswab'] ?? null)],
             ]
         ];
-        print_r($form);
+        $log = Cache::get('siit-cert-log', []);
+        $today = $visit->date_visit->format('Y-m-d');
+        $log[$today]['send_count'] = ($log[$today]['send_count'] ?? 0) + 1;
         try {
             $res = Http::withHeaders(['token' => config('services.siit.export_certificate_token')])
                         ->timeout(2)
@@ -172,24 +174,29 @@ class SiITManager
                         ->post(config('services.siit.export_certificate_endpoint'), $form)
                         ->json();
         } catch (Exception $e) {
-            // Log::error('SiIT_EXPORT_REQUEST@'.$visit->slug.'@'.$e->getMessage());
-            // $siitLog[$today]['request_error'] = $siitLog[$today]['request_error'] + 1;
-            // Cache::put('siit-log', $siitLog);
+            $log[$today]['error_count'] = ($log[$today]['error_count'] ?? 0) + 1;
+            $log[$today]['error_log'][] = preg_replace('/\d{8}/', '********', str_replace("\n", '', $e->getMessage()));
+            Cache::put('siit-cert-log', $log);
 
             return false;
         }
 
         if ($res['messageCode'] === '0') {
-            // $siitLog[$today]['accept'] = $siitLog[$today]['accept'] + 1;
-            // Cache::put('siit-log', $siitLog);
+            $log[$today]['success_count'] = ($log[$today]['success_count'] ?? 0) + 1;
+            Cache::put('siit-cert-log', $log);
+            $visit->forceFill(['form->scc_cert_sent_hash' => $visit->scc_cert_sent_hash])->save();
 
             return true;
         }
 
+        $log[$today]['failed_count'] = ($log[$today]['failed_count'] ?? 0) + 1;
+        $log[$today]['failed_log'][] = preg_replace('/\d{8}/', '********', str_replace("\n", '', $res['messageStatus']));
+        Cache::put('siit-cert-log', $log);
+
         return false;
     }
 
-    public function runCert(string $dateVisit)
+    public function sentSccCertificates(string $dateVisit)
     {
         $certificates = Visit::where('swabbed', true)
                              ->wherePatientType(1)
@@ -213,11 +220,11 @@ class SiITManager
 
         $this->daysCriteria = Carbon::create($dateVisit)->lessThan(Carbon::create('2022-01-24')) ? 14 : 10;
 
-        $count = 1;
         foreach ($certificates as $cert) {
-            echo $count."\n";
+            if (($cert->form['scc_cert_sent_hash'] ?? null) && $cert->form['scc_cert_sent_hash'] === $cert->scc_cert_sent_hash) {
+                continue;
+            }
             $this->manageCertificate($cert, $md);
-            $count++;
         }
     }
 }
