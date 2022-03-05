@@ -7,6 +7,7 @@ use App\Models\Visit;
 use App\Traits\MedicalCertifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
@@ -67,6 +68,7 @@ class CertificateListExportController extends Controller
                                     ['np_swab_result', 'asc']
                                 ]);
 
+        Cache::put(key: 'send-scc-certs-job', value: $dateVisit, ttl: now()->addMinutes(3));
         return FastExcel::data($filtered)->download($filename);
     }
 }
