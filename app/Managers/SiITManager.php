@@ -156,7 +156,7 @@ class SiITManager
             'hn' => $visit->hn,
             'lab_no' => $visit->atk_positive_case ? '' : ($tx ? $tx['lab_no'] : ''),
             'atk_result' => $visit->atk_positive_case ? 'Detected' : '',
-            'doctor_code' => '12345',//$visit->atk_positive_case ? $md['md_pln'] : $cert['md_pln'],
+            'doctor_code' => $visit->atk_positive_case ? $md['md_pln'] : $cert['md_pln'],
             'doctor_name' => $visit->atk_positive_case ? $md['md_name'] : $cert['md_name'],
             'doctor_comments' => [
                 ['seq' => 1, 'comments' => $this->getRecommendation($cert['recommendation'] ?? null)],
@@ -164,6 +164,7 @@ class SiITManager
                 ['seq' => 3, 'comments' => $this->getThaiDate($cert['date_reswab'] ?? null)],
             ]
         ];
+        print_r($form);
         try {
             $res = Http::withHeaders(['token' => config('services.siit.export_certificate_token')])
                         ->timeout(2)
@@ -171,8 +172,6 @@ class SiITManager
                         ->post(config('services.siit.export_certificate_endpoint'), $form)
                         ->json();
         } catch (Exception $e) {
-            dd($e);
-            echo str_replace("\n", '', $e->getMessage())  . "\n";
             // Log::error('SiIT_EXPORT_REQUEST@'.$visit->slug.'@'.$e->getMessage());
             // $siitLog[$today]['request_error'] = $siitLog[$today]['request_error'] + 1;
             // Cache::put('siit-log', $siitLog);
@@ -187,7 +186,6 @@ class SiITManager
             return true;
         }
 
-        echo $res['messageStatus'] . "\n";
         return false;
     }
 
