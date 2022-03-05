@@ -156,7 +156,7 @@ class SiITManager
             'hn' => $visit->hn,
             'lab_no' => $visit->atk_positive_case ? '' : ($tx ? $tx['lab_no'] : ''),
             'atk_result' => $visit->atk_positive_case ? 'Detected' : '',
-            'doctor_code' => $visit->atk_positive_case ? $md['md_pln'] : $cert['md_pln'],
+            'doctor_code' => '12345',//$visit->atk_positive_case ? $md['md_pln'] : $cert['md_pln'],
             'doctor_name' => $visit->atk_positive_case ? $md['md_name'] : $cert['md_name'],
             'doctor_comments' => [
                 ['seq' => 1, 'comments' => $this->getRecommendation($cert['recommendation'] ?? null)],
