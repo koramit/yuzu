@@ -21,8 +21,8 @@ class LabCovidManager
 
         $this->labs = [
             'pcr' => [
-                'service_id' => ['204592', '5565'],
-                'ti_code' => collect(['204592', '556A03']),
+                'service_id' => ['204592', '204593', '5565'],
+                'ti_code' => collect(['204592', '204593', '556A03']),
                 'result' => collect(['detected', 'not detected', 'inconclusive']),
             ],
         ];
