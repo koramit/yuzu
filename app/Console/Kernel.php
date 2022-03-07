@@ -12,6 +12,7 @@ use App\Tasks\UpdatePatientName;
 use Exception;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Cache;
 
 class Kernel extends ConsoleKernel
 {
@@ -70,6 +71,11 @@ class Kernel extends ConsoleKernel
 
         // send Scc certs job
         $schedule->call(fn () => SendSccCerts::run())->everyMinute();
+
+        $schedule->call(function () {
+            Cache::forget(key: 'siit-log');
+            Cache::forget(key: 'siit-cert-log');
+        })->twiceMonthly(1, 16, '11:00');
     }
 
     /**
