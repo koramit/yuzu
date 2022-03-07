@@ -212,13 +212,13 @@ class SiITManager
                              ->withPublicPatientWalkinATKPosWithoutPCR($dateVisit)
                              ->get();
 
-        $md = $certificates->filter(fn ($cert) => $cert->form['evaluation']['md_name'] ?? null)->values();
-        if (! $md->count()) {
+        $md = $certificates->filter(fn ($cert) => $cert->form['evaluation']['md_name'] ?? null)->first();
+        if (!$md) {
             return;
         }
         $md = [
-            'md_name' => $md[0]->form['evaluation']['md_name'],
-            'md_pln' => $md[0]->form['evaluation']['md_pln'],
+            'md_name' => $md->form['evaluation']['md_name'],
+            'md_pln' => $md->form['evaluation']['md_pln'],
         ];
 
         $this->daysCriteria = Carbon::create($dateVisit)->lessThan(Carbon::create('2022-01-24')) ? 14 : 10;
