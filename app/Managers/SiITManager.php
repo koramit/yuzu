@@ -212,7 +212,7 @@ class SiITManager
                              ->withPublicPatientWalkinATKPosWithoutPCR($dateVisit)
                              ->get();
 
-        $md = $certificates->filter(fn ($cert) => $cert->form['evaluation']['md_name'] ?? null);
+        $md = $certificates->filter(fn ($cert) => $cert->form['evaluation']['md_name'] ?? null)->values();
         if (! $md->count()) {
             return;
         }
