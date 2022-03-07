@@ -65,7 +65,7 @@ class LabCovidManager
         }
 
         if ($count['reported']) {
-            VisitUpdated::dispatch($this->reported);
+            VisitUpdated::dispatch($this->reported ?? $this->detected); // in case of last lab is detected
             LabReported::dispatch($this->detected ?? $this->reported);
             $count['remains'] = $count['start'] - $count['reported'];
         }
