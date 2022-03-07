@@ -175,7 +175,10 @@ class SiITManager
                         ->json();
         } catch (Exception $e) {
             $log[$today]['error_count'] = ($log[$today]['error_count'] ?? 0) + 1;
-            $log[$today]['error_log'][] = preg_replace('/\d{8}/', '********', str_replace("\n", '', $e->getMessage()));
+            $message = preg_replace('/\d{8}/', '********', str_replace("\n", '', $e->getMessage()));
+            if (! collect($log[$today]['error_log'])->contains($message)) {
+                $log[$today]['error_log'][] = $message;
+            }
             Cache::put('siit-cert-log', $log);
 
             return false;
@@ -190,7 +193,10 @@ class SiITManager
         }
 
         $log[$today]['failed_count'] = ($log[$today]['failed_count'] ?? 0) + 1;
-        $log[$today]['failed_log'][] = preg_replace('/\d{8}/', '********', str_replace("\n", '', $res['messageStatus']));
+        $message = preg_replace('/\d{8}/', '********', str_replace("\n", '', $res['messageStatus']));
+        if (! collect($log[$today]['failed_log'])->contains($message)) {
+            $log[$today]['failed_log'][] = $message;
+        }
         Cache::put('siit-cert-log', $log);
 
         return false;
