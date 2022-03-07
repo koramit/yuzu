@@ -338,6 +338,15 @@ Route::get('siit-feedback', function () {
     return $reversed;
 });
 
+Route::get('siit-cert-feedback', function () {
+    $log = Cache::get('siit-cert-log', []);
+    $reversed = [];
+    foreach (array_reverse(array_keys($log)) as $key) {
+        $reversed[$key] = $log[$key];
+    }
+    return $reversed;
+});
+
 Route::get('user-add-line', function () {
     return \App\Models\User::whereNotNull('profile->notification')
                               ->get()
