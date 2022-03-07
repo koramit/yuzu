@@ -22,6 +22,23 @@ class CertificateListExportController extends Controller
         $dateVisit = Session::get('certificate-list-export-date', now('asia/bangkok')->format('Y-m-d'));
         $this->daysCriteria = Carbon::create($dateVisit)->lessThan(Carbon::create('2022-01-24')) ? 14 : 10;
         $user = Auth::user();
+        $md = Visit::wherePatientType(1)
+                    ->whereDateVisit($dateVisit)
+                    ->whereNotNull('form->evaluation->md_name')
+                    ->first();
+
+        if ($md) {
+            $md = [
+                'md_name' => $md->form['evaluation']['md_name'],
+                'md_pln' => $md->form['evaluation']['md_pln'],
+            ];
+        } else {
+            $md = [
+                'md_name' => null,
+                'md_pln' => null,
+            ];
+        }
+
         $certificates = Visit::with('patient')
                              ->where('swabbed', true)
                              ->wherePatientType(1)
@@ -30,7 +47,7 @@ class CertificateListExportController extends Controller
                              ->where('form->management->np_swab_result', '<>', 'Detected')
                              ->withPublicPatientWalkinATKPosWithoutPCR($dateVisit)
                              ->get()
-                             ->transform(function ($visit) {
+                             ->transform(function ($visit) use ($md) {
                                  return [
                                       'HN' => $visit->hn,
                                       'name' => $visit->patient_name,
@@ -38,11 +55,14 @@ class CertificateListExportController extends Controller
                                       'age' => $visit->age_at_visit,
                                       'tel_no' => $visit->form['patient']['tel_no'],
                                       'tel_no_alt' => $visit->form['patient']['tel_no_alt'],
-                                      'ใบรับรองแพทย์' => $this->getRecommendation($visit->form['evaluation']['recommendation'] ?? null),// $this->getRecommendation($visit, $atkPos),
-                                      'กักตัวถึง' => $this->getThaiDate($visit->form['evaluation']['date_quarantine_end'] ?? null), //$this->quarantineUltil($visit, $atkPos),
+                                      'ใบรับรองแพทย์' => $this->getRecommendation($visit->form['evaluation']['recommendation'] ?? null),
+                                      'กักตัวถึง' => $this->getThaiDate($visit->form['evaluation']['date_quarantine_end'] ?? null),
                                       'นัดสวอบซ้ำ' => $this->getThaiDate($visit->form['evaluation']['date_reswab'] ?? null),
                                       'np_swab_result' => $visit->atk_positive_case ? 'ผู้มาขอใบรับรองทำการตรวจการติดเชื้อด้วยตนเอง และพบว่าผลบวก' : $visit->form['management']['np_swab_result'],
                                       'swab_at' => $visit->form['management']['container_swab_at'],
+                                      'หมายเหตุอื่น' =>	null,
+                                      'ชื่อแพทย์' => $visit->form['evaluation']['md_name'] ?? $md['md_name'],
+                                      'DoctorCode' => $visit->form['evaluation']['md_pln'] ?? $md['md_pln']
                                   ];
                              });
 
