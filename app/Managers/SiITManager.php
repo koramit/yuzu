@@ -160,10 +160,17 @@ class SiITManager
             'doctor_name' => $visit->atk_positive_case ? $md['md_name'] : ($cert['md_name'] ?? $md['md_name']),
             'doctor_comments' => [
                 ['seq' => 1, 'comments' => $this->getRecommendation($cert['recommendation'] ?? null)],
-                ['seq' => 2, 'comments' => $this->getThaiDate($cert['date_quarantine_end'] ?? null)],
-                ['seq' => 3, 'comments' => $this->getThaiDate($cert['date_reswab'] ?? null)],
             ]
         ];
+        $dateQuarantineEnd = $this->getThaiDate($cert['date_quarantine_end'] ?? null);
+        if ($dateQuarantineEnd) {
+            $form['doctor_comments'][] = ['seq' => 2, 'comments' => $dateQuarantineEnd];
+            $dateReswab = $this->getThaiDate($cert['date_reswab'] ?? null);
+            if ($dateReswab) {
+                $form['doctor_comments'][] = ['seq' => 3, 'comments' => $dateReswab];
+            }
+        }
+
         $log = Cache::get('siit-cert-log', []);
         $today = $visit->date_visit->format('Y-m-d');
         $log[$today]['send_count'] = ($log[$today]['send_count'] ?? 0) + 1;
