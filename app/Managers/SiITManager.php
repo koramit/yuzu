@@ -164,10 +164,10 @@ class SiITManager
         ];
         $dateQuarantineEnd = $this->getThaiDate($cert['date_quarantine_end'] ?? null);
         if ($dateQuarantineEnd) {
-            $form['doctor_comments'][] = ['seq' => 2, 'comments' => $dateQuarantineEnd];
+            $form['doctor_comments'][] = ['seq' => 2, 'comments' => 'กักตัวถึง '.$dateQuarantineEnd];
             $dateReswab = $this->getThaiDate($cert['date_reswab'] ?? null);
             if ($dateReswab) {
-                $form['doctor_comments'][] = ['seq' => 3, 'comments' => $dateReswab];
+                $form['doctor_comments'][] = ['seq' => 3, 'comments' => 'นัดสวอบซ้ำ '.$dateReswab];
             }
         }
 
