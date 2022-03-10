@@ -155,7 +155,7 @@ class SiITManager
         $form = [
             'hn' => $visit->hn,
             'lab_no' => $visit->atk_positive_case ? '' : ($tx ? $tx['lab_no'] : ''),
-            'atk_result' => $visit->atk_positive_case ? 'Detected' : '',
+            'atk_results' => $visit->atk_positive_case ? 'Detected' : '',
             'doctor_code' => $visit->atk_positive_case ? $md['md_pln'] : ($cert['md_pln'] ?? $md['md_pln']),
             'doctor_name' => $visit->atk_positive_case ? $md['md_name'] : ($cert['md_name'] ?? $md['md_name']),
             'doctor_comments' => [
