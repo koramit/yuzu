@@ -23,7 +23,7 @@ class LabCovidManager
             'pcr' => [
                 'service_id' => ['204592', '204593', '5565'],
                 'ti_code' => collect(['204592', '204593', '556A03']),
-                'result' => collect(['detected', 'not detected', 'inconclusive']),
+                'result' => collect(['detected', 'not detected', 'inconclusive', 'invalid']),
             ],
         ];
 
@@ -126,6 +126,11 @@ class LabCovidManager
             'form->management->np_swab_result_note' => ($record['NOTE'] ?? null) ? str_replace("\r\n", ' | ', $record['NOTE']) : null,
             'form->management->np_swab_result_transaction' => $transaction,
         ])->save();
+
+        if (strtolower($this->labSelected['RESULT_CHAR']) === 'invalid') {
+            // event
+            return 'reported';
+        }
 
         if (!$this->detected && strtolower($this->labSelected['RESULT_CHAR']) === 'detected') {
             $this->detected = $visit;
