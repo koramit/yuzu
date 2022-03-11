@@ -3,9 +3,11 @@
 namespace App\Managers;
 
 use App\APIs\SiITLabAPI;
+use App\Events\LabAlerted;
 use App\Events\LabReported;
 use App\Events\VisitUpdated;
 use App\Models\Visit;
+use App\Providers\LabNoResult;
 
 class LabCovidManager
 {
@@ -14,6 +16,7 @@ class LabCovidManager
     protected $labSelected;
     protected $reported;
     protected $detected;
+    protected $noResult;
 
     public function __construct()
     {
@@ -29,6 +32,7 @@ class LabCovidManager
 
         $this->reported = null;
         $this->detected = null;
+        $this->noResult = [];
     }
 
     public function fetchPCR(string $dateVisit)
@@ -57,11 +61,16 @@ class LabCovidManager
                 $count['error']++;
             } elseif ($result === 'ok') {
                 $count['no lab']++;
+                $this->noResult[] = $visit;
             } elseif ($result === 'pending') {
                 $count['pending']++;
             } elseif ($result === 'reported') {
                 $count['reported']++;
             }
+        }
+
+        if (now()->hour >= 13 && count($this->noResult)) { // after 20:00 only
+            LabNoResult::dispatch($this->noResult);
         }
 
         if ($count['reported']) {
@@ -128,8 +137,7 @@ class LabCovidManager
         ])->save();
 
         if (strtolower($this->labSelected['RESULT_CHAR']) === 'invalid') {
-            // event
-            return 'reported';
+            LabAlerted::dispatch($visit, 'invalid');
         }
 
         if (!$this->detected && strtolower($this->labSelected['RESULT_CHAR']) === 'detected') {
