@@ -50,8 +50,6 @@ class Kernel extends ConsoleKernel
         $schedule->call(fn () => ClearPatientNotification::run())->dailyAt('09:30'); // 16:30
 
         // croissant need help
-        $schedule->call(fn () => CroissantNeedHelpNotification::run())->dailyAt('11:20'); // 18:20
-        $schedule->call(fn () => CroissantNeedHelpNotification::run())->dailyAt('11:50'); // 18:50
         $schedule->call(fn () => CroissantNeedHelpNotification::run())->dailyAt('12:20'); // 19:20
         $schedule->call(fn () => CroissantNeedHelpNotification::run())->dailyAt('12:50'); // 19:50
         $schedule->call(fn () => CroissantNeedHelpNotification::run())->dailyAt('13:20'); // 20:20
