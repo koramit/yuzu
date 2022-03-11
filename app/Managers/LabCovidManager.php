@@ -3,9 +3,11 @@
 namespace App\Managers;
 
 use App\APIs\SiITLabAPI;
+use App\Events\LabAlerted;
 use App\Events\LabReported;
 use App\Events\VisitUpdated;
 use App\Models\Visit;
+use App\Providers\LabNoResult;
 
 class LabCovidManager
 {
@@ -14,6 +16,7 @@ class LabCovidManager
     protected $labSelected;
     protected $reported;
     protected $detected;
+    protected $noResult;
 
     public function __construct()
     {
@@ -23,12 +26,13 @@ class LabCovidManager
             'pcr' => [
                 'service_id' => ['204592', '204593', '5565'],
                 'ti_code' => collect(['204592', '204593', '556A03']),
-                'result' => collect(['detected', 'not detected', 'inconclusive']),
+                'result' => collect(['detected', 'not detected', 'inconclusive', 'invalid']),
             ],
         ];
 
         $this->reported = null;
         $this->detected = null;
+        $this->noResult = [];
     }
 
     public function fetchPCR(string $dateVisit)
@@ -57,11 +61,16 @@ class LabCovidManager
                 $count['error']++;
             } elseif ($result === 'ok') {
                 $count['no lab']++;
+                $this->noResult[] = $visit;
             } elseif ($result === 'pending') {
                 $count['pending']++;
             } elseif ($result === 'reported') {
                 $count['reported']++;
             }
+        }
+
+        if (now()->hour >= 13 && count($this->noResult)) { // after 20:00 only
+            LabNoResult::dispatch($this->noResult);
         }
 
         if ($count['reported']) {
@@ -126,6 +135,10 @@ class LabCovidManager
             'form->management->np_swab_result_note' => ($record['NOTE'] ?? null) ? str_replace("\r\n", ' | ', $record['NOTE']) : null,
             'form->management->np_swab_result_transaction' => $transaction,
         ])->save();
+
+        if (strtolower($this->labSelected['RESULT_CHAR']) === 'invalid') {
+            LabAlerted::dispatch($visit, 'invalid');
+        }
 
         if (!$this->detected && strtolower($this->labSelected['RESULT_CHAR']) === 'detected') {
             $this->detected = $visit;
