@@ -29,9 +29,7 @@ class NotifyLabNoResult
     {
         $text = "ไม่มีแลป\n";
         foreach ($event->visits as $visit) {
-            $firstName = explode(' ', $visit->patient_name)[1] ?? '';
-            $text .= (substr($visit->hn, 0, 4) . "**** \n");
-            // $text .= (substr($firstName, 0, 2) . "****\n\n"); // error character not support
+            $text .= ("\n" . $visit->hn);
         }
 
         (new NotificationManager)->notifySubscribers(mode: 'notify_croissant_need_help', text: $text, sticker: 'warning');
