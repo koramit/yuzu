@@ -4,10 +4,10 @@ namespace App\Managers;
 
 use App\APIs\SiITLabAPI;
 use App\Events\LabAlerted;
+use App\Events\LabNoResult;
 use App\Events\LabReported;
 use App\Events\VisitUpdated;
 use App\Models\Visit;
-use App\Providers\LabNoResult;
 
 class LabCovidManager
 {
