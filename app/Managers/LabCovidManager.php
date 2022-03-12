@@ -59,7 +59,7 @@ class LabCovidManager
             $result = $this->manage($visit, 'pcr');
             if ($result === 'error') {
                 $count['error']++;
-            } elseif ($result === 'ok') {
+            } elseif ($result === 'no lab') {
                 $count['no lab']++;
                 $this->noResult[] = $visit;
             } elseif ($result === 'pending') {
