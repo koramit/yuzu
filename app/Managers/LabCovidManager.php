@@ -92,7 +92,7 @@ class LabCovidManager
         if ($results === false) {
             return 'error';
         }
-        if (!count($results)) {
+        if (empty($results)) {
             return 'no lab';
         }
         $filtered = collect($results)->filter(
