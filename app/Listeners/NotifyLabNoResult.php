@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Providers;
+namespace App\Listeners;
 
 use App\Managers\NotificationManager;
-use App\Providers\LabNoResult;
+use App\Events\LabNoResult;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -22,7 +22,7 @@ class NotifyLabNoResult
     /**
      * Handle the event.
      *
-     * @param  \App\Providers\LabNoResult  $event
+     * @param  \App\Events\LabNoResult  $event
      * @return void
      */
     public function handle(LabNoResult $event)

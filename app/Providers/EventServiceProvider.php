@@ -4,13 +4,16 @@ namespace App\Providers;
 
 use App\Events\LabReported;
 use App\Events\LabAlerted;
+use App\Events\LabNoResult;
 use App\Events\Registered;
 use App\Events\VisitUpdated;
 use App\Listeners\InitRole;
 use App\Listeners\ManageVisitEvent;
 use App\Listeners\NotifyLabSubscribers;
 use App\Listeners\NotifyLabAlerted;
+use App\Listeners\NotifyLabNoResult;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use PhpParser\Node\Stmt\Label;
 
 class EventServiceProvider extends ServiceProvider
 {
