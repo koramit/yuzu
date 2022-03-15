@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CaptainMarvelController;
 use App\Http\Controllers\CertificateListExportController;
 use App\Http\Controllers\CertificationsController;
+use App\Http\Controllers\CheckQueueSwabController;
 use App\Http\Controllers\DutyTokensController;
 use App\Http\Controllers\DutyTokenUserAuthorizationController;
 use App\Http\Controllers\HomeController;
@@ -327,6 +328,12 @@ Route::get('in-transit', InTransitController::class)
 Route::get('medical-records', UserMedicalRecordsController::class)
      ->middleware('auth')
      ->name('medical-records');
+
+// check queue swab
+Route::get('check-queue-swab', [CheckQueueSwabController::class, 'create'])
+     ->name('check-queue-swab');
+Route::post('check-queue-swab', [CheckQueueSwabController::class, 'show'])
+     ->name('check-queue-swab.show');
 
 // SiIT feedback
 Route::get('siit-feedback', function () {
