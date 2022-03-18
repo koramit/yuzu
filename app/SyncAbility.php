@@ -32,4 +32,33 @@ class SyncAbility
                 ->sync($abilityIds);
         }
     }
+
+    public static function add()
+    {
+        $datetime = ['created_at' => now(), 'updated_at' => now()];
+
+        Ability::insert([
+            ['name' => 'get_a_treat'] + $datetime,
+            ['name' => 'view_clinic_alert'] + $datetime,
+            ['name' => 'subscribe_lab_notify'] + $datetime,
+            ['name' => 'view_croissant_feedback'] + $datetime,
+            ['name' => 'ask_today_stat'] + $datetime,
+        ]);
+
+        $assignment = [
+            'admin' => ['get_a_treat', 'view_clinic_alert', 'subscribe_lab_notify', 'view_croissant_feedback', 'ask_today_stat'],
+            'id_md' => ['get_a_treat', 'subscribe_lab_notify', 'ask_today_stat'],
+            'pm_md' => ['get_a_treat', 'subscribe_lab_notify', 'ask_today_stat'],
+            'ari_nurse' => ['get_a_treat', 'subscribe_lab_notify', 'ask_today_stat'],
+            'icn_nurse' => ['get_a_treat', 'subscribe_lab_notify', 'ask_today_stat'],
+            'in_charge' => ['get_a_treat', 'view_clinic_alert', 'subscribe_lab_notify', 'ask_today_stat'],
+        ];
+
+        foreach ($assignment as $role => $abilities) {
+            $theRole = Role::whereName($role)->first();
+            foreach ($abilities as $abilitie) {
+                $theRole->allowTo($abilitie);
+            }
+        }
+    }
 }
