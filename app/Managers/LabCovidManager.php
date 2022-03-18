@@ -8,6 +8,7 @@ use App\Events\LabNoResult;
 use App\Events\LabReported;
 use App\Events\VisitUpdated;
 use App\Models\Visit;
+use Illuminate\Support\Facades\Log;
 
 class LabCovidManager
 {
@@ -67,6 +68,10 @@ class LabCovidManager
             } elseif ($result === 'reported') {
                 $count['reported']++;
             }
+        }
+
+        if ($count['error']) {
+            Log::notice('lab error ', $count['error'].' of '.$visits->count());
         }
 
         if (now()->hour >= 13 && count($this->noResult)) { // after 20:00 only
