@@ -6,6 +6,7 @@ use App\Managers\NotificationManager;
 use App\Events\LabNoResult;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
 
 class NotifyLabNoResult
 {
@@ -31,6 +32,8 @@ class NotifyLabNoResult
         foreach ($event->visits as $visit) {
             $text .= ("\n" . $visit->hn);
         }
+
+        Log::notice($text);
 
         (new NotificationManager)->notifySubscribers(mode: 'notify_croissant_need_help', text: $text, sticker: 'warning');
     }
