@@ -99,5 +99,7 @@ return [
         'service_url' => env('LISAPI_SERVICE_URL'),
         'id' => env('LISAPI_ID'),
         'secret' => env('LISAPI_SECRET'),
-    ]
+    ],
+
+    'sivaccination_api_url' => env('SIVACCINATION_API_URL'),
 ];

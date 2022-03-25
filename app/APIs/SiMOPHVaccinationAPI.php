@@ -7,18 +7,26 @@ use Illuminate\Support\Facades\Http;
 
 class SiMOPHVaccinationAPI
 {
-    public function getVaccination(int $pid)
+    public function getVaccination($cid)
     {
         try {
             $result = Http::asJson()
-                        ->timeout(2)
-                        ->retry(5, 100)
-                        ->get(config('services.sivaccination_api_url'), ['cid' => $pid])
+                        ->timeout(12)
+                        ->retry(3, 100)
+                        ->post(config('services.sivaccination_api_url'), ['cid' => $cid])
                         ->json();
         } catch (Exception $e) {
-            return false;
+            return ['ok' => false, 'serverError' => false];
         }
 
-        return $result;
+        if (!isset($result['MessageCode'])) {
+            return ['ok' => false, 'serverError' => true];
+        }
+
+        if ($result['MessageCode'] !== 200) {
+            return ['ok' => true, 'found' => false, 'message' => $result['Message']];
+        }
+
+        return $result['result'];
     }
 }
