@@ -11,8 +11,8 @@ class SiMOPHVaccinationAPI
     {
         try {
             $result = Http::asJson()
-                        ->timeout(12)
-                        ->retry(3, 100)
+                        ->timeout(30)
+                        ->retry(2, 100)
                         ->post(config('services.sivaccination_api_url'), ['cid' => $cid])
                         ->json();
         } catch (Exception $e) {
