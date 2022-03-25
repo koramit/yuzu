@@ -27,6 +27,10 @@ class SiMOPHVaccinationAPI
             return ['ok' => true, 'found' => false, 'message' => $result['Message']];
         }
 
-        return $result['result'];
+        return [
+            'ok' => true,
+            'found' => true,
+            'data' => $result['result'],
+        ];
     }
 }
