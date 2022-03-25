@@ -16,7 +16,8 @@ class GenVaccine
             $cid = $patient->profile['document_id'];
             echo "pid: {$patient->id} => cid: {$cid} ; time: ";
             $startAt = now();
-            if ($cid) {
+            if (!$cid) {
+                echo "\n";
                 continue;
             }
             $vaccinations = $m->manage($cid);
