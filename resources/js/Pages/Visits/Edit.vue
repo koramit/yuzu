@@ -515,10 +515,10 @@
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light mb-4">
-                ข้อมูลการได้รับวัคซีนจากส่วนกลาง
+                ข้อมูลการได้รับวัคซีนดึงจากส่วนกลาง
             </h2>
             <div v-if="vaccinations === false">
-                ไม่สามารถดึงข้อมูลได้
+                ไม่สามารถดึงข้อมูลได้ {{ visit.patient_document_id ? '' : 'เนื่องจากไม่มีเลขประจำตัวประชาชน' }}
             </div>
             <div v-else-if="vaccinations.length === 0">
                 ไม่เคยได้รับวัคซีน
@@ -528,7 +528,7 @@
                 class="space-y-2"
             >
                 <div
-                    class="md:grid grid-cols-3 px-4 py-2 border border-bitter-theme-light rounded"
+                    class="sm:grid grid-cols-3 px-4 py-2 border border-bitter-theme-light rounded"
                     v-for="(vaccination, key) in vaccinations"
                     :key="key"
                 >
@@ -1471,7 +1471,6 @@ export default {
                     .post(window.route('moph-vaccination', props.visit.patient_document_id))
                     .then(res => {
                         if (res.data.ok) {
-                            console.log(res.data);
                             vaccinations.value = res.data.vaccinations;
                         }
                     });
