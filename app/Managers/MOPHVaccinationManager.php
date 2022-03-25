@@ -33,15 +33,17 @@ class MOPHVaccinationManager
 
         if (($result['vaccine_history_count'] ?? null) === 0) {
             // unvac
-            return 0;
+            return [];
         }
 
         $vaccinations = [];
         foreach ($result['vaccine_history'] as $vac) {
+            $date = explode('T', $vac['immunization_datetime'])[0];
             $vaccinations[] = [
                 'brand' => $brands[$vac['vaccine_manufacturer_id']],
                 'label' => $vac['vaccine_name'],
-                'date' => explode('T', $vac['immunization_datetime'])[0],
+                'date' => $date,
+                'date_label' => now()->create($date)->format('d/m/Y'),
                 'place' => $vac['hospital_name'],
                 'manufacturer_id' => $vac['vaccine_manufacturer_id'],
             ];

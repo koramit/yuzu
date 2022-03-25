@@ -15,6 +15,7 @@ use App\Http\Controllers\InTransitController;
 use App\Http\Controllers\KotoController;
 use App\Http\Controllers\LinkPatientController;
 use App\Http\Controllers\MocktailController;
+use App\Http\Controllers\MOPHVaccinationController;
 use App\Http\Controllers\OPDCardExportController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PositiveCaseDecisionExportController;
@@ -334,6 +335,10 @@ Route::get('check-queue-swab', [CheckQueueSwabController::class, 'create'])
      ->name('check-queue-swab');
 Route::post('check-queue-swab', [CheckQueueSwabController::class, 'show'])
      ->name('check-queue-swab.show');
+
+Route::post('moph-vaccination/{cip}', [MOPHVaccinationController::class, 'show'])
+     ->middleware('auth')
+     ->name('moph-vaccination');
 
 // SiIT feedback
 Route::get('siit-feedback', function () {

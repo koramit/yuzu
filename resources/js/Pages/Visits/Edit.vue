@@ -514,6 +514,32 @@
         </div>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+            <h2 class="font-semibold text-thick-theme-light mb-4">
+                ข้อมูลการได้รับวัคซีนจากส่วนกลาง
+            </h2>
+            <div v-if="vaccinations === false">
+                ไม่สามารถดึงข้อมูลได้
+            </div>
+            <div v-else-if="vaccinations.length === 0">
+                ไม่เคยได้รับวัคซีน
+            </div>
+            <div
+                v-else
+                class="space-y-2"
+            >
+                <div
+                    class="md:grid grid-cols-3 px-4 py-2 border border-bitter-theme-light rounded"
+                    v-for="(vaccination, key) in vaccinations"
+                    :key="key"
+                >
+                    <div>{{ vaccination.brand }}</div>
+                    <div>{{ vaccination.date_label }}</div>
+                    <div>{{ vaccination.place }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light sm:flex justify-between">
                 <p>ประวัติการฉีดวัคซีน COVID-19</p>
                 <button
@@ -906,7 +932,7 @@ import PatientMedicalRecord from '@/Components/Cards/PatientMedicalRecord';
 import { useForm, usePage } from '@inertiajs/inertia-vue3';
 import Layout from '@/Components/Layouts/Layout';
 import { reactive, ref } from '@vue/reactivity';
-import { computed, nextTick, watch } from '@vue/runtime-core';
+import { computed, nextTick, onMounted, watch } from '@vue/runtime-core';
 export default {
     layout: Layout,
     components: {
@@ -1438,6 +1464,20 @@ export default {
             }
         };
 
+        const vaccinations = ref(false);
+        onMounted(() => {
+            if (props.visit.has_patient && props.visit.patient_document_id) {
+                window.axios
+                    .post(window.route('moph-vaccination', props.visit.patient_document_id))
+                    .then(res => {
+                        if (res.data.ok) {
+                            console.log(res.data);
+                            vaccinations.value = res.data.vaccinations;
+                        }
+                    });
+            }
+        });
+
         const dateIsolationEndInput = ref(null);
         const dateReswabInput = ref(null);
         const dateReswabNextInput = ref(null);
@@ -1475,7 +1515,8 @@ export default {
             saveToDischargeSwabbed,
             canSaveToSwab,
             cloneVaccination,
-            dateLatestVaccinatedInput
+            dateLatestVaccinatedInput,
+            vaccinations
         };
     },
 };
