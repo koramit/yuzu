@@ -73,7 +73,7 @@
 
             <PatientMedicalRecord
                 :records="records"
-                v-if="form.visit.patient_type === 'บุคคลทั่วไป' && form.visit.screen_type === 'เริ่มตรวจใหม่'"
+                v-if="(form.visit.patient_type === 'บุคคลทั่วไป' && form.visit.screen_type === 'เริ่มตรวจใหม่') || form.visit.patient_type === 'เจ้าหน้าที่ศิริราช'"
             />
 
             <template v-if="form.visit.screen_type === 'นัดมา swab ซ้ำ'">
