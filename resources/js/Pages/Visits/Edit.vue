@@ -514,9 +514,21 @@
         </div>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
-            <h2 class="font-semibold text-thick-theme-light mb-4">
-                ข้อมูลการได้รับวัคซีนดึงจากส่วนกลาง
+            <h2 class="font-semibold text-thick-theme-light sm:flex justify-between mb-4">
+                <p>ข้อมูลการได้รับวัคซีนดึงจากส่วนกลาง</p>
+                <button
+                    class="inline-flex justify-start items-center mt-2 sm:mt-0"
+                    v-if="vaccinations !== false"
+                    @click="cloneMophVaccination"
+                >
+                    <Icon
+                        class="w-4 h-4 mr-1"
+                        name="clone"
+                    />
+                    <span class="block font-normal text-bitter-theme-light">ใช้ข้อมูลนี้</span>
+                </button>
             </h2>
+
             <div v-if="vaccinations === false">
                 ไม่สามารถดึงข้อมูลได้ {{ visit.patient_document_id ? '' : 'เนื่องจากไม่มีเลขประจำตัวประชาชน' }}
             </div>
@@ -1477,6 +1489,21 @@ export default {
             }
         });
 
+        const cloneMophVaccination = () => {
+            if (vaccinations.length === 0) {
+                form.vaccination.unvaccinated = true;
+                return;
+            }
+
+            form.vaccination.unvaccinated = false;
+            nextTick(() => {
+                form.vaccination.doses = vaccinations.value.length;
+                form.vaccination.date_latest_vacciniated = vaccinations.value[vaccinations.value.length - 1].date;
+                dateLatestVaccinatedInput.value.setDate(form.vaccination.date_latest_vacciniated);
+                vaccinations.value.forEach(vaccination => form.vaccination[vaccination.brand] = true);
+            });
+        };
+
         const dateIsolationEndInput = ref(null);
         const dateReswabInput = ref(null);
         const dateReswabNextInput = ref(null);
@@ -1515,7 +1542,8 @@ export default {
             canSaveToSwab,
             cloneVaccination,
             dateLatestVaccinatedInput,
-            vaccinations
+            vaccinations,
+            cloneMophVaccination
         };
     },
 };
