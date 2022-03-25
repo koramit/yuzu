@@ -21,6 +21,8 @@ class MOPHVaccinationManager
             return false;
         }
 
+        $result = $result['data'];
+
         if (($result['vaccine_history_count'] ?? null) === 0) {
             // unvac
             return 0;
