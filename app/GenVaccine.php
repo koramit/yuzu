@@ -13,7 +13,9 @@ class GenVaccine
         $vaccine = [];
         for ($i = $start; $i <= $stop; $i++) {
             $patient = Patient::find($i);
-            $vaccinations = $m->manage($patient->profile['document_id']);
+            $cid = $patient->profile['document_id'];
+            echo "pid: {$patient->id} => cid: {$cid}\n";
+            $vaccinations = $m->manage($cid);
             if (!$vaccinations) {
                 continue;
             }
