@@ -14,8 +14,14 @@ class GenVaccine
         for ($i = $start; $i <= $stop; $i++) {
             $patient = Patient::find($i);
             $cid = $patient->profile['document_id'];
-            echo "pid: {$patient->id} => cid: {$cid}\n";
+            echo "pid: {$patient->id} => cid: {$cid} ; time: ";
+            $startAt = now();
+            if ($cid) {
+                continue;
+            }
             $vaccinations = $m->manage($cid);
+            $callTime = now()->diffInSeconds($startAt);
+            echo "{$callTime}\n";
             if (!$vaccinations) {
                 continue;
             }
@@ -24,6 +30,7 @@ class GenVaccine
                 $vaccine[] = [
                     'mid' => $vac['manufacturer_id'],
                     'name' => $vac['vaccine'],
+                    'time' => $callTime,
                 ];
             }
         }
