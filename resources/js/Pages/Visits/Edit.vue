@@ -1497,6 +1497,8 @@ export default {
 
             form.vaccination.unvaccinated = false;
             nextTick(() => {
+                configs.vaccines.forEach(vaccine => form.vaccination[vaccine] = false);
+
                 form.vaccination.doses = vaccinations.value.length;
                 form.vaccination.date_latest_vacciniated = vaccinations.value[vaccinations.value.length - 1].date;
                 dateLatestVaccinatedInput.value.setDate(form.vaccination.date_latest_vacciniated);
