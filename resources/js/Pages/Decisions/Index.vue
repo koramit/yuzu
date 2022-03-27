@@ -266,6 +266,26 @@
                     </p>
                 </div>
             </div>
+            <!-- CT -->
+            <div
+                class="mt-2 rounded-md shadow-sm bg-gray-100 p-2"
+                v-if="positive.lab_remark"
+            >
+                <p
+                    class="italic text-red-400"
+                    v-html="positive.lab_remark.replaceAll(' | ', '<br>')"
+                />
+            </div>
+            <!-- note -->
+            <div
+                class="mt-2 rounded-md shadow-sm bg-gray-100 p-2"
+                v-if="positive.note"
+            >
+                <p>
+                    <span class="italic">Note: </span>
+                    {{ positive.note }}
+                </p>
+            </div>
         </div>
     </div>
 
