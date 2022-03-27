@@ -517,7 +517,7 @@ const shortenVaccineBrand = (note) => {
     // ['Sinovac', 'Sinopharm', 'AstraZeneca', 'Moderna', 'Pfizer']
     return note.replace('Sinovac', 'Sv')
         .replace('Sinopharm', 'Sp')
-        .replace('AstraZeneca', 'As')
+        .replace('AstraZeneca', 'Az')
         .replace('Moderna', 'Mo')
         .replace('Pfizer', 'Pf');
 };
