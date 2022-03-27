@@ -57,7 +57,15 @@
                             name="check-circle"
                             class="w-4 h-4 mr-1 text-bitter-theme-light"
                         />
-                        {{ positive.patient_name }}
+                        <span
+                            class="mx-1 w-6 h-6 inline-block text-center rounded-full text-white font-semibold"
+                            :class="{
+                                'bg-dark-theme-light': positive.patient_type === 'public',
+                                'bg-bitter-theme-light': positive.patient_type === 'staff',
+                            }"
+                            v-text="positive.patient_type === 'staff' ? 'S' : 'P'"
+                        />
+                        {{ positive.patient_hn_name }}
                     </p>
                 </td>
                 <td
@@ -66,9 +74,9 @@
                 >
                     {{ positive.age }}
                 </td>
-                <td class="border-t">
+                <!-- <td class="border-t">
                     <span class="px-3 py-2">{{ positive.hn }}</span>
-                </td>
+                </td> -->
                 <td class="border-t">
                     <button
                         @click="callPositive(positive)"
@@ -82,9 +90,9 @@
                         {{ positive.tel_no }}
                     </button>
                 </td>
-                <td class="border-t px-3 py-2">
+                <!-- <td class="border-t px-3 py-2">
                     {{ positive.patient_type }}
-                </td>
+                </td> -->
                 <td class="border-t px-3 py-2">
                     {{ positive.insuranceShow }}
                 </td>
@@ -111,6 +119,9 @@
                     :class="{'text-red-400': positive.weight > 90}"
                 >
                     {{ positive.weight }}
+                </td>
+                <td class="border-t px-3 py-2">
+                    {{ shortenVaccineBrand(positive.note) }}
                 </td>
                 <td class="border-t px-3 py-2">
                     {{ positive.remark }}
@@ -452,7 +463,8 @@ watch (
     }
 );
 
-const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom','Onset','O2 sat','Weight','Remark','Decision']);
+const headrows = ref(['Name','Age','Tel','Insurance','U/D','Symptom','Onset','O2 sat','Weight','Note','Remark','Decision']);
+// const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom','Onset','O2 sat','Weight','Remark','Decision']);
 const formDateVisit = ref(props.dateVisit);
 const search = ref('');
 const positives = computed(() => {
@@ -496,6 +508,18 @@ const postDecision = (decision) => {
             selectedPositive.value.remark = decision.remark;
             selectedPositive.value.linked = response.data.linked;
         });
+};
+const shortenVaccineBrand = (note) => {
+    if (!note) {
+        return null;
+    }
+
+    // ['Sinovac', 'Sinopharm', 'AstraZeneca', 'Moderna', 'Pfizer']
+    return note.replace('Sinovac', 'Sv')
+        .replace('Sinopharm', 'Sp')
+        .replace('AstraZeneca', 'As')
+        .replace('Moderna', 'Mo')
+        .replace('Pfizer', 'Pf');
 };
 </script>
 
