@@ -25,7 +25,7 @@ class SiITManager
 
         $data = $this->formatData($visit);
         $siitLog = Cache::get('siit-log', []);
-        $today = now()->tz(7)->format('Y-m-d');
+        $today = $visit->date_visit->format('Y-m-d');
         if (!isset($siitLog[$today])) {
             $siitLog[$today] = [
                 'send' => 0,
