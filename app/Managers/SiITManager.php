@@ -150,6 +150,10 @@ class SiITManager
 
     public function manageCertificate(Visit $visit, array $md)
     {
+        if ($visit->atk_positive_case) {
+            $this->manage($visit);
+        }
+
         $tx = $visit->form['management']['np_swab_result_transaction'] ?? null;
         $cert = $visit->form['evaluation'];
         $form = [
