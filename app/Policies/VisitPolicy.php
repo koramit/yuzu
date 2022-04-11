@@ -60,6 +60,9 @@ class VisitPolicy
         if ($user->hasRole('md')) {
             return true;
         } elseif ($user->hasRole('nurse')) {
+            if (!isset($visit->form['md'])) {
+                return false;
+            }
             return $visit->form['md']['signed_on_behalf'];
         }
 
