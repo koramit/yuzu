@@ -791,6 +791,9 @@ class VisitManager
             $content['อาการแสดง'] .= '<br>วันแรกที่มีอาการ '.$content['symptom_headers']['วันแรกที่มีอาการ'];
         }
         $content['อาการแสดง'] = trim($content['อาการแสดง'].'<br>'.$content['symptoms']);
+        if (!isset($visit->form['md'])) {
+            \Log::error($visit->slug);
+        }
         $content['md'] = $visit->form['md'];
         $content['md']['signed_at'] = Carbon::create($visit->form['md']['signed_at'])->tz('asia/bangkok')->format('d M Y H:i');
         $content['t_barcode'] = 'T'.$content['visit']['hn'].'$'.($visit->date_visit->year + 543).$visit->date_visit->format('md').'$1403$';
