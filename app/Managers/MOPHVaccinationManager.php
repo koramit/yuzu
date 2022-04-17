@@ -8,16 +8,9 @@ class MOPHVaccinationManager
 {
     public function manage($cid)
     {
-        $brands = [
-            1 => 'AstraZeneca',
-            5 => 'Moderna',
-            6 => 'Pfizer',
-            7 => 'Sinovac',
-            8 => 'Sinopharm'
-        ];
+        $brands = config('services.vaccine_brands');
 
         $result = (new SiMOPHVaccinationAPI)->getVaccination($cid);
-
 
         if (!$result['ok']) {
             // error
