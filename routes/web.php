@@ -350,6 +350,11 @@ Route::get('siit-feedback', function () {
     return $reversed;
 });
 
+// monitor
+Route::get('monitor', function () {
+    return ['up' => true];
+});
+
 Route::get('siit-cert-feedback', function () {
     $log = Cache::get('siit-cert-log', []);
     $reversed = [];
