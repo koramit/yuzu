@@ -19,12 +19,13 @@ class CreatePatientVaccinationsTable extends Migration
             $table->timestamp('vaccinated_at')->index();
             $table->unsignedSmallInteger('brand_id')->index();
             $table->string('label');
-            $table->unsignedTinyInteger('plan_no')->index();
-            $table->string('lot_no', 20)->index();
+            $table->unsignedTinyInteger('dose_no')->index();
+            $table->string('lot_no', 20);
             $table->string('serial_no', 24)->unique();
             $table->timestamp('expired_at');
-            $table->string('hospital_code', 10)->index();
-            $table->string('hospital_name')->index();
+            $table->string('hospital_code', 10);
+            $table->string('hospital_name');
+            $table->string('hospital_province');
             $table->timestamps();
         });
     }
