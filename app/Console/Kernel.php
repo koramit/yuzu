@@ -7,6 +7,7 @@ use App\Tasks\ClearPatientNotification;
 use App\Tasks\CroissantNeedHelpNotification;
 use App\Tasks\DrinkWaterNotification;
 use App\Tasks\FetchLabCovid;
+use App\Tasks\FetchMOPHVaccination;
 use App\Tasks\SendSccCerts;
 use App\Tasks\UpdatePatientName;
 use Exception;
@@ -69,6 +70,18 @@ class Kernel extends ConsoleKernel
 
         // send Scc certs job
         $schedule->call(fn () => SendSccCerts::run())->everyMinute();
+
+        // Fetch Vaccinations
+        $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('01:07'); // 08:07
+        $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('02:07'); // 09:07
+        $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('03:07'); // 10:07
+        $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('04:07'); // 11:07
+        $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('05:07'); // 12:07
+        $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('06:07'); // 13:07
+        $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('07:07'); // 14:07
+        $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('08:07'); // 15:07
+        $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('09:07'); // 16:07
+        $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('10:07'); // 17:07
 
         $schedule->call(function () {
             Cache::forget(key: 'siit-log');
