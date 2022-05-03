@@ -41,7 +41,7 @@ class FetchMOPHVaccination
                 continue;
             }
 
-            $doses = $visit->patient->vaccinations()->select('dose_no')->get();
+            $doses = $visit->patient->vaccinations()->select('dose_no')->pluck('dose_no')->all();
             $vacs = collect($vacs)->whereNotIn('vaccine_plan_no', $doses);
 
             $data = [];
