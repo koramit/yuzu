@@ -6,18 +6,11 @@ use App\APIs\SiMOPHVaccinationAPI;
 
 class MOPHVaccinationManager
 {
-    public function manage($cid)
+    public function manage($cid, $raw = false)
     {
-        $brands = [
-            1 => 'AstraZeneca',
-            5 => 'Moderna',
-            6 => 'Pfizer',
-            7 => 'Sinovac',
-            8 => 'Sinopharm'
-        ];
+        $brands = config('services.vaccine_brands');
 
         $result = (new SiMOPHVaccinationAPI)->getVaccination($cid);
-
 
         if (!$result['ok']) {
             // error
@@ -34,6 +27,10 @@ class MOPHVaccinationManager
         if (($result['vaccine_history_count'] ?? null) === 0) {
             // unvac
             return [];
+        }
+
+        if ($raw) {
+            return $result['vaccine_history'];
         }
 
         $vaccinations = [];

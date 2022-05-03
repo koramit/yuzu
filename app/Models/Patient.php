@@ -20,6 +20,16 @@ class Patient extends Model
         'profile',
     ];
 
+    public function visits()
+    {
+        return $this->hasMany(Visit::class);
+    }
+
+    public function vaccinations()
+    {
+        return $this->hasMany(PatientVaccination::class);
+    }
+
     /**
      * Set field 'hn'.
      *

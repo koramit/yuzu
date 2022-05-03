@@ -102,4 +102,12 @@ return [
     ],
 
     'sivaccination_api_url' => env('SIVACCINATION_API_URL'),
+
+    'vaccine_brands' => [
+        1 => 'AstraZeneca',
+        5 => 'Moderna',
+        6 => 'Pfizer',
+        7 => 'Sinovac',
+        8 => 'Sinopharm'
+    ]
 ];
