@@ -71,7 +71,7 @@ class LabCovidManager
         }
 
         if ($count['error']) {
-            Log::notice('lab error ', $count['error'].' of '.$visits->count());
+            Log::notice('lab error '. $count['error'].' of '.$visits->count());
         }
 
         if (now()->hour >= 13 && count($this->noResult)) { // after 20:00 only
