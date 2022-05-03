@@ -22,7 +22,7 @@ class CreatePatientVaccinationsTable extends Migration
             $table->unsignedTinyInteger('dose_no')->index();
             $table->string('lot_no', 20);
             $table->string('serial_no', 24)->unique();
-            $table->timestamp('expired_at');
+            $table->timestamp('expired_at')->nullable();
             $table->string('hospital_code', 10);
             $table->string('hospital_name');
             $table->string('hospital_province');
