@@ -47,16 +47,16 @@ class FetchMOPHVaccination
             $data = [];
             foreach ($vacs as $vac) {
                 $data[] = [
-                    'vaccinated_at' => now()->parse($data['immunization_datetime'])->addHours(-7),
-                    'brand_id' => $brands[$data['vaccine_manufacturer_id']],
-                    'label' => $data['vaccine_name'],
-                    'dose_no' => $data['vaccine_plan_no'],
-                    'lot_no' => $data['lot_number'],
-                    'serial_no' => $data['serial_no'],
-                    'expired_at' => now()->parse($data['expiration_date'])->tz(0),
-                    'hospital_code' => $data['hospital_code'],
-                    'hospital_name' => $data['hospital_name'],
-                    'hospital_province' => $data['province_name'],
+                    'vaccinated_at' => now()->parse($vac['immunization_datetime'])->addHours(-7),
+                    'brand_id' => $brands[$vac['vaccine_manufacturer_id']],
+                    'label' => $vac['vaccine_name'],
+                    'dose_no' => $vac['vaccine_plan_no'],
+                    'lot_no' => $vac['lot_number'],
+                    'serial_no' => $vac['serial_no'],
+                    'expired_at' => now()->parse($vac['expiration_date'])->tz(0),
+                    'hospital_code' => $vac['hospital_code'],
+                    'hospital_name' => $vac['hospital_name'],
+                    'hospital_province' => $vac['province_name'],
                 ];
             }
 
