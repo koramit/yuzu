@@ -15,6 +15,7 @@ class FetchMOPHVaccination
         $patientsId = Cache::get($keyName, []);
 
         $visits = Visit::with('patient')
+                        ->whereDateVisit(today()->format('Y-m-d'))
                         ->whereNotNull('patient_id')
                         ->whereNotIn('patient_id', $patientsId)
                         ->get();
