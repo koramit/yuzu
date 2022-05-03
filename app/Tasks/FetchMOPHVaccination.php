@@ -20,7 +20,6 @@ class FetchMOPHVaccination
                         ->get();
 
         $manager = new MOPHVaccinationManager();
-        $brands = config('services.vaccine_brands');
 
         foreach ($visits as $visit) {
             if (!$visit->patient->profile['document_id']) {
@@ -48,7 +47,7 @@ class FetchMOPHVaccination
             foreach ($vacs as $vac) {
                 $data[] = [
                     'vaccinated_at' => now()->parse($vac['immunization_datetime'])->addHours(-7),
-                    'brand_id' => $brands[$vac['vaccine_manufacturer_id']],
+                    'brand_id' => $vac['vaccine_manufacturer_id'],
                     'label' => $vac['vaccine_name'],
                     'dose_no' => $vac['vaccine_plan_no'],
                     'lot_no' => $vac['lot_number'],
