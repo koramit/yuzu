@@ -6,7 +6,7 @@ use App\APIs\SiMOPHVaccinationAPI;
 
 class MOPHVaccinationManager
 {
-    public function manage($cid)
+    public function manage($cid, $raw = false)
     {
         $brands = config('services.vaccine_brands');
 
@@ -27,6 +27,10 @@ class MOPHVaccinationManager
         if (($result['vaccine_history_count'] ?? null) === 0) {
             // unvac
             return [];
+        }
+
+        if ($raw) {
+            return $result['vaccine_history'];
         }
 
         $vaccinations = [];

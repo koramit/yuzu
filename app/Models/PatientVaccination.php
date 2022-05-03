@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class PatientVaccination extends Model
 {
     use HasFactory;
+
+    protected $guarded = [];
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
+    }
 }
