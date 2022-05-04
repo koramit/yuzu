@@ -3,6 +3,7 @@
 namespace App\Tasks;
 
 use App\Managers\MOPHVaccinationManager;
+use App\Models\Patient;
 use App\Models\PatientVaccination;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Cache;
@@ -83,6 +84,76 @@ class FetchMOPHVaccination
             }
             $patientsId[] = $visit->patient_id;
             Cache::put($keyName, $patientsId, now()->addHours(2));
+        }
+    }
+
+    public static function gen()
+    {
+        $patients = Patient::whereDoesntHave('vaccinations')
+                            ->limit(300)
+                            ->get();
+
+        $manager = new MOPHVaccinationManager();
+
+        $insertCount = 0;
+        foreach ($patients as $patient) {
+            if (!$patient->profile['document_id']) {
+                continue;
+            }
+
+            $vacs = $manager->manage($patient->profile['document_id'], true);
+
+            if ($vacs === []) {
+                continue;
+            }
+
+            if ($vacs === false) {
+                continue;
+            }
+
+            $vacs = collect($vacs);
+
+            $data = [];
+            foreach ($vacs as $vac) {
+                try {
+                    $year = (int) explode('-', explode("T", $vac['immunization_datetime'])[0])[0];
+                    if ($year > 2500) {
+                        $vac['immunization_datetime'] = str_replace($year, $year - 543, $vac['immunization_datetime']);
+                    }
+                    $year = (int) explode('-', explode("T", $vac['expiration_date'])[0])[0];
+                    if ($year > 2500) {
+                        $vac['expiration_date'] = str_replace($year, $year - 543, $vac['expiration_date']);
+                    }
+                } catch (\Exception $e) {
+                    Log::error($patient->id."\n".$e->getMessage());
+                    continue;
+                }
+
+                $data[] = [
+                    'vaccinated_at' => now()->parse($vac['immunization_datetime'])->addHours(-7),
+                    'brand_id' => $vac['vaccine_manufacturer_id'],
+                    'label' => $vac['vaccine_name'],
+                    'dose_no' => $vac['vaccine_plan_no'],
+                    'lot_no' => $vac['lot_number'],
+                    'serial_no' => $vac['serial_no'],
+                    'expired_at' => now()->parse($vac['expiration_date'])->tz(0),
+                    'hospital_code' => $vac['hospital_code'],
+                    'hospital_name' => $vac['hospital_name'],
+                    'hospital_province' => $vac['province_name'],
+                ];
+            }
+
+            try {
+                $patient->vaccinations()->createMany($data);
+                $insertCount = $insertCount + 1;
+            } catch (\Exception $e) {
+                Log::error($patient->id."\n".$e->getMessage());
+                continue;
+            }
+        }
+
+        if ($insertCount === 0) {
+            Log::notice('no vac insert');
         }
     }
 }
