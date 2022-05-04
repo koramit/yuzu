@@ -6,6 +6,7 @@ use App\Managers\MOPHVaccinationManager;
 use App\Models\PatientVaccination;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class FetchMOPHVaccination
 {
@@ -60,7 +61,12 @@ class FetchMOPHVaccination
                 ];
             }
 
-            $visit->patient->vaccinations()->createMany($data);
+            try {
+                $visit->patient->vaccinations()->createMany($data);
+            } catch (\Exception $e) {
+                Log::error($visit->patient_id."\n".$e->getMessage());
+                continue;
+            }
             $patientsId[] = $visit->patient_id;
             Cache::put($keyName, $patientsId, now()->addHours(2));
         }
