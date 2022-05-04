@@ -47,6 +47,20 @@ class FetchMOPHVaccination
 
             $data = [];
             foreach ($vacs as $vac) {
+                try {
+                    $year = (int) explode('-', explode("T", $vac['immunization_datetime'])[0])[0];
+                    if ($year > 2500) {
+                        $vac['immunization_datetime'] = str_replace($year, $year - 543, $vac['immunization_datetime']);
+                    }
+                    $year = (int) explode('-', explode("T", $vac['expiration_date'])[0])[0];
+                    if ($year > 2500) {
+                        $vac['expiration_date'] = str_replace($year, $year - 543, $vac['expiration_date']);
+                    }
+                } catch (\Exception $e) {
+                    Log::error($visit->patient_id."\n".$e->getMessage());
+                    continue;
+                }
+
                 $data[] = [
                     'vaccinated_at' => now()->parse($vac['immunization_datetime'])->addHours(-7),
                     'brand_id' => $vac['vaccine_manufacturer_id'],
