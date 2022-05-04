@@ -52,10 +52,14 @@ class FetchMOPHVaccination
                     $year = (int) explode('-', explode("T", $vac['immunization_datetime'])[0])[0];
                     if ($year > 2500) {
                         $vac['immunization_datetime'] = str_replace($year, $year - 543, $vac['immunization_datetime']);
+                    } elseif ($year < 2000) {
+                        $vac['immunization_datetime'] = str_replace($year, $year + 543, $vac['immunization_datetime']);
                     }
                     $year = (int) explode('-', explode("T", $vac['expiration_date'])[0])[0];
                     if ($year > 2500) {
                         $vac['expiration_date'] = str_replace($year, $year - 543, $vac['expiration_date']);
+                    } elseif ($year < 2000) {
+                        $vac['expiration_date'] = str_replace($year, $year + 543, $vac['expiration_date']);
                     }
                 } catch (\Exception $e) {
                     Log::error($visit->patient_id."\n".$e->getMessage());
@@ -119,10 +123,14 @@ class FetchMOPHVaccination
                     $year = (int) explode('-', explode("T", $vac['immunization_datetime'])[0])[0];
                     if ($year > 2500) {
                         $vac['immunization_datetime'] = str_replace($year, $year - 543, $vac['immunization_datetime']);
+                    } elseif ($year < 2000) {
+                        $vac['immunization_datetime'] = str_replace($year, $year + 543, $vac['immunization_datetime']);
                     }
                     $year = (int) explode('-', explode("T", $vac['expiration_date'])[0])[0];
                     if ($year > 2500) {
                         $vac['expiration_date'] = str_replace($year, $year - 543, $vac['expiration_date']);
+                    } elseif ($year < 2000) {
+                        $vac['expiration_date'] = str_replace($year, $year + 543, $vac['expiration_date']);
                     }
                 } catch (\Exception $e) {
                     Log::error($patient->id."\n".$e->getMessage());
