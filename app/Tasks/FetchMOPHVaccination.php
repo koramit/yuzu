@@ -94,13 +94,15 @@ class FetchMOPHVaccination
     public static function gen()
     {
         $patients = Patient::whereDoesntHave('vaccinations')
-                            ->limit(300)
+                            ->orderBy('updated_at')
+                            ->limit(450)
                             ->get();
 
         $manager = new MOPHVaccinationManager();
 
         $insertCount = 0;
         foreach ($patients as $patient) {
+            $patient->touch();
             if (!$patient->profile['document_id']) {
                 continue;
             }
