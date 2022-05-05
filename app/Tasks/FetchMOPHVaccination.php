@@ -53,13 +53,13 @@ class FetchMOPHVaccination
                     if ($year > 2038) {
                         $vac['immunization_datetime'] = str_replace($year, ($year - 543) < 1970 ? 1970 : ($year - 543), $vac['immunization_datetime']);
                     } elseif ($year < 1970) {
-                        $vac['immunization_datetime'] = str_replace($year, ($year + 543) > 2038 ? 1970 : ($year + 543), $vac['immunization_datetime']);
+                        $vac['immunization_datetime'] = str_replace($year, ($year + 543) < 1970 ? 1970 : ($year + 543), $vac['immunization_datetime']);
                     }
                     $year = (int) explode('-', explode("T", $vac['expiration_date'])[0])[0];
                     if ($year > 2038) {
                         $vac['expiration_date'] = str_replace($year, ($year - 543) < 1970 ? 1970 : ($year - 543), $vac['expiration_date']);
                     } elseif ($year < 1970) {
-                        $vac['expiration_date'] = str_replace($year, ($year + 543) > 2038 ? 1970 : ($year + 543), $vac['expiration_date']);
+                        $vac['expiration_date'] = str_replace($year, ($year + 543) < 1970 ? 1970 : ($year + 543), $vac['expiration_date']);
                     }
                 } catch (\Exception $e) {
                     Log::error($visit->patient_id."\n".$e->getMessage());
@@ -126,13 +126,13 @@ class FetchMOPHVaccination
                     if ($year > 2038) {
                         $vac['immunization_datetime'] = str_replace($year, ($year - 543) < 1970 ? 1970 : ($year - 543), $vac['immunization_datetime']);
                     } elseif ($year < 1970) {
-                        $vac['immunization_datetime'] = str_replace($year, ($year + 543) > 2038 ? 1970 : ($year + 543), $vac['immunization_datetime']);
+                        $vac['immunization_datetime'] = str_replace($year, ($year + 543) < 1970 ? 1970 : ($year + 543), $vac['immunization_datetime']);
                     }
                     $year = (int) explode('-', explode("T", $vac['expiration_date'])[0])[0];
                     if ($year > 2038) {
                         $vac['expiration_date'] = str_replace($year, ($year - 543) < 1970 ? 1970 : ($year - 543), $vac['expiration_date']);
                     } elseif ($year < 1970) {
-                        $vac['expiration_date'] = str_replace($year, ($year + 543) > 2038 ? 1970 : ($year + 543), $vac['expiration_date']);
+                        $vac['expiration_date'] = str_replace($year, ($year + 543) < 1970 ? 1970 : ($year + 543), $vac['expiration_date']);
                     }
                 } catch (\Exception $e) {
                     Log::error($patient->id."\n".$e->getMessage());
