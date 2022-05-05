@@ -51,15 +51,31 @@ class FetchMOPHVaccination
                 try {
                     $year = (int) explode('-', explode("T", $vac['immunization_datetime'])[0])[0];
                     if ($year > 2038) {
-                        $vac['immunization_datetime'] = str_replace($year, ($year - 543) < 1970 ? 1970 : ($year - 543), $vac['immunization_datetime']);
+                        $adjustedYear = ($year - 543) < 1970 ? 1970 : ($year - 543);
+                        if ($adjustedYear < 1970 || $adjustedYear > 2038) {
+                            $adjustedYear = 1970;
+                        }
+                        $vac['immunization_datetime'] = str_replace($year, $adjustedYear, $vac['immunization_datetime']);
                     } elseif ($year < 1970) {
-                        $vac['immunization_datetime'] = str_replace($year, ($year + 543) < 1970 ? 1970 : ($year + 543), $vac['immunization_datetime']);
+                        $adjustedYear = ($year + 543) < 1970 ? 1970 : ($year + 543);
+                        if ($adjustedYear < 1970 || $adjustedYear > 2038) {
+                            $adjustedYear = 1970;
+                        }
+                        $vac['immunization_datetime'] = str_replace($year, $adjustedYear, $vac['immunization_datetime']);
                     }
                     $year = (int) explode('-', explode("T", $vac['expiration_date'])[0])[0];
                     if ($year > 2038) {
-                        $vac['expiration_date'] = str_replace($year, ($year - 543) < 1970 ? 1970 : ($year - 543), $vac['expiration_date']);
+                        $adjustedYear = ($year - 543) < 1970 ? 1970 : ($year - 543);
+                        if ($adjustedYear < 1970 || $adjustedYear > 2038) {
+                            $adjustedYear = 1970;
+                        }
+                        $vac['expiration_date'] = str_replace($year, $adjustedYear, $vac['expiration_date']);
                     } elseif ($year < 1970) {
-                        $vac['expiration_date'] = str_replace($year, ($year + 543) < 1970 ? 1970 : ($year + 543), $vac['expiration_date']);
+                        $adjustedYear = ($year + 543) < 1970 ? 1970 : ($year + 543);
+                        if ($adjustedYear < 1970 || $adjustedYear > 2038) {
+                            $adjustedYear = 1970;
+                        }
+                        $vac['expiration_date'] = str_replace($year, $adjustedYear, $vac['expiration_date']);
                     }
                 } catch (\Exception $e) {
                     Log::error($visit->patient_id."\n".$e->getMessage());
@@ -95,7 +111,7 @@ class FetchMOPHVaccination
     {
         $patients = Patient::whereDoesntHave('vaccinations')
                             ->orderBy('updated_at')
-                            ->limit(450)
+                            ->limit(500)
                             ->get();
 
         $manager = new MOPHVaccinationManager();
@@ -124,15 +140,31 @@ class FetchMOPHVaccination
                 try {
                     $year = (int) explode('-', explode("T", $vac['immunization_datetime'])[0])[0];
                     if ($year > 2038) {
-                        $vac['immunization_datetime'] = str_replace($year, ($year - 543) < 1970 ? 1970 : ($year - 543), $vac['immunization_datetime']);
+                        $adjustedYear = ($year - 543) < 1970 ? 1970 : ($year - 543);
+                        if ($adjustedYear < 1970 || $adjustedYear > 2038) {
+                            $adjustedYear = 1970;
+                        }
+                        $vac['immunization_datetime'] = str_replace($year, $adjustedYear, $vac['immunization_datetime']);
                     } elseif ($year < 1970) {
-                        $vac['immunization_datetime'] = str_replace($year, ($year + 543) < 1970 ? 1970 : ($year + 543), $vac['immunization_datetime']);
+                        $adjustedYear = ($year + 543) < 1970 ? 1970 : ($year + 543);
+                        if ($adjustedYear < 1970 || $adjustedYear > 2038) {
+                            $adjustedYear = 1970;
+                        }
+                        $vac['immunization_datetime'] = str_replace($year, $adjustedYear, $vac['immunization_datetime']);
                     }
                     $year = (int) explode('-', explode("T", $vac['expiration_date'])[0])[0];
                     if ($year > 2038) {
-                        $vac['expiration_date'] = str_replace($year, ($year - 543) < 1970 ? 1970 : ($year - 543), $vac['expiration_date']);
+                        $adjustedYear = ($year - 543) < 1970 ? 1970 : ($year - 543);
+                        if ($adjustedYear < 1970 || $adjustedYear > 2038) {
+                            $adjustedYear = 1970;
+                        }
+                        $vac['expiration_date'] = str_replace($year, $adjustedYear, $vac['expiration_date']);
                     } elseif ($year < 1970) {
-                        $vac['expiration_date'] = str_replace($year, ($year + 543) < 1970 ? 1970 : ($year + 543), $vac['expiration_date']);
+                        $adjustedYear = ($year + 543) < 1970 ? 1970 : ($year + 543);
+                        if ($adjustedYear < 1970 || $adjustedYear > 2038) {
+                            $adjustedYear = 1970;
+                        }
+                        $vac['expiration_date'] = str_replace($year, $adjustedYear, $vac['expiration_date']);
                     }
                 } catch (\Exception $e) {
                     Log::error($patient->id."\n".$e->getMessage());
