@@ -111,7 +111,7 @@ class FetchMOPHVaccination
     {
         $patients = Patient::whereDoesntHave('vaccinations')
                             ->orderBy('updated_at')
-                            ->limit(500)
+                            ->limit(700)
                             ->get();
 
         $manager = new MOPHVaccinationManager();
