@@ -82,7 +82,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('08:07'); // 15:07
         $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('09:07'); // 16:07
         $schedule->call(fn () => FetchMOPHVaccination::run())->dailyAt('10:07'); // 17:07
-        $schedule->call(fn () => FetchMOPHVaccination::gen())->hourlyAt(37);
+        // $schedule->call(fn () => FetchMOPHVaccination::gen())->hourlyAt(37);
 
         $schedule->call(function () {
             Cache::forget(key: 'siit-log');
