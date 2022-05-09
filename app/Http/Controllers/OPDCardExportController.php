@@ -26,11 +26,11 @@ class OPDCardExportController extends Controller
                        ->get()
                        ->transform(function ($visit) {
                            return $this->allData($visit) + [
-                            'vaccine_dose_1' => $visit->vaccinations()->where('dose_no', 1)->first()?->brand,
-                            'vaccine_dose_2' => $visit->vaccinations()->where('dose_no', 2)->first()?->brand,
-                            'vaccine_dose_3' => $visit->vaccinations()->where('dose_no', 3)->first()?->brand,
-                            'vaccine_dose_4' => $visit->vaccinations()->where('dose_no', 4)->first()?->brand,
-                            'vaccine_dose_5' => $visit->vaccinations()->where('dose_no', 5)->first()?->brand,
+                            'vaccine_dose_1' => $visit->vaccinations->where('dose_no', 1)->first()?->brand,
+                            'vaccine_dose_2' => $visit->vaccinations->where('dose_no', 2)->first()?->brand,
+                            'vaccine_dose_3' => $visit->vaccinations->where('dose_no', 3)->first()?->brand,
+                            'vaccine_dose_4' => $visit->vaccinations->where('dose_no', 4)->first()?->brand,
+                            'vaccine_dose_5' => $visit->vaccinations->where('dose_no', 5)->first()?->brand,
                            ];
                        });
 
