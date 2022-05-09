@@ -56,6 +56,11 @@ class Visit extends Model
         return $this->hasMany('App\Models\VisitFormVersion', 'visit_id', 'id');
     }
 
+    public function vaccinations()
+    {
+        return $this->hasMany('App\Models\PatientVaccination', 'patient_id', 'patient_id');
+    }
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
