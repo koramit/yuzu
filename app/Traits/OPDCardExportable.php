@@ -92,7 +92,7 @@ trait OPDCardExportable
             'AstraZeneca' => $form['vaccination']['AstraZeneca'] ? 'YES' : 'NO',
             'Moderna' => $form['vaccination']['Moderna'] ? 'YES' : 'NO',
             'Pfizer' => $form['vaccination']['Pfizer'] ? 'YES' : 'NO',
-            'doses' => $form['vaccination']['doses'] ?? 0,
+            'doses' => $form['vaccination']['doses'],
             'date_latest_vacciniated' => $this->castDate($form['vaccination']['date_latest_vacciniated']),
 
             'no_symptom' => $form['diagnosis']['no_symptom'] ? 'YES' : 'NO',
