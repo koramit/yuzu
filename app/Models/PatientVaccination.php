@@ -11,8 +11,18 @@ class PatientVaccination extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'vaccinated_at' => 'datetime',
+        'expired_at' => 'datetime',
+    ];
+
     public function patient()
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    public function getBrandAttribute()
+    {
+        return config('services.vaccine_brands')[$this->brand_id] ?? null;
     }
 }
