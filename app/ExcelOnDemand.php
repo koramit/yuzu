@@ -20,6 +20,7 @@ class ExcelOnDemand
     protected function kantarida2202()
     {
         $visits = Visit::with('patient')
+                        ->with(['vaccinations' => fn ($q) => $q->select(['vaccinated_at', 'brand_id', 'dose_no', 'patient_id'])->orderBy('dose_no')])
                         ->where('date_visit', '<', '2022-01-01')
                         ->where('patient_type', 2) // จนท
                         ->where('swabbed', true)

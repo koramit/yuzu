@@ -95,6 +95,13 @@ trait OPDCardExportable
             'doses' => $form['vaccination']['doses'],
             'date_latest_vacciniated' => $this->castDate($form['vaccination']['date_latest_vacciniated']),
 
+            // vaccine dose
+            'vaccine_dose_1' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 1)->first()?->brand,
+            'vaccine_dose_2' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 2)->first()?->brand,
+            'vaccine_dose_3' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 3)->first()?->brand,
+            'vaccine_dose_4' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 4)->first()?->brand,
+            'vaccine_dose_5' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 5)->first()?->brand,
+
             'no_symptom' => $form['diagnosis']['no_symptom'] ? 'YES' : 'NO',
             'suspected_covid_19' => $this->suspectedCovidDx($visit), // $form['diagnosis']['suspected_covid_19'] ? 'YES' : 'NO', // defect
             'uri' => $form['diagnosis']['uri'] ? 'YES' : 'NO',
