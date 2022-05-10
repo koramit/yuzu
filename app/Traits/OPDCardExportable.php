@@ -109,7 +109,7 @@ trait OPDCardExportable
             'other_diagnosis' => $form['diagnosis']['other_diagnosis'] ? str_replace("\n", ' ', $form['diagnosis']['other_diagnosis']) : null,
             'covid_19_infection_by_positive_atk' => ($visit->atk_positive_case && !$visit->swabbed) ? 'YES' : 'NO',
             'atk_positive' => ($form['exposure']['atk_positive'] ?? false) ? 'YES' : 'NO',
-            'date_atk_positive' => $this->castDate($form['exposure']['date_atk_positive']),
+            'date_atk_positive' => $this->castDate($form['exposure']['date_atk_positive'] ?? null),
 
             'np_swab' => ($form['management']['np_swab'] && $visit->swabbed) ? 'YES' : 'NO',
             'tube_no' => $form['management']['specimen_no'],
