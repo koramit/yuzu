@@ -33,7 +33,7 @@ class LINEMessagingManager
 
     public function pushMessage(string $userId, array $messages, string $mode = 'push')
     {
-        return null; // turn off push for awhile
+        // return null; // turn off push for awhile
         try {
             $this->client->post($this->baseEndpoint.'message/push', [
                 'to' => $userId,
