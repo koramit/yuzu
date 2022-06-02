@@ -244,5 +244,5 @@ return [
 
     'ww_token' => env('WW_TOKEN'),
 
-    'specific_roles' => collect(['root', 'admin', 'id_md', 'pm_md', 'ari_nurse', 'icn_nurse']),
+    'specific_roles' => collect(['root', 'admin', 'id_md', 'pm_md', 'ari_nurse', 'icn_nurse', 'id_admin']),
 ];

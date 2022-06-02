@@ -57,6 +57,7 @@ class AbilityRoleTableSeeder extends Seeder
             ['name' => 'id_md'] + $datetime,
             ['name' => 'pm_md'] + $datetime,
             ['name' => 'patient'] + $datetime,
+            ['name' => 'id_admin'] + $datetime,
         ]);
 
         $assignment = [
@@ -67,6 +68,7 @@ class AbilityRoleTableSeeder extends Seeder
             'staff' => ['view_mr_list', 'view_queue_list', 'view_today_list', 'authorize_visit', 'attach_opd_card', 'print_opd_card'],
             'id_md' => ['export_opd_cards', 'export_visits', 'evaluate', 'link_mocktail', 'view_decision_list', 'view_certification_list', 'certify'],
             'pm_md' => ['export_opd_cards', 'export_visits'],
+            'id_admin' => ['view_any_visits'],
         ];
 
         foreach ($assignment as $role => $abilities) {
