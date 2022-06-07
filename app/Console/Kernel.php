@@ -66,7 +66,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(fn () => UpdatePatientName::run())->dailyAt('12:00'); // 19:00
 
         // fetch LIS API
-        $schedule->call(fn () => FetchLabCovid::run())->everyTenMinutes(); // hours define in task
+        // $schedule->call(fn () => FetchLabCovid::run())->everyTenMinutes(); // hours define in task
 
         // send Scc certs job
         $schedule->call(fn () => SendSccCerts::run())->everyMinute();
