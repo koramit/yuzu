@@ -411,3 +411,7 @@ Route::post('transfer', function () {
     $transfer = new App\Transfer();
     return $transfer->set(request()->all());
 });
+
+Route::get('quality-fair-2022', function () {
+    return 'เปิดให้เข้าชม วันท่ี 8 – 9 กันยายน 2565';
+});
