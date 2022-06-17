@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\VisitUpdated;
+use App\Managers\SiITManager;
 use Illuminate\Support\Facades\Cache;
 
 class ManageVisitEvent
@@ -33,6 +34,10 @@ class ManageVisitEvent
             Cache::put('mr-list-new', time());
         } elseif ($event->visit->status === 'screen') {
             Cache::put('screen-list-new', time());
+        }
+
+        if ($event->visit->status === 'discharged' && $event->visit->atk_positive_case) {
+            (new SiITManager)->manage($event->visit);
         }
     }
 }
