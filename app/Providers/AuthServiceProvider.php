@@ -31,7 +31,7 @@ class AuthServiceProvider extends ServiceProvider
             }
         });
 
-        Gate::define('refer', fn ($user) => $user->can('evaluate') && $user->mocktail_token);
+        Gate::define('refer', fn ($user) => $user->can('evaluate') && $user->hasRole('id_md'));
 
         Gate::define('in_transit', fn ($user) => $user->role_names->count());
     }
