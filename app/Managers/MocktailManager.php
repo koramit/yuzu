@@ -38,6 +38,7 @@ class MocktailManager
             'patient_name' => $visit->patient_name,
             'patient_hn_name' => 'HN '.$visit->hn.' '.$visit->patient->profile['first_name'],
             'patient_type' => $visit->patient_type === 'บุคคลทั่วไป' ? 'public' : 'staff',
+            'document_id' => $visit->patient->profile['document_id'],
             'tel_no' => $visit->form['patient']['tel_no'],
             'tel_no_alt' => $visit->form['patient']['tel_no_alt'],
             'insurance' => $insurance,

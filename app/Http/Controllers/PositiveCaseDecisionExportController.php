@@ -31,6 +31,7 @@ class PositiveCaseDecisionExportController extends Controller
                                       'Tel' => trim($positive['tel_no'].' '.$positive['tel_no_alt'] ?? ''),
                                       'Type' => $positive['patient_type'],
                                       'Insurance' => $positive['insuranceShow'],
+                                      'National_Id' => $positive['document_id'],
                                       'U/D' => $positive['ud'],
                                       'Symptom' => $positive['symptom'],
                                       'Onset' => $positive['onset'],
