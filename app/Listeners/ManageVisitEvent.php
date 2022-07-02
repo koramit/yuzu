@@ -36,7 +36,7 @@ class ManageVisitEvent
             Cache::put('screen-list-new', time());
         }
 
-        if ($event->visit->status === 'discharged' && $event->visit->atk_positive_case) {
+        if ($event->visit->status === 'discharged' && $event->visit->atk_positive_case && $event->visit->patient_id) {
             (new SiITManager)->manage($event->visit);
         }
     }
