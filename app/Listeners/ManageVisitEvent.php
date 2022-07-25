@@ -42,7 +42,10 @@ class ManageVisitEvent
             try {
                 (new SiITManager)->manage($event->visit);
             } catch (Exception $e) {
-                Log::error('export error on enqueue_swab'.'@'.$e->getMessage());
+                $message = $e->getMessage();
+                if (!str_starts_with($message, 'URL error 28: Connection timed out after')) {
+                    Log::error('export error on discharge'.'@'.$e->getMessage());
+                }
             }
         }
     }
