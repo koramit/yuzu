@@ -4,7 +4,9 @@ namespace App\Listeners;
 
 use App\Events\VisitUpdated;
 use App\Managers\SiITManager;
+use Exception;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class ManageVisitEvent
 {
@@ -37,7 +39,11 @@ class ManageVisitEvent
         }
 
         if ($event->visit->status === 'discharged' && $event->visit->atk_positive_case && $event->visit->patient_id) {
-            (new SiITManager)->manage($event->visit);
+            try {
+                (new SiITManager)->manage($event->visit);
+            } catch (Exception $e) {
+                Log::error('export error on enqueue_swab'.'@'.$e->getMessage());
+            }
         }
     }
 }
