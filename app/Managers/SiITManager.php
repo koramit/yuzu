@@ -45,7 +45,10 @@ class SiITManager
                         ->post($url, $data)
                         ->json();
         } catch (Exception $e) {
-            Log::error('SiIT_EXPORT_REQUEST@'.$visit->slug.'@'.$e->getMessage());
+            $message = $e->getMessage();
+            if (!str_contains($message, 'Connection timed out')) {
+                Log::error('SiIT_EXPORT_REQUEST@'.$visit->slug.'@'.$message);
+            }
             $siitLog[$today]['request_error'] = $siitLog[$today]['request_error'] + 1;
             Cache::put('siit-log', $siitLog);
 
