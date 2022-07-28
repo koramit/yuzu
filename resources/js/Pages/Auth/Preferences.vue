@@ -1,7 +1,7 @@
 <template>
     <SelectHomePage :configs="selectHomePage" />
     <LayoutAppearance :configs="layoutAppearance" />
-    <LinkMocktail :configs="linkMocktail" />
+    <!-- <LinkMocktail :configs="linkMocktail" /> -->
     <SetupNotification :configs="setupNotification" />
     <ManageNotification :configs="manageNotification" />
     <LinkPatient :configs="linkPatient" />
