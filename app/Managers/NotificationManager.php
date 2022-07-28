@@ -52,7 +52,7 @@ class NotificationManager
                 continue;
             }
             $messages[] = $this->bot->buildTextMessage(text: $text, placeholders: ['username' => $subscriber->profile['notification']['nickname']]);
-            if ($stickers) {
+            if ($stickers && rand(1,10) === 5) {
                 $sticker = $stickers->random();
                 $messages[] = $this->bot->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
             }
@@ -72,7 +72,7 @@ class NotificationManager
                 continue;
             }
             $messages[] = $this->bot->buildTextMessage(text: $text, placeholders: ['username' => $subscriber->profile['notification']['nickname']]);
-            if ($stickers) {
+            if ($stickers && rand(1,10) === 5) {
                 $sticker = $stickers->random();
                 $messages[] = $this->bot->buildStickerMessage(packageId: $sticker['packageId'], stickerId: $sticker['stickerId']);
             }

@@ -69,11 +69,12 @@ class PreferencesController extends Controller
             ],
             'manageNotification' => [
                 'notifications' => [
-                    ['can' => $canManageNotifications, 'value' =>  9, 'set' => false, 'label' => 'ดื่มน้ำ'],
-                    ['can' => $canManageNotifications, 'value' => 10, 'set' => false, 'label' => 'มีผู้ป่วยตกค้าง'],
-                    ['can' => $canManageNotifications, 'value' => 11, 'set' => false, 'label' => 'รายงานถ่ายทอดสด'],
-                    ['can' => $canManageNotifications, 'value' => 12, 'set' => false, 'label' => 'เมื่อมีผลบวก'],
-                    ['can' => $canManageNotifications, 'value' => 13, 'set' => false, 'label' => 'เมื่อผลครบตามกลุ่มผู้ป่วย'],
+                    // ['can' => $canManageNotifications, 'value' =>  9, 'set' => false, 'label' => 'ดื่มน้ำ'],
+                    ['can' => $user->line_active && $user->role_names->intersect(collect(['admin', 'root', 'in_charge']))->count(), 'value' => 10, 'set' => false, 'label' => 'มีผู้ป่วยตกค้าง'],
+                    ['can' => $canManageNotifications, 'value' => 11, 'set' => false, 'label' => 'เมื่อผลครบ'],
+                    // ['can' => $canManageNotifications, 'value' => 11, 'set' => false, 'label' => 'รายงานถ่ายทอดสด'],
+                    // ['can' => $canManageNotifications, 'value' => 12, 'set' => false, 'label' => 'เมื่อมีผลบวก'],
+                    // ['can' => $canManageNotifications, 'value' => 13, 'set' => false, 'label' => 'เมื่อผลครบตามกลุ่มผู้ป่วย'],
                     ['can' => $user->line_active && $user->role_names->intersect(collect(['admin', 'root']))->count(), 'value' => 14, 'set' => false, 'label' => 'Croissant งอแง'],
                 ],
                 'subscriptions' => $user->subscribedNotifications()->pluck('id'),
