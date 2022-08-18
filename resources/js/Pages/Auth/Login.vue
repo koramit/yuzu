@@ -13,8 +13,9 @@
             >
         </div>
         <div class="mt-4 px-4 py-8 w-80 bg-white rounded shadow transform -translate-y-12">
-            <!-- ⚗️😌 🔥😭-->
-            <span class="block text-xl text-bitter-theme-light mt-12 text-center">⚗️ ARI Clinic 😌</span>
+            <!-- ⚗️😌 🔥😭 🎂-->
+            <!-- <span class="block text-xl text-bitter-theme-light mt-12 text-center">⚗️ ARI Clinic 😌</span> -->
+            <span class="block text-xl text-bitter-theme-light mt-12 text-center">🎂 ARI Clinic 😌</span>
             <FormInput
                 class="mt-8"
                 label="ชื่อบัญชี"
