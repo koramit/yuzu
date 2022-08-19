@@ -108,6 +108,7 @@ return [
         5 => 'Moderna',
         6 => 'Pfizer',
         7 => 'Sinovac',
-        8 => 'Sinopharm'
+        8 => 'Sinopharm',
+        11 => 'COVOVAX',
     ]
 ];
