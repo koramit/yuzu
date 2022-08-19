@@ -37,7 +37,7 @@ class MOPHVaccinationManager
         foreach ($result['vaccine_history'] as $vac) {
             $date = explode('T', $vac['immunization_datetime'])[0];
             $vaccinations[] = [
-                'brand' => $brands[$vac['vaccine_manufacturer_id']],
+                'brand' => $brands[$vac['vaccine_manufacturer_id']] ?? $vac['vaccine_manufacturer_id'],
                 'label' => $vac['vaccine_name'],
                 'date' => $date,
                 'date_label' => now()->create($date)->format('d/m/Y'),
