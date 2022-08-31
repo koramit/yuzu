@@ -33,14 +33,12 @@ class ReportOPDCard extends Command
      */
     public function handle()
     {
-        ini_set('memory_limit', '256M');
-
         $begin = $this->argument('begin');
         $end = $this->argument('end');
         $filename = storage_path("app/temp/super-valentine-{$begin}-to-{$end}.xlsx");
 
         $visits = Visit::with('patient')
-            ->with(['vaccinations' => fn ($q) => $q->select(['vaccinated_at', 'brand_id', 'dose_no', 'patient_id'])->orderBy('dose_no')])
+            // ->with(['vaccinations' => fn ($q) => $q->select(['vaccinated_at', 'brand_id', 'dose_no', 'patient_id'])->orderBy('dose_no')])
             ->where('swabbed', true)
             ->where('patient_type', 2)
             ->whereBetween('date_visit', [$begin, $end])
@@ -59,7 +57,12 @@ class ReportOPDCard extends Command
     protected function transform(Visit $visit)
     {
         $form = $visit->form;
-        $vaccinations = $visit->vaccinations->filter(fn ($v) => $v->vaccinated_at->lessThan($visit->date_visit));
+        $vaccinations = $visit->vaccinations()
+            ->select(['vaccinated_at', 'brand_id', 'dose_no', 'patient_id'])
+            ->where('vaccinated_at', '<', $visit->date_visit)
+            ->orderBy('dose_no')
+            ->get();
+
         return [
             'v_count' => $vaccinations->count(),
             'ชื่อ-นามสกุล' => $visit->patient_name, // 1
