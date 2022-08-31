@@ -57,7 +57,9 @@ class ReportOPDCard extends Command
     protected function transform(Visit $visit)
     {
         $form = $visit->form;
+        $vaccinations = $visit->vaccinations->filter(fn ($v) => $v->vaccinated_at->lessThan($visit->date_visit));
         return [
+            'v_count' => $vaccinations->count(),
             'ชื่อ-นามสกุล' => $visit->patient_name, // 1
             'HN' => $visit->hn, // 2
             'เพศ' => $visit->patient->gender, // 3
@@ -110,16 +112,16 @@ class ReportOPDCard extends Command
 
             // 18
             'Unvaccinated' => $form['vaccination']['unvaccinated'] ? 'YES' : 'NO',
-            'vaccine dose 1' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 1)->first()?->brand,
-            'date vaccination dose 1' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 1)->first()?->vaccinated_at->format('d M Y'),
-            'vaccine dose 2' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 2)->first()?->brand,
-            'date vaccination dose 2' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 2)->first()?->vaccinated_at->format('d M Y'),
-            'vaccine dose 3' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 3)->first()?->brand,
-            'date vaccination dose 3' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 3)->first()?->vaccinated_at->format('d M Y'),
-            'vaccine dose 4' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 4)->first()?->brand,
-            'date vaccination dose 4' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 4)->first()?->vaccinated_at->format('d M Y'),
-            'vaccine dose 5' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 5)->first()?->brand,
-            'date vaccination dose 5' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 5)->first()?->vaccinated_at->format('d M Y'),
+            'vaccine dose 1' => $vaccinations->where('dose_no', 1)->first()?->brand,
+            'date vaccination dose 1' => $vaccinations->where('dose_no', 1)->first()?->vaccinated_at->format('d M Y'),
+            'vaccine dose 2' => $vaccinations->where('dose_no', 2)->first()?->brand,
+            'date vaccination dose 2' => $vaccinations->where('dose_no', 2)->first()?->vaccinated_at->format('d M Y'),
+            'vaccine dose 3' => $vaccinations->where('dose_no', 3)->first()?->brand,
+            'date vaccination dose 3' => $vaccinations->where('dose_no', 3)->first()?->vaccinated_at->format('d M Y'),
+            'vaccine dose 4' => $vaccinations->where('dose_no', 4)->first()?->brand,
+            'date vaccination dose 4' => $vaccinations->where('dose_no', 4)->first()?->vaccinated_at->format('d M Y'),
+            'vaccine dose 5' => $vaccinations->where('dose_no', 5)->first()?->brand,
+            'date vaccination dose 5' => $vaccinations->where('dose_no', 5)->first()?->vaccinated_at->format('d M Y'),
             'Number of vaccination dose' => $form['vaccination']['doses'], // 19
             'date of latest vaccination' => $this->castDate($form['vaccination']['date_latest_vacciniated']), // 20
             'nNP swab result' => $form['management']['np_swab_result'], // 21
