@@ -33,6 +33,8 @@ class ReportOPDCard extends Command
      */
     public function handle()
     {
+        ini_set('memory_limit', '256M');
+
         $begin = $this->argument('begin');
         $end = $this->argument('end');
         $filename = storage_path("app/temp/super-valentine-{$begin}-to-{$end}.xlsx");
