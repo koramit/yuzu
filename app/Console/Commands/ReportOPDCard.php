@@ -129,7 +129,7 @@ class ReportOPDCard extends Command
             'Number of vaccination dose' => $form['vaccination']['doses']
                 ?? $vaccinations->count(), // 19
             'date of latest vaccination' => $this->castDate($form['vaccination']['date_latest_vacciniated'])
-                ?? $vaccinations->last()->vaccinated_at?->format('d M Y'), // 20
+                ?? $vaccinations->last()?->vaccinated_at->format('d M Y'), // 20
             'nNP swab result' => $form['management']['np_swab_result'], // 21
             'CT value' => $form['management']['np_swab_result_note'],
         ];
