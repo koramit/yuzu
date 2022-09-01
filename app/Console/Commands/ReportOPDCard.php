@@ -64,7 +64,6 @@ class ReportOPDCard extends Command
             ->get();
 
         return [
-            'v_count' => $vaccinations->count(),
             'ชื่อ-นามสกุล' => $visit->patient_name, // 1
             'HN' => $visit->hn, // 2
             'เพศ' => $visit->patient->gender, // 3
@@ -90,7 +89,7 @@ class ReportOPDCard extends Command
             'loss of taste' => $form['symptoms']['loss_of_taste'] ? 'YES' : 'NO',
             'myalgia' => $form['symptoms']['myalgia'] ? 'YES' : 'NO',
             'diarrhea' => $form['symptoms']['diarrhea'] ? 'YES' : 'NO',
-            'other_symptoms' => $form['symptoms']['other_symptoms'] ? 'YES' : 'NO',
+            'other symptoms' => $form['symptoms']['other_symptoms'] ? 'YES' : 'NO',
             'Onset of symptom' => $form['symptoms']['date_symptom_start']                                  // 14
                 ? \Carbon\Carbon::create($form['symptoms']['date_symptom_start'])->format('d-M-Y')
                 : null,
@@ -127,8 +126,10 @@ class ReportOPDCard extends Command
             'date vaccination dose 4' => $vaccinations->where('dose_no', 4)->first()?->vaccinated_at->format('d M Y'),
             'vaccine dose 5' => $vaccinations->where('dose_no', 5)->first()?->brand,
             'date vaccination dose 5' => $vaccinations->where('dose_no', 5)->first()?->vaccinated_at->format('d M Y'),
-            'Number of vaccination dose' => $form['vaccination']['doses'], // 19
-            'date of latest vaccination' => $this->castDate($form['vaccination']['date_latest_vacciniated']), // 20
+            'Number of vaccination dose' => $form['vaccination']['doses']
+                ?? $vaccinations->count(), // 19
+            'date of latest vaccination' => $this->castDate($form['vaccination']['date_latest_vacciniated'])
+                ?? $vaccinations->last()->vaccinated_at?->format('d M Y'), // 20
             'nNP swab result' => $form['management']['np_swab_result'], // 21
             'CT value' => $form['management']['np_swab_result_note'],
         ];
