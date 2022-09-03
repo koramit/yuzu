@@ -46,6 +46,8 @@ class AbilityRoleTableSeeder extends Seeder
             ['name' => 'view_decision_list'] + $datetime,
             ['name' => 'view_certification_list'] + $datetime,
             ['name' => 'certify'] + $datetime,
+            ['name' => 'view_any_users'] + $datetime,
+            ['name' => 'authorize_user'] + $datetime,
         ]);
 
         Role::insert([
@@ -62,7 +64,7 @@ class AbilityRoleTableSeeder extends Seeder
 
         $assignment = [
             'root' => [],
-            'admin' => ['view_screen_list', 'view_exam_list', 'view_swab_list', 'view_mr_list', 'view_queue_list', 'view_today_list', 'view_any_visits', 'cancel_visit', 'export_visits', 'export_opd_cards', 'view_visit_actions', 'link_mocktail', 'view_decision_list', 'view_certification_list'],
+            'admin' => ['view_screen_list', 'view_exam_list', 'view_swab_list', 'view_mr_list', 'view_queue_list', 'view_today_list', 'view_any_visits', 'cancel_visit', 'export_visits', 'export_opd_cards', 'view_visit_actions', 'link_mocktail', 'view_decision_list', 'view_certification_list', 'view_any_users', 'authorize_user'],
             'md' => ['create_visit', 'view_any_visits', 'view_screen_list', 'view_exam_list', 'view_today_list', 'view_any_visits', 'update_visit', 'sign_opd_card', 'print_opd_card', 'replace_visit', 'cancel_visit'],
             'nurse' => ['create_visit', 'view_screen_list', 'view_exam_list', 'view_swab_list', 'view_mr_list', 'view_queue_list', 'view_enqueue_swab_list', 'view_today_list', 'view_any_visits', 'update_visit', 'sign_on_behalf', 'enlist_exam', 'enqueue_swab', 'print_opd_card', 'replace_visit', 'cancel_visit', 'export_visits'],
             'staff' => ['view_mr_list', 'view_queue_list', 'view_today_list', 'authorize_visit', 'attach_opd_card', 'print_opd_card'],

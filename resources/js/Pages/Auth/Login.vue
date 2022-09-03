@@ -78,8 +78,11 @@
                 class="mt-4 block text-xs text-red-400"
                 href="https://si-eservice3.si.mahidol.ac.th/selfservice/"
                 target="_blank"
-            >เปลี่ยนรหัสผ่านได้ที่นี่</a>
-            <!-- href="https://si-eservice.mahidol.ac.th/myaccount/" -->
+            >เปลี่ยนรหัสผ่าน AD ได้ที่นี่</a>
+            <InertiaLink
+                class="mt-4 block text-xs text-blue-400"
+                :href="route('register-md')"
+            >ลงทะเบียนแพทย์ไม่มี SAP ID</InertiaLink>
         </div>
     </div>
 </template>
@@ -91,9 +94,9 @@ import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import { useCheckSessionTimeout } from '@/Functions/useCheckSessionTimeout';
 import { useRemoveLoader } from '@/Functions/useRemoveLoader';
 import { nextTick, onMounted, ref } from '@vue/runtime-core';
-import { Head } from '@inertiajs/inertia-vue3';
+import { Head, InertiaLink } from '@inertiajs/inertia-vue3';
 export default {
-    components: { FormInput, SpinnerButton, Head },
+    components: { FormInput, SpinnerButton, Head, InertiaLink },
     setup () {
         useCheckSessionTimeout();
         useRemoveLoader();

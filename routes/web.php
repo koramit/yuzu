@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\RegisterMDWithoutADController;
 use App\Http\Controllers\CaptainMarvelController;
 use App\Http\Controllers\CertificateListExportController;
 use App\Http\Controllers\CertificationsController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\ImportAppointmentsController;
 use App\Http\Controllers\InTransitController;
 use App\Http\Controllers\KotoController;
 use App\Http\Controllers\LinkPatientController;
+use App\Http\Controllers\MDWithoutADAuthorizationController;
 use App\Http\Controllers\MocktailController;
 use App\Http\Controllers\MOPHVaccinationController;
 use App\Http\Controllers\OPDCardExportController;
@@ -78,6 +80,14 @@ Route::post('active-duty-token', [DutyTokensController::class, 'store'])
      ->middleware('auth', 'can:create_active_duty_token')
      ->name('duty-token.store');
 
+// authorize MD without AD
+Route::get('authorize-md-without-ad', [MDWithoutADAuthorizationController::class, 'index'])
+    ->middleware('auth', 'can:view_any_users')
+    ->name('authorize-md-without-ad.index');
+Route::patch('authorize-md-without-ad/{user:login}', [MDWithoutADAuthorizationController::class, 'update'])
+    ->middleware('auth', 'can:authorize_user')
+    ->name('authorize-md-without-ad.update');
+
 // Register
 Route::get('register', [RegisteredUserController::class, 'create'])
      ->middleware('guest')
@@ -85,6 +95,12 @@ Route::get('register', [RegisteredUserController::class, 'create'])
 Route::post('register', [RegisteredUserController::class, 'store'])
      ->middleware('guest')
      ->name('register.store');
+Route::get('register-md-without-ad', [RegisterMDWithoutADController::class, 'create'])
+    ->middleware('guest')
+    ->name('register-md');
+Route::post('register-md-without-ad', [RegisterMDWithoutADController::class, 'store'])
+    ->middleware('guest')
+    ->name('register-md.store');
 
 // Page
 Route::get('terms-and-policies', [PagesController::class, 'terms'])

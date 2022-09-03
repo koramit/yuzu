@@ -451,6 +451,7 @@ class VisitManager
                 ['icon' => 'satellite-dish', 'label' => 'ผลแลปวันนี้', 'route' => 'visits.lab-list', 'can' => $user->can('view_lab_list')],
                 ['icon' => 'archive', 'label' => 'รายการเคสทั้งหมด', 'route' => 'visits', 'can' => $user->can('view_any_visits')],
                 ['icon' => 'key', 'label' => 'รหัสปฏิบัติงาน', 'route' => 'duty-token.show', 'can' => $user->can('view_active_duty_token')],
+                ['icon' => 'user-check', 'label' => 'จัดการสิทธิ์', 'route' => 'authorize-md-without-ad.index', 'can' => $user->can('view_any_users')],
                 ['icon' => 'procedure', 'label' => 'Decision', 'route' => 'decisions', 'can' => $user->can('view_decision_list')],
                 ['icon' => 'certificate', 'label' => 'Certification', 'route' => 'certifications', 'can' => $user->can('view_certification_list')],
             ],
