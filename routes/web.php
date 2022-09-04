@@ -22,7 +22,7 @@ use App\Http\Controllers\OPDCardExportController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PositiveCaseDecisionExportController;
 use App\Http\Controllers\PosterController;
-use App\Http\Controllers\PosterDataController;
+use App\Http\Controllers\StatDataController;
 use App\Http\Controllers\PreferencesController;
 use App\Http\Controllers\PrintOPDCardController;
 use App\Http\Controllers\RequestVerificationCodeController;
@@ -432,4 +432,9 @@ Route::post('transfer', function () {
 
 Route::get('quality-fair-2022', PosterController::class)->name('poster');
 Route::get('poster-approval-needed', PosterController::class)->name('poster-preview');
-Route::post('poster-data', PosterDataController::class)->name('poster-data');
+Route::post('stat-data/service', StatDataController::class)->name('stat-data.service');
+Route::post('stat-data/lab-result', StatDataController::class)->name('stat-data.lab-result');
+Route::post('stat-data/lab-positive', StatDataController::class)->name('stat-data.lab-positive');
+Route::post('poster-data/service', StatDataController::class)->name('poster-data.service');
+Route::post('poster-data/lab-result', StatDataController::class)->name('poster-data.lab-result');
+Route::post('poster-data/lab-positive', StatDataController::class)->name('poster-data.lab-positive');
