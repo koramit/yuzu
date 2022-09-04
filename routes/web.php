@@ -21,6 +21,8 @@ use App\Http\Controllers\MOPHVaccinationController;
 use App\Http\Controllers\OPDCardExportController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PositiveCaseDecisionExportController;
+use App\Http\Controllers\PosterController;
+use App\Http\Controllers\PosterDataController;
 use App\Http\Controllers\PreferencesController;
 use App\Http\Controllers\PrintOPDCardController;
 use App\Http\Controllers\RequestVerificationCodeController;
@@ -428,6 +430,6 @@ Route::post('transfer', function () {
     return $transfer->set(request()->all());
 });
 
-Route::get('quality-fair-2022', function () {
-    return 'เปิดให้เข้าชม วันท่ี 8 – 9 กันยายน 2565';
-});
+Route::get('quality-fair-2022', PosterController::class)->name('poster');
+Route::get('poster-approval-needed', PosterController::class)->name('poster-preview');
+Route::post('poster-data', PosterDataController::class)->name('poster-data');
