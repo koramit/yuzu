@@ -1,6 +1,7 @@
 <template>
-    <div class="p-4 md:px-60">
-        <div class="flex items-center md:space-x-4">
+    <div>
+        <canvas ref="chartCanvas" />
+        <div class="mt-4 md:mt-12 flex items-center md:space-x-4">
             <FormDatetime
                 name="start"
                 v-model="form.start"
@@ -22,8 +23,7 @@
                 v-model="form.end"
             />
         </div>
-        <canvas ref="chartCanvas" />
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+        <div class="mt-4 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
             <FormCheckbox
                 v-for="set in props.config.datasets"
                 :key="set.name"
@@ -59,7 +59,11 @@ const datasetColors = [
     {bg: 'rgb(255, 99, 132, 0.2)', bd: 'rgb(255, 99, 132)'},
     {bg: 'rgb(126, 222, 111, 0.2)', bd: 'rgb(126, 222, 111)'},
     {bg: 'rgb(34,72,199, 0.2)', bd: 'rgb(34,72,199)'},
-    {bg: 'rgba(204,210,23,0.2)', bd: 'rgb(204,210,23)'},
+    {bg: 'rgba(225,214,4,0.2)', bd: 'rgba(225,214,4,0.93)'},
+    {bg: 'rgba(126,23,210,0.2)', bd: 'rgb(126,23,210)'},
+    {bg: 'rgba(210,135,23,0.2)', bd: 'rgb(210,135,23)'},
+    {bg: 'rgba(22,188,210,0.2)', bd: 'rgb(22,188,210)'},
+    {bg: 'rgba(250,8,229,0.2)', bd: 'rgb(250,8,229)'},
 ];
 
 const toggleDatasets = reactive({});

@@ -1,37 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Actions;
 
-use App\Models\Visit;
 use App\Models\VisitStat;
+use App\Traits\VisitStatQueryable;
 use Exception;
-use Illuminate\Http\Request;
 
-class PosterDataController extends Controller
+class VisitServiceStatAction
 {
+    use VisitStatQueryable;
     /**
      * @throws Exception
      */
-    public function __invoke(Request $request)
+    public function __invoke($start, $end)
     {
-        $validated = $request->validate([
-            'start' => 'nullable|date',
-            'end' => 'nullable|date',
-        ]);
-
-        $minDate = cache('first-visit-date');
-        $maxDate = cache('last-visit-date');
-
-        $start = $validated['start'] ?? $minDate;
-        $end = $validated['end'] ?? $maxDate;
-
-        if ($start < $minDate) {
-            $start = $minDate;
-        }
-        if ($end > $maxDate) {
-            $end = $maxDate;
-        }
-
         return cache()->remember("service-chart-$start-$end", now()->addDay(), function () use($start, $end) {
             $all = $this->query($start, $end, true);
             $staff = $this->query($start, $end, false, 2)->toArray();
@@ -50,24 +32,6 @@ class PosterDataController extends Controller
                 ],
             ];
         });
-    }
-
-    protected function query($start, $end, $label = null, $patientType = null, $swab = null)
-    {
-        $base = Visit::query()
-            ->selectRaw('COUNT(*) as cases')
-            ->when($label, fn ($query) => $query->selectRaw('DATE_FORMAT(date_visit, "%e %b %y") as visited_at'))
-            ->where('status', 4)
-            ->where('date_visit', '>=', $start)
-            ->where('date_visit', '<=', $end)
-            ->when($patientType, fn ($query) => $query->where('patient_type', $patientType))
-            ->when($swab !== null, fn ($query) => $query->where('swabbed', $swab))
-            ->orderBy('date_visit')
-            ->groupBy('date_visit');
-
-        return $label
-            ? $base->pluck('cases', 'visited_at')
-            : $base->pluck('cases');
     }
 
     protected function useModel($start, $end)
