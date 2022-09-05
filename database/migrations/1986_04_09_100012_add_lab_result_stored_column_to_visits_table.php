@@ -15,7 +15,7 @@ class AddLabResultStoredColumnToVisitsTable extends Migration
     {
         Schema::table('visits', function (Blueprint $table) {
             $table->string('lab_result_stored')
-                ->storedAs('json_unquote(json_extract(form, \'$."management"."np_swab_result"\'))')
+                ->storedAs('CASE WHEN json_unquote(json_extract(form, \'$."management"."np_swab_result"\')) = "null" THEN null ELSE json_unquote(json_extract(form, \'$."management"."np_swab_result"\')) END' )
                 ->nullable()
                 ->after('swabbed')
                 ->index();
