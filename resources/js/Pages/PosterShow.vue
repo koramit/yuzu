@@ -65,7 +65,7 @@ const labResultChartConfig = reactive({
 
 const labPositiveChartConfig = reactive({
     endpoint: window.route('poster-data.lab-positive'),
-    title: 'ตรวจ PCR ผลพบเชื้อ',
+    title: 'ผลพบเชื้อ - ผู้ป่วยมีอาการ - การได้รับวัคซีน',
     datasets: [
         {name: 'all', label: 'รวมผลพบเชื้อ'},
         {name: 'allVaccinated', label: 'รวมได้รับวัคซีน'},
