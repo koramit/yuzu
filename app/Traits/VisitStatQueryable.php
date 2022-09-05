@@ -17,8 +17,8 @@ trait VisitStatQueryable
             ->where('date_visit', '<=', $end)
             ->when($patientType, fn ($query) => $query->where('patient_type', $patientType))
             ->when($swab !== null, fn ($query) => $query->where('swabbed', $swab))
-            ->when($result, fn ($query) => $query->where('form->management->np_swab_result', $result))
-            ->when($asymptom !== null, fn ($query) => $query->where('form->symptoms->asymptomatic_symptom', $asymptom))
+            ->when($result, fn ($query) => $query->where('lab_result_stored', $result))
+            ->when($asymptom !== null, fn ($query) => $query->where('asymptomatic_stored', $asymptom))
             ->when($vaccinated !== null, function ($query) use ($vaccinated) {
                 $query->when($vaccinated === true, function ($query) {
                     $query->whereHas('vaccinations', fn ($q) => $q->whereRaw('vaccinated_at < visits.date_visit'));
