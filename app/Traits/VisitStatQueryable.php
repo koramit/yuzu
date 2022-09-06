@@ -10,15 +10,15 @@ trait VisitStatQueryable
     protected function query($start, $end, $label = null, $patientType = null, $swab = null, $result = null, $asymptom = null, $vaccinated = null): Collection
     {
         $base = Visit::query()
-            ->selectRaw('COUNT(id) as cases')
+            ->selectRaw('COUNT(*) as cases')
             ->when($label, fn ($query) => $query->selectRaw('DATE_FORMAT(date_visit, "%e %b %y") as visited_at'))
             ->where('status', 4)
             ->where('date_visit', '>=', $start)
             ->where('date_visit', '<=', $end)
             ->when($patientType, fn ($query) => $query->where('patient_type', $patientType))
             ->when($swab !== null, fn ($query) => $query->where('swabbed', $swab))
-            ->when($result, fn ($query) => $query->where('form->management->np_swab_result', $result))
-            ->when($asymptom !== null, fn ($query) => $query->where('form->symptoms->asymptomatic_symptom', $asymptom))
+            ->when($result, fn ($query) => $query->where('lab_result_stored', $result))
+            ->when($asymptom !== null, fn ($query) => $query->where('asymptomatic_stored', $asymptom))
             ->when($vaccinated !== null, function ($query) use ($vaccinated) {
                 $query->when($vaccinated === true, function ($query) {
                     $query->whereHas('vaccinations', fn ($q) => $q->whereRaw('vaccinated_at < visits.date_visit'));
@@ -42,5 +42,17 @@ trait VisitStatQueryable
         }
 
         return $filled;
+    }
+
+    protected function calStats(&$map, &$datasets, &$aggregates)
+    {
+        foreach ($map as $key => $data) {
+            $datasets[$key] = $data->toArray();
+            $aggregates[$key]['sum'] = $data->sum();
+            $aggregates[$key]['avg'] = (int) $data->avg();
+            $aggregates[$key]['max'] = $data->max();
+            $aggregates[$key]['min'] = $data->min();
+            $aggregates[$key]['median'] = $data->median();
+        }
     }
 }

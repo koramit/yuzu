@@ -49,14 +49,14 @@ class VisitLabResultStatAction
                 }
             }
 
-            $datasets = [
-                'all' => $all,
-                'allPos' => $allPos,
-                'allNeg' => $allNeg,
-                'publicPos' => $publicPos,
-                'publicNeg' => $publicNeg,
-                'staffPos' => $staffPos,
-                'staffNeg' => $staffNeg,
+            $map = [
+                'all' => collect($all),
+                'allPos' => collect($allPos),
+                'allNeg' => collect($allNeg),
+                'publicPos' => collect($publicPos),
+                'publicNeg' => collect($publicNeg),
+                'staffPos' => collect($staffPos),
+                'staffNeg' => collect($staffNeg),
             ];
 
             if ($full) {
@@ -65,9 +65,14 @@ class VisitLabResultStatAction
                 $datasets['staffInc'] = $staffInc;
             }
 
+            $aggregates = [];
+            $datasets = [];
+            $this->calStats($map,$datasets, $aggregates);
+
             return [
                 'labels' => $labels,
                 'datasets' => $datasets,
+                'aggregates' => $aggregates,
             ];
         });
     }

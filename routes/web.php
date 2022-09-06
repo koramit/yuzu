@@ -433,8 +433,14 @@ Route::post('transfer', function () {
 Route::get('quality-fair-2022', PosterController::class)->name('poster');
 Route::get('poster-approval-needed', PosterController::class)->name('poster-preview');
 Route::post('stat-data/service', StatDataController::class)->name('stat-data.service');
+Route::post('stat-data/service-weekday', StatDataController::class)->name('stat-data.service-weekday');
 Route::post('stat-data/lab-result', StatDataController::class)->name('stat-data.lab-result');
+Route::post('stat-data/lab-result-total', StatDataController::class)->name('stat-data.lab-result-total');
+Route::post('stat-data/lab-result-vaccination', StatDataController::class)->name('stat-data.lab-result-vaccination');
 Route::post('stat-data/lab-positive', StatDataController::class)->name('stat-data.lab-positive');
 Route::post('poster-data/service', StatDataController::class)->name('poster-data.service');
+Route::post('poster-data/service-weekday', StatDataController::class)->name('poster-data.service-weekday');
 Route::post('poster-data/lab-result', StatDataController::class)->name('poster-data.lab-result');
+Route::post('poster-data/lab-result-total', StatDataController::class)->name('poster-data.lab-result-total');
+Route::post('poster-data/lab-result-vaccination', StatDataController::class)->name('poster-data.lab-result-vaccination');
 Route::post('poster-data/lab-positive', StatDataController::class)->name('poster-data.lab-positive');

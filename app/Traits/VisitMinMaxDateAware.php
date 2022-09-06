@@ -25,7 +25,7 @@ trait VisitMinMaxDateAware
     {
         return cache()->remember(
             'last-visit-date',
-            now()->addDay(),
+            now()->addHours(12),
             fn () => Visit::query()->where('status', 4)->where('date_visit', '<', today())->max('date_visit'),
         );
     }

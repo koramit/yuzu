@@ -16,20 +16,25 @@ class VisitServiceStatAction
     {
         return cache()->remember("service-chart-$start-$end", now()->addDay(), function () use($start, $end) {
             $all = $this->query($start, $end, true);
-            $staff = $this->query($start, $end, false, 2)->toArray();
-            $public = $this->query($start, $end, false, 1)->toArray();
-            $publicSwab = $this->query($start, $end, false, 1, 1)->toArray();
+            $staff = $this->query($start, $end, false, 2);
+            $public = $this->query($start, $end, false, 1);
+            $publicSwab = $this->query($start, $end, false, 1, 1);
             $labels = array_keys($all->toArray());
-            $all = array_values($all->toArray());
+            $all = collect(array_values($all->toArray()));
+            $map = [
+                'all' => $all,
+                'staff' => $staff,
+                'public' => $public,
+                'publicSwab' => $publicSwab,
+            ];
+            $aggregates = [];
+            $datasets = [];
+            $this->calStats($map,$datasets, $aggregates);
 
             return [
                 'labels' => $labels,
-                'datasets' => [
-                    'all' => $all,
-                    'staff' => $staff,
-                    'public' => $public,
-                    'publicSwab' => $publicSwab,
-                ],
+                'datasets' => $datasets,
+                'aggregates' => $aggregates,
             ];
         });
     }
