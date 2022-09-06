@@ -10,7 +10,7 @@ trait VisitStatQueryable
     protected function query($start, $end, $label = null, $patientType = null, $swab = null, $result = null, $asymptom = null, $vaccinated = null): Collection
     {
         $base = Visit::query()
-            ->selectRaw('COUNT(id) as cases')
+            ->selectRaw('COUNT(*) as cases')
             ->when($label, fn ($query) => $query->selectRaw('DATE_FORMAT(date_visit, "%e %b %y") as visited_at'))
             ->where('status', 4)
             ->where('date_visit', '>=', $start)
@@ -42,5 +42,17 @@ trait VisitStatQueryable
         }
 
         return $filled;
+    }
+
+    protected function calStats(&$map, &$datasets, &$aggregates)
+    {
+        foreach ($map as $key => $data) {
+            $datasets[$key] = $data->toArray();
+            $aggregates[$key]['sum'] = $data->sum();
+            $aggregates[$key]['avg'] = (int) $data->avg();
+            $aggregates[$key]['max'] = $data->max();
+            $aggregates[$key]['min'] = $data->min();
+            $aggregates[$key]['median'] = $data->median();
+        }
     }
 }

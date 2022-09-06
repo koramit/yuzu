@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\VisitWeekdayStatAction;
 use App\Actions\VisitLabPositiveStatAction;
 use App\Actions\VisitLabResultStatAction;
-use App\Actions\VisitPCRStatAction;
+use App\Actions\VisitLabResultTotalAction;
+use App\Actions\VisitLabResultVaccinationStatAction;
 use App\Actions\VisitServiceStatAction;
 use App\Traits\VisitMinMaxDateAware;
 use Exception;
@@ -44,6 +46,12 @@ class StatDataController extends Controller
             return (new VisitLabPositiveStatAction())($start, $end);
         } elseif ($name === 'lab-result') {
             return (new VisitLabResultStatAction())($start, $end);
+        } elseif ($name === 'lab-result-total') {
+            return (new VisitLabResultTotalAction())($start, $end);
+        } elseif ($name === 'lab-result-vaccination') {
+            return (new VisitLabResultVaccinationStatAction())($start, $end);
+        } elseif ($name === 'service-weekday') {
+            return (new VisitWeekdayStatAction())($start, $end);
         }
 
         return [];

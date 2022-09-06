@@ -40,18 +40,25 @@ class VisitLabPositiveStatAction
             $data = $this->query($start, $end, true, 2, 1, 'Detected', true);
             $staffAsymptom = $this->fillZero($data, $labels);
 
+            $map = [
+                'all' => collect($all),
+                'allVaccinated' => collect($allVaccinated),
+                'allSymptom' => collect($allSymptom),
+                'public' => collect($public),
+                'publicAsymptom' => collect($publicAsymptom),
+                'publicUnvaccinated' => collect($publicUnvaccinated),
+                'staff' => collect($staff),
+                'staffAsymptom' => collect($staffAsymptom),
+            ];
+
+            $aggregates = [];
+            $datasets = [];
+            $this->calStats($map,$datasets, $aggregates);
+
             return [
                 'labels' => $labels,
-                'datasets' => [
-                    'all' => $all,
-                    'allVaccinated' => $allVaccinated,
-                    'allSymptom' => $allSymptom,
-                    'public' => $public,
-                    'publicAsymptom' => $publicAsymptom,
-                    'publicUnvaccinated' => $publicUnvaccinated,
-                    'staff' => $staff,
-                    'staffAsymptom' => $staffAsymptom,
-                ],
+                'datasets' => $datasets,
+                'aggregates' => $aggregates,
             ];
         });
     }
