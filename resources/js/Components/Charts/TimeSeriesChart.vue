@@ -210,7 +210,13 @@ onMounted(() => {
 const addDataset = (name) => {
     let index = props.config.datasets.findIndex(set => set.name === name);
     let set = props.config.datasets[index];
-    const data = chartData?.datasets[name] ?? [];
+    let selectedData = chartData?.datasets[name] ?? [];
+    let data;
+    if (categories.value.length && selectedData.length) {
+        data = categories.value.filter(c => c.show).map(c => selectedData[c.index]);
+    } else {
+        data = [...selectedData];
+    }
     if (props.config.type === 'line') {
         chart.data.datasets.push({
             label: set.label,
