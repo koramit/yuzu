@@ -13,6 +13,7 @@ class VisitLabResultVaccinationStatAction
     public function __invoke($start, $end): array
     {
         return cache()->remember("lab-result-vaccination-$start-$end", now()->addDay(), function () use ($start, $end) {
+            cache()->increment('lab-result-vaccination-query-count');
             $labelAvailable = ['ไม่เคยได้รับวัคซีน', '1 เข็ม', '2 เข็ม', '3 เข็ม', '4 เข็ม', '5 เข็ม', '6 เข็ม'];
             $results = ['Detected', 'Not detected', 'Inconclusive'];
 

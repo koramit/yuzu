@@ -13,6 +13,7 @@ class VisitLabResultTotalAction
     public function __invoke($start, $end): array
     {
         return cache()->remember("lab-result-total-$start-$end", now()->addDay(), function () use ($start, $end) {
+            cache()->increment('lab-result-total-query-count');
             $labels = ['Detected', 'Not detected', 'Inconclusive'];
             $data = DB::table('visits')
                 ->selectRaw('COUNT(*) as cases, patient_type, lab_result_stored')

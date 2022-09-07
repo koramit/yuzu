@@ -13,6 +13,7 @@ class VisitWeekdayStatAction
     public function __invoke($start, $end): array
     {
         return cache()->remember("service-weekday-$start-$end", now()->addDay(), function () use ($start, $end) {
+            cache()->increment('service-weekday-query-count');
             $labels = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์'];
             $dividers = [0,0,0,0,0,0,0];
             $startDate = now()->create($start);

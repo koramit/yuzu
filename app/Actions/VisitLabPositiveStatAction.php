@@ -15,6 +15,7 @@ class VisitLabPositiveStatAction
     public function __invoke($start, $end): array
     {
         return cache()->remember("lab-positive-$start-$end", now()->addDay(), function () use ($start, $end) {
+            cache()->increment('lab-positive-query-count');
             $all = $this->query($start, $end, true, null, 1, 'Detected');
             $labels = array_keys($all->toArray());
             $all = array_values($all->toArray());

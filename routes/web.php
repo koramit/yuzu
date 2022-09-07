@@ -444,3 +444,16 @@ Route::post('poster-data/lab-result', StatDataController::class)->name('poster-d
 Route::post('poster-data/lab-result-total', StatDataController::class)->name('poster-data.lab-result-total');
 Route::post('poster-data/lab-result-vaccination', StatDataController::class)->name('poster-data.lab-result-vaccination');
 Route::post('poster-data/lab-positive', StatDataController::class)->name('poster-data.lab-positive');
+
+Route::get('/cache-me-if-you-can', function () {
+    return [
+        'poster-2022-visitor-count' => cache('poster-2022-visitor-count'),
+        'poster-2022-view-count' => cache('poster-2022-view-count'),
+        'service-chart-query-count' => cache('service-chart-query-count'),
+        'service-weekday-query-count' => cache('service-weekday-query-count'),
+        'lab-result-query-count' => cache('lab-result-query-count'),
+        'lab-result-total-query-count' => cache('lab-result-total-query-count'),
+        'lab-positive-query-count' => cache('lab-positive-query-count'),
+        'lab-result-vaccination-query-count' => cache('lab-result-vaccination-query-count'),
+    ];
+});

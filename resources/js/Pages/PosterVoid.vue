@@ -1,4 +1,7 @@
 <template>
+    <Head>
+        <title>YUZU Quality Fair 2022</title>
+    </Head>
     <div class="w-full min-h-screen flex flex-col items-center justify-center p-4">
         <h1 class="text-dark-theme-light font-semibold text-2xl">
             YUZU 🍊 <span class="text-thick-theme-light italic">:</span> Quality fair 2565
