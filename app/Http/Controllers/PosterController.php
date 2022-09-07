@@ -16,14 +16,24 @@ class PosterController extends Controller
      */
     public function __invoke(Request $request)
     {
-        if ($request->route()->getName() === 'poster') {
-            if (
-                now()->tz(7)->lessThan(now()->create('2022-09-08 00:00 +7'))
-                || now()->tz(7)->greaterThan(now()->create('2022-09-10 00:00 +7'))
-            ) {
-                return Inertia::render('PosterVoid');
-            }
+        $now = now()->tz(7);
+        $start = now()->create('2022-09-08 00:00 +7');
+        $end = now()->create('2022-09-10 00:00 +7');
+
+        if ($request->route()->getName() !== 'poster') {
+            return redirect()->route('poster');
         }
+
+        if (! $now->between($start, $end)) {
+            return Inertia::render('PosterVoid');
+        }
+
+        if (! $request->session()->get('poster-visitor', null)) {
+            $request->session()->put('poster-visitor', true);
+            cache()->increment('poster-2022-visitor-count');
+        }
+
+        cache()->increment('poster-2022-view-count');
 
         return Inertia::render('PosterShow', [
             'firstDay' => $this->firstDay(),

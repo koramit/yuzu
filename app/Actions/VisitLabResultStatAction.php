@@ -16,6 +16,7 @@ class VisitLabResultStatAction
     {
         $mode = $full ? 'full' : 'less';
         return cache()->remember("lab-result-$start-$end-$mode", now()->addDay(), function () use ($start, $end, $full) {
+            cache()->increment('lab-result-query-count');
             $all = $this->query($start, $end, true, null, 1);
             $labels = array_keys($all->toArray());
             $all = array_values($all->toArray());

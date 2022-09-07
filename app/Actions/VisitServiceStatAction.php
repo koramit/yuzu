@@ -15,6 +15,7 @@ class VisitServiceStatAction
     public function __invoke($start, $end)
     {
         return cache()->remember("service-chart-$start-$end", now()->addDay(), function () use($start, $end) {
+            cache()->increment('service-chart-query-count');
             $all = $this->query($start, $end, true);
             $staff = $this->query($start, $end, false, 2);
             $public = $this->query($start, $end, false, 1);
