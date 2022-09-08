@@ -42,9 +42,9 @@
             </SpinnerButton>
 
             <!-- annoucement -->
-            <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
+            <!--            <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
                 <p>ประกาศ</p>
-                <!--                <div class="mt-4">
+                <div class="mt-4">
                     <p class="mt-2 italic text-xs">
                         <span class="underline">วันนี้ (6 พ.ค. 2565) เวลา 22:00 - 24:00 น.</span> โดยประมาณ กองเทคโนโลยีสารสนเทศ มหาวิทยาลัยมหิดล <span class="underline">จะทำการซ่อมบำรุงอุปกรณ์ระบบเครือข่าย</span>
                     </p>
@@ -73,19 +73,18 @@
                     </p>
                 </div>
             </div>-->
-                <a
-                    v-if="form.errors.login"
-                    class="mt-4 block text-xs text-red-400"
-                    href="https://si-eservice3.si.mahidol.ac.th/selfservice/"
-                    target="_blank"
-                >เปลี่ยนรหัสผ่าน AD ได้ที่นี่</a>
-                <InertiaLink
-                    class="mt-4 block text-xs text-blue-400"
-                    :href="route('register-md')"
-                >
-                    ลงทะเบียนแพทย์ไม่มี SAP ID
-                </InertiaLink>
-            </div>
+            <a
+                v-if="form.errors.login"
+                class="mt-4 block text-xs text-red-400"
+                href="https://si-eservice3.si.mahidol.ac.th/selfservice/"
+                target="_blank"
+            >เปลี่ยนรหัสผ่าน AD ได้ที่นี่</a>
+            <InertiaLink
+                class="mt-4 block text-xs text-blue-400"
+                :href="route('register-md')"
+            >
+                ลงทะเบียนแพทย์ไม่มี SAP ID
+            </InertiaLink>
         </div>
     </div>
 </template>
