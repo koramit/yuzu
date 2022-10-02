@@ -74,6 +74,14 @@ class LabCovidManager
             Log::notice('lab error '. $count['error'].' of '.$visits->count());
         }
 
+        if (count($this->noResult)) {
+            $notice = "no lab\n";
+            foreach($this->noResult as $visit) {
+                $notice .= "{$visit->hn}\n";
+            }
+            Log::notice($notice);
+        }
+
         if (now()->hour >= 13 && count($this->noResult)) { // after 20:00 only
             LabNoResult::dispatch($this->noResult);
         }
