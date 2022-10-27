@@ -39,6 +39,7 @@ class PositiveCaseDecisionExportController extends Controller
                                       'Weight' => $positive['weight'],
                                       'CT' => $positive['lab_remark'] ? str_replace("\n", ' ', $positive['lab_remark']) : null,
                                       'Note' => $positive['note'] ? str_replace("\n", ' ', $positive['note']) : null,
+                                      'Vaccination' => $positive['vaccination_text'],
                                       'Remark' => $positive['remark'] ? str_replace("\n", ' ', $positive['remark']) : null,
                                       'Decision' => $positive['refer_to'],
                                   ];

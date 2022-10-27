@@ -124,6 +124,9 @@
                     {{ shortenVaccineBrand(positive.note) }}
                 </td>
                 <td class="border-t px-3 py-2">
+                    {{ shortenVaccineBrand(positive.vaccination_text) }}
+                </td>
+                <td class="border-t px-3 py-2">
                     {{ positive.remark }}
                 </td>
                 <td
@@ -286,6 +289,16 @@
                     class="italic text-red-400"
                     v-html="positive.lab_remark.replaceAll(' | ', '<br>')"
                 />
+            </div>
+            <!-- vaccination -->
+            <div
+                class="mt-2 rounded-md shadow-sm bg-gray-100 p-2"
+                v-if="positive.vaccination_text"
+            >
+                <p>
+                    <span class="italic">Vaccination: </span>
+                    {{ positive.vaccination_text }}
+                </p>
             </div>
             <!-- note -->
             <div
@@ -463,7 +476,7 @@ watch (
     }
 );
 
-const headrows = ref(['Name','Age','Tel','Insurance','U/D','Symptom','Onset','O2 sat','Weight','Note','Remark','Decision']);
+const headrows = ref(['Name','Age','Tel','Insurance','U/D','Symptom','Onset','O2 sat','Weight','Note','Vaccination','Remark','Decision']);
 // const headrows = ref(['Name','Age','HN','Tel','Type','Insurance','U/D','Symptom','Onset','O2 sat','Weight','Remark','Decision']);
 const formDateVisit = ref(props.dateVisit);
 const search = ref('');
