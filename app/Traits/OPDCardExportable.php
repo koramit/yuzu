@@ -16,6 +16,12 @@ trait OPDCardExportable
 
         $this->daysCriteria = $visit->date_visit->lessThan(Carbon::create('2022-01-24')) ? 14 : 10;
 
+        $vaccineDoses = $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->count();
+        $dateLastVaccinated = $visit->vaccinations
+            ->where('vaccinated_at', '<', $visit->date_visit)
+            ->sortByDesc('vaccinated_at')
+            ->first()?->vaccinated_at->format('d-M-Y');
+
         return [
             'date_visit' => $visit->date_visit->format('d-M-Y'),
             'HN' => $visit->hn,
@@ -92,8 +98,8 @@ trait OPDCardExportable
             'AstraZeneca' => $form['vaccination']['AstraZeneca'] ? 'YES' : 'NO',
             'Moderna' => $form['vaccination']['Moderna'] ? 'YES' : 'NO',
             'Pfizer' => $form['vaccination']['Pfizer'] ? 'YES' : 'NO',
-            'doses' => $form['vaccination']['doses'],
-            'date_latest_vacciniated' => $this->castDate($form['vaccination']['date_latest_vacciniated']),
+            'doses' => $vaccineDoses !== 0 ? $vaccineDoses : $form['vaccination']['doses'],
+            'date_latest_vacciniated' => $dateLastVaccinated ?? $this->castDate($form['vaccination']['date_latest_vacciniated']),
 
             // vaccine dose
             'vaccine_dose_1' => $visit->vaccinations->where('vaccinated_at', '<', $visit->date_visit)->where('dose_no', 1)->first()?->brand,
