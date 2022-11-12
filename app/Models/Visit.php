@@ -65,9 +65,9 @@ class Visit extends Model
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
             if (is_numeric($search)) {
-                $query->where('hn_virtual', 'like', "{$search}%");
+                $query->where('hn_stored', 'like', "{$search}%");
             } else {
-                $query->where('name_name', 'like', "%{$search}%");
+                $query->where('name_stored', 'like', "%{$search}%");
             }
         });
     }

@@ -14,14 +14,14 @@ class AddHnVirtualNameVirtualColumnsToVisitsTable extends Migration
     public function up()
     {
         Schema::table('visits', function (Blueprint $table) {
-            $table->unsignedInteger('hn_virtual')
-                ->virtualAs('CASE WHEN json_unquote(json_extract(form, \'$."patient"."hn"\')) = "null" THEN null ELSE json_unquote(json_extract(form, \'$."patient"."hn"\')) END' )
+            $table->unsignedInteger('hn_stored')
+                ->storedAs('CASE WHEN json_unquote(json_extract(form, \'$."patient"."hn"\')) = "null" THEN null ELSE json_unquote(json_extract(form, \'$."patient"."hn"\')) END' )
                 ->nullable()
                 ->after('asymptomatic_stored')
                 ->index();
-            $table->string('name_virtual', 60)
-            ->virtualAs('CASE WHEN json_unquote(json_extract(form, \'$."patient"."name"\')) = "null" THEN null ELSE json_unquote(json_extract(form, \'$."patient"."name"\')) END' )
-                ->after('hn_virtual')
+            $table->string('name_stored', 60)
+            ->storedAs('CASE WHEN json_unquote(json_extract(form, \'$."patient"."name"\')) = "null" THEN null ELSE json_unquote(json_extract(form, \'$."patient"."name"\')) END' )
+                ->after('hn_stored')
                 ->index();
         });
     }
@@ -34,7 +34,8 @@ class AddHnVirtualNameVirtualColumnsToVisitsTable extends Migration
     public function down()
     {
         Schema::table('visits', function (Blueprint $table) {
-            //
+            $table->dropColumn('hn_stored');
+            $table->dropColumn('name_stored');
         });
     }
 }
