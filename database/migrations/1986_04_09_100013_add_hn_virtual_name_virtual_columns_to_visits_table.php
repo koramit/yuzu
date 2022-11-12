@@ -14,12 +14,12 @@ class AddHnVirtualNameVirtualColumnsToVisitsTable extends Migration
     public function up()
     {
         Schema::table('visits', function (Blueprint $table) {
-            $table->unsignedInteger('hn_stored')
+            $table->string('hn_stored', 20)
                 ->storedAs('CASE WHEN json_unquote(json_extract(form, \'$."patient"."hn"\')) = "null" THEN null ELSE json_unquote(json_extract(form, \'$."patient"."hn"\')) END' )
                 ->nullable()
                 ->after('asymptomatic_stored')
                 ->index();
-            $table->string('name_stored', 60)
+            $table->string('name_stored', 120)
             ->storedAs('CASE WHEN json_unquote(json_extract(form, \'$."patient"."name"\')) = "null" THEN null ELSE json_unquote(json_extract(form, \'$."patient"."name"\')) END' )
                 ->after('hn_stored')
                 ->index();
