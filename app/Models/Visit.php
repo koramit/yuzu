@@ -65,9 +65,9 @@ class Visit extends Model
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
             if (is_numeric($search)) {
-                $query->where('form->patient->hn', 'like', "{$search}%");
+                $query->where('hn_virtual', 'like', "{$search}%");
             } else {
-                $query->where('form->patient->name', 'like', "%{$search}%");
+                $query->where('name_name', 'like', "%{$search}%");
             }
         });
     }
