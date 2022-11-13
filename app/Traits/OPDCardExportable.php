@@ -12,7 +12,7 @@ trait OPDCardExportable
     protected function allData(Visit $visit)
     {
         $form = $visit->form;
-        $profile = $visit->patient->profile;
+        $profile = $visit->patient?->profile ?? null;
 
         $this->daysCriteria = $visit->date_visit->lessThan(Carbon::create('2022-01-24')) ? 14 : 10;
 
@@ -37,11 +37,11 @@ trait OPDCardExportable
             'insurance' => $form['patient']['insurance'],
             'tel_no' => $form['patient']['tel_no'],
             'tel_no_alt' => $form['patient']['tel_no_alt'],
-            'address' => $profile['address'],
-            'subdistrict' => $profile['subdistrict'],
-            'district' => $profile['district'],
-            'postcode' => $profile['postcode'],
-            'province' => $profile['province'],
+            'address' => $profile['address'] ?? null,
+            'subdistrict' => $profile['subdistrict'] ?? null,
+            'district' => $profile['district'] ?? null,
+            'postcode' => $profile['postcode'] ?? null,
+            'province' => $profile['province'] ?? null,
 
             'sap_id' => $form['patient']['sap_id'],
             'position' => $form['patient']['position'],
