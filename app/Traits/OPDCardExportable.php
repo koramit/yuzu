@@ -28,7 +28,7 @@ trait OPDCardExportable
             'name' => $visit->patient_name,
             'patient_type' => $visit->patient_type,
             'screen_type' => $visit->screen_type,
-            'gender' => $visit->patient->gender,
+            'gender' => $visit->patient?->gender,
             'menstruation' => $visit->menstruation,
             'age' => $visit->age_at_visit,
             'age_unit' => $visit->age_at_visit_unit,
@@ -55,7 +55,7 @@ trait OPDCardExportable
             'date_swabbed' => $this->castDate($form['patient']['date_swabbed']),
             'date_reswabbed' => $this->castDate($form['patient']['date_reswabbed']),
             'passport_no' => $form['patient']['passport_no'] ?? null,
-            'national_id' => $visit->patient->profile['document_id'],
+            'national_id' => $visit->patient?->profile['document_id'],
 
             'symptoms' => $form['symptoms']['asymptomatic_symptom'] ? 'ไม่มีอาการ' : 'มีอาการ',
             'onset' => $form['symptoms']['date_symptom_start'] ? Carbon::create($form['symptoms']['date_symptom_start'])->format('d-M-Y') : null,
