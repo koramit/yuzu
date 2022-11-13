@@ -384,7 +384,7 @@ class Visit extends Model
 
     public function getMenstruationAttribute()
     {
-        if ($this->patient->profile['gender'] === 'male') {
+        if (!$this->patient || $this->patient->profile['gender'] === 'male') {
             return null;
         }
 
