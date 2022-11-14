@@ -25,7 +25,7 @@ class CertificateManager
 
         return [
             'slug' => $visit->slug,
-            'patient_name' => 'HN '.$visit->hn.' '.$visit->patient->profile['first_name'],
+            'patient_name' => 'HN '.$visit->hn.' '.$visit->patient?->profile['first_name'],
             'result' => $visit->atk_positive_case ? 'ATK positive' : $visit->form['management']['np_swab_result'],
             'age' => $visit->age_at_visit,
             'risk' => $visit->atk_positive_case ? 'ATK positive' : $this->risk,
