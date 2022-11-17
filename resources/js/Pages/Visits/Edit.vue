@@ -755,7 +755,7 @@
                 v-if="form.exposure.atk_positive
                     && form.visit.patient_type === 'บุคคลทั่วไป'
                     && form.visit.screen_type === 'เริ่มตรวจใหม่'
-                    && (form.management.manage_atk_positive ?? '').startsWith('ไม่ต้องการยืนยันผลด้วยวิธี PCR')"
+                    && !(form.management.manage_atk_positive ?? '').startsWith('ไม่ต้องการยืนยันผลด้วยวิธี PCR')"
             >
                 <h2 class="font-semibold text-thick-theme-light">
                     คำแนะนำสำหรับผู้ป่วย
@@ -766,7 +766,7 @@
             </div>
             <div
                 class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
-                v-else-if="form.visit.patient_type && !(form.visit.patient_type === 'บุคคลทั่วไป' && form.management.np_swab)"
+                v-else-if="form.visit.patient_type && !(form.visit.patient_type === 'บุคคลทั่วไป' && form.management.np_swab) && !(form.management.manage_atk_positive ?? '').startsWith('ไม่ต้องการยืนยันผลด้วยวิธี PCR')"
             >
                 <h2 class="font-semibold text-thick-theme-light">
                     คำแนะนำสำหรับ{{ isEmployee ? 'เจ้าหน้าที่ศิริราช' : 'ผู้ป่วย' }}

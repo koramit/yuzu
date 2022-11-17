@@ -216,7 +216,7 @@ class VisitManager
             'public_patient_walkin_managment_atk_positive' => ['NP swab for PCR test of SARS-CoV-2', 'ไม่ต้องการยืนยันผลด้วยวิธี PCR แพทย์พิจารณาให้ยาเลย (หากต้องการเข้าระบบ ให้ติดต่อ 1330 เอง)'],
             'public_patient_walkin_managment_atk_positive_with_pcr' => ['NP swab for PCR test of SARS-CoV-2'],
             'public_patient_walkin_managment_atk_positive_without_pcr' => ['ไม่ต้องการยืนยันผลด้วยวิธี PCR แพทย์พิจารณาให้ยาเลย (หากต้องการเข้าระบบ ให้ติดต่อ 1330 เอง)'],
-            'atk_positive_without_pcr_medications' => ['ไม่รับยา', 'Set A', 'Set B', 'Set C'],
+            'atk_positive_without_pcr_medications' => ['ไม่รับยา', 'Set A', 'Set B', 'Set C', 'Set D'],
             'atk_positive_without_pcr_recommendation' => 'ลางาน กักตัวเองที่บ้าน ห้ามพบปะผู้อื่นจนครบ 10 วัน จะส่งใบรับรองแพทย์ไปทาง sms ด้วยหมายเลขโทรศัพท์ที่ให้ไว้'
         ];
     }
@@ -740,7 +740,7 @@ class VisitManager
             }
             $recommendation = $text;
         } elseif (($visit->form['management']['manage_atk_positive'] ?? null) && str_starts_with($visit->form['management']['manage_atk_positive'], 'ไม่ต้องการยืนยันผลด้วยวิธี PCR')) {
-            $recommendation = $this->getConfigs($visit)['atk_positive_without_pcr_recommendation'];
+            $recommendation = null; // CR 20221015 $this->getConfigs($visit)['atk_positive_without_pcr_recommendation'];
         } else {
             $recommendation = null;
         }
