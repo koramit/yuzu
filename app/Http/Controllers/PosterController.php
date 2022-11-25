@@ -17,8 +17,8 @@ class PosterController extends Controller
     public function __invoke(Request $request)
     {
         $now = now()->tz(7);
-        $start = now()->create('2022-09-08 00:00 +7');
-        $end = now()->create('2022-09-10 00:00 +7');
+        $start = now()->create('2022-11-25 00:00 +7');
+        $end = now()->create('2022-11-30 00:00 +7');
 
         if ($request->route()->getName() !== 'poster') {
             return redirect()->route('poster');
