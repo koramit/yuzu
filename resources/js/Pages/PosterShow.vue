@@ -6,7 +6,7 @@
         <span class="block text-dark-theme-light font-semibold text-lg md:text-2xl">
             🍊 YUZU : ระบบสารสนเทศเพื่อบริหารจัดการข้อมูล<br class="hidden md:block lg:hidden">ภายใน <span class="text-bitter-theme-light">ARI คลินิก</span> 🍊
         </span>
-        <span class="block mt-4 md:mt-8 text-thick-theme-light italic md:text-xl">ในงานมหกรรมคุณภาพ Quality Fair ประจำปี 2565 </span>
+        <span class="block mt-4 md:mt-8 text-thick-theme-light italic md:text-xl">ในงาน Mahidol Quality Fair 2022 </span>
     </h1>
     <hr class="border border-dashed border-thick-theme-light my-8 md:my-16 lg:my-28">
     <h2 class="mb-8 md:mb-16 lg:mb-28 p-4 md:px-10 lg:px-32 xl:px-40 2xl:px-64 text-lg md:text-2xl text-thick-theme-light font-semibold italic underline">
