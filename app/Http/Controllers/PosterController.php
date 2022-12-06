@@ -18,7 +18,7 @@ class PosterController extends Controller
     {
         $now = now()->tz(7);
         $start = now()->create('2022-11-25 00:00 +7');
-        $end = now()->create('2022-12-01 00:00 +7');
+        $end = now()->create('2023-10-01 00:00 +7');
 
         if ($request->route()->getName() !== 'poster') {
             return redirect()->route('poster');
