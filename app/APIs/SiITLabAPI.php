@@ -4,7 +4,9 @@ namespace App\APIs;
 
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SiITLabAPI
 {
@@ -43,6 +45,11 @@ class SiITLabAPI
                         ->post(config('services.lisapi.service_url'), $form)
                         ->json();
         } catch (Exception $e) {
+            if (! Cache::get('lab-error-notified')) {
+                Log::error($e->getMessage());
+                Cache::put('lab-error-notified', true, 60);
+            }
+
             return false;
         }
 
