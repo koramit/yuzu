@@ -24,9 +24,9 @@ class PosterController extends Controller
             return redirect()->route('poster');
         }
 
-        if (! $now->between($start, $end)) {
+        /*if (! $now->between($start, $end)) {
             return Inertia::render('PosterVoid');
-        }
+        }*/
 
         if (! $request->session()->get('poster-visitor', null)) {
             $request->session()->put('poster-visitor', true);
