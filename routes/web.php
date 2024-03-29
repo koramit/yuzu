@@ -457,3 +457,9 @@ Route::get('/cache-me-if-you-can', function () {
         'lab-result-vaccination-query-count' => cache('lab-result-vaccination-query-count'),
     ];
 });
+
+Route::get('/uptime', function () {
+    return \Illuminate\Support\Facades\Http::acceptJson()
+        ->get(env('UPTIME_URL'))
+        ->json();
+});
